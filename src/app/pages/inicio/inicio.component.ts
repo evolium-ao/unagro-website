@@ -24,7 +24,6 @@ const NOTICIAS_POR_PAGINA = 4;
     CartaoNoticiaDestaqueComponent,
     CartaoNoticiaResumoComponent,
     CartaoEventoDestaqueComponent,
-    BotaoComponent,
     IconeComponent,
     RevelarAoScrollDirective,
     ContainerPaginaComponent

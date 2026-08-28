@@ -1,16 +1,16 @@
 <app-banner-destaque [subtitulo]="traducao.t('paginas.inicio.heroSubtitulo')" [ctas]="[]" />
-<!--
-  /* [selos]="[traducao.t('paginas.inicio.heroBadge')]" */
-   /* [titulo]="traducao.t('paginas.inicio.heroTitulo')" */
-  -->
-
-<app-faixa-estatisticas [estatisticas]="estatisticas()" />
-<app-container-pagina appRevelarAoScroll>
-  <!-- <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20" appRevelarAoScroll> -->
+<div class="flex flex-col gap-40">
+  <!--
+    /* [selos]="[traducao.t('paginas.inicio.heroBadge')]" */
+     /* [titulo]="traducao.t('paginas.inicio.heroTitulo')" */
+    -->
+  <app-faixa-estatisticas [estatisticas]="estatisticas()" />
+  <app-container-pagina appRevelarAoScroll>
+    <!-- <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20" appRevelarAoScroll> -->
     <!-- <div class="mx-auto max-w-2xl text-center">
-      <h2 class="text-2xl font-bold text-text-primary sm:text-3xl">{{ traducao.t('paginas.inicio.pilaresTitulo') }}</h2>
-      <p class="mt-2 text-text-secondary">{{ traducao.t('paginas.inicio.pilaresSubtitulo') }}</p>
-    </div> -->
+        <h2 class="text-2xl font-bold text-text-primary sm:text-3xl">{{ traducao.t('paginas.inicio.pilaresTitulo') }}</h2>
+        <p class="mt-2 text-text-secondary">{{ traducao.t('paginas.inicio.pilaresSubtitulo') }}</p>
+      </div> -->
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       @for (pilar of pilares(); track pilar.id) {
       <div
@@ -23,12 +23,10 @@
       </div>
       }
     </div>
-  <!-- </section> -->
-</app-container-pagina>
+    <!-- </section> -->
+  </app-container-pagina>
 
-<section class="bg-[#f8f8f8]">
   <app-container-pagina>
-    <!-- <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20" appRevelarAoScroll> -->
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <div class="w-fit">
@@ -55,7 +53,6 @@
         </button>
       </div>
     </div>
-
     <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       @if (noticiaDestaque(); as destaque) {
       <app-cartao-noticia-destaque [noticia]="destaque" />
@@ -73,26 +70,11 @@
       <app-cartao-noticia-resumo [noticia]="lateral" class="md:col-span-2 lg:col-span-1" />
       }
     </div>
-    <!-- </div> -->
   </app-container-pagina>
-</section>
 
-@if (eventoPrincipal(); as evento) {
-<app-container-pagina class="" appRevelarAoScroll>
-  <app-cartao-evento-destaque [evento]="evento" link="/eventos" />
-</app-container-pagina>
-}
-
-<!-- <section class="bg-primary text-white" appRevelarAoScroll>
-  <div
-    class="mx-auto flex max-w-4xl flex-col items-center gap-4 px-4 py-16 text-center sm:px-6 lg:px-8"
-  >
-    <h2 class="text-2xl font-bold sm:text-3xl">
-      {{ traducao.t('paginas.inicio.ctaFinalTitulo') }}
-    </h2>
-    <p class="text-white/80">{{ traducao.t('paginas.inicio.ctaFinalSubtitulo') }}</p>
-    <app-botao variante="branco" tamanho="lg" link="/candidaturas" class="mt-2">
-      {{ traducao.t('paginas.inicio.ctaFinalBotao') }}
-    </app-botao>
-  </div>
-</section> -->
+  @if (eventoPrincipal(); as evento) {
+  <app-container-pagina class="" appRevelarAoScroll>
+    <app-cartao-evento-destaque [evento]="evento" link="/eventos" />
+  </app-container-pagina>
+  }
+</div>
