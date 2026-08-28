@@ -1,0 +1,68 @@
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
+  <div class="max-w-2xl">
+    <h1 class="text-3xl font-bold text-text-primary sm:text-4xl">{{ traducao.t('paginas.formacoes.titulo') }}</h1>
+    <p class="mt-3 text-text-secondary">{{ traducao.t('paginas.formacoes.subtitulo') }}</p>
+  </div>
+
+  <div class="mt-12">
+    <h2 class="text-xl font-semibold text-text-primary">{{ traducao.t('paginas.formacoes.cursosTitulo') }}</h2>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (curso of cursosCurtaDuracao(); track curso.id) {
+        <div class="flex flex-col gap-2">
+          <app-cartao-curso [curso]="curso" />
+          @if (curso.proximaData) {
+            <p class="text-xs text-text-secondary">
+              {{ traducao.t('paginas.formacoes.datasTitulo') }}: {{ curso.proximaData }}
+            </p>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="mt-16">
+    <h2 class="text-xl font-semibold text-text-primary">{{ traducao.t('paginas.formacoes.vantagensTitulo') }}</h2>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      @for (vantagem of vantagens(); track vantagem.titulo) {
+        <div class="flex flex-col items-start gap-2 rounded-lg border border-gray-100 p-5 shadow-sm">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <app-icone [nome]="vantagem.icone" [tamanho]="20" />
+          </div>
+          <h3 class="font-semibold text-text-primary">{{ vantagem.titulo }}</h3>
+          <p class="text-sm text-text-secondary">{{ vantagem.descricao }}</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="mt-16 max-w-lg rounded-lg border border-gray-100 p-6 shadow-sm">
+    <h2 class="text-xl font-semibold text-text-primary">{{ traducao.t('paginas.formacoes.validarTitulo') }}</h2>
+    <p class="mt-1 text-sm text-text-secondary">{{ traducao.t('paginas.formacoes.validarDescricao') }}</p>
+    <form class="mt-4 flex flex-col gap-4" [formGroup]="formularioValidacao" (ngSubmit)="validarCertificado()">
+      <app-campo-texto
+        formControlName="codigo"
+        [rotulo]="traducao.t('paginas.formacoes.validarCampoCodigo')"
+        placeholder="UNAGRO-2026-000000"
+        [obrigatorio]="true"
+        [mensagemErro]="traducao.t('comum.campoObrigatorio')"
+      />
+      <app-botao
+        tipo="submit"
+        variante="primario"
+        [aCarregar]="estadoValidacao() === 'validando'"
+        class="self-start"
+      >
+        {{ traducao.t('paginas.formacoes.validarBotao') }}
+      </app-botao>
+      @if (estadoValidacao() === 'valido') {
+        <p class="flex items-center gap-2 text-sm font-medium text-primary">
+          <app-icone nome="badge-check" [tamanho]="18" />
+          {{ traducao.t('paginas.formacoes.validarSucesso') }}
+        </p>
+      }
+      @if (estadoValidacao() === 'invalido') {
+        <p class="text-sm font-medium text-red-600">{{ traducao.t('paginas.formacoes.validarErro') }}</p>
+      }
+    </form>
+  </div>
+</section>

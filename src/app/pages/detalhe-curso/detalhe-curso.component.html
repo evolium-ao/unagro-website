@@ -1,0 +1,68 @@
+@if (curso(); as c) {
+  <section class="bg-bg-light">
+    <div class="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-16">
+      <div>
+        <app-selo variante="primario">{{ c.faculdade }}</app-selo>
+        <h1 class="mt-3 text-3xl font-bold text-text-primary sm:text-4xl">{{ c.titulo }}</h1>
+        <p class="mt-3 text-text-secondary">{{ c.resumo }}</p>
+      </div>
+      <app-espaco-imagem proporcao="video" alturaMinima="280px" />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div class="grid gap-6 sm:grid-cols-3">
+      <div class="rounded-lg border border-gray-100 p-5 text-center shadow-sm">
+        <p class="text-2xl font-bold text-primary">{{ c.duracao }}</p>
+        <p class="mt-1 text-sm text-text-secondary">{{ traducao.t('paginas.detalheCurso.metricaDuracao') }}</p>
+      </div>
+      <div class="rounded-lg border border-gray-100 p-5 text-center shadow-sm">
+        <p class="text-2xl font-bold text-primary">{{ c.grau }}</p>
+        <p class="mt-1 text-sm text-text-secondary">{{ traducao.t('paginas.detalheCurso.metricaGrau') }}</p>
+      </div>
+      <div class="rounded-lg border border-gray-100 p-5 text-center shadow-sm">
+        <p class="text-2xl font-bold text-primary">{{ totalDisciplinas() }}</p>
+        <p class="mt-1 text-sm text-text-secondary">{{ traducao.t('paginas.detalheCurso.metricaDisciplinas') }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <h2 class="text-xl font-semibold text-text-primary">{{ traducao.t('paginas.detalheCurso.objetivosTitulo') }}</h2>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      @for (objetivo of c.objetivos; track objetivo) {
+        <div class="rounded-lg border border-gray-100 p-4 text-sm text-text-secondary shadow-sm">{{ objetivo }}</div>
+      }
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <h2 class="text-xl font-semibold text-text-primary">
+      {{ traducao.t('paginas.detalheCurso.planoCurricularTitulo') }}
+    </h2>
+    <app-acordeao class="mt-6 block">
+      @for (ano of c.planoCurricular; track ano.ano) {
+        <app-item-acordeao [titulo]="ano.titulo">
+          <ul class="flex flex-col gap-1">
+            @for (disciplina of ano.disciplinas; track disciplina) {
+              <li>{{ disciplina }}</li>
+            }
+          </ul>
+        </app-item-acordeao>
+      }
+    </app-acordeao>
+  </section>
+
+  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:pb-20">
+    <h2 class="text-xl font-semibold text-text-primary">{{ traducao.t('paginas.detalheCurso.saidasTitulo') }}</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      @for (saida of c.saidasProfissionais; track saida) {
+        <app-selo variante="acento">{{ saida }}</app-selo>
+      }
+    </div>
+  </section>
+} @else {
+  <div class="mx-auto max-w-7xl px-4 py-20 text-center text-text-secondary">
+    {{ traducao.t('paginas.detalheCurso.naoEncontrado') }}
+  </div>
+}

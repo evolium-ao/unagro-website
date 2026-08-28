@@ -8,7 +8,18 @@
   "projects": {
     "web-site-unagro": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "type": "component",
+          "style": "css"
+        },
+        "@schematics/angular:service": {
+          "type": "service"
+        },
+        "@schematics/angular:directive": {
+          "type": "directive"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -30,7 +41,7 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": []
+              "allowedHosts": ["localhost"]
             },
             "ssr": {
               "entry": "src/server.ts"
