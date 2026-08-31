@@ -2,7 +2,7 @@ import { Injectable, afterNextRender, computed, signal } from '@angular/core';
 import { CaminhoDicionario, Dicionario } from './dicionario';
 import { en } from './dicionarios/en';
 import { pt } from './dicionarios/pt';
-import { IDIOMA_PADRAO, Idioma } from './idioma';
+import { IDIOMA_PADRAO, IDIOMAS_DISPONIVEIS, Idioma } from './idioma';
 
 const CHAVE_ARMAZENAMENTO = 'unagro.idioma';
 
@@ -14,6 +14,11 @@ export class TraducaoService {
   private readonly dicionarioAtual = computed<Dicionario>(() =>
     this.idiomaSinal() === 'pt' ? pt : en,
   );
+
+  getTraducao(textos: string[]): string {
+    const indice = IDIOMAS_DISPONIVEIS.indexOf(this.idiomaSinal());
+    return textos[indice] ?? textos[0];
+  }
 
   constructor() {
     afterNextRender(() => {

@@ -9,6 +9,10 @@ import { CartaoEventoDestaqueComponent } from '../../shared/componentes/cartao-e
 import { CartaoNoticiaDestaqueComponent } from '../../shared/componentes/cartao-noticia-destaque/cartao-noticia-destaque.component';
 import { CartaoNoticiaResumoComponent } from '../../shared/componentes/cartao-noticia-resumo/cartao-noticia-resumo.component';
 import { FaixaEstatisticasComponent } from '../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component';
+import {
+  FaixaPatrocinadoresComponent,
+  PatrocinadorExibido,
+} from '../../shared/componentes/faixa-patrocinadores/faixa-patrocinadores.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 import { ContainerPaginaComponent } from "../../shared/componentes/container-pagina/container-pagina.component";
@@ -16,11 +20,22 @@ import { ContainerPaginaComponent } from "../../shared/componentes/container-pag
 /** Uma notícia em destaque mais três secundárias preenchem a grelha da secção. */
 const NOTICIAS_POR_PAGINA = 4;
 
+/** Placeholder até existirem logótipos reais dos patrocinadores. */
+const PATROCINADORES_PLACEHOLDER: PatrocinadorExibido[] = [
+  { id: '1', nome: 'Patrocinador 1' },
+  { id: '2', nome: 'Patrocinador 2' },
+  { id: '3', nome: 'Patrocinador 3' },
+  { id: '4', nome: 'Patrocinador 4' },
+  { id: '5', nome: 'Patrocinador 5' },
+  { id: '6', nome: 'Patrocinador 6' },
+];
+
 @Component({
   selector: 'app-inicio',
   imports: [
     BannerDestaqueComponent,
     FaixaEstatisticasComponent,
+    FaixaPatrocinadoresComponent,
     CartaoNoticiaDestaqueComponent,
     CartaoNoticiaResumoComponent,
     CartaoEventoDestaqueComponent,
@@ -41,6 +56,7 @@ export class InicioComponent {
   protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly pilares = this.estatisticasService.pilares;
   protected readonly eventoPrincipal = this.eventosService.emDestaque;
+  protected readonly patrocinadores = signal(PATROCINADORES_PLACEHOLDER);
 
   private readonly paginaNoticias = signal(0);
 

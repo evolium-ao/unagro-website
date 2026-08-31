@@ -29,24 +29,24 @@ function comZero(valor: number): string {
   selector: 'app-contador-regressivo',
   template: `
     @if (variante() === 'painel') {
-      <div class="rounded-xl border border-white/10 bg-black/20 px-6 py-5 text-center">
+      <div class="rounded-xl border border-white/10 bg-black/20 px-8 py-7 text-center">
         @if (titulo(); as textoTitulo) {
-          <p class="text-[9px] font-semibold uppercase tracking-[0.18em] text-secondary">
+          <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary">
             {{ textoTitulo }}
           </p>
         }
         <div class="mt-6 flex items-start justify-center">
           @for (unidade of unidades(); track unidade.rotulo; let ultimo = $last) {
             <div class="flex flex-col items-center">
-              <span class="text-[26px] font-bold leading-none tabular-nums text-white">{{
+              <span class="text-[36px] font-bold leading-none tabular-nums text-white">{{
                 unidade.valor
               }}</span>
-              <span class="mt-2 text-[9px] font-semibold uppercase tracking-wider text-white/50">
+              <span class="mt-2 text-[10px] font-semibold uppercase tracking-wider text-white/50">
                 {{ unidade.rotulo }}
               </span>
             </div>
             @if (!ultimo) {
-              <span class="px-5 text-[26px] font-bold leading-none text-white/40" aria-hidden="true"
+              <span class="px-6 text-[36px] font-bold leading-none text-white/40" aria-hidden="true"
                 >:</span
               >
             }

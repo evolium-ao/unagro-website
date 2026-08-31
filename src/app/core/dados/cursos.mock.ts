@@ -8,6 +8,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Engenharia Agronómica', en: 'Agronomic Engineering' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '4 anos', en: '4 years' },
+    regime: { pt: 'Presencial', en: 'On-campus' },
     resumo: {
       pt: 'Forma engenheiros agrónomos capazes de planear e gerir sistemas de produção agrícola sustentáveis.',
       en: 'Trains agronomic engineers to plan and manage sustainable agricultural production systems.',
@@ -60,6 +61,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Medicina Veterinária', en: 'Veterinary Medicine' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '5 anos', en: '5 years' },
+    regime: { pt: 'Presencial', en: 'On-campus' },
     resumo: {
       pt: 'Prepara médicos veterinários para a saúde e bem-estar animal, saúde pública e produção pecuária.',
       en: 'Prepares veterinarians for animal health and welfare, public health and livestock production.',
@@ -113,6 +115,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Zootecnia', en: 'Animal Science' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '4 anos', en: '4 years' },
+    regime: { pt: 'Pós-laboral', en: 'Evening' },
     resumo: {
       pt: 'Especializa profissionais em produção, nutrição e melhoramento genético animal.',
       en: 'Specializes professionals in animal production, nutrition and genetic improvement.',
@@ -153,6 +156,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Gestão Agroindustrial', en: 'Agribusiness Management' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '4 anos', en: '4 years' },
+    regime: { pt: 'Pós-laboral', en: 'Evening' },
     resumo: {
       pt: 'Forma gestores para a indústria agroalimentar, do processamento à comercialização.',
       en: 'Trains managers for the agri-food industry, from processing to commercialization.',
@@ -193,6 +197,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Economia Agrária', en: 'Agricultural Economics' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '4 anos', en: '4 years' },
+    regime: { pt: 'Presencial', en: 'On-campus' },
     resumo: {
       pt: 'Analisa mercados, políticas públicas e desenvolvimento económico do sector rural.',
       en: 'Analyzes markets, public policy and economic development in the rural sector.',
@@ -233,6 +238,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Engenharia Florestal', en: 'Forestry Engineering' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '4 anos', en: '4 years' },
+    regime: { pt: 'Presencial', en: 'On-campus' },
     resumo: {
       pt: 'Forma engenheiros para a gestão sustentável de florestas e recursos madeireiros.',
       en: 'Trains engineers for the sustainable management of forests and timber resources.',
@@ -273,6 +279,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Ciências Ambientais', en: 'Environmental Sciences' },
     grau: { pt: 'Licenciatura', en: "Bachelor's Degree" },
     duracao: { pt: '4 anos', en: '4 years' },
+    regime: { pt: 'Pós-laboral', en: 'Evening' },
     resumo: {
       pt: 'Prepara profissionais para a avaliação e gestão de impactos ambientais e recursos naturais.',
       en: 'Prepares professionals to assess and manage environmental impacts and natural resources.',
@@ -313,6 +320,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Agricultura de Precisão', en: 'Precision Agriculture' },
     grau: { pt: 'Certificado Profissional', en: 'Professional Certificate' },
     duracao: { pt: '3 meses', en: '3 months' },
+    regime: { pt: 'Pós-laboral', en: 'Evening' },
     resumo: {
       pt: 'Curso de curta duração sobre tecnologias de sensorização, mapeamento e gestão de dados agrícolas.',
       en: 'Short course on sensing technologies, mapping and agricultural data management.',
@@ -341,6 +349,7 @@ export const CURSOS_MOCK: Curso[] = [
     titulo: { pt: 'Gestão de Cooperativas Agrícolas', en: 'Agricultural Cooperative Management' },
     grau: { pt: 'Certificado Profissional', en: 'Professional Certificate' },
     duracao: { pt: '2 meses', en: '2 months' },
+    regime: { pt: 'Online', en: 'Online' },
     resumo: {
       pt: 'Capacita gestores e associados de cooperativas em governação, finanças e comercialização coletiva.',
       en: 'Trains cooperative managers and members in governance, finance and collective commercialization.',

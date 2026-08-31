@@ -71,10 +71,10 @@
       }
     </div>
   </app-container-pagina>
-
-  @if (eventoPrincipal(); as evento) {
-    <app-container-pagina class="mb-40">
-    <app-cartao-evento-destaque [evento]="evento" link="/eventos" />
+  <app-faixa-patrocinadores [patrocinadores]="patrocinadores()" />
+  <!-- @if (eventoPrincipal(); as evento) { -->
+  <app-container-pagina class="mb-40">
+    <app-cartao-evento-destaque [evento]="eventoPrincipal()" link="/eventos" />
   </app-container-pagina>
-  }
+  <!-- } -->
 </div>

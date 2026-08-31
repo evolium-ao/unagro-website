@@ -14,6 +14,15 @@ export const pt = {
     hub: 'HUB UNAGRO',
     contactos: 'Contactos',
     alumni: 'Alumni',
+    sobreMenu: {
+      nossaHistoria: 'Nossa História',
+      pilares: 'Pilares institucionais',
+      orgaosGestao: 'Orgãos de gestão',
+      estruturaOrganizacional: 'Estrutura organizacional',
+      faculdadesDepartamentos: 'Faculdades e departamentos',
+      abaUnagro: 'Aba Unagro',
+      governanca: 'Governança',
+    },
   },
   comum: {
     verMais: 'Ver mais',
@@ -158,8 +167,17 @@ export const pt = {
     candidaturas: {
       titulo: 'Candidaturas',
       subtitulo: 'Tudo o que precisa de saber para se candidatar a um curso da UNAGRO.',
-      passosTitulo: 'Como me candidatar',
-      requisitosTitulo: 'Requisitos de candidatura',
+      passosTitulo: 'Como candidatar-se?',
+      passosSubtitulo:
+        'Siga estes passos simples para garantir a sua vaga numa das instituições líderes em ensino agrário em África.',
+      ofertaTitulo: 'Oferta Académica',
+      ofertaSubtitulo: 'Filtre por área e encontre o seu futuro.',
+      filtroFaculdadeRotulo: 'Faculdade',
+      filtroGrauRotulo: 'Grau académico',
+      filtroRegimeRotulo: 'Regime',
+      requisitosTitulo: 'Requisitos Gerais',
+      requisitosDescricao:
+        'Certifique-se de que possui todos os documentos digitalizados antes de iniciar o processo online. O formato preferencial é PDF.',
       calendarioTitulo: 'Calendário académico',
       bolsasTitulo: 'Bolsas de estudo disponíveis',
       faqTitulo: 'Dúvidas frequentes',

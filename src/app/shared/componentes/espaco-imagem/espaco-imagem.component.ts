@@ -18,7 +18,7 @@ const CLASSES_PROPORCAO: Record<ProporcaoImagem, string> = {
   template: `
     <div
       class="relative flex w-full flex-col items-center justify-center gap-2 overflow-hidden bg-gray-300 text-gray-500 dark:bg-slate-700"
-      [class]="classeProporcao()"
+      [class]="classes()"
       [style.min-height]="alturaMinima()"
       role="img"
       [attr.aria-label]="legenda() ?? 'Imagem ilustrativa'"
@@ -41,5 +41,10 @@ export class EspacoImagemComponent {
   readonly icone = input<string>('image');
   readonly legenda = input<string>();
   readonly imagem = input<string>();
-  protected readonly classeProporcao = computed(() => CLASSES_PROPORCAO[this.proporcao()]);
+  /** Arredonda os cantos — usado quando a imagem fica embutida dentro de um cartão. */
+  readonly arredondado = input(false);
+
+  protected readonly classes = computed(
+    () => `${CLASSES_PROPORCAO[this.proporcao()]}${this.arredondado() ? ' rounded-lg' : ''}`,
+  );
 }

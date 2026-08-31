@@ -35,6 +35,8 @@ export interface CtaBannerDestaque {
               }
             </div>
           }
+          //
+          {{titulo()}}
           @if (titulo()) {
             <h1 class="text-3xl font-bold text-white sm:text-4xl lg:text-5xl">{{ titulo() }}</h1>
           }

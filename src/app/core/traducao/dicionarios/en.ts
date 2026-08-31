@@ -14,6 +14,15 @@ export const en = {
     hub: 'UNAGRO HUB',
     contactos: 'Contact',
     alumni: 'Alumni',
+    sobreMenu: {
+      nossaHistoria: 'Our History',
+      pilares: 'Institutional pillars',
+      orgaosGestao: 'Governing bodies',
+      estruturaOrganizacional: 'Organizational structure',
+      faculdadesDepartamentos: 'Faculties and departments',
+      abaUnagro: 'Unagro Tab',
+      governanca: 'Governance',
+    },
   },
   comum: {
     verMais: 'See more',
@@ -158,8 +167,17 @@ export const en = {
     candidaturas: {
       titulo: 'Admissions',
       subtitulo: 'Everything you need to know to apply for a UNAGRO course.',
-      passosTitulo: 'How to apply',
-      requisitosTitulo: 'Admission requirements',
+      passosTitulo: 'How to apply?',
+      passosSubtitulo:
+        'Follow these simple steps to secure your place at one of the leading institutions in agricultural education in Africa.',
+      ofertaTitulo: 'Academic Offer',
+      ofertaSubtitulo: 'Filter by area and find your future.',
+      filtroFaculdadeRotulo: 'Faculty',
+      filtroGrauRotulo: 'Degree',
+      filtroRegimeRotulo: 'Schedule',
+      requisitosTitulo: 'General Requirements',
+      requisitosDescricao:
+        'Make sure you have all documents scanned before starting the online process. PDF is the preferred format.',
       calendarioTitulo: 'Academic calendar',
       bolsasTitulo: 'Available scholarships',
       faqTitulo: 'Frequently asked questions',

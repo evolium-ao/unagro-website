@@ -13,6 +13,7 @@ export interface Curso {
   titulo: TextoTraduzido;
   grau: TextoTraduzido;
   duracao: TextoTraduzido;
+  regime: TextoTraduzido;
   resumo: TextoTraduzido;
   objetivos: TextoTraduzido[];
   planoCurricular: AnoCurricular[];

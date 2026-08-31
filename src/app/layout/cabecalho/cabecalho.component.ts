@@ -6,6 +6,11 @@ import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { BarraTopoComponent } from '../../shared/componentes/barra-topo/barra-topo.component';
 import { CHAVE_SUBMENU_CURSOS, MENU_PRINCIPAL } from './menu.config';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
+import {
+  DropdownMenuComponent,
+  DropdownMenuItemConfig,
+} from '../../shared/componentes/dropdown-menu/dropdown-menu.component';
+import { DropdownMenuTriggerDirective } from '../../shared/componentes/dropdown-menu/dropdown-menu-trigger.directive';
 
 /** Entrada de submenu já pronta para o template, venha ela da config ou de dados dinâmicos. */
 interface ItemSubmenu {
@@ -21,6 +26,8 @@ interface ItemSubmenu {
     IconeComponent,
     BarraTopoComponent,
     ContainerPaginaComponent,
+    DropdownMenuComponent,
+    DropdownMenuTriggerDirective,
   ],
   templateUrl: './cabecalho.component.html',
 })
@@ -56,8 +63,28 @@ export class CabecalhoComponent {
     return mapa;
   });
 
+  /**
+   * Os mesmos submenus no formato que o `app-dropdown-menu` consome — usado apenas
+   * na navegação desktop; o menu móvel continua a render os `submenus()` em acordeão.
+   */
+  protected readonly submenusDropdown = computed(() => {
+    const mapa = new Map<string, DropdownMenuItemConfig[]>();
+
+    for (const [label, filhos] of this.submenus()) {
+      mapa.set(
+        label,
+        filhos.map((filho) => ({
+          label: filho.texto,
+          routeUrl: filho.path,
+          iconRight: 'chevronRight' as const,
+        })),
+      );
+    }
+
+    return mapa;
+  });
+
   protected readonly menuAberto = signal(false);
-  protected readonly submenuAberto = signal<string | null>(null);
   protected readonly submenuMobileAberto = signal<string | null>(null);
 
   protected alternarMenu(): void {
@@ -66,12 +93,7 @@ export class CabecalhoComponent {
 
   protected fecharMenu(): void {
     this.menuAberto.set(false);
-    this.submenuAberto.set(null);
     this.submenuMobileAberto.set(null);
-  }
-
-  protected alternarSubmenu(label: string): void {
-    this.submenuAberto.update((aberto) => (aberto === label ? null : label));
   }
 
   protected alternarSubmenuMobile(label: string): void {

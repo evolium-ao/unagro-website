@@ -12,6 +12,16 @@ export interface Dicionario {
     hub: string;
     contactos: string;
     alumni: string;
+    /** Itens do submenu de "Sobre a UNAGRO". */
+    sobreMenu: {
+      nossaHistoria: string;
+      pilares: string;
+      orgaosGestao: string;
+      estruturaOrganizacional: string;
+      faculdadesDepartamentos: string;
+      abaUnagro: string;
+      governanca: string;
+    };
   };
   comum: {
     verMais: string;
@@ -143,7 +153,14 @@ export interface Dicionario {
       titulo: string;
       subtitulo: string;
       passosTitulo: string;
+      passosSubtitulo: string;
+      ofertaTitulo: string;
+      ofertaSubtitulo: string;
+      filtroFaculdadeRotulo: string;
+      filtroGrauRotulo: string;
+      filtroRegimeRotulo: string;
       requisitosTitulo: string;
+      requisitosDescricao: string;
       calendarioTitulo: string;
       bolsasTitulo: string;
       faqTitulo: string;

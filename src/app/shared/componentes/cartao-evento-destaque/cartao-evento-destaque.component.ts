@@ -24,11 +24,11 @@ export interface EventoDestaqueCartao {
   imports: [IconeComponent, ContadorRegressivoComponent, RouterLink],
   host: { class: 'block' },
   template: `
-    <article class="overflow-hidden rounded-xl bg-primary-deep text-white border-l-6 border-secondary">
+    <article class="w-full overflow-hidden rounded-xl bg-primary-deep text-white border-l-6 border-secondary">
       <div
-        class="flex flex-col gap-8 p-10 sm:p-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
+        class="flex flex-col gap-8 p-10 sm:p-14 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
       >
-        <div class="max-w-xl">
+        <div>
           <div class="flex flex-wrap items-center gap-2.5">
             <span
               class="rounded bg-secondary px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-primary-dark"
@@ -49,10 +49,10 @@ export interface EventoDestaqueCartao {
           @if (link(); as destino) {
             <a
               [routerLink]="destino"
-              class="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-2 text-[10px] font-bold uppercase tracking-wider text-primary-dark transition-colors duration-200 hover:bg-white/90"
+              class="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-xs font-bold uppercase tracking-wider text-primary-dark transition-colors duration-200 hover:bg-white/90"
             >
               {{ traducao.t('comum.saberMais') }}
-              <app-icone nome="arrow-right" [tamanho]="14" />
+              <app-icone nome="arrow-right" [tamanho]="16" />
             </a>
           }
         </div>

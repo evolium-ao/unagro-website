@@ -3,38 +3,38 @@ import { PassoCandidatura } from '../modelos/passo-candidatura.model';
 export const PASSOS_CANDIDATURA_MOCK: PassoCandidatura[] = [
   {
     numero: 1,
-    titulo: { pt: 'Escolher o curso', en: 'Choose your course' },
-    descricao: { pt: 'Consulte a oferta formativa e escolha a faculdade e o curso pretendido.', en: 'Browse the course offer and choose your faculty and intended course.' },
-    icone: 'search',
+    titulo: { pt: 'Escolha o curso', en: 'Choose your course' },
+    descricao: { pt: 'Explore a nossa oferta formativa.', en: 'Explore our range of courses.' },
+    icone: 'graduation-cap',
   },
   {
     numero: 2,
-    titulo: { pt: 'Reunir documentos', en: 'Gather documents' },
-    descricao: { pt: 'Prepare o certificado de habilitações, BI e restante documentação exigida.', en: 'Prepare your school diploma, ID and remaining required documents.' },
-    icone: 'file-text',
-  },
-  {
-    numero: 3,
-    titulo: { pt: 'Submeter candidatura', en: 'Submit application' },
-    descricao: { pt: 'Preencha o formulário de candidatura online ou presencialmente no campus.', en: 'Fill in the application form online or in person on campus.' },
-    icone: 'send',
-  },
-  {
-    numero: 4,
-    titulo: { pt: 'Realizar exame de admissão', en: 'Take the admission exam' },
-    descricao: { pt: 'Compareça na data marcada para o exame de Matemática e Ciências Naturais.', en: 'Attend on the scheduled date for the Mathematics and Natural Sciences exam.' },
-    icone: 'pencil-line',
-  },
-  {
-    numero: 5,
-    titulo: { pt: 'Consultar resultados', en: 'Check results' },
-    descricao: { pt: 'A lista de admitidos é publicada no Espaço do Estudante.', en: 'The list of admitted candidates is published in the Student Hub.' },
+    titulo: { pt: 'Verifique os requisitos', en: 'Check the requirements' },
+    descricao: { pt: 'Consulte os documentos necessários.', en: 'Review the required documents.' },
     icone: 'clipboard-check',
   },
   {
+    numero: 3,
+    titulo: { pt: 'Preencha o formulário', en: 'Fill in the form' },
+    descricao: { pt: 'Submeta os seus dados pessoais.', en: 'Submit your personal details.' },
+    icone: 'pencil-line',
+  },
+  {
+    numero: 4,
+    titulo: { pt: 'Envie os documentos', en: 'Send your documents' },
+    descricao: { pt: 'Upload de BI e certificados.', en: 'Upload your ID and certificates.' },
+    icone: 'file-text',
+  },
+  {
+    numero: 5,
+    titulo: { pt: 'Aguarde a validação', en: 'Wait for validation' },
+    descricao: { pt: 'Análise pela nossa secretaria.', en: "Review by our admissions office." },
+    icone: 'clock',
+  },
+  {
     numero: 6,
-    titulo: { pt: 'Efetuar matrícula', en: 'Complete enrollment' },
-    descricao: { pt: 'Formalize a matrícula nos serviços académicos e inicie o ano letivo.', en: 'Formalize enrollment with academic services and start the academic year.' },
+    titulo: { pt: 'Faça a matrícula', en: 'Complete your enrollment' },
+    descricao: { pt: 'Confirme a sua vaga.', en: 'Confirm your place.' },
     icone: 'circle-check',
   },
 ];
