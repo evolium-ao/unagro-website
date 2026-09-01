@@ -4,7 +4,12 @@ import { CursosService } from '../../core/servicos/cursos.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { BarraTopoComponent } from '../../shared/componentes/barra-topo/barra-topo.component';
-import { CHAVE_SUBMENU_CURSOS, MENU_PRINCIPAL } from './menu.config';
+import { CHAVE_SUBMENU_CURSOS, MENU_PRINCIPAL, ModalMenu } from './menu.config';
+import { AlertModalService } from '../../shared/componentes/alert-modal/alert-modal.service';
+import {
+  ID_MODAL_NOSSA_HISTORIA,
+  ModalNossaHistoriaComponent,
+} from '../../shared/componentes/modal-nossa-historia/modal-nossa-historia.component';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import {
   DropdownMenuComponent,
@@ -15,7 +20,9 @@ import { DropdownMenuTriggerDirective } from '../../shared/componentes/dropdown-
 /** Entrada de submenu já pronta para o template, venha ela da config ou de dados dinâmicos. */
 interface ItemSubmenu {
   texto: string;
-  path: string;
+  path?: string;
+  /** Quando presente, o item abre um modal em vez de navegar. */
+  modal?: ModalMenu;
 }
 
 @Component({
@@ -34,6 +41,7 @@ interface ItemSubmenu {
 export class CabecalhoComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly cursosService = inject(CursosService);
+  private readonly modais = inject(AlertModalService);
 
   protected readonly menuPrincipal = MENU_PRINCIPAL;
 
@@ -55,7 +63,11 @@ export class CabecalhoComponent {
       } else if (item.children?.length) {
         mapa.set(
           item.label,
-          item.children.map((filho) => ({ texto: this.traducao.t(filho.label), path: filho.path })),
+          item.children.map((filho) => ({
+            texto: this.traducao.t(filho.label),
+            path: filho.path,
+            modal: filho.modal,
+          })),
         );
       }
     }
@@ -75,7 +87,8 @@ export class CabecalhoComponent {
         label,
         filhos.map((filho) => ({
           label: filho.texto,
-          routeUrl: filho.path,
+          routeUrl: filho.modal ? undefined : filho.path,
+          click: filho.modal ? () => this.abrirModal(filho.modal!) : undefined,
           iconRight: 'chevronRight' as const,
         })),
       );
@@ -94,6 +107,22 @@ export class CabecalhoComponent {
   protected fecharMenu(): void {
     this.menuAberto.set(false);
     this.submenuMobileAberto.set(null);
+  }
+
+  /** Abre o modal associado a um item de menu (ex: "Nossa História"). */
+  protected abrirModal(modal: ModalMenu): void {
+    this.fecharMenu();
+
+    if (modal === 'nossaHistoria') {
+      void this.modais.open({
+        id: ID_MODAL_NOSSA_HISTORIA,
+        template: ModalNossaHistoriaComponent,
+        tamanho: 'xlgrande',
+        temHeader: false,
+        semBotoes: true,
+        fecharAoClicarFundo: true,
+      });
+    }
   }
 
   protected alternarSubmenuMobile(label: string): void {

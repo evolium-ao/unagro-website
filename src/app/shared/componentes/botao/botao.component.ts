@@ -10,24 +10,24 @@ export type RaioBotao = 'completo' | 'medio';
 
 const CLASSES_VARIANTE: Record<VarianteBotao, string> = {
   primario: 'bg-primary text-white hover:bg-primary-hover',
-  secundario: 'bg-accent text-white hover:opacity-90',
+  secundario: 'bg-accent text-primary hover:opacity-90',
   contorno: 'border border-primary text-primary hover:bg-primary/5',
   branco: 'bg-white text-primary hover:bg-gray-50',
-  glass: 'bg-white text-primary hover:bg-gray-50',
+  glass: 'bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all',
   suave: 'bg-primary/10 text-primary hover:bg-primary/15',
 };
 
 const CLASSES_TAMANHO: Record<TamanhoBotao, string> = {
   sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  md: 'px-6 py-2 text-base',
+  lg: 'px-8 py-3 text-lg',
 };
 
 const CLASSES_RAIO: Record<RaioBotao, string> = {
   completo: 'rounded-full',
   medio: 'rounded-lg',
 };
-
+export type PosicaoIcone = 'esquerda' | 'direita'
 const CLASSES_BASE =
   'inline-flex items-center justify-center gap-2 font-medium transition-all duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-60 disabled:pointer-events-none';
 
@@ -37,7 +37,7 @@ const CLASSES_BASE =
   host: { '[class.block]': 'larguraTotal()', '[class.w-full]': 'larguraTotal()' },
   template: `
     @if (link(); as destino) {
-      <a [routerLink]="destino" [class]="classes()">
+      <a [routerLink]="rotaBase()" [fragment]="fragmento()" [class]="classes()">
         <ng-container [ngTemplateOutlet]="conteudo" />
       </a>
     } @else {
@@ -68,7 +68,7 @@ export class BotaoComponent {
   readonly variante = input<VarianteBotao>('primario');
   readonly tamanho = input<TamanhoBotao>('md');
   readonly icone = input<string>();
-  readonly posicaoIcone = input<'esquerda' | 'direita'>('esquerda');
+  readonly posicaoIcone = input<PosicaoIcone | undefined>('esquerda');
   readonly aCarregar = input(false);
   readonly desativado = input(false);
   readonly tipo = input<'button' | 'submit'>('button');
@@ -80,6 +80,12 @@ export class BotaoComponent {
   readonly clicado = output<void>();
 
   protected readonly tamanhoIcone = computed(() => (this.tamanho() === 'lg' ? 20 : 16));
+  protected readonly rotaBase = computed(() => this.link()?.split('#')[0] ?? '');
+  protected readonly fragmento = computed(() => {
+    const destino = this.link();
+    const indice = destino?.indexOf('#') ?? -1;
+    return indice >= 0 ? destino!.slice(indice + 1) : undefined;
+  });
   protected readonly classes = computed(
     () =>
       `${CLASSES_BASE} ${CLASSES_VARIANTE[this.variante()]} ${CLASSES_TAMANHO[this.tamanho()]} ` +

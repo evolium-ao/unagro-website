@@ -22,6 +22,13 @@ export interface Dicionario {
       abaUnagro: string;
       governanca: string;
     };
+    /** Itens do submenu de "Candidaturas". */
+    candidaturasMenu: {
+      secretariaAcademica: string;
+      gabineteInvestigacao: string;
+      admissaoCandidatura: string;
+      docentes: string;
+    };
   };
   comum: {
     verMais: string;
@@ -46,6 +53,8 @@ export interface Dicionario {
     envioComSucesso: string;
     envioComErro: string;
     aCarregar: string;
+    publicado: string;
+    verTodasNoticias: string;
   };
   rodape: {
     lema: string;
@@ -127,12 +136,25 @@ export interface Dicionario {
     estudantes: {
       titulo: string;
       subtitulo: string;
+      heroSelo: string;
+      heroTitulo: string;
+      heroTituloDestaque: string;
+      heroSubtitulo: string;
+      heroCtaCursos: string;
+      heroCtaHorarios: string;
+      intranetSecaoTitulo: string;
+      intranetSecaoDescricao: string;
+      intranetCartaoSelo: string;
+      intranetCartaoTitulo: string;
+      intranetCartaoDescricao: string;
+      intranetCartaoCta: string;
       intranetTitulo: string;
       intranetDescricao: string;
       intranetBotao: string;
       intranetAviso: string;
       avisosTitulo: string;
       noticiasTitulo: string;
+      noticiasDescricao: string;
     };
     alumni: {
       titulo: string;
@@ -162,17 +184,71 @@ export interface Dicionario {
       requisitosTitulo: string;
       requisitosDescricao: string;
       calendarioTitulo: string;
+      calendarioSubtitulo: string;
+      portalTitulo: string;
+      portalDescricao: string;
+      portalBotaoContinuar: string;
+      portalBotaoEstado: string;
+      portalLinkRecuperar: string;
+      recrutamentoSelo: string;
+      recrutamentoTitulo: string;
+      recrutamentoDescricao: string;
+      recrutamentoBotao: string;
       bolsasTitulo: string;
+      bolsasDescricao: string;
+      bolsasLink: string;
       faqTitulo: string;
+      secretariaTitulo: string;
+      secretariaDescricao: string;
+    };
+    candidaturaDocentes: {
+      heroSelo: string;
+      heroTitulo: string;
+      heroSubtitulo: string;
+      heroCtaCandidatar: string;
+      heroCtaBrochura: string;
+      porqueTitulo: string;
+      porqueDescricao: string;
+      requisitosTitulo: string;
+      duvidasTexto: string;
+      duvidasLink: string;
     };
     detalheCurso: {
+      heroSelo: string;
+      heroCtaCandidatar: string;
+      heroCtaPlano: string;
+      secao1Titulo: string;
+      /** Contém o marcador `{curso}`, substituído pelo título do curso aberto. */
+      secao1Paragrafo1: string;
+      secao1Paragrafo2: string;
+      inscricoesTitulo: string;
+      inscricoesDetalhe: string;
+      inscricoesBotao: string;
       objetivosTitulo: string;
+      objetivosDescricao: string;
       planoCurricularTitulo: string;
+      planoCurricularDescricao: string;
+      metodologiaTitulo: string;
+      requisitosAdmissaoTitulo: string;
+      faqTitulo: string;
+      ctaFinalTitulo: string;
+      /** Contém o marcador `{curso}`, substituído pelo título do curso aberto. */
+      ctaFinalDescricao: string;
       saidasTitulo: string;
+      saidasDescricao: string;
       naoEncontrado: string;
+      naoEncontradoDescricao: string;
+      naoEncontradoBotao: string;
       metricaDuracao: string;
       metricaGrau: string;
       metricaDisciplinas: string;
+      metricaRegime: string;
+      metricaProximaData: string;
+      ctaTitulo: string;
+      ctaDescricao: string;
+      ctaBotaoContactar: string;
+      outrosCursosTitulo: string;
+      outrosCursosDescricao: string;
     };
     formacoes: {
       titulo: string;
@@ -216,12 +292,25 @@ export interface Dicionario {
       ctaFinalBotao: string;
     };
   };
+  /** Conteúdos apresentados em modais (fora do fluxo das páginas). */
+  modais: {
+    nossaHistoria: {
+      selo: string;
+      titulo: string;
+      paragrafoUm: string;
+      paragrafoDois: string;
+      destaqueTitulo: string;
+      destaqueTexto: string;
+      fechar: string;
+    };
+  };
   rotas: {
     inicio: { titulo: string; descricao: string };
     sobre: { titulo: string; descricao: string };
     desenvolvimento: { titulo: string; descricao: string };
     hub: { titulo: string; descricao: string };
     candidaturas: { titulo: string; descricao: string };
+    candidaturaDocentes: { titulo: string; descricao: string };
     detalheCurso: { titulo: string; descricao: string };
     estudantes: { titulo: string; descricao: string };
     detalheProjeto: { titulo: string; descricao: string };

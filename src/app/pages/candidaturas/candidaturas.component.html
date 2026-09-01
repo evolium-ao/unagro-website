@@ -1,5 +1,5 @@
-<app-banner-destaque [titulo]="'bannerTitulo()'" [subtitulo]="traducao.t('paginas.inicio.heroSubtitulo')"
-  [ctas]="ctaBannerDestaque()" />
+<app-banner-destaque [titulo]="TituloInicio()" [tituloDestaque]="'UNAGRO'" [subtitulo]="heroSubtitulo()" [ctas]="ctaBannerDestaque()"
+  [selos]="['Comece aquí a sua carreira']" bg="/imagens/campos-hero-candidatura.png" [temBackdrop]="true" />
 <app-faixa-estatisticas [estatisticas]="estatisticas()" />
 <app-container-pagina>
   <!-- Aqui vai o conteúdo da página de candidaturas -->
@@ -13,7 +13,7 @@
   </section>
 
   <!-- 2 sessaão -->
-  <section class="py-16 sm:py-20">
+  <section id="secao-cursos" class="py-16 sm:py-20">
     <app-cabecalho-secao [titulo]="traducao.t('paginas.candidaturas.ofertaTitulo')"
       [descricao]="traducao.t('paginas.candidaturas.ofertaSubtitulo')" />
 
@@ -76,13 +76,133 @@
     </div>
   </section>
 
-  <!-- 4 sessaão -->
+</app-container-pagina>
 
-  <!-- 5 sessaão -->
+<!-- 4 sessaão — faixa verde a toda a largura, só o conteúdo é que fica no container -->
+<section class="bg-primary px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="escuro" [mostrarTracos]="false"
+      [titulo]="traducao.t('paginas.candidaturas.calendarioTitulo')"
+      [descricao]="traducao.t('paginas.candidaturas.calendarioSubtitulo')" />
 
-  <!-- 6 sessaão -->
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      @for (fase of fases(); track fase.id) {
+      <app-cartao-fase [titulo]="fase.titulo" [estado]="fase.estado" [estadoRotulo]="fase.estadoRotulo"
+        [prazos]="fase.prazos" />
+      }
+    </div>
+  </app-container-pagina>
+</section>
 
-  <!-- 7 sessaão -->
+<!-- 5 sessaão — imagem de fundo a toda a largura, só o cartão fica no container -->
+<section id="secao-portal" class="relative isolate overflow-hidden px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-espaco-imagem class="absolute inset-0 -z-10" proporcao="cover" alturaMinima="100%" [legenda]="undefined"
+    imagem="imagens/bg-candidatura-sessao-2.png" [temBackdrop]="true" />
+  <div class="absolute inset-0 -z-10 bg-white/30" aria-hidden="true"></div>
 
-  <!-- 8 sessaão -->
+  <app-container-pagina>
+    <app-cartao-chamada-acao [titulo]="traducao.t('paginas.candidaturas.portalTitulo')"
+      [descricao]="traducao.t('paginas.candidaturas.portalDescricao')">
+      <app-botao acoes variante="primario" raio="medio" icone="log-in" link="/estudantes">
+        {{ traducao.t('paginas.candidaturas.portalBotaoContinuar') }}
+      </app-botao>
+      <app-botao acoes variante="contorno" raio="medio" icone="search" link="/estudantes">
+        {{ traducao.t('paginas.candidaturas.portalBotaoEstado') }}
+      </app-botao>
+
+      <a routerLink="/contactos"
+        class="mt-5 inline-block text-sm font-semibold text-primary transition-colors hover:text-primary-hover hover:underline">
+        {{ traducao.t('paginas.candidaturas.portalLinkRecuperar') }}
+      </a>
+    </app-cartao-chamada-acao>
+  </app-container-pagina>
+</section>
+
+<app-container-pagina>
+  <!-- 6 sessaão — recrutamento de professores -->
+  <section class="py-16 sm:py-20">
+    <div class="grid overflow-hidden rounded-2xl bg-bg-light lg:grid-cols-2">
+      <div class="flex flex-col items-start justify-center p-8 sm:p-10 lg:p-12">
+        <app-selo variante="primario" class="uppercase tracking-wider">
+          {{ traducao.t('paginas.candidaturas.recrutamentoSelo') }}
+        </app-selo>
+
+        <h2 class="mt-5 text-2xl font-bold text-text-primary sm:text-3xl">
+          {{ traducao.t('paginas.candidaturas.recrutamentoTitulo') }}
+        </h2>
+        <p class="mt-4 text-sm leading-relaxed text-text-secondary">
+          {{ traducao.t('paginas.candidaturas.recrutamentoDescricao') }}
+        </p>
+
+        <app-lista-verificacao class="mt-6 block w-full" [itens]="beneficiosRecrutamento()" />
+
+        <app-botao class="mt-8" variante="primario" raio="medio" icone="arrow-right" posicaoIcone="direita"
+          link="/contactos">
+          {{ traducao.t('paginas.candidaturas.recrutamentoBotao') }}
+        </app-botao>
+      </div>
+
+      <app-espaco-imagem proporcao="auto" alturaMinima="100%" class="min-h-80" imagem="/imagens/home-grafico.png" />
+    </div>
+  </section>
+
+
+  <!-- 7 sessaão — bolsas e apoios + dúvidas frequentes -->
+  <section class="py-16 sm:py-20">
+    <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <!-- Coluna esquerda: bolsas e apoios -->
+      <div>
+        <app-cabecalho-secao alinhamento="esquerda" [titulo]="traducao.t('paginas.candidaturas.bolsasTitulo')"
+          [descricao]="traducao.t('paginas.candidaturas.bolsasDescricao')" />
+
+        <div class="mt-8 flex flex-col gap-4">
+          @for (bolsa of bolsas(); track bolsa.id) {
+          <app-cartao-bolsa [nome]="bolsa.nome" [descricao]="bolsa.descricao" />
+          }
+        </div>
+
+        <a routerLink="/estudantes"
+          class="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary-hover">
+          {{ traducao.t('paginas.candidaturas.bolsasLink') }}
+          <app-icone nome="arrow-right" [tamanho]="16" />
+        </a>
+      </div>
+
+      <!-- Coluna direita: dúvidas frequentes -->
+      <div>
+        <h2 class="text-2xl font-bold text-text-primary sm:text-3xl">
+          {{ traducao.t('paginas.candidaturas.faqTitulo') }}
+        </h2>
+
+        <app-acordeao variante="cartoes" class="mt-8 block">
+          @for (pergunta of perguntas(); track pergunta.id; let primeira = $first) {
+          <app-item-acordeao [titulo]="pergunta.pergunta" [inicialmenteAberto]="primeira">
+            {{ pergunta.resposta }}
+          </app-item-acordeao>
+          }
+        </app-acordeao>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 sessaão — secretaria de admissões -->
+  <section class="pb-16 sm:pb-20">
+    <div class="rounded-xl bg-bg-light p-8 sm:p-10">
+      <div class="grid gap-8 lg:grid-cols-4 lg:gap-10">
+        <div>
+          <h2 class="font-semibold text-text-primary">
+            {{ traducao.t('paginas.candidaturas.secretariaTitulo') }}
+          </h2>
+          <p class="mt-2 text-xs leading-relaxed text-text-secondary">
+            {{ traducao.t('paginas.candidaturas.secretariaDescricao') }}
+          </p>
+        </div>
+
+        @for (canal of canaisContacto(); track canal.id) {
+        <app-item-contacto [icone]="canal.icone" [rotulo]="canal.rotulo" [valor]="canal.valor"
+          [detalhe]="canal.detalhe" />
+        }
+      </div>
+    </div>
+  </section>
 </app-container-pagina>

@@ -32,6 +32,9 @@ const CLASSES_PROPORCAO: Record<ProporcaoImagem, string> = {
           {{ legenda() }}
         </span>
       }
+      @if (temBackdrop()) {
+        <div class="absolute top-0 left-0 w-full h-full bg-white/70" [class.bg-black/70!]="colorBackdrop() == 'preto'"></div>
+      }
     </div>
   `,
 })
@@ -44,6 +47,8 @@ export class EspacoImagemComponent {
   /** Arredonda os cantos — usado quando a imagem fica embutida dentro de um cartão. */
   readonly arredondado = input(false);
 
+  readonly temBackdrop = input(false)
+  readonly colorBackdrop = input<'branco' | 'preto'>('branco')
   protected readonly classes = computed(
     () => `${CLASSES_PROPORCAO[this.proporcao()]}${this.arredondado() ? ' rounded-lg' : ''}`,
   );

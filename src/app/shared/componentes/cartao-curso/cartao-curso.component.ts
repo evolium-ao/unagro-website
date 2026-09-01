@@ -14,6 +14,7 @@ export interface CursoExibidoCard {
   grau: string;
   duracao: string;
   regime?: string;
+  imagem?: string;
 }
 
 @Component({
@@ -24,7 +25,7 @@ export interface CursoExibidoCard {
       <article
         class="flex h-full flex-col overflow-hidden rounded-xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
       >
-        <app-espaco-imagem proporcao="video" [arredondado]="true" />
+        <app-espaco-imagem proporcao="video" [arredondado]="true" [imagem]="curso().imagem" />
         <div class="flex flex-1 flex-col items-start gap-2 px-1 pt-4">
           <app-selo variante="primario">{{ curso().grau }}</app-selo>
           <h3 class="text-base font-semibold text-text-primary">{{ curso().titulo }}</h3>
@@ -56,7 +57,7 @@ export interface CursoExibidoCard {
       <article
         class="flex h-full flex-col overflow-hidden rounded-lg border border-gray-100 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
       >
-        <app-espaco-imagem proporcao="video" />
+        <app-espaco-imagem proporcao="video" [imagem]="curso().imagem" />
         <div class="flex flex-1 flex-col gap-2 p-4">
           <app-selo variante="primario" class="self-start">{{ curso().faculdade }}</app-selo>
           <h3 class="text-lg font-semibold text-text-primary">{{ curso().titulo }}</h3>

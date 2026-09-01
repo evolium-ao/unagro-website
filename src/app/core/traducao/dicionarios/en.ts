@@ -23,6 +23,12 @@ export const en = {
       abaUnagro: 'Unagro Tab',
       governanca: 'Governance',
     },
+    candidaturasMenu: {
+      secretariaAcademica: 'Academic registry',
+      gabineteInvestigacao: 'Research office',
+      admissaoCandidatura: 'Admissions and applications',
+      docentes: 'Faculty',
+    },
   },
   comum: {
     verMais: 'See more',
@@ -47,6 +53,8 @@ export const en = {
     envioComSucesso: 'Sent successfully.',
     envioComErro: 'Something went wrong. Please try again.',
     aCarregar: 'Loading…',
+    publicado: 'Published',
+    verTodasNoticias: 'See all news',
   },
   rodape: {
     lema: '"From the field to the world — innovation and sustainability committed to the agricultural future of Angola since 2026."',
@@ -138,14 +146,30 @@ export const en = {
     estudantes: {
       titulo: 'Student Hub',
       subtitulo: 'Access to the academic intranet, important notices and school life news.',
+      heroSelo: 'WELCOME STUDENT',
+      heroTitulo: 'Welcome to your',
+      heroTituloDestaque: 'Academic Space',
+      heroSubtitulo:
+        'Find the ideal programme for your agribusiness career, check the requirements and apply entirely online, quickly and securely.',
+      heroCtaCursos: 'View my courses',
+      heroCtaHorarios: 'Class schedules',
+      intranetSecaoTitulo: 'Quick Intranet Access',
+      intranetSecaoDescricao:
+        "Quickly reach UNAGRO's main digital tools to manage your academic life efficiently and securely.",
+      intranetCartaoSelo: 'QUICK ACCESS',
+      intranetCartaoTitulo: 'Student Portal Access',
+      intranetCartaoDescricao:
+        "Quickly reach UNAGRO's main digital services to manage your academic life efficiently and securely.",
+      intranetCartaoCta: 'Enter the Portal',
       intranetTitulo: 'Intranet Access',
       intranetDescricao:
         'Check grades, schedules and academic documents with your student credentials.',
       intranetBotao: 'Access the intranet',
       intranetAviso:
         'Restricted to enrolled students. Use the credentials provided by the academic office.',
-      avisosTitulo: 'Notices',
-      noticiasTitulo: 'Academic news',
+      avisosTitulo: 'Information Notes',
+      noticiasTitulo: 'Academic News',
+      noticiasDescricao: 'Highlights from our scientific and student community.',
     },
     alumni: {
       titulo: 'Alumni',
@@ -178,18 +202,80 @@ export const en = {
       requisitosTitulo: 'General Requirements',
       requisitosDescricao:
         'Make sure you have all documents scanned before starting the online process. PDF is the preferred format.',
-      calendarioTitulo: 'Academic calendar',
-      bolsasTitulo: 'Available scholarships',
-      faqTitulo: 'Frequently asked questions',
+      calendarioTitulo: 'Academic Calendar',
+      calendarioSubtitulo: "Keep an eye on the key deadlines so you don't miss your opportunity.",
+      portalTitulo: 'Already started your application?',
+      portalDescricao:
+        'Access your portal to complete the form, submit missing documents or check the status of your application.',
+      portalBotaoContinuar: 'Continue Application',
+      portalBotaoEstado: 'Check Status',
+      portalLinkRecuperar: 'Recover Access Code',
+      recrutamentoSelo: 'Career opportunities',
+      recrutamentoTitulo: 'Faculty Recruitment',
+      recrutamentoDescricao:
+        'UNAGRO is looking for researchers and academics dedicated to shaping the future of agricultural sciences. Join an outstanding faculty and gain access to world-class research facilities, experimental hubs and a vibrant academic community.',
+      recrutamentoBotao: 'Apply as a Lecturer',
+      bolsasTitulo: 'Scholarships and Support',
+      bolsasDescricao:
+        'We believe in merit and inclusion. Explore our financial support programmes.',
+      bolsasLink: 'Learn more about scholarships',
+      faqTitulo: 'Frequently Asked Questions',
+      secretariaTitulo: 'Admissions Office',
+      secretariaDescricao: 'Our team is ready to help at every step of your journey.',
+    },
+    candidaturaDocentes: {
+      heroSelo: 'FACULTY RECRUITMENT',
+      heroTitulo: 'Join our Faculty.',
+      heroSubtitulo:
+        'The National University of Agronomy is looking for brilliant, innovative minds. Committed to academic excellence and sustainable innovation, we offer an environment where your research and teaching will shape the future of global agriculture.',
+      heroCtaCandidatar: 'Apply now',
+      heroCtaBrochura: 'Download the PDF brochure',
+      porqueTitulo: 'Why UNAGRO?',
+      porqueDescricao:
+        'We do not just teach agriculture; we define its future. Our professors enjoy an ecosystem designed to drive discovery.',
+      requisitosTitulo: 'General Requirements',
+      duvidasTexto: 'Questions about the process?',
+      duvidasLink: 'Contact Academic HR',
     },
     detalheCurso: {
-      objetivosTitulo: 'Course objectives',
+      heroSelo: 'FEATURED PROGRAMME',
+      heroCtaCandidatar: 'Apply now',
+      heroCtaPlano: 'View curriculum',
+      secao1Titulo: 'The Science that Feeds the Future',
+      secao1Paragrafo1:
+        'The {curso} programme at UNAGRO is designed to train professionals able to meet the challenges of food security and sustainable rural development.',
+      secao1Paragrafo2:
+        'Our students benefit from a unique ecosystem that combines academic rigour with constant hands-on exposure in cutting-edge experimental fields.',
+      inscricoesTitulo: 'Applications open for 2026',
+      inscricoesDetalhe: 'Limited places at the Central Campus',
+      inscricoesBotao: 'Apply Now',
+      objetivosTitulo: 'Course Objectives',
+      objetivosDescricao: 'Skills you will develop throughout the programme.',
       planoCurricularTitulo: 'Curriculum',
-      saidasTitulo: 'Career outcomes',
+      planoCurricularDescricao: 'Course units organised by academic year.',
+      metodologiaTitulo: 'Teaching Approach',
+      requisitosAdmissaoTitulo: 'Admission Requirements',
+      faqTitulo: 'Frequently Asked Questions',
+      ctaFinalTitulo: 'Liked this course?',
+      ctaFinalDescricao:
+        'Do not miss the chance to join the next generation of {curso} professionals. Applications are open.',
+      saidasTitulo: 'Career Outcomes',
+      saidasDescricao: 'Fields where our graduates build their careers.',
       naoEncontrado: 'Course not found.',
+      naoEncontradoDescricao:
+        'The course you are looking for does not exist or is no longer part of our offering.',
+      naoEncontradoBotao: 'View all courses',
       metricaDuracao: 'Duration',
       metricaGrau: 'Degree',
       metricaDisciplinas: 'Subjects',
+      metricaRegime: 'Study mode',
+      metricaProximaData: 'Next intake',
+      ctaTitulo: 'Ready to take the next step?',
+      ctaDescricao:
+        'Applications are open. Gather the required documents and secure your place on this course.',
+      ctaBotaoContactar: 'Talk to admissions',
+      outrosCursosTitulo: 'Other courses in this faculty',
+      outrosCursosDescricao: 'Explore related programmes in the same field of knowledge.',
     },
     formacoes: {
       titulo: 'Short Courses',
@@ -234,6 +320,19 @@ export const en = {
       ctaFinalBotao: 'See how to apply',
     },
   },
+  modais: {
+    nossaHistoria: {
+      selo: 'LEGACY & EVOLUTION',
+      titulo: 'Our History',
+      paragrafoUm:
+        'Founded in 2026, the Angola Agribusiness University (UNAGRO) was born from the strategic vision of turning Angola\u2019s agricultural potential into tangible economic reality. What began as a centre of excellence in Luanda quickly expanded into strategic hubs in the province of Icolo e Bengo.',
+      paragrafoDois:
+        'Over the course of a year, UNAGRO has been the birthplace of innovations that are essential to the national productive sector, graduating more than 5,000 professionals who today lead the country\u2019s main farming operations and research centres.',
+      destaqueTitulo: 'National Recognition',
+      destaqueTexto: 'Certified by the Ministry of Higher Education and Innovation',
+      fechar: 'Close our history',
+    },
+  },
   rotas: {
     inicio: {
       titulo: 'Home',
@@ -255,6 +354,10 @@ export const en = {
     candidaturas: {
       titulo: 'Admissions',
       descricao: 'Find out how to apply to UNAGRO courses.',
+    },
+    candidaturaDocentes: {
+      titulo: 'Faculty Applications',
+      descricao: 'UNAGRO faculty recruitment: benefits, requirements and how to apply.',
     },
     detalheCurso: {
       titulo: 'Course',

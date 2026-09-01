@@ -40,10 +40,10 @@ export const COLUNAS_RODAPE: ColunaRodape[] = [
     titulo: 'rodape.servicosTitulo',
     itens: [
       { label: 'rodape.portalEstudante', path: '/estudantes' },
-      { label: 'rodape.processoAdmissao', path: '/candidaturas' },
+      { label: 'rodape.processoAdmissao', path: '/candidaturas/admissao-candidatura' },
       { label: 'rodape.apoioEstudante', path: '/estudantes' },
       { label: 'nav.formacoes', path: '/formacoes' },
-      { label: 'rodape.bolsasEstudo', path: '/candidaturas' },
+      { label: 'rodape.bolsasEstudo', path: '/candidaturas/admissao-candidatura' },
     ],
   },
 ];

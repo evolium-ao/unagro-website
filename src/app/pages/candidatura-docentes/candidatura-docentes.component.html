@@ -1,0 +1,52 @@
+<!-- Hero — mesma estrutura do hero do detalhe de curso, sem realce dourado no título.
+     TODO: trocar `bg` pela fotografia definitiva do recrutamento docente. -->
+<app-banner-destaque [titulo]="traducao.t('paginas.candidaturaDocentes.heroTitulo')"
+  [subtitulo]="traducao.t('paginas.candidaturaDocentes.heroSubtitulo')" [ctas]="ctasHero()" [selos]="selosHero()"
+  bg="/imagens/bg-candidatura-docente.png" [temBackdrop]="true" />
+<app-faixa-estatisticas [estatisticas]="estatisticas()" />
+<!-- 1 sessão — vantagens de leccionar na UNAGRO e painel de requisitos gerais -->
+<section id="secao-requisitos" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid gap-8 lg:grid-cols-3 lg:gap-10">
+      <div class="lg:col-span-2">
+        <h2 class="text-2xl font-bold leading-snug text-primary-dark sm:text-3xl">
+          {{ traducao.t('paginas.candidaturaDocentes.porqueTitulo') }}
+        </h2>
+        <p class="mt-5 max-w-lg text-sm leading-relaxed text-text-secondary">
+          {{ traducao.t('paginas.candidaturaDocentes.porqueDescricao') }}
+        </p>
+
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          @for (vantagem of vantagens(); track vantagem.id) {
+          <app-cartao-recurso [icone]="vantagem.icone" [titulo]="vantagem.titulo" [descricao]="vantagem.descricao" />
+          }
+        </div>
+      </div>
+
+      <app-painel-lateral [titulo]="traducao.t('paginas.candidaturaDocentes.requisitosTitulo')"
+        icone="square-check-list">
+        @for (requisito of requisitos(); track requisito.id) {
+        <app-item-requisito [icone]="requisito.icone" [titulo]="requisito.titulo" [descricao]="requisito.descricao" />
+        }
+
+        <div rodape>
+          <p class="text-xs text-text-secondary">
+            {{ traducao.t('paginas.candidaturaDocentes.duvidasTexto') }}
+          </p>
+          <a routerLink="/contactos"
+            class="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary-hover">
+            {{ traducao.t('paginas.candidaturaDocentes.duvidasLink') }}
+            <app-icone nome="arrow-right" [tamanho]="15" />
+          </a>
+        </div>
+      </app-painel-lateral>
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 2 sessão — formulário de candidatura em três passos -->
+<section id="secao-formulario" class="bg-bg-light px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-formulario-docente />
+  </app-container-pagina>
+</section>

@@ -2,21 +2,29 @@ import { Bolsa } from '../modelos/bolsa.model';
 
 export const BOLSAS_MOCK: Bolsa[] = [
   {
-    id: 'merito-academico',
-    nome: { pt: 'Bolsa de Mérito Académico', en: 'Academic Merit Scholarship' },
-    cobertura: { pt: '50% do valor das propinas', en: '50% of tuition fees' },
-    requisitos: { pt: 'Média final de acesso igual ou superior a 16 valores.', en: 'Final admission average of 16 points or higher.' },
+    id: 'merito-agro',
+    nome: { pt: 'Bolsa Mérito Agro', en: 'Agro Merit Scholarship' },
+    descricao: {
+      pt: 'Isenção total de propinas para alunos com média superior a 16 valores no ensino secundário.',
+      en: 'Full tuition waiver for students with a secondary school average above 16 points.',
+    },
+    cobertura: { pt: 'Isenção total de propinas', en: 'Full tuition waiver' },
+    requisitos: {
+      pt: 'Média final de acesso igual ou superior a 16 valores.',
+      en: 'Final admission average of 16 points or higher.',
+    },
   },
   {
     id: 'apoio-social',
-    nome: { pt: 'Bolsa de Apoio Social', en: 'Social Support Scholarship' },
+    nome: { pt: 'Apoio Social', en: 'Social Support' },
+    descricao: {
+      pt: 'Reduções parciais para candidatos em situação de vulnerabilidade socioeconómica comprovada.',
+      en: 'Partial reductions for applicants with proven socioeconomic vulnerability.',
+    },
     cobertura: { pt: 'Até 100% do valor das propinas', en: 'Up to 100% of tuition fees' },
-    requisitos: { pt: 'Comprovativo de rendimento familiar e aprovação do exame de admissão.', en: 'Proof of household income and admission exam approval.' },
-  },
-  {
-    id: 'excelencia-investigacao',
-    nome: { pt: 'Bolsa de Excelência em Investigação', en: 'Research Excellence Scholarship' },
-    cobertura: { pt: 'Propinas e apoio a material de investigação', en: 'Tuition fees and research materials support' },
-    requisitos: { pt: 'Participação ativa num projeto de investigação da UNAGRO.', en: 'Active participation in a UNAGRO research project.' },
+    requisitos: {
+      pt: 'Comprovativo de rendimento familiar e aprovação do exame de admissão.',
+      en: 'Proof of household income and admission exam approval.',
+    },
   },
 ];

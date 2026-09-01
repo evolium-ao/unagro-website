@@ -3,7 +3,7 @@ import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { EventosService } from '../../core/servicos/eventos.service';
 import { NoticiasService } from '../../core/servicos/noticias.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
-import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
+import { BannerDestaqueComponent, HeroImage } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { CartaoEventoDestaqueComponent } from '../../shared/componentes/cartao-evento-destaque/cartao-evento-destaque.component';
 import { CartaoNoticiaDestaqueComponent } from '../../shared/componentes/cartao-noticia-destaque/cartao-noticia-destaque.component';
@@ -42,7 +42,7 @@ const PATROCINADORES_PLACEHOLDER: PatrocinadorExibido[] = [
     IconeComponent,
     RevelarAoScrollDirective,
     ContainerPaginaComponent
-],
+  ],
   templateUrl: './inicio.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -86,5 +86,11 @@ export class InicioComponent {
 
   protected noticiasSeguintes(): void {
     this.paginaNoticias.update((pagina) => Math.min(this.totalPaginasNoticias() - 1, pagina + 1));
+  }
+
+  readonly heroImageConfig: HeroImage = {
+    url: '/imagens/estudante.png',
+    x: '0',
+    y: '0px'
   }
 }

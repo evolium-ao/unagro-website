@@ -165,6 +165,7 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
   ],
   x: [p('M18 6 6 18'), p('m6 6 12 12')],
   check: [p('M20 6 9 17l-5-5')],
+  'log-in': [p('M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'), p('m10 17 5-5-5-5'), p('M15 12H3')],
   'id-card': [
     p('M16 10h2'),
     p('M16 14h2'),
@@ -178,4 +179,58 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
   ],
   menu: [p('M4 5h16'), p('M4 12h16'), p('M4 19h16')],
   image: [r('3', '3', '18', '18', '2', '2'), c('9', '9', '2'), p('m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21')],
+  /** Globo com continentes — usado na vantagem "Rede Internacional" do recrutamento docente. */
+  earth: [
+    p('M21.54 15H17a2 2 0 0 0-2 2v4.54'),
+    p('M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17'),
+    p('M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05'),
+    c('12', '12', '10'),
+  ],
+  /** Ideograma + "A": proficiência linguística. */
+  languages: [
+    p('m5 8 6 6'),
+    p('m4 14 6-6 2-3'),
+    p('M2 5h12'),
+    p('M7 2h1'),
+    p('m22 22-5-10-5 10'),
+    p('M14 18h6'),
+  ],
+  /** Quadro com linhas e visto — cabeçalho de painéis de requisitos. */
+  'square-check-list': [
+    r('3', '3', '18', '18', '2'),
+    p('M7 8h3'),
+    p('M7 12h3'),
+    p('M7 16h3'),
+    p('m12.5 13 1.75 1.75L18 11'),
+  ],
+  /** Quadro com três linhas de texto — publicações e documentos. */
+  'square-text': [
+    r('3', '3', '18', '18', '2'),
+    p('M7 9h10'),
+    p('M7 12.5h10'),
+    p('M7 16h5'),
+  ],
+  /** Alvo concêntrico — objetivo geral de um curso. */
+  target: [c('12', '12', '10'), c('12', '12', '6'), c('12', '12', '2')],
+  /** Robô — objetivos de inovação e automação. */
+  bot: [
+    p('M12 8V4H8'),
+    r('4', '8', '16', '12', '2'),
+    p('M2 14h2'),
+    p('M20 14h2'),
+    p('M15 13v2'),
+    p('M9 13v2'),
+  ],
+  /** Nuvem com seta interior — área de carregamento de ficheiros. */
+  'cloud-upload': [
+    p('M6.5 19a4.5 4.5 0 0 1-.42-8.98 6 6 0 0 1 11.79-1.2A4.5 4.5 0 0 1 17.5 19h-11Z'),
+    p('M12 16.5v-6'),
+    p('m9.25 13.25 2.75-2.75 2.75 2.75'),
+  ],
+  /** Ficheiro genérico com canto dobrado — mostra o anexo já escolhido. */
+  'file-check': [
+    p('M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z'),
+    p('M14 2v5h5'),
+    p('m9 15 2 2 4-4'),
+  ],
 };

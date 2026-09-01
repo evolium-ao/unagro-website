@@ -4,18 +4,11 @@
   <app-container-pagina class="flex items-center justify-between gap-6 py-3">
     <!-- Marca -->
     <a routerLink="/" (click)="fecharMenu()" class="flex shrink-0 items-center gap-3">
-      <img
-        src="/imagens/unagro-logo.png"
-        alt="Emblema da UNAGRO"
-        width="70"
-        height="70"
-        class="h-14 w-14 object-contain sm:h-17.5 sm:w-17.5"
-      />
+      <img src="/imagens/unagro-logo.png" alt="Emblema da UNAGRO" width="70" height="70"
+        class="h-14 w-14 object-contain sm:h-17.5 sm:w-17.5" />
       <span class="flex flex-col justify-center">
         <span class="text-2xl leading-none tracking-tight inter-900 text-primary">UNAGRO</span>
-        <span
-          class="mt-1.5 text-[9px] font-semibold inter-500 uppercase leading-none tracking-[0.11em] text-primary"
-        >
+        <span class="mt-1.5 text-[9px] font-semibold inter-500 uppercase leading-none tracking-[0.11em] text-primary">
           Universidade de Agronegócio de Angola
         </span>
       </span>
@@ -24,54 +17,34 @@
     <!-- Navegação desktop -->
     <nav class="hidden items-center gap-x-3 lg:flex" aria-label="Navegação principal">
       @for (item of menuPrincipal; track item.label) {
-        @if (submenusDropdown().get(item.label); as filhos) {
-          <app-dropdown-menu
-            variante="escuro"
-            menuMinWidth="270px"
-            menuMaxWidth="320px"
-            [itemListDropdown]="filhos"
-            [ariaLabel]="traducao.t(item.label)"
-          >
-            <ng-template dropdownMenuTrigger let-toggleMenu="toggleMenu" let-menuOpen="menuOpen">
-              <button
-                type="button"
-                class="relative flex cursor-pointer items-center gap-1 px-1 py-2 text-[15px] font-semibold text-primary transition-colors duration-200 after:absolute after:inset-x-1 after:bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-secondary after:transition-transform after:duration-200 after:content-[''] hover:after:scale-x-100"
-                [class.after:scale-x-100]="menuOpen"
-                [attr.aria-expanded]="menuOpen"
-                aria-haspopup="true"
-                (click)="toggleMenu()"
-              >
-                {{ traducao.t(item.label) }}
-                <app-icone
-                  nome="chevron-down"
-                  [tamanho]="15"
-                  class="transition-transform duration-200"
-                  [class.rotate-180]="menuOpen"
-                />
-              </button>
-            </ng-template>
-          </app-dropdown-menu>
-        } @else {
-          <a
-            [routerLink]="item.path"
-            routerLinkActive="after:scale-x-100"
-            class="relative px-1 py-2 text-[15px] font-semibold text-primary transition-colors duration-200 after:absolute after:inset-x-1 after:bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-secondary after:transition-transform after:duration-200 after:content-[''] hover:after:scale-x-100"
-            >{{ traducao.t(item.label) }}</a
-          >
-        }
+      @if (submenusDropdown().get(item.label); as filhos) {
+      <app-dropdown-menu variante="escuro" menuMinWidth="270px" menuMaxWidth="320px" [itemListDropdown]="filhos"
+        [ariaLabel]="traducao.t(item.label)">
+        <ng-template dropdownMenuTrigger let-toggleMenu="toggleMenu" let-menuOpen="menuOpen">
+          <button type="button"
+            class="relative flex cursor-pointer items-center gap-1 px-1 py-2 text-[15px] font-semibold text-primary transition-colors duration-200 after:absolute after:inset-x-1 after:bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-secondary after:transition-transform after:duration-200 after:content-[''] hover:after:scale-x-100"
+            [class.after:scale-x-100]="menuOpen" [attr.aria-expanded]="menuOpen" aria-haspopup="true"
+            (click)="toggleMenu()">
+            {{ traducao.t(item.label) }}
+            <app-icone nome="chevron-down" [tamanho]="15" class="transition-transform duration-200"
+              [class.rotate-180]="menuOpen" />
+          </button>
+        </ng-template>
+      </app-dropdown-menu>
+      } @else {
+      <a [routerLink]="item.path" routerLinkActive="after:scale-x-100"
+        class="relative px-1 py-2 text-[15px] font-semibold text-primary transition-colors duration-200 after:absolute after:inset-x-1 after:bottom-0.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-secondary after:transition-transform after:duration-200 after:content-[''] hover:after:scale-x-100">{{
+        traducao.t(item.label) }}</a>
+      }
       }
     </nav>
 
     <!-- Alternador do menu móvel -->
-    <button
-      type="button"
+    <button type="button"
       class="-mr-2 inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-primary lg:hidden"
       [attr.aria-label]="
         menuAberto() ? traducao.t('comum.fecharMenu') : traducao.t('comum.abrirMenu')
-      "
-      [attr.aria-expanded]="menuAberto()"
-      (click)="alternarMenu()"
-    >
+      " [attr.aria-expanded]="menuAberto()" (click)="alternarMenu()">
       <app-icone [nome]="menuAberto() ? 'x' : 'menu'" [tamanho]="24" />
     </button>
   </app-container-pagina>
@@ -79,51 +52,40 @@
   <!-- Navegação mobile -->
   <div
     class="grid overflow-hidden border-t border-gray-100 transition-[grid-template-rows] duration-300 ease-in-out lg:hidden"
-    [class]="menuAberto() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
-  >
+    [class]="menuAberto() ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'">
     <nav class="min-h-0" aria-label="Navegação móvel">
       <app-container-pagina class="divide-y divide-gray-100 py-1">
         @for (item of menuPrincipal; track item.label) {
-          @if (submenus().get(item.label); as filhos) {
-            <div>
-              <button
-                type="button"
-                class="flex w-full cursor-pointer items-center justify-between px-2 py-3 text-left text-[15px] font-semibold text-primary"
-                [attr.aria-expanded]="submenuMobileAberto() === item.label"
-                aria-haspopup="true"
-                (click)="alternarSubmenuMobile(item.label)"
-              >
-                {{ traducao.t(item.label) }}
-                <app-icone
-                  nome="chevron-down"
-                  [tamanho]="16"
-                  class="transition-transform duration-200"
-                  [class.rotate-180]="submenuMobileAberto() === item.label"
-                />
-              </button>
+        @if (submenus().get(item.label); as filhos) {
+        <div>
+          <button type="button"
+            class="flex w-full cursor-pointer items-center justify-between px-2 py-3 text-left text-[15px] font-semibold text-primary"
+            [attr.aria-expanded]="submenuMobileAberto() === item.label" aria-haspopup="true"
+            (click)="alternarSubmenuMobile(item.label)">
+            {{ traducao.t(item.label) }}
+            <app-icone nome="chevron-down" [tamanho]="16" class="transition-transform duration-200"
+              [class.rotate-180]="submenuMobileAberto() === item.label" />
+          </button>
 
-              @if (submenuMobileAberto() === item.label) {
-                <div class="ml-2 border-l-2 border-secondary pb-2 pl-3">
-                  @for (filho of filhos; track filho.path) {
-                    <a
-                      [routerLink]="filho.path"
-                      (click)="fecharMenu()"
-                      class="block py-2 text-sm font-medium text-text-secondary"
-                      >{{ filho.texto }}</a
-                    >
-                  }
-                </div>
-              }
-            </div>
-          } @else {
-            <a
-              [routerLink]="item.path"
-              routerLinkActive="text-secondary!"
-              (click)="fecharMenu()"
-              class="block px-2 py-3 text-[15px] font-semibold text-primary"
-              >{{ traducao.t(item.label) }}</a
-            >
+          @if (submenuMobileAberto() === item.label) {
+          <div class="ml-2 border-l-2 border-secondary pb-2 pl-3">
+            @for (filho of filhos; track filho.texto) {
+            @if (filho.modal) {
+            <button type="button" (click)="abrirModal(filho.modal)"
+              class="block w-full cursor-pointer py-2 text-left text-sm font-medium text-text-secondary">{{
+              filho.texto }}</button>
+            } @else {
+            <a [routerLink]="filho.path" (click)="fecharMenu()"
+              class="block py-2 text-sm font-medium text-text-secondary">{{ filho.texto }}</a>
+            }
+            }
+          </div>
           }
+        </div>
+        } @else {
+        <a [routerLink]="item.path" routerLinkActive="text-secondary!" (click)="fecharMenu()"
+          class="block px-2 py-3 text-[15px] font-semibold text-primary">{{ traducao.t(item.label) }}</a>
+        }
         }
       </app-container-pagina>
     </nav>

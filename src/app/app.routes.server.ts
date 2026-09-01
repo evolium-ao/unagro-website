@@ -10,7 +10,8 @@ const ROTAS_ESTATICAS = [
   'contactos',
   'eventos',
   'formacoes',
-  'candidaturas',
+  'candidaturas/admissao-candidatura',
+  'candidaturas/docentes',
   'alumni',
   'estudantes',
 ] as const;
@@ -22,6 +23,12 @@ export const serverRoutes: ServerRoute[] = [
       renderMode: RenderMode.Prerender,
     }),
   ),
+  {
+    // `/candidaturas` só redirecciona para a página de admissões: renderizado no
+    // servidor para devolver 200 em vez do 404 da rota catch-all abaixo.
+    path: 'candidaturas',
+    renderMode: RenderMode.Server,
+  },
   {
     path: 'cursos/:id',
     renderMode: RenderMode.Prerender,

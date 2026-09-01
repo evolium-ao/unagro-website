@@ -5,4 +5,6 @@ export interface NoticiaCartao {
   data: string;
   titulo: string;
   resumo: string;
+  /** URL da fotografia; sem ela o cartão mostra o espaço reservado. */
+  imagem?: string;
 }

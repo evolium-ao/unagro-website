@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { CandidaturasService } from '../../core/servicos/candidaturas.service';
 import { PerguntasFrequentesService } from '../../core/servicos/perguntas-frequentes.service';
+import { localizarProfundo } from '../../core/traducao/localizar-profundo';
+import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { AcordeaoComponent } from '../../shared/componentes/acordeao/acordeao.component';
 import { ItemAcordeaoComponent } from '../../shared/componentes/acordeao/item-acordeao.component';
@@ -12,13 +14,39 @@ import { BannerDestaqueComponent, CtaBannerDestaque } from "../../shared/compone
 import { FaixaEstatisticasComponent } from "../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component";
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
 import { CursosService } from '../../core/servicos/cursos.service';
-import { CartaoCursoComponent } from '../../shared/componentes/cartao-curso/cartao-curso.component';
+import { CartaoCursoComponent, CursoExibidoCard } from '../../shared/componentes/cartao-curso/cartao-curso.component';
 import { FiltroPilulaComponent, OpcaoFiltroPilula } from '../../shared/componentes/filtro-pilula/filtro-pilula.component';
-import { AbasComponent } from '../../shared/componentes/abas/abas.component';
-import { CartaoRequisitoComponent } from '../../shared/componentes/cartao-requisito/cartao-requisito.component';
-import { ListaVerificacaoComponent } from '../../shared/componentes/lista-verificacao/lista-verificacao.component';
+import { Curso } from '../../core/modelos/curso.model';
+import { ListaVerificacaoComponent } from "../../shared/componentes/lista-verificacao/lista-verificacao.component";
+import { AbasComponent } from "../../shared/componentes/abas/abas.component";
+import { CartaoRequisitoComponent } from "../../shared/componentes/cartao-requisito/cartao-requisito.component";
+import { CartaoFaseComponent } from '../../shared/componentes/cartao-fase/cartao-fase.component';
+import { CartaoChamadaAcaoComponent } from '../../shared/componentes/cartao-chamada-acao/cartao-chamada-acao.component';
+import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
+import { EspacoImagemComponent } from '../../shared/componentes/espaco-imagem/espaco-imagem.component';
+import { SeloComponent } from '../../shared/componentes/selo/selo.component';
+import { RouterLink } from '@angular/router';
+import { CartaoBolsaComponent } from '../../shared/componentes/cartao-bolsa/cartao-bolsa.component';
+import { ItemContactoComponent } from '../../shared/componentes/item-contacto/item-contacto.component';
 
 type CursoOferta = ReturnType<CursosService['cursosGrau']> extends (infer U)[] ? U : never;
+
+const BENEFICIOS_RECRUTAMENTO_BRUTOS: TextoTraduzido[] = [
+  {
+    pt: 'Financiamento para projetos de pesquisa aprovados',
+    en: 'Funding for approved research projects',
+  },
+  { pt: 'Rede de colaboração internacional ativa', en: 'Active international collaboration network' },
+  { pt: 'Infraestrutura laboratorial de última geração', en: 'State-of-the-art laboratory facilities' },
+];
+
+const REQUISITOS_BRUTOS: TextoTraduzido[] = [
+  { pt: 'Certificado de conclusão do ensino médio', en: 'High school completion certificate' },
+  { pt: 'Bilhete de identidade válido', en: 'Valid national ID card' },
+  { pt: '2 fotografias tipo passe', en: '2 passport-style photographs' },
+  { pt: 'Comprovativo de pagamento da taxa de candidatura', en: 'Proof of application fee payment' },
+  { pt: 'Aprovação no exame de admissão', en: 'Admission exam approval' },
+];
 
 @Component({
   selector: 'app-candidaturas',
@@ -28,11 +56,22 @@ type CursoOferta = ReturnType<CursosService['cursosGrau']> extends (infer U)[] ?
     ContainerPaginaComponent,
     CabecalhoSecaoComponent,
     IndicadorPassosComponent,
-    CartaoCursoComponent,
     FiltroPilulaComponent,
+    CartaoCursoComponent,
+    ListaVerificacaoComponent,
     AbasComponent,
     CartaoRequisitoComponent,
-    ListaVerificacaoComponent,
+    CartaoFaseComponent,
+    CartaoChamadaAcaoComponent,
+    BotaoComponent,
+    EspacoImagemComponent,
+    SeloComponent,
+    RouterLink,
+    AcordeaoComponent,
+    ItemAcordeaoComponent,
+    CartaoBolsaComponent,
+    ItemContactoComponent,
+    IconeComponent
   ],
   templateUrl: './candidaturas.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,18 +88,38 @@ export class CandidaturasComponent {
   protected readonly calendario = this.candidaturasService.calendario;
   protected readonly perguntas = this.faqService.perguntas;
   protected readonly ctaBannerDestaque = computed<CtaBannerDestaque[]>(() => {
-    this.traducao.idioma()
     return [
-      { link: '/candidaturas', texto: this.traducao.getTraducao(['Iniciar Candidatura', 'Start Application']), variante: 'branco' },
-      { link: '/candidaturas', texto: this.traducao.getTraducao(['Ver cursos', 'View courses']), variante: 'contorno' },
+      {
+        link: '/candidaturas/admissao-candidatura#secao-portal',
+        texto: this.traducao.getTraducao(['Iniciar Candidatura', 'Start Application']),
+        variante: 'branco',
+        icone: "arrow-right",
+        posicaoIcone: 'direita',
+      },
+      {
+        link: '/candidaturas/admissao-candidatura#secao-cursos',
+        texto: this.traducao.getTraducao(['Ver cursos', 'View courses']),
+        variante: 'glass'
+      },
     ]
   })
-  readonly bannerTitulo = computed(() => {
-    this.traducao.idioma()
+  readonly TituloInicio = computed(() => {
     return this.traducao.getTraducao([
-
+      'Candidate-se à ',
+      'Apply to '
     ])
   })
+
+
+  readonly heroSubtitulo = computed(() => {
+    return this.traducao.getTraducao([
+      'Encontre o curso ideal para a sua carreira no agronegócio, conheça os requisitos e faça a sua candidatura totalmente online de forma rápida e segura.',
+      'Find the ideal course for your career in agribusiness, learn about the requirements and apply completely online quickly and securely.'
+    ])
+  })
+
+
+  protected readonly requisitos = computed(() => localizarProfundo(REQUISITOS_BRUTOS, this.traducao.idioma()));
 
   // --- Secção 3: requisitos gerais ---
   protected readonly documentos = this.candidaturasService.documentos;
@@ -74,6 +133,17 @@ export class CandidaturasComponent {
     const niveis = this.requisitosNiveis();
     return niveis.find((nivel) => nivel.id === this.nivelRequisitosAtivo()) ?? niveis[0];
   });
+
+  // --- Secção 4: calendário académico ---
+  protected readonly fases = this.candidaturasService.fases;
+
+  // --- Secção 7: bolsas, dúvidas frequentes e contactos ---
+  protected readonly canaisContacto = this.candidaturasService.canaisContacto;
+
+  // --- Secção 6: recrutamento de professores ---
+  protected readonly beneficiosRecrutamento = computed(() =>
+    localizarProfundo(BENEFICIOS_RECRUTAMENTO_BRUTOS, this.traducao.idioma()),
+  );
 
   // --- Secção 2: oferta académica ---
   protected readonly cursosOferta = this.cursosService.cursosGrau;
@@ -104,13 +174,12 @@ export class CandidaturasComponent {
         (!regime || curso.regime === regime),
     );
 
-    const porFaculdade = new Map<string, CursoOferta[]>();
+    const porFaculdade = new Map<string, CursoExibidoCard[]>();
     for (const curso of filtrados) {
       const grupo = porFaculdade.get(curso.faculdade) ?? [];
       grupo.push(curso);
       porFaculdade.set(curso.faculdade, grupo);
     }
-
     return Array.from(porFaculdade.entries()).map(([faculdadeGrupo, cursos]) => ({
       faculdade: faculdadeGrupo,
       cursos,

@@ -1,18 +1,21 @@
 import { Component, computed, input } from '@angular/core';
 
-export type VarianteSelo = 'primario' | 'acento' | 'neutro';
+export type VarianteSelo = 'primario' | 'acento' | 'neutro' | 'segondary' | 'sobreEscuro';
 
 const CLASSES_VARIANTE: Record<VarianteSelo, string> = {
   primario: 'bg-primary/10 text-primary',
   acento: 'bg-accent/20 text-[#8c6d43]',
   neutro: 'bg-gray-100 text-text-secondary',
+  segondary: 'text-primary bg-secondary',
+  /** Para fundos verdes escuros — ver secção do calendário académico. */
+  sobreEscuro: 'bg-white/10 text-white/70',
 };
 
 @Component({
   selector: 'app-selo',
   template: `
     <span
-      class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+      class="inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-2 text-xs font-medium"
       [class]="classeVariante()"
     >
       <ng-content />

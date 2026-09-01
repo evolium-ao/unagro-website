@@ -25,6 +25,27 @@ export function formatarDataCurta(iso: string, idioma: Idioma): string {
 }
 
 /**
+ * Formata a antiguidade de uma data como "há 2 dias" / "2 days ago", escolhendo
+ * a unidade mais legível (horas até um dia, depois dias, meses e anos).
+ */
+export function formatarTempoRelativo(iso: string, idioma: Idioma): string {
+  const formatador = new Intl.RelativeTimeFormat(LOCAIS[idioma], { numeric: 'auto' });
+  const horas = Math.round((new Date(iso).getTime() - Date.now()) / 3_600_000);
+
+  if (Math.abs(horas) < 24) {
+    return formatador.format(horas, 'hour');
+  }
+  const dias = Math.round(horas / 24);
+  if (Math.abs(dias) < 30) {
+    return formatador.format(dias, 'day');
+  }
+  const meses = Math.round(dias / 30);
+  return Math.abs(meses) < 12
+    ? formatador.format(meses, 'month')
+    : formatador.format(Math.round(meses / 12), 'year');
+}
+
+/**
  * Formata o intervalo de um evento, condensando o que as duas datas têm em comum:
  * "15-17 agosto 2026", "30 agosto - 2 setembro 2026" ou, sem data de fim,
  * "15 agosto 2026". A capitalização fica ao cuidado do CSS.

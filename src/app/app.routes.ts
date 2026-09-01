@@ -49,10 +49,28 @@ export const routes: Routes = [
         data: { tituloChave: 'rotas.detalheCurso.titulo', descricaoChave: 'rotas.detalheCurso.descricao' },
       },
       {
+        // Candidaturas é agora um ramo: cada público tem a sua própria página filha.
         path: 'candidaturas',
-        loadComponent: () =>
-          import('./pages/candidaturas/candidaturas.component').then((m) => m.CandidaturasComponent),
-        data: { tituloChave: 'rotas.candidaturas.titulo', descricaoChave: 'rotas.candidaturas.descricao' },
+        children: [
+          { path: '', redirectTo: 'admissao-candidatura', pathMatch: 'full' },
+          {
+            path: 'admissao-candidatura',
+            loadComponent: () =>
+              import('./pages/candidaturas/candidaturas.component').then((m) => m.CandidaturasComponent),
+            data: { tituloChave: 'rotas.candidaturas.titulo', descricaoChave: 'rotas.candidaturas.descricao' },
+          },
+          {
+            path: 'docentes',
+            loadComponent: () =>
+              import('./pages/candidatura-docentes/candidatura-docentes.component').then(
+                (m) => m.CandidaturaDocentesComponent,
+              ),
+            data: {
+              tituloChave: 'rotas.candidaturaDocentes.titulo',
+              descricaoChave: 'rotas.candidaturaDocentes.descricao',
+            },
+          },
+        ],
       },
       {
         path: 'alumni',
