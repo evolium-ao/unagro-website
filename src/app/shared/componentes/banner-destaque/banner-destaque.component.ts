@@ -64,10 +64,10 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
           @if (titulo()) {
             @if (cartao()) {
               <h2 [class]="classesTitulo()">{{ titulo()
-                }}<span class="text-secondary">{{ destaqueComEspaco() }}</span></h2>
+                }}<span class="text-secondary">{{ destaqueComEspaco() }}</span>{{ fimComEspaco() }}</h2>
             } @else {
               <h1 [class]="classesTitulo()">{{ titulo()
-                }}<span class="text-secondary">{{ destaqueComEspaco() }}</span></h1>
+                }}<span class="text-secondary">{{ destaqueComEspaco() }}</span>{{ fimComEspaco() }}</h1>
             }
           }
           @if (subtitulo()) {
@@ -91,6 +91,11 @@ export class BannerDestaqueComponent {
   readonly titulo = input<string>();
   /** Parte final do título realçada a dourado — ver hero do detalhe de curso. */
   readonly tituloDestaque = input<string>();
+  /**
+   * Texto que continua depois do realce dourado, para títulos em que a parte
+   * realçada fica no meio — ver hero dos eventos. Vazio mantém o realce no fim.
+   */
+  readonly tituloFim = input<string>();
   readonly subtitulo = input<string>();
   readonly selos = input<string[]>([]);
   readonly ctas = input<CtaBannerDestaque[]>([]);
@@ -147,5 +152,11 @@ export class BannerDestaqueComponent {
   protected readonly destaqueComEspaco = computed(() => {
     const destaque = this.tituloDestaque();
     return destaque ? ` ${destaque}` : '';
+  });
+
+  /** Mesma razão do espaço em `destaqueComEspaco`, agora depois do realce. */
+  protected readonly fimComEspaco = computed(() => {
+    const fim = this.tituloFim();
+    return fim ? ` ${fim}` : '';
   });
 }

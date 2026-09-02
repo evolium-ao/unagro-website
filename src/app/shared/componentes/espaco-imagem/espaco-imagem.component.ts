@@ -44,6 +44,7 @@ export class EspacoImagemComponent {
   readonly icone = input<string>('image');
   readonly legenda = input<string>();
   readonly imagem = input<string>();
+
   /** Arredonda os cantos — usado quando a imagem fica embutida dentro de um cartão. */
   readonly arredondado = input(false);
 

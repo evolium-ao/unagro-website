@@ -1,26 +1,29 @@
-<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
-  <div class="max-w-2xl">
-    <h1 class="text-3xl font-bold text-text-primary sm:text-4xl">{{ traducao.t('paginas.eventos.titulo') }}</h1>
-    <p class="mt-3 text-text-secondary">{{ traducao.t('paginas.eventos.subtitulo') }}</p>
-  </div>
+<!-- Hero — evento em destaque, com o realce dourado no meio do título (tituloFim). -->
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque [titulo]="tituloHero()" [tituloDestaque]="tituloHeroDestaque()" [tituloFim]="tituloHeroFim()"
+    [subtitulo]="subtituloHero()" [ctas]="ctasHero()" bg="/imagens/bg-banner-eventos.png" [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
 
+
+
+<section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20">
   @if (eventoPrincipal(); as destaque) {
-    <div class="mt-10 overflow-hidden rounded-xl bg-primary text-white">
-      <div class="grid gap-6 p-6 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
-        <div>
-          <app-selo variante="acento">{{ destaque.categoria }}</app-selo>
-          <h2 class="mt-3 text-2xl font-bold sm:text-3xl">{{ destaque.titulo }}</h2>
-          <p class="mt-2 text-white/80">{{ destaque.descricao }}</p>
-          <p class="mt-3 text-sm text-white/70">{{ destaque.local }}</p>
-        </div>
-        <div>
-          <p class="mb-2 text-sm uppercase tracking-wide text-white/70">
-            {{ traducao.t('paginas.eventos.contadorTitulo') }}
-          </p>
-          <app-contador-regressivo [dataAlvo]="destaque.dataInicio" [rotulos]="rotulosContador()" />
-        </div>
+  <div id="secao-destaque" class="overflow-hidden rounded-xl bg-primary text-white">
+    <div class="grid gap-6 p-6 sm:p-10 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div>
+        <app-selo variante="acento">{{ destaque.categoria }}</app-selo>
+        <h2 class="mt-3 text-2xl font-bold sm:text-3xl">{{ destaque.titulo }}</h2>
+        <p class="mt-2 text-white/80">{{ destaque.descricao }}</p>
+        <p class="mt-3 text-sm text-white/70">{{ destaque.local }}</p>
+      </div>
+      <div>
+        <p class="mb-2 text-sm uppercase tracking-wide text-white/70">
+          {{ traducao.t('paginas.eventos.contadorTitulo') }}
+        </p>
+        <app-contador-regressivo [dataAlvo]="destaque.dataInicio" [rotulos]="rotulosContador()" />
       </div>
     </div>
+  </div>
   }
 
   <div class="mt-12 grid gap-10 lg:grid-cols-[240px_1fr]">
@@ -28,34 +31,26 @@
       <h2 class="font-semibold text-text-primary">{{ traducao.t('paginas.eventos.filtroTitulo') }}</h2>
       <ul class="mt-4 flex flex-col gap-1">
         <li>
-          <button
-            type="button"
-            class="w-full rounded-md px-3 py-2 text-left text-sm transition-colors duration-200"
+          <button type="button" class="w-full rounded-md px-3 py-2 text-left text-sm transition-colors duration-200"
             [class]="
               categoriaSelecionada() === TODAS_CATEGORIAS
                 ? 'bg-primary/10 font-medium text-primary'
                 : 'text-text-secondary hover:bg-bg-light'
-            "
-            (click)="selecionarCategoria(TODAS_CATEGORIAS)"
-          >
+            " (click)="selecionarCategoria(TODAS_CATEGORIAS)">
             {{ traducao.t('paginas.eventos.filtroTodas') }}
           </button>
         </li>
         @for (categoria of categorias(); track categoria) {
-          <li>
-            <button
-              type="button"
-              class="w-full rounded-md px-3 py-2 text-left text-sm transition-colors duration-200"
-              [class]="
+        <li>
+          <button type="button" class="w-full rounded-md px-3 py-2 text-left text-sm transition-colors duration-200"
+            [class]="
                 categoriaSelecionada() === categoria
                   ? 'bg-primary/10 font-medium text-primary'
                   : 'text-text-secondary hover:bg-bg-light'
-              "
-              (click)="selecionarCategoria(categoria)"
-            >
-              {{ categoria }}
-            </button>
-          </li>
+              " (click)="selecionarCategoria(categoria)">
+            {{ categoria }}
+          </button>
+        </li>
         }
       </ul>
     </aside>
@@ -63,13 +58,13 @@
     <div>
       <h2 class="mb-6 text-xl font-semibold text-text-primary">{{ traducao.t('paginas.eventos.proximosTitulo') }}</h2>
       @if (eventosFiltrados().length) {
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          @for (evento of eventosFiltrados(); track evento.id) {
-            <app-cartao-evento [evento]="evento" />
-          }
-        </div>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        @for (evento of eventosFiltrados(); track evento.id) {
+        <app-cartao-evento [evento]="evento" />
+        }
+      </div>
       } @else {
-        <p class="text-text-secondary">{{ traducao.t('paginas.eventos.semEventos') }}</p>
+      <p class="text-text-secondary">{{ traducao.t('paginas.eventos.semEventos') }}</p>
       }
     </div>
   </div>

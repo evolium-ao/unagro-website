@@ -1,15 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { EventosService } from '../../core/servicos/eventos.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import {
+  BannerDestaqueComponent,
+  CtaBannerDestaque,
+} from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { CartaoEventoComponent } from '../../shared/componentes/cartao-evento/cartao-evento.component';
 import { ContadorRegressivoComponent } from '../../shared/componentes/contador-regressivo/contador-regressivo.component';
 import { SeloComponent } from '../../shared/componentes/selo/selo.component';
+import { EstatisticasService } from '../../core/servicos/estatisticas.service';
+import { FaixaEstatisticasComponent } from "../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component";
+import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 
 const TODAS_CATEGORIAS = '__todas__';
 
 @Component({
   selector: 'app-eventos',
-  imports: [CartaoEventoComponent, ContadorRegressivoComponent, SeloComponent],
+  imports: [BannerDestaqueComponent, CartaoEventoComponent, ContadorRegressivoComponent, SeloComponent, ContainerBannerFaixaEstatisticaComponent],
   templateUrl: './eventos.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -21,6 +28,34 @@ export class EventosComponent {
   protected readonly TODAS_CATEGORIAS = TODAS_CATEGORIAS;
 
   protected readonly eventoPrincipal = this.eventosService.emDestaque;
+
+  protected readonly tituloHero = computed(() => this.traducao.getTraducao(['Simpósio', 'International']));
+
+  protected readonly tituloHeroDestaque = computed(() =>
+    this.traducao.getTraducao(['Internacional', 'Symposium']),
+  );
+
+  protected readonly tituloHeroFim = computed(() =>
+    this.traducao.getTraducao(['de Biotecnologia Agrária', 'on Agrarian Biotechnology']),
+  );
+
+  protected readonly subtituloHero = computed(() =>
+    this.traducao.getTraducao([
+      'Unindo as maiores mentes do continente para discutir o futuro da segurança alimentar através de inovações genéticas e sustentabilidade climática.',
+      'Bringing together the continent’s greatest minds to discuss the future of food security through genetic innovation and climate sustainability.',
+    ]),
+  );
+
+  protected readonly ctasHero = computed<CtaBannerDestaque[]>(() => [
+    {
+      // TODO: apontar para a inscrição do evento quando existir rota de detalhe/inscrição.
+      link: '/eventos#secao-destaque',
+      texto: this.traducao.getTraducao(['Inscrever-se agora', 'Register now']),
+      variante: 'branco',
+      icone: 'arrow-right',
+      posicaoIcone: 'direita',
+    },
+  ]);
 
   protected readonly categorias = computed(() => [
     ...new Set(this.eventosService.proximos().map((e) => e.categoria)),

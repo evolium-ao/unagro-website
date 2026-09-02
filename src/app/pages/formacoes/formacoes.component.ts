@@ -4,13 +4,11 @@ import { CursosService } from '../../core/servicos/cursos.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
-import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
-import { CampoTextoComponent } from '../../shared/componentes/campo-texto/campo-texto.component';
-import { CartaoCursoComponent } from '../../shared/componentes/cartao-curso/cartao-curso.component';
-import { IconeComponent } from '../../shared/componentes/icone/icone.component';
+import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
+import { EstatisticasService } from '../../core/servicos/estatisticas.service';
+import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 
 type EstadoValidacao = 'ocioso' | 'validando' | 'valido' | 'invalido';
-
 interface VantagemBruta {
   icone: string;
   titulo: TextoTraduzido;
@@ -53,17 +51,29 @@ const VANTAGENS_BRUTAS: VantagemBruta[] = [
 ];
 
 @Component({
+  imports: [ReactiveFormsModule, BannerDestaqueComponent, ContainerBannerFaixaEstatisticaComponent],
   selector: 'app-formacoes',
-  imports: [CartaoCursoComponent, IconeComponent, ReactiveFormsModule, CampoTextoComponent, BotaoComponent],
   templateUrl: './formacoes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormacoesComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly cursosService = inject(CursosService);
-
   protected readonly cursosCurtaDuracao = this.cursosService.cursosCurtaDuracao;
   protected readonly vantagens = computed(() => localizarProfundo(VANTAGENS_BRUTAS, this.traducao.idioma()));
+
+  protected readonly tituloHero = computed(() =>
+    this.traducao.getTraducao(['Centro de Formação Profissional', 'Professional Training Centre']),
+  );
+
+  protected readonly tituloDestaqueHero = computed(() => 'UNAGRO');
+
+  protected readonly subtituloHero = computed(() =>
+    this.traducao.getTraducao([
+      'Capacitação Técnica e Excelência para o Agronegócio. Formando os líderes da revolução sustentável no campo.',
+      'Technical training and excellence for agribusiness. Shaping the leaders of the sustainable revolution in the field.',
+    ]),
+  );
 
   protected readonly estadoValidacao = signal<EstadoValidacao>('ocioso');
   protected readonly formularioValidacao = new FormGroup({

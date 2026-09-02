@@ -21,10 +21,11 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
   template: `
     @if (modo() === 'horizontal') {
       <article
-        class="flex h-full gap-4 overflow-hidden rounded-lg border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
+        class="flex h-full gap-4 overflow-hidden rounded-lg border border-gray-200 bg-[#EBEFED] p-4 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
       >
         <app-espaco-imagem
-          class="w-22 shrink-0 self-stretch"
+          class="w-2/5 max-w-52 shrink-0 self-stretch"
+          proporcao="cover"
           alturaMinima="100%"
           [arredondado]="true"
           [imagem]="noticia().imagem"

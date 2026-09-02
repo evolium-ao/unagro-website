@@ -9,7 +9,7 @@ import { IconeComponent } from '../icone/icone.component';
   imports: [ContainerPaginaComponent, IconeComponent],
   styleUrl: './barra-topo.component.css',
   template: `
-    <div class="bg-primary text-white text-xs w-full items-center">
+    <div class="bg-primary text-white text-xs w-full items-center ">
       <app-container-pagina class="flex justify-between items-center py-1.5">
         <div class="flex items-center">
           @for (item of items; track $index) {

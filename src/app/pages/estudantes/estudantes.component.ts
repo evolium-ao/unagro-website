@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TipoAvisoIntranet } from '../../core/modelos/aviso-intranet.model';
+import { AvisoIntranet, TipoAvisoIntranet } from '../../core/modelos/aviso-intranet.model';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { IntranetService } from '../../core/servicos/intranet.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
@@ -15,6 +15,10 @@ import { CartaoNoticiaResumoComponent } from '../../shared/componentes/cartao-no
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { FaixaEstatisticasComponent } from '../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
+import { NgIcon, provideIcons } from "@ng-icons/core";
+import { saxLockOutline } from '@ng-icons/iconsax/outline';
+import { BotaoComponent } from "../../shared/componentes/botao/botao.component";
+import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 
 /**
  * Forma como uma notícia académica chega do backend: cada texto é o par
@@ -46,7 +50,7 @@ const NOTICIAS_ACADEMICAS_MOCK: NoticiaAcademicaApi[] = [
       'A UNAGRO research team has developed a maize variety able to withstand prolonged periods of severe drought.',
     ],
     data: '2026-08-31',
-    imagem: '/imagens/estudantes-em-laboratório-agrícola.png',
+    imagem: '/imagens/estudante-noticia-pesquisa.png',
     destaque: true,
   },
   {
@@ -97,16 +101,18 @@ const ICONES_AVISO: Record<TipoAvisoIntranet, string> = {
     FaixaEstatisticasComponent,
     IconeComponent,
     RouterLink,
-  ],
+    NgIcon,
+    BotaoComponent,
+    ContainerBannerFaixaEstatisticaComponent
+],
+viewProviders: [provideIcons({ saxLockOutline })],
   templateUrl: './estudantes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EstudantesComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly intranetService = inject(IntranetService);
-  private readonly estatisticasService = inject(EstatisticasService);
 
-  protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly avisos = this.intranetService.avisos;
 
   protected readonly mostrarAvisoAcesso = signal(false);
@@ -173,4 +179,12 @@ export class EstudantesComponent {
   protected tentarAceder(): void {
     this.mostrarAvisoAcesso.set(true);
   }
+
+  avisoAutenticacao = computed(() => ({
+    id: 'acesso-restrito',
+    tipo: 'geral',
+    titulo: this.traducao.getTraducao(['O acesso a estas áreas requer autenticação institucional.', 'Access to these areas requires institutional authentication.']),
+    mensagem: this.traducao.getTraducao(['Use as suas credenciais de estudante para entrar na Intranet.', 'Use your student credentials to log in to the Intranet.']),
+    data: new Date().toISOString(),
+  }));
 }

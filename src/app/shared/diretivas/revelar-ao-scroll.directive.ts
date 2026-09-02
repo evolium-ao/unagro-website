@@ -1,65 +1,111 @@
-import { Directive, ElementRef, OnDestroy, OnInit, Renderer2, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  DestroyRef,
+  Directive,
+  ElementRef,
+  PLATFORM_ID,
+  afterNextRender,
+  inject,
+  input,
+} from '@angular/core';
 
-const CLASSES_OCULTAS = ['opacity-0', 'translate-y-4'];
-const CLASSES_TRANSICAO = ['transition-all', 'duration-700', 'ease-out'];
-const TEMPO_LIMITE_REVELACAO_MS = 2000;
+/** Distância, em px, que o elemento sobe ao entrar. */
+const DESLOCAMENTO_PX = 24;
+/** Atraso acumulado por posição, para os cartões de uma grelha entrarem em cascata. */
+const ATRASO_POR_POSICAO_S = 0.09;
+const DURACAO_S = 0.5;
+/** Curva de saída suave — o movimento trava no fim em vez de parar a seco. */
+const CURVA: [number, number, number, number] = [0.22, 1, 0.36, 1];
+/**
+ * Se o Motion falhar a carregar ou o `inView` nunca disparar (captura automática,
+ * página restaurada já com scroll), o conteúdo não pode ficar invisível para sempre.
+ */
+const TEMPO_LIMITE_MS = 2000;
 
+/**
+ * Revela o elemento de baixo para cima quando ele entra no ecrã, com o Motion.
+ *
+ * O valor passado é a posição do elemento no seu lote e multiplica o atraso, o
+ * que produz a cascata numa grelha: `[appRevelarAoScroll]="$index"`. Sem valor,
+ * revela sem atraso. Elementos criados depois — uma página seguinte de
+ * resultados, por exemplo — animam à medida que aparecem, porque cada um traz a
+ * sua própria instância da diretiva.
+ */
 @Directive({
   selector: '[appRevelarAoScroll]',
 })
-export class RevelarAoScrollDirective implements OnInit, OnDestroy {
-  private readonly elementoRef = inject(ElementRef<HTMLElement>);
-  private readonly renderer = inject(Renderer2);
-  private observador?: IntersectionObserver;
+export class RevelarAoScrollDirective {
+  readonly posicao = input<number, unknown>(0, {
+    alias: 'appRevelarAoScroll',
+    transform: (valor) => Number(valor) || 0,
+  });
+
+  private readonly elemento = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
+  private pararObservacao?: VoidFunction;
   private idTempoLimite?: ReturnType<typeof setTimeout>;
   private revelado = false;
 
-  ngOnInit(): void {
-    if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') {
-      return;
-    }
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.limpar());
+
+    if (!this.ehNavegador || this.movimentoReduzido()) {
       return;
     }
 
-    const elemento = this.elementoRef.nativeElement;
-    for (const classe of [...CLASSES_OCULTAS, ...CLASSES_TRANSICAO]) {
-      this.renderer.addClass(elemento, classe);
-    }
+    // Esconder aqui, e não em `afterNextRender`, evita o elemento aparecer
+    // durante um fotograma antes de a animação começar.
+    this.elemento.style.opacity = '0';
+    this.elemento.style.transform = `translateY(${DESLOCAMENTO_PX}px)`;
 
-    this.observador = new IntersectionObserver(
-      (entradas) => {
-        for (const entrada of entradas) {
-          if (entrada.isIntersecting) {
-            this.revelar();
+    afterNextRender(() => void this.observar());
+  }
+
+  private movimentoReduzido(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  private async observar(): Promise<void> {
+    this.idTempoLimite = setTimeout(() => this.mostrarSemAnimacao(), TEMPO_LIMITE_MS);
+
+    try {
+      const { animate, inView } = await import('motion');
+
+      this.pararObservacao = inView(
+        this.elemento,
+        () => {
+          if (this.revelado) {
+            return;
           }
-        }
-      },
-      { threshold: 0.15 },
-    );
-    this.observador.observe(elemento);
+          this.revelado = true;
+          this.limpar();
 
-    // Salvaguarda: garante que o conteúdo nunca fica permanentemente invisível
-    // caso o IntersectionObserver não dispare (ex.: ferramentas de captura automática,
-    // páginas restauradas já com scroll, ou qualquer condição de layout inesperada).
-    this.idTempoLimite = setTimeout(() => this.revelar(), TEMPO_LIMITE_REVELACAO_MS);
+          animate(
+            this.elemento,
+            { opacity: [0, 1], y: [DESLOCAMENTO_PX, 0] },
+            { duration: DURACAO_S, delay: this.posicao() * ATRASO_POR_POSICAO_S, ease: CURVA },
+          );
+        },
+        { amount: 0.15 },
+      );
+    } catch {
+      this.mostrarSemAnimacao();
+    }
   }
 
-  ngOnDestroy(): void {
-    this.observador?.disconnect();
-    clearTimeout(this.idTempoLimite);
-  }
-
-  private revelar(): void {
+  private mostrarSemAnimacao(): void {
     if (this.revelado) {
       return;
     }
     this.revelado = true;
-    const elemento = this.elementoRef.nativeElement;
-    for (const classe of CLASSES_OCULTAS) {
-      this.renderer.removeClass(elemento, classe);
-    }
-    this.observador?.unobserve(elemento);
+    this.limpar();
+    this.elemento.style.opacity = '';
+    this.elemento.style.transform = '';
+  }
+
+  private limpar(): void {
+    this.pararObservacao?.();
+    this.pararObservacao = undefined;
     clearTimeout(this.idTempoLimite);
   }
 }

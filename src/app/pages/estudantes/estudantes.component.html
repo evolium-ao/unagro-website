@@ -1,9 +1,10 @@
 <!-- Hero — mesma estrutura do hero da candidatura de docentes, com realce dourado no título. -->
-<app-banner-destaque [titulo]="traducao.t('paginas.estudantes.heroTitulo')"
-  [tituloDestaque]="traducao.t('paginas.estudantes.heroTituloDestaque')"
-  [subtitulo]="traducao.t('paginas.estudantes.heroSubtitulo')" [ctas]="ctasHero()" [selos]="selosHero()"
-  bg="/imagens/bg-banner-estudantes.jpg" [temBackdrop]="true" />
-  <app-faixa-estatisticas [estatisticas]="estatisticas()" />
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque [titulo]="traducao.t('paginas.estudantes.heroTitulo')"
+    [tituloDestaque]="traducao.t('paginas.estudantes.heroTituloDestaque')"
+    [subtitulo]="traducao.t('paginas.estudantes.heroSubtitulo')" [ctas]="ctasHero()" [selos]="selosHero()"
+    bg="/imagens/bg-banner-estudantes.jpg" [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
 
 <!-- 1 sessão — acesso rápido à intranet, num banner encaixado na secção -->
 <section id="secao-intranet" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -11,11 +12,10 @@
     <app-cabecalho-secao [titulo]="traducao.t('paginas.estudantes.intranetSecaoTitulo')"
       [descricao]="traducao.t('paginas.estudantes.intranetSecaoDescricao')" />
 
-    <app-banner-destaque class="mt-12 block" [cartao]="true"
-      [selos]="selosIntranet()" [titulo]="traducao.t('paginas.estudantes.intranetCartaoTitulo')"
+    <app-banner-destaque class="mt-12 block" [cartao]="true" [selos]="selosIntranet()"
+      [titulo]="traducao.t('paginas.estudantes.intranetCartaoTitulo')"
       [subtitulo]="traducao.t('paginas.estudantes.intranetCartaoDescricao')" [ctas]="ctasIntranet()"
-      bg="/imagens/bg-banner-estudante-sessao-1.png" [temBackdrop]="true"
-      classeBackdrop="bg-primary-deep/70" />
+      bg="/imagens/bg-banner-estudante-sessao-1.png" [temBackdrop]="true" classeBackdrop="bg-primary-deep/70" />
   </app-container-pagina>
 </section>
 
@@ -33,7 +33,7 @@
           <app-icone [nome]="iconeAviso(aviso.tipo)" [tamanho]="16" class="text-secondary" />
           <h3 class="text-sm font-semibold text-white">{{ aviso.titulo }}</h3>
         </div>
-        <p class="mt-2 text-xs leading-relaxed text-white/60">{{ aviso.mensagem }}</p>
+        <p class="ml-6 mt-2 text-xs leading-relaxed text-white/60">{{ aviso.mensagem }}</p>
       </article>
       }
     </div>
@@ -56,7 +56,7 @@
       </a>
     </div>
 
-    <div class="mt-8 grid gap-6 lg:grid-cols-5">
+    <div class="mt-8 grid gap-6 lg:h-150 lg:grid-cols-5">
       @if (noticiaDestaque(); as destaque) {
       <app-cartao-noticia-destaque class="lg:col-span-3" variante="simples" [noticia]="destaque" />
       }
@@ -70,4 +70,23 @@
       }
     </div>
   </app-container-pagina>
+</section>
+<section id="secao-avisos" class="bg-primary-dark px-4 py-6 sm:px-6 lg:px-8 mt-18 mb-40">
+  <app-container-pagina>
+    <div class="flex justify-between items-center ">
+      <article class="flex gap-x-2">
+        <div class="text-secondary bg-secondary/10 rounded-full p-2 flex items-center justify-center">
+          <ng-icon name="saxLockOutline" size="25" />
+        </div>
+        <div class="flex flex-col items-start gap-2 text-secondary ">
+          <h3 class="text-sm font-semibold text-white ">{{ avisoAutenticacao().titulo }}</h3>
+          <p class="text-xs leading-relaxed text-white/60 ">{{ avisoAutenticacao().mensagem }}</p>
+        </div>
+      </article>
+      <app-botao [variante]="'branco'" [routerLink]="['/auth/login']">
+        {{ traducao.getTraducao(['Autenticar Agora', 'Authenticate Now']) }}
+      </app-botao>
+    </div>
+  </app-container-pagina>
+
 </section>

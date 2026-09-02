@@ -17,10 +17,21 @@ const CLASSES_VARIANTE: Record<VarianteBotao, string> = {
   suave: 'bg-primary/10 text-primary hover:bg-primary/15',
 };
 
-const CLASSES_TAMANHO: Record<TamanhoBotao, string> = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-6 py-2 text-base',
-  lg: 'px-8 py-3 text-lg',
+/**
+ * O `tamanho` define espaçamento e corpo de letra em conjunto, mas os dois lados
+ * estão separados para os inputs `paddingX`/`paddingY` poderem substituir só o
+ * espaçamento sem tocar no texto.
+ */
+const CLASSES_PADDING: Record<TamanhoBotao, { x: string; y: string }> = {
+  sm: { x: 'px-3', y: 'py-1.5' },
+  md: { x: 'px-6', y: 'py-2' },
+  lg: { x: 'px-8', y: 'py-3' },
+};
+
+const CLASSES_TEXTO: Record<TamanhoBotao, string> = {
+  sm: 'text-sm',
+  md: 'text-base',
+  lg: 'text-lg',
 };
 
 const CLASSES_RAIO: Record<RaioBotao, string> = {
@@ -76,6 +87,14 @@ export class BotaoComponent {
   readonly raio = input<RaioBotao>('completo');
   /** Faz o botão ocupar toda a largura disponível (o host passa a bloco). */
   readonly larguraTotal = input(false);
+  /**
+   * Substituem o espaçamento que vem do `tamanho`. Recebem a classe inteira
+   * (`paddingX="px-8"`), e não só o valor, para o Tailwind a encontrar ao
+   * varrer o template — uma classe montada em código não é gerada.
+   * Sem valor, o `tamanho` manda, como antes.
+   */
+  readonly paddingX = input<string>();
+  readonly paddingY = input<string>();
 
   readonly clicado = output<void>();
 
@@ -86,9 +105,14 @@ export class BotaoComponent {
     const indice = destino?.indexOf('#') ?? -1;
     return indice >= 0 ? destino!.slice(indice + 1) : undefined;
   });
-  protected readonly classes = computed(
-    () =>
-      `${CLASSES_BASE} ${CLASSES_VARIANTE[this.variante()]} ${CLASSES_TAMANHO[this.tamanho()]} ` +
-      `${CLASSES_RAIO[this.raio()]}${this.larguraTotal() ? ' w-full' : ''}`,
-  );
+  protected readonly classes = computed(() => {
+    const padrao = CLASSES_PADDING[this.tamanho()];
+    const espacamento = `${this.paddingX() ?? padrao.x} ${this.paddingY() ?? padrao.y}`;
+
+    return (
+      `${CLASSES_BASE} ${CLASSES_VARIANTE[this.variante()]} ` +
+      `${espacamento} ${CLASSES_TEXTO[this.tamanho()]} ` +
+      `${CLASSES_RAIO[this.raio()]}${this.larguraTotal() ? ' w-full' : ''}`
+    );
+  });
 }
