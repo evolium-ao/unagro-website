@@ -5,7 +5,8 @@
 /tmp
 /out-tsc
 /bazel-out
-.claude/imagen
+/imagen
+
 # Node
 /node_modules
 npm-debug.log
