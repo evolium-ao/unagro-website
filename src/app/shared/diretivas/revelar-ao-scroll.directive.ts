@@ -11,6 +11,8 @@ import {
 
 /** Distância, em px, que o elemento sobe ao entrar. */
 const DESLOCAMENTO_PX = 24;
+/** Vindo da direita percorre mais caminho: um salto curto na horizontal não se lê. */
+const DESLOCAMENTO_HORIZONTAL_PX = 48;
 /** Atraso acumulado por posição, para os cartões de uma grelha entrarem em cascata. */
 const ATRASO_POR_POSICAO_S = 0.09;
 const DURACAO_S = 0.5;
@@ -22,8 +24,11 @@ const CURVA: [number, number, number, number] = [0.22, 1, 0.36, 1];
  */
 const TEMPO_LIMITE_MS = 2000;
 
+/** De onde o elemento entra: `baixo` sobe, `direita` desliza para a esquerda. */
+export type DirecaoRevelacao = 'baixo' | 'direita';
+
 /**
- * Revela o elemento de baixo para cima quando ele entra no ecrã, com o Motion.
+ * Revela o elemento quando ele entra no ecrã, com o Motion.
  *
  * O valor passado é a posição do elemento no seu lote e multiplica o atraso, o
  * que produz a cascata numa grelha: `[appRevelarAoScroll]="$index"`. Sem valor,
@@ -39,6 +44,8 @@ export class RevelarAoScrollDirective {
     alias: 'appRevelarAoScroll',
     transform: (valor) => Number(valor) || 0,
   });
+  /** `baixo` por omissão, que é como todas as secções anteriores revelam. */
+  readonly direcaoRevelacao = input<DirecaoRevelacao>('baixo');
 
   private readonly elemento = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
@@ -56,13 +63,26 @@ export class RevelarAoScrollDirective {
     // Esconder aqui, e não em `afterNextRender`, evita o elemento aparecer
     // durante um fotograma antes de a animação começar.
     this.elemento.style.opacity = '0';
-    this.elemento.style.transform = `translateY(${DESLOCAMENTO_PX}px)`;
+    this.elemento.style.transform = this.transformeInicial();
 
     afterNextRender(() => void this.observar());
   }
 
   private movimentoReduzido(): boolean {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  private transformeInicial(): string {
+    return this.direcaoRevelacao() === 'direita'
+      ? `translateX(${DESLOCAMENTO_HORIZONTAL_PX}px)`
+      : `translateY(${DESLOCAMENTO_PX}px)`;
+  }
+
+  /** O eixo animado é o mesmo do `transformeInicial`, senão o elemento ficava desviado. */
+  private deslocamentoAnimado(): Record<string, unknown> {
+    return this.direcaoRevelacao() === 'direita'
+      ? { x: [DESLOCAMENTO_HORIZONTAL_PX, 0] }
+      : { y: [DESLOCAMENTO_PX, 0] };
   }
 
   private async observar(): Promise<void> {
@@ -82,7 +102,7 @@ export class RevelarAoScrollDirective {
 
           animate(
             this.elemento,
-            { opacity: [0, 1], y: [DESLOCAMENTO_PX, 0] },
+            { opacity: [0, 1], ...this.deslocamentoAnimado() },
             { duration: DURACAO_S, delay: this.posicao() * ATRASO_POR_POSICAO_S, ease: CURVA },
           );
         },

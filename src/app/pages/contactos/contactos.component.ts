@@ -15,11 +15,6 @@ type EstadoEnvio = 'ocioso' | 'enviando' | 'sucesso' | 'erro';
   selector: 'app-contactos',
   imports: [
     ReactiveFormsModule,
-    CampoTextoComponent,
-    SeletorComponent,
-    BotaoComponent,
-    IconeComponent,
-    EspacoImagemComponent,
     BannerDestaqueComponent,
     ContainerBannerFaixaEstatisticaComponent,
   ],

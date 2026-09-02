@@ -11,6 +11,11 @@ export interface UnidadeInvestigacao {
   nome: TextoBilingue;
   imagem_url: string;
   link: string;
+  /**
+   * Nome de um ícone de `dados-icones.ts`, usado onde a unidade aparece sem
+   * fotografia (ex.: os cartões de escolha do modal de agendamento de visita).
+   */
+  icone?: string;
 }
 
 /**
@@ -31,4 +36,29 @@ export interface LinhaInvestigacao {
   metricas?: TextoBilingue[];
   /** Só a faixa tem acção. */
   cta?: { texto: TextoBilingue; link: string };
+}
+
+/**
+ * Passo do ciclo de trabalho apresentado na secção da metodologia. O `numero`
+ * vem nos dados, e não do índice da grelha, porque faz parte do título ("01.").
+ */
+export interface PassoMetodologia {
+  id: string;
+  /** Já formatado como aparece no título, ex.: "01". */
+  numero: string;
+  /** Nome de um ícone de `dados-icones.ts`. */
+  icone: string;
+  titulo: TextoBilingue;
+  descricao: TextoBilingue;
+}
+
+/** Investigador principal — um cartão da fila da equipa científica. */
+export interface Investigador {
+  id: string;
+  /** Nome próprio, igual nos dois idiomas, logo sem `TextoBilingue`. */
+  nome: string;
+  cargo: TextoBilingue;
+  foto_url: string;
+  /** Áreas de especialidade; o cartão mostra-as como pílulas em maiúsculas. */
+  especialidades: TextoBilingue[];
 }

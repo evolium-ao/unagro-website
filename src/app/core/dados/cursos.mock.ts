@@ -469,6 +469,145 @@ export const CURSOS_MOCK: Curso[] = [
     ],
   },
   {
+    id: 'gestao-sistemas-irrigacao',
+    tipo: 'curta-duracao',
+    imagem: '/imagens/campo-de-milho-1.png',
+    faculdade: { pt: 'Faculdade de Ciências Agrárias', en: 'Faculty of Agricultural Sciences' },
+    titulo: { pt: 'Gestão de Sistemas de Irrigação', en: 'Irrigation Systems Management' },
+    grau: { pt: 'Certificado Profissional', en: 'Professional Certificate' },
+    duracao: { pt: '40 horas', en: '40 hours' },
+    regime: { pt: 'Pós-laboral', en: 'Evening' },
+    resumo: {
+      pt: 'Aprenda a optimizar o uso hídrico com tecnologias de monitorização em tempo real.',
+      en: 'Learn to optimize water use with real-time monitoring technologies.',
+    },
+    objetivos: [
+      {
+        rotulo: { pt: 'Eficiência', en: 'Efficiency' },
+        icone: 'droplet',
+        texto: {
+          pt: 'Dimensionar e regular sistemas de rega gota-a-gota e por aspersão segundo a necessidade da cultura.',
+          en: 'Size and tune drip and sprinkler irrigation systems to the actual needs of each crop.',
+        },
+      },
+      {
+        rotulo: { pt: 'Monitorização', en: 'Monitoring' },
+        icone: 'bot',
+        texto: {
+          pt: 'Instalar e interpretar sensores de humidade do solo para decidir quando e quanto regar.',
+          en: 'Install and read soil moisture sensors to decide when and how much to irrigate.',
+        },
+      },
+    ],
+    planoCurricular: [
+      { ano: 1, titulo: { pt: 'Módulos', en: 'Modules' }, tema: { pt: 'Água e Rega', en: 'Water and Irrigation' }, disciplinas: [
+        { pt: 'Balanço Hídrico do Solo', en: 'Soil Water Balance' },
+        { pt: 'Dimensionamento de Sistemas de Rega', en: 'Irrigation System Design' },
+        { pt: 'Sensores e Automação da Rega', en: 'Irrigation Sensors and Automation' },
+      ]},
+    ],
+    saidasProfissionais: [
+      { pt: 'Técnico de Rega', en: 'Irrigation Technician' },
+      { pt: 'Gestor de Recursos Hídricos Agrícolas', en: 'Agricultural Water Resources Manager' },
+    ],
+    cargaHoraria: 40,
+    preco: 80250,
+    estadoInscricao: 'abertas',
+  },
+  {
+    id: 'operacao-maquinas-agricolas',
+    tipo: 'curta-duracao',
+    imagem: '/imagens/campo-de-milho-2.png',
+    faculdade: { pt: 'Faculdade de Engenharia Agrícola', en: 'Faculty of Agricultural Engineering' },
+    titulo: { pt: 'Operação de Máquinas Agrícolas', en: 'Agricultural Machinery Operation' },
+    grau: { pt: 'Certificado Profissional', en: 'Professional Certificate' },
+    duracao: { pt: '60 horas', en: '60 hours' },
+    regime: { pt: 'Presencial', en: 'On-campus' },
+    resumo: {
+      pt: 'Capacitação avançada em tractores, colheitadeiras e implementos de última geração.',
+      en: 'Advanced training in tractors, harvesters and latest-generation implements.',
+    },
+    objetivos: [
+      {
+        rotulo: { pt: 'Operação', en: 'Operation' },
+        icone: 'wrench',
+        texto: {
+          pt: 'Operar tractores, colheitadeiras e implementos com segurança e no regime de trabalho correcto.',
+          en: 'Operate tractors, harvesters and implements safely and at the correct working settings.',
+        },
+      },
+      {
+        rotulo: { pt: 'Manutenção', en: 'Maintenance' },
+        icone: 'clipboard-check',
+        texto: {
+          pt: 'Executar a manutenção preventiva que reduz avarias e prolonga a vida do equipamento.',
+          en: 'Carry out the preventive maintenance that reduces breakdowns and extends equipment life.',
+        },
+      },
+    ],
+    planoCurricular: [
+      { ano: 1, titulo: { pt: 'Módulos', en: 'Modules' }, tema: { pt: 'Mecanização Agrícola', en: 'Agricultural Mechanization' }, disciplinas: [
+        { pt: 'Segurança na Operação de Máquinas', en: 'Machinery Operation Safety' },
+        { pt: 'Regulação de Implementos', en: 'Implement Setup and Calibration' },
+        { pt: 'Manutenção Preventiva', en: 'Preventive Maintenance' },
+      ]},
+    ],
+    saidasProfissionais: [
+      { pt: 'Operador de Máquinas Agrícolas', en: 'Agricultural Machinery Operator' },
+      { pt: 'Responsável de Frota Agrícola', en: 'Farm Fleet Supervisor' },
+    ],
+    cargaHoraria: 60,
+    preco: 204800,
+    estadoInscricao: 'proxima-turma',
+    proximaTurma: { pt: 'Maio', en: 'May' },
+  },
+  {
+    id: 'tecnicas-plantio-precisao',
+    tipo: 'curta-duracao',
+    imagem: '/imagens/campo-de-milho-3.png',
+    faculdade: { pt: 'Faculdade de Ciências Agrárias', en: 'Faculty of Agricultural Sciences' },
+    titulo: { pt: 'Técnicas de Plantio de Precisão', en: 'Precision Planting Techniques' },
+    grau: { pt: 'Certificado Profissional', en: 'Professional Certificate' },
+    duracao: { pt: '32 horas', en: '32 hours' },
+    regime: { pt: 'Pós-laboral', en: 'Evening' },
+    resumo: {
+      pt: 'Domine o uso de mapas de fertilidade e taxas variáveis para garantir a máxima produtividade por hectare.',
+      en: 'Master fertility maps and variable-rate application to secure the highest yield per hectare.',
+    },
+    objetivos: [
+      {
+        rotulo: { pt: 'Mapeamento', en: 'Mapping' },
+        icone: 'search',
+        texto: {
+          pt: 'Construir e ler mapas de fertilidade a partir de amostragem de solo georreferenciada.',
+          en: 'Build and read fertility maps from georeferenced soil sampling.',
+        },
+      },
+      {
+        rotulo: { pt: 'Aplicação', en: 'Application' },
+        icone: 'sprout',
+        texto: {
+          pt: 'Programar semeadores de taxa variável para ajustar densidade e adubação por zona da parcela.',
+          en: 'Program variable-rate seeders to adjust density and fertilization zone by zone.',
+        },
+      },
+    ],
+    planoCurricular: [
+      { ano: 1, titulo: { pt: 'Módulos', en: 'Modules' }, tema: { pt: 'Plantio de Precisão', en: 'Precision Planting' }, disciplinas: [
+        { pt: 'Amostragem Georreferenciada do Solo', en: 'Georeferenced Soil Sampling' },
+        { pt: 'Mapas de Fertilidade', en: 'Fertility Maps' },
+        { pt: 'Aplicação a Taxa Variável', en: 'Variable-Rate Application' },
+      ]},
+    ],
+    saidasProfissionais: [
+      { pt: 'Técnico de Agricultura de Precisão', en: 'Precision Agriculture Technician' },
+      { pt: 'Consultor de Fertilidade do Solo', en: 'Soil Fertility Consultant' },
+    ],
+    cargaHoraria: 32,
+    preco: 95890,
+    estadoInscricao: 'abertas',
+  },
+  {
     id: 'agricultura-precisao',
     tipo: 'curta-duracao',
     imagem: '/imagens/image-curso-2.png',
@@ -511,6 +650,9 @@ export const CURSOS_MOCK: Curso[] = [
       { pt: 'Consultor de Tecnologias Agrícolas', en: 'AgTech Consultant' },
     ],
     proximaData: { pt: '15 de outubro de 2026', en: 'October 15, 2026' },
+    cargaHoraria: 120,
+    preco: 145600,
+    estadoInscricao: 'abertas',
   },
   {
     id: 'gestao-cooperativas',
@@ -555,5 +697,9 @@ export const CURSOS_MOCK: Curso[] = [
       { pt: 'Técnico de Extensão Rural', en: 'Rural Extension Technician' },
     ],
     proximaData: { pt: '5 de novembro de 2026', en: 'November 5, 2026' },
+    cargaHoraria: 80,
+    preco: 112500,
+    estadoInscricao: 'proxima-turma',
+    proximaTurma: { pt: 'Novembro', en: 'November' },
   },
 ];

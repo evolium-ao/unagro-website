@@ -6,3 +6,28 @@
     bg="/imagens/bg-banner-formacoes.png" [temBackdrop]="true"
     classeBackdrop="bg-gradient-to-r from-black/70 via-black/45 to-black/10" />
 </app-container-banner-faixa-estatistica>
+
+<!-- 1 sessão — Cursos de curta duração: grelha de 3 por lote, revelada pelo "Ver mais" -->
+<section id="secao-cursos-curta-duracao" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao [titulo]="tituloCursosCurta()" [descricao]="descricaoCursosCurta()" />
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (curso of cursosCurtaVisiveis(); track curso.id) {
+      <app-cartao-curso-curta-duracao [curso]="curso" [appRevelarAoScroll]="$index % cursosCurtaPorLote" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+        {{ vazioCursosCurta() }}
+      </p>
+      }
+    </div>
+
+    @if (mostrarBotaoCursosCurta()) {
+    <div class="mt-10 flex justify-center">
+      <app-botao variante="contorno" tamanho="md" (clicado)="alternarCursosCurta()">
+        {{ rotuloVerMaisCursosCurta() }}
+      </app-botao>
+    </div>
+    }
+  </app-container-pagina>
+</section>

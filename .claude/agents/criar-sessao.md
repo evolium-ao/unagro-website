@@ -124,6 +124,76 @@ export class CartaoXComponent {
 - Os textos fixos de interface do componente (um "Ver mais") passam pelo
   `TraducaoService` **dentro** do componente; os textos de conteúdo vêm nos dados.
 
+## Dados — prontos para a API
+
+O site ainda corre sobre mocks, mas **toda a sessão que criares tem de ficar pronta
+para receber a lista da API sem se mexer na página nem nos componentes**. Isso
+consegue-se sempre da mesma maneira: os dados atravessam quatro camadas, e só a
+primeira desaparece quando a API entrar.
+
+1. **Modelo** — `src/app/core/modelos/<conceito>.model.ts`. A interface do domínio, com
+   `TextoTraduzido` (`{ pt, en }`) nos campos de texto e **tipos como a API os
+   mandaria**: número é `number`, data é `string` ISO, estado é união de literais.
+   Nada de texto já formatado nos dados: guarda-se `cargaHoraria: 40` e
+   `preco: 80250`, não `'40 Horas'` nem `'Kz 80.250,00'` — a formatação é do
+   componente que mostra.
+2. **Mock** — `src/app/core/dados/<conceito>.mock.ts`, um `export const X_MOCK: T[]`.
+   **É o único ficheiro do projecto com dados literais de conteúdo**, e é o único que
+   desaparece no dia da API. Se precisares de conteúdo novo para a sessão, ele vai
+   para aqui.
+3. **Serviço** — `src/app/core/servicos/<conceito>.service.ts`, no padrão que já lá
+   está (ver `cursos.service.ts`, `eventos.service.ts`):
+
+   ```ts
+   @Injectable({ providedIn: 'root' })
+   export class CursosService {
+     private readonly traducao = inject(TraducaoService);
+     private readonly brutos = signal(CURSOS_MOCK);
+
+     readonly cursos = computed(() => localizarProfundo(this.brutos(), this.traducao.idioma()));
+     readonly cursosCurtaDuracao = computed(() => this.cursos().filter((c) => c.tipo === 'curta-duracao'));
+   }
+   ```
+
+   É este desenho que faz o trabalho: a **única** linha ligada ao mock é o
+   `signal(X_MOCK)`, e trocá-la por `httpResource(...)` / `toSignal(http.get(...))`
+   deixa tudo o resto — localização, filtros, ordenações, a página, os cartões — igual.
+   Por isso: os filtros e as ordenações vivem em `computed` **no serviço**, nunca em
+   arrays já filtrados à mão.
+4. **Página** — injecta o serviço e expõe o sinal dele. Uma página **não declara
+   arrays de conteúdo**; guarda só **estado de interface** (filtro escolhido, quantos
+   lotes visíveis, aba activa) em `signal`, e deriva o que mostra num `computed` sobre
+   o sinal do serviço:
+
+   ```ts
+   private readonly cursosService = inject(CursosService);
+   protected readonly cursosCurtaDuracao = this.cursosService.cursosCurtaDuracao;
+   protected readonly lotesVisiveis = signal(1);
+   protected readonly cursosVisiveis = computed(() =>
+     this.cursosCurtaDuracao().slice(0, this.lotesVisiveis() * CURSOS_POR_LOTE),
+   );
+   ```
+
+   Excepção: conteúdo **estrutural** da própria sessão (as 4 vantagens de um bloco
+   "porquê nós", os passos de um processo) pode ficar numa constante no `.ts` da
+   página, como `VANTAGENS_BRUTAS` em `formacoes.component.ts` — isso não é uma lista
+   que a API vá servir. Se pode crescer, mudar ou ser gerido por alguém, é mock +
+   serviço.
+
+**No template**, o que prepara a sessão para dados assíncronos:
+
+- `@for (… ; track item.id)` — o `track` por **id estável** vindo dos dados, nunca por
+  `$index`, senão a lista pisca toda quando a API responde.
+- `@empty` sempre, com a mensagem traduzida: enquanto a API não devolver nada, a
+  secção tem de ficar apresentável em vez de vazia.
+- Zero conteúdo escrito no template: título de cartão, imagem, preço, contagem — tudo
+  entra por input. Se um valor não vier nos dados, o campo é opcional no modelo e o
+  bloco fica dentro de um `@if`.
+
+**Nunca** acrescentes um campo obrigatório a um modelo que já está a ser usado — parte
+todos os mocks existentes. Campo novo entra opcional (`preco?: number`), e o
+componente trata a ausência.
+
 ## Traduções
 
 Regra do projecto (`.claude/README.md`): **textos e frases usam
@@ -236,8 +306,13 @@ reconhecer que já existe.
 4. **Pergunta pelas imagens**, se faltarem — todas numa mensagem, antes de escrever.
 5. **Lê a página de destino** (`.html` e `.ts`) para perceber onde a secção entra, que
    componentes já estão nos `imports` e que padrão de estado a página usa.
-6. **Cria/estende os componentes** em `src/app/shared/componentes/`.
-7. **Escreve a secção** no `.html` da página e o estado dela no `.ts`:
+6. **Monta a camada de dados** (ver "Dados — prontos para a API"): modelo em
+   `core/modelos/`, conteúdo em `core/dados/*.mock.ts`, um serviço em
+   `core/servicos/` a expor sinais `computed`. Se o conceito já tiver serviço
+   (`CursosService`, `EventosService`, …), **reutiliza-o** e acrescenta lá o
+   `computed` que falta em vez de criar dados na página.
+7. **Cria/estende os componentes** em `src/app/shared/componentes/`.
+8. **Escreve a secção** no `.html` da página e o estado dela no `.ts`:
 
    ```html
    <!-- N sessão — <o que a secção mostra> -->
@@ -260,14 +335,14 @@ reconhecer que já existe.
 
    Alterna o fundo em relação à secção vizinha (`bg-white` ↔ `bg-bg-lighter`) e dá um
    `id="secao-<nome>"` para as âncoras funcionarem.
-8. **Registar nos `imports`** do `@Component` da página os componentes que usaste,
+9. **Registar nos `imports`** do `@Component` da página os componentes que usaste,
    incluindo `RevelarAoScrollDirective`, `ContainerPaginaComponent` e
    `CabecalhoSecaoComponent`. Mantém o `ChangeDetectionStrategy.OnPush`.
-9. **Verifica**: `npx ng build`. Tem de passar. Erros em ficheiros que não tocaste são
+10. **Verifica**: `npx ng build`. Tem de passar. Erros em ficheiros que não tocaste são
    pré-existentes: não os corrijas, mas di-lo no relatório. Confirma também que os
    ficheiros que escreveste ficaram bem no disco (`sed -n '1,30p' <ficheiro>`) — o
    IDE às vezes injecta auto-importações que corrompem a linha.
-10. **Actualiza `.claude/memory/criar-sessao.md`**.
+11. **Actualiza `.claude/memory/criar-sessao.md`**.
 
 ## Regras
 
@@ -289,15 +364,22 @@ reconhecer que já existe.
 - **Cores e espaçamentos** vêm dos tokens de `src/styles.css` (`primary`,
   `primary-dark`, `primary-deep`, `secondary`, `accent`, `bg-light`, `bg-lighter`,
   `text-primary`, `text-secondary`). Não escrevas hexadecimais.
+- **Dados pela camada de dados**: a lista que a sessão mostra vem sempre de um sinal
+  de serviço (mock → serviço → página), com tipos brutos no modelo e a formatação no
+  componente. Nada de arrays de conteúdo no `.ts` da página nem texto de conteúdo no
+  template — ver "Dados — prontos para a API".
+- **Campo novo num modelo já usado entra opcional**, e o componente trata a ausência.
 - **Nomes em português**, como o resto do código. Comentários só onde expliquem uma
   decisão que o código não mostra.
-- Não mexas em ficheiros fora do necessário: a página, os componentes da sessão e o
-  registo. Nada mais.
+- Não mexas em ficheiros fora do necessário: a página, os componentes da sessão, a
+  camada de dados dela (modelo, mock, serviço) e o registo. Nada mais.
 
 ## Relatório final
 
 Diz, em poucas linhas: que ficheiros criaste e mudaste; que componentes são novos e
 quais reutilizaste (e, se estendeste algum, com que input e qual o valor por omissão);
-onde a secção entrou na página; que imagens ficaram definitivas e quais ficaram no
-marcador cinzento; que entradas acrescentaste ao registo; o resultado do `npx ng build`;
-e o que ficou pendente (imagens, destinos de links, dados por ligar à API).
+onde a secção entrou na página; **que camada de dados a sessão usa — modelo, mock e
+serviço, e qual a linha exacta que muda no dia da API**; que imagens ficaram definitivas
+e quais ficaram no marcador cinzento; que entradas acrescentaste ao registo; o resultado
+do `npx ng build`; e o que ficou pendente (imagens, destinos de links, campos que a API
+terá de passar a servir).

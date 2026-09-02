@@ -3,18 +3,27 @@ import { Component, computed, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconeComponent } from '../icone/icone.component';
 
-export type VarianteBotao = 'primario' | 'secundario' | 'contorno' | 'branco' | 'glass' | 'suave';
+export type VarianteBotao =
+  | 'primario'
+  | 'secundario'
+  | 'contorno'
+  | 'branco'
+  | 'glass'
+  | 'suave'
+  /** Verde mais escuro (`primary-deep`), para secções que usam essa cor como acento. */
+  | 'profundo';
 export type TamanhoBotao = 'sm' | 'md' | 'lg';
 /** `completo` é a pílula usada em toda a navegação; `medio` serve cartões e formulários. */
 export type RaioBotao = 'completo' | 'medio';
 
 const CLASSES_VARIANTE: Record<VarianteBotao, string> = {
-  primario: 'bg-primary text-white hover:bg-primary-hover',
+  primario: 'bg-primary-deep text-white hover:bg-primary-hover',
   secundario: 'bg-accent text-primary hover:opacity-90',
   contorno: 'border border-primary text-primary hover:bg-primary/5',
   branco: 'bg-white text-primary hover:bg-gray-50',
   glass: 'bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all',
   suave: 'bg-primary/10 text-primary hover:bg-primary/15',
+  profundo: 'bg-primary-deep text-white hover:bg-primary-dark',
 };
 
 /**

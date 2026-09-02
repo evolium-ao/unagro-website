@@ -16,7 +16,7 @@ const COLUNAS_MAX = 4;
   selector: 'app-faixa-estatisticas',
   template: `
     @if (estatisticas().length) {
-      <section class="overflow-hidden bg-primary-dark text-white">
+      <section class="overflow-hidden bg-primary-deep text-white">
         <div
           class="faixa-rolagem grid w-full grid-flow-col py-6"
           [style.--total]="estatisticas().length"

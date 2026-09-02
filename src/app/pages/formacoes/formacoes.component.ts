@@ -7,6 +7,17 @@ import { TraducaoService } from '../../core/traducao/traducao.service';
 import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
+import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
+import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
+import {
+  CartaoCursoCurtaDuracaoComponent,
+  CursoCurtaDuracaoCartao,
+} from '../../shared/componentes/cartao-curso-curta-duracao/cartao-curso-curta-duracao.component';
+import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
+import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
+
+/** Cursos de curta duração revelados de cada vez pelo botão "Ver mais". */
+const CURSOS_CURTA_POR_LOTE = 3;
 
 type EstadoValidacao = 'ocioso' | 'validando' | 'valido' | 'invalido';
 interface VantagemBruta {
@@ -51,7 +62,16 @@ const VANTAGENS_BRUTAS: VantagemBruta[] = [
 ];
 
 @Component({
-  imports: [ReactiveFormsModule, BannerDestaqueComponent, ContainerBannerFaixaEstatisticaComponent],
+  imports: [
+    ReactiveFormsModule,
+    BannerDestaqueComponent,
+    ContainerBannerFaixaEstatisticaComponent,
+    BotaoComponent,
+    CabecalhoSecaoComponent,
+    CartaoCursoCurtaDuracaoComponent,
+    ContainerPaginaComponent,
+    RevelarAoScrollDirective,
+  ],
   selector: 'app-formacoes',
   templateUrl: './formacoes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +92,82 @@ export class FormacoesComponent {
     this.traducao.getTraducao([
       'Capacitação Técnica e Excelência para o Agronegócio. Formando os líderes da revolução sustentável no campo.',
       'Technical training and excellence for agribusiness. Shaping the leaders of the sustainable revolution in the field.',
+    ]),
+  );
+
+  // Cursos de curta duração — a lista vem do serviço; a página só guarda quantos
+  // lotes estão revelados, para trocar o mock por HTTP não mexer no template.
+  protected readonly cursosCurtaPorLote = CURSOS_CURTA_POR_LOTE;
+  private readonly lotesCursosCurta = signal(1);
+
+  private readonly cartoesCursosCurta = computed<CursoCurtaDuracaoCartao[]>(() =>
+    this.cursosCurtaDuracao().flatMap((curso) => {
+      const { cargaHoraria, preco } = curso;
+      // Sem carga horária nem preço o cartão do mockup não tem o que mostrar.
+      if (cargaHoraria === undefined || preco === undefined) {
+        return [];
+      }
+      return [
+        {
+          id: curso.id,
+          titulo: curso.titulo,
+          resumo: curso.resumo,
+          cargaHoraria,
+          preco,
+          estadoInscricao: curso.estadoInscricao ?? 'abertas',
+          proximaTurma: curso.proximaTurma,
+          link: `/cursos/${curso.id}`,
+          imagem: curso.imagem,
+        },
+      ];
+    }),
+  );
+
+  protected readonly cursosCurtaVisiveis = computed(() =>
+    this.cartoesCursosCurta().slice(0, this.lotesCursosCurta() * CURSOS_CURTA_POR_LOTE),
+  );
+
+  protected readonly temMaisCursosCurta = computed(
+    () => this.cursosCurtaVisiveis().length < this.cartoesCursosCurta().length,
+  );
+
+  /** Com um lote ou menos não há nada a revelar nem a recolher. */
+  protected readonly mostrarBotaoCursosCurta = computed(
+    () => this.cartoesCursosCurta().length > CURSOS_CURTA_POR_LOTE,
+  );
+
+  protected alternarCursosCurta(): void {
+    if (this.temMaisCursosCurta()) {
+      this.lotesCursosCurta.update((lotes) => lotes + 1);
+      return;
+    }
+    this.lotesCursosCurta.set(1);
+  }
+
+  protected readonly tituloCursosCurta = computed(() =>
+    this.traducao.getTraducao([
+      'Cursos de Curta Duração e Treinamentos Técnicos',
+      'Short Courses and Technical Training',
+    ]),
+  );
+
+  protected readonly descricaoCursosCurta = computed(() =>
+    this.traducao.getTraducao([
+      'Módulos intensivos desenhados para actualização rápida e aplicação imediata no sector produtivo.',
+      'Intensive modules designed for rapid upskilling and immediate use in the productive sector.',
+    ]),
+  );
+
+  protected readonly rotuloVerMaisCursosCurta = computed(() =>
+    this.temMaisCursosCurta()
+      ? this.traducao.getTraducao(['Ver mais', 'See more'])
+      : this.traducao.getTraducao(['Ver menos', 'See less']),
+  );
+
+  protected readonly vazioCursosCurta = computed(() =>
+    this.traducao.getTraducao([
+      'Ainda não há cursos de curta duração com inscrições anunciadas.',
+      'There are no short courses with announced enrolment yet.',
     ]),
   );
 

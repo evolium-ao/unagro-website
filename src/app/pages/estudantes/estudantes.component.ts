@@ -98,7 +98,6 @@ const ICONES_AVISO: Record<TipoAvisoIntranet, string> = {
     CartaoNoticiaDestaqueComponent,
     CartaoNoticiaResumoComponent,
     ContainerPaginaComponent,
-    FaixaEstatisticasComponent,
     IconeComponent,
     RouterLink,
     NgIcon,

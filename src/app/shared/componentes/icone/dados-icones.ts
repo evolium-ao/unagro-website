@@ -49,6 +49,14 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
   ],
   'trending-up': [p('M16 7h6v6'), p('m22 7-8.5 8.5-5-5L2 17')],
   'chart-column': [p('M3 3v16a2 2 0 0 0 2 2h16'), p('M18 17V9'), p('M13 17V5'), p('M8 17v-3')],
+  'square-activity': [r('3', '3', '18', '18', '2'), p('M17 12h-2l-2 5-2-10-2 5H7')],
+  'drafting-compass': [
+    p('m12.99 6.74 1.93 3.44'),
+    p('M19.136 12a10 10 0 0 1-14.271 0'),
+    p('m21 21-2.16-3.84'),
+    p('m3 21 8.02-14.26'),
+    c('12', '5', '2'),
+  ],
   facebook: [p('M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z')],
   instagram: [
     r('2', '2', '20', '20', '5', '5'),
@@ -239,5 +247,29 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
     p('M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z'),
     p('M14 2v5h5'),
     p('m9 15 2 2 4-4'),
+  ],
+  /** Seta a descer para uma bandeja — descarregar ficheiro. */
+  download: [
+    p('M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'),
+    p('m7 10 5 5 5-5'),
+    l('12', '15', '12', '3'),
+  ],
+  /** Três cursores horizontais — abre o painel de filtros. */
+  'sliders-horizontal': [
+    l('21', '4', '14', '4'),
+    l('10', '4', '3', '4'),
+    l('21', '12', '12', '12'),
+    l('8', '12', '3', '12'),
+    l('21', '20', '16', '20'),
+    l('12', '20', '3', '20'),
+    l('14', '2', '14', '6'),
+    l('8', '10', '8', '14'),
+    l('16', '18', '16', '22'),
+  ],
+  /** Chave inglesa — engenharia e manutenção. */
+  wrench: [
+    p(
+      'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
+    ),
   ],
 };

@@ -66,7 +66,8 @@
 
     <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       @for (unidade of unidades(); track unidade.id) {
-      <app-cartao-unidade [unidade]="unidade" [appRevelarAoScroll]="$index" />
+      <app-cartao-unidade [unidade]="unidade" [acaoComoBotao]="true"
+        (visitarSolicitado)="abrirAgendamentoVisita($event)" [appRevelarAoScroll]="$index" />
       }
     </div>
 
@@ -77,6 +78,140 @@
       @for (linha of linhasInvestigacao(); track linha.id) {
       <app-cartao-linha-investigacao [linha]="linha" [class]="colunasLinha(linha.formato)"
         [appRevelarAoScroll]="$index" />
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 3 sessão — impacto em números: indicadores sobre fundo verde e fotografia com a nota da presença nacional -->
+<section id="secao-impacto" class="relative overflow-hidden bg-primary-deep px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <!-- Folha do canto: só ornamento, fica fora da árvore de acessibilidade -->
+  <svg class="pointer-events-none absolute -left-12 -top-12 h-56 w-56 text-white/[0.06]" viewBox="0 0 24 24"
+    fill="currentColor" aria-hidden="true">
+    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+  </svg>
+
+  <app-container-pagina>
+    <div class="relative grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <app-cabecalho-secao tema="branco" alinhamento="esquerda" [titulo]="tituloImpacto()"
+          [descricao]="descricaoImpacto()" appRevelarAoScroll />
+
+        <div class="mt-10 grid grid-cols-2 gap-x-8 gap-y-10">
+          @for (estatistica of estatisticasImpacto(); track estatistica.id) {
+          <app-item-estatistica [valor]="estatistica.valor" [rotulo]="estatistica.rotulo"
+            [appRevelarAoScroll]="$index + 1" />
+          }
+        </div>
+      </div>
+
+      <div class="relative" appRevelarAoScroll>
+        <img src="/imagens/impacto-numerico.png" [alt]="legendaImagemImpacto()"
+          class="h-72 w-full rounded-xl object-cover sm:h-96 lg:h-[28rem]" />
+        <app-cartao-vidro class="absolute bottom-5 left-5 right-5 sm:right-auto sm:max-w-xs"
+          [titulo]="tituloNotaImpacto()" [texto]="textoNotaImpacto()" />
+      </div>
+    </div>
+  </app-container-pagina>
+</section>
+
+
+<!-- 4 sessão — publicações recentes: pesquisa por título, revista ou autores e lista vertical de artigos -->
+<section id="secao-publicacoes" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <app-cabecalho-secao alinhamento="esquerda" [mostrarTracos]="false" [titulo]="tituloPublicacoes()"
+        [descricao]="descricaoPublicacoes()" />
+
+      <div class="flex w-full items-center gap-2 sm:w-auto">
+        <label class="relative w-full sm:w-72">
+          <app-icone nome="search" [tamanho]="15"
+            class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+          <input type="search" [value]="pesquisaPublicacoes()"
+            (input)="definirPesquisaPublicacoes($any($event.target).value)"
+            [placeholder]="traducao.getTraducao(['Procurar artigo…', 'Search article…'])"
+            [attr.aria-label]="traducao.getTraducao(['Procurar artigo', 'Search article'])"
+            class="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-9 pr-4 text-sm text-text-primary placeholder:text-text-secondary focus:border-primary-deep focus:outline-none focus:ring-2 focus:ring-primary-deep/20" />
+        </label>
+
+        <!-- TODO: o painel de filtros das publicações ainda não existe; o botão fica decorativo até lá. -->
+        <button type="button" [attr.aria-label]="rotuloFiltroPublicacoes()"
+          class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white text-text-secondary hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-deep">
+          <app-icone nome="sliders-horizontal" [tamanho]="16" />
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-10 flex flex-col gap-4">
+      @for (publicacao of publicacoesVisiveis(); track publicacao.id) {
+      <app-cartao-publicacao [publicacao]="publicacao" [appRevelarAoScroll]="$index" />
+      } @empty {
+      <p class="py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Nenhuma publicação corresponde à pesquisa.', 'No publication matches your search.'])
+        }}
+      </p>
+      }
+    </div>
+
+    <div class="mt-12 flex justify-center">
+      <app-botao variante="profundo" [link]="linkArquivoPublicacoes">
+        {{ tituloArquivoPublicacoes() }}
+      </app-botao>
+    </div>
+  </app-container-pagina>
+</section>
+
+
+<!-- 5 sessão — nossa metodologia: os quatro passos do Ciclo de Excelência, ligados pela linha do topo -->
+<section id="secao-metodologia" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao [titulo]="tituloMetodologia()" [descricao]="descricaoMetodologia()" />
+
+    <div class="relative mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      <!-- Linha que liga os passos, à altura do centro dos quadrados; só em ecrã largo, onde eles
+           ficam em fila. Começa e acaba a um oitavo da largura, que é o centro das colunas das
+           pontas, agora que os passos estão centrados — as extremidades ficam tapadas pelos quadrados. -->
+      <span aria-hidden="true"
+        class="pointer-events-none absolute left-[12.5%] right-[12.5%] top-8 hidden h-px bg-gray-200 lg:block"></span>
+
+      @for (passo of passosMetodologia(); track passo.id) {
+      <app-passo-metodologia [passo]="passo" [appRevelarAoScroll]="$index" />
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 6 sessão — investigadores principais, percorridos lote a lote com as setas do cabeçalho -->
+<section id="secao-investigadores" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false"
+        [titulo]="tituloInvestigadores()" [descricao]="descricaoInvestigadores()" />
+
+      <div class="flex items-center gap-3">
+        <button type="button"
+          class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white text-text-secondary hover:border-primary-deep hover:text-primary-deep disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-deep"
+          [disabled]="!temInvestigadoresAnteriores()" [attr.aria-label]="rotuloInvestigadoresAnteriores()"
+          (click)="investigadoresAnteriores()">
+          <app-icone nome="chevron-left" [tamanho]="16" />
+        </button>
+        <button type="button"
+          class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-primary-deep text-white hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-deep"
+          [disabled]="!temInvestigadoresSeguintes()" [attr.aria-label]="rotuloInvestigadoresSeguintes()"
+          (click)="investigadoresSeguintes()">
+          <app-icone nome="chevron-right" [tamanho]="16" />
+        </button>
+      </div>
+    </div>
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      @for (investigador of investigadoresVisiveis(); track investigador.id) {
+      <app-cartao-investigador [investigador]="investigador" direcaoRevelacao="direita"
+        [appRevelarAoScroll]="$index % investigadoresPorPagina" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Ainda não há investigadores a mostrar.', 'No researchers to show yet.']) }}
+      </p>
       }
     </div>
   </app-container-pagina>

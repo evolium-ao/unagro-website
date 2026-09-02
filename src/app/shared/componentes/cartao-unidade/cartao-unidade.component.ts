@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { UnidadeInvestigacao } from '../../../core/modelos/investigacao.model';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { BotaoComponent } from '../botao/botao.component';
@@ -42,7 +49,8 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
           posicaoIcone="direita"
           paddingY="py-2.5"
           [larguraTotal]="true"
-          [link]="unidade().link"
+          [link]="destino()"
+          (clicado)="visitarSolicitado.emit(unidade())"
           class="mt-4"
         >
           {{ traducao.getTraducao(['Visitar Unidade', 'Visit Unit']) }}
@@ -54,8 +62,22 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
 })
 export class CartaoUnidadeComponent {
   readonly unidade = input.required<UnidadeInvestigacao>();
+  /**
+   * Por omissão o botão é um link para `unidade().link`, como sempre foi. A `true`,
+   * passa a ser um botão que emite `visitarSolicitado` e deixa a acção a quem usa o
+   * cartão — é assim que a página de desenvolvimento abre o modal de agendamento.
+   */
+  readonly acaoComoBotao = input(false);
+
+  /** Pedido de visita à unidade do cartão. Só emite com `acaoComoBotao` a `true`. */
+  readonly visitarSolicitado = output<UnidadeInvestigacao>();
 
   protected readonly traducao = inject(TraducaoService);
+
+  /** Sem destino, o `app-botao` renderiza um `<button>` em vez de um `<a>`. */
+  protected readonly destino = computed(() =>
+    this.acaoComoBotao() ? undefined : this.unidade().link,
+  );
 
   protected readonly area = computed(() => this.traducao.getTraducao(this.unidade().area));
   protected readonly nome = computed(() => this.traducao.getTraducao(this.unidade().nome));

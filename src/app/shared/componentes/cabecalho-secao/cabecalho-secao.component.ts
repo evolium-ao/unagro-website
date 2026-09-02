@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 /**
  * `claro` = fundo claro (texto escuro); `escuro` = fundo verde (título dourado);
- * `branco` = fundo verde com título branco (plano curricular do detalhe de curso).
+ * `branco` = fundo verde com título branco (plano curricular do detalhe de curso);
+ * `verde` = fundo claro com o título em verde escuro (equipa de investigadores).
  */
-export type TemaCabecalhoSecao = 'claro' | 'escuro' | 'branco';
+export type TemaCabecalhoSecao = 'claro' | 'escuro' | 'branco' | 'verde';
 export type AlinhamentoCabecalhoSecao = 'centro' | 'esquerda';
 
 const CLASSES_ALINHAMENTO: Record<AlinhamentoCabecalhoSecao, string> = {
@@ -16,12 +17,14 @@ const CLASSES_TITULO: Record<TemaCabecalhoSecao, string> = {
   claro: 'text-text-primary',
   escuro: 'text-secondary',
   branco: 'text-white',
+  verde: 'text-primary-deep',
 };
 
 const CLASSES_DESCRICAO: Record<TemaCabecalhoSecao, string> = {
   claro: 'text-text-secondary',
   escuro: 'text-white/70',
   branco: 'text-white/70',
+  verde: 'text-text-secondary',
 };
 
 /**

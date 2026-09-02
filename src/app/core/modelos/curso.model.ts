@@ -15,6 +15,9 @@ export interface ObjetivoCurso {
   texto: TextoTraduzido;
 }
 
+/** Estado das inscrições de um curso de curta duração. */
+export type EstadoInscricao = 'abertas' | 'proxima-turma';
+
 export interface Curso {
   id: string;
   tipo: 'grau' | 'curta-duracao';
@@ -29,4 +32,18 @@ export interface Curso {
   planoCurricular: AnoCurricular[];
   saidasProfissionais: TextoTraduzido[];
   proximaData?: TextoTraduzido;
+
+  /*
+   * Campos dos cursos de curta duração. São opcionais porque os cursos de grau
+   * não os têm, e chegam crus como uma API os devolveria — a formatação
+   * ("40 Horas", "Kz 80.250,00") é do cartão.
+   */
+
+  /** Número de horas do módulo (ex.: `40`). */
+  cargaHoraria?: number;
+  /** Valor da inscrição em kwanzas (ex.: `80250`). */
+  preco?: number;
+  estadoInscricao?: EstadoInscricao;
+  /** Rótulo curto do mês da próxima turma, para o selo (ex.: `{ pt: 'Maio', en: 'May' }`). */
+  proximaTurma?: TextoTraduzido;
 }
