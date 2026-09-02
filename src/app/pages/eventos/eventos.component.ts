@@ -13,6 +13,7 @@ import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/component
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { ItemFiltroLateralComponent } from '../../shared/componentes/item-filtro-lateral/item-filtro-lateral.component';
+import { PilarIconeComponent } from '../../shared/componentes/pilar-icone/pilar-icone.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 
 /** Âmbito do evento — é por ele que a barra lateral filtra a listagem. */
@@ -113,6 +114,47 @@ interface FiltroAmbito {
   icone: string;
 }
 
+interface PilarBruto {
+  id: string;
+  icone: string;
+  titulo: TextoBilingue;
+  descricao: TextoBilingue;
+}
+
+/**
+ * Conteúdo estrutural da sessão da certificação — não é uma lista que a API vá
+ * servir, por isso fica aqui em vez de mock + serviço.
+ */
+const PILARES_CERTIFICACAO: PilarBruto[] = [
+  {
+    id: 'reconhecimento-academico',
+    icone: 'graduation-cap',
+    titulo: ['Reconhecimento Académico', 'Academic Recognition'],
+    descricao: [
+      'Certificados emitidos por uma universidade de referência, garantindo base teórica sólida e validada.',
+      'Certificates issued by a leading university, guaranteeing a solid, validated theoretical foundation.',
+    ],
+  },
+  {
+    id: 'validacao-tecnica',
+    icone: 'wrench',
+    titulo: ['Validação Técnica', 'Technical Validation'],
+    descricao: [
+      'Conteúdo prático desenvolvido em parceria com fabricantes e grandes produtores do agronegócio.',
+      'Practical content developed with manufacturers and major agribusiness producers.',
+    ],
+  },
+  {
+    id: 'certificacao-digital',
+    icone: 'shield-check',
+    titulo: ['Certificação Digital', 'Digital Certification'],
+    descricao: [
+      'Validação via código QR e blockchain, garantindo segurança total contra fraudes no seu currículo.',
+      'Validation via QR code and blockchain, for complete protection against CV fraud.',
+    ],
+  },
+];
+
 @Component({
   selector: 'app-eventos',
   imports: [
@@ -123,6 +165,7 @@ interface FiltroAmbito {
     ContainerPaginaComponent,
     IconeComponent,
     ItemFiltroLateralComponent,
+    PilarIconeComponent,
     RevelarAoScrollDirective,
   ],
   templateUrl: './eventos.component.html',
@@ -261,6 +304,30 @@ export class EventosComponent {
 
   protected readonly temAnteriores = computed(() => this.paginaValida() > 0);
   protected readonly temSeguintes = computed(() => this.paginaValida() < this.totalPaginas() - 1);
+
+  // 2 sessão — A Autoridade de uma Certificação UNAGRO: três pilares sobre fundo verde
+  protected readonly tituloCertificacao = computed(() =>
+    this.traducao.getTraducao([
+      'A Autoridade de uma Certificação UNAGRO',
+      'The Authority of a UNAGRO Certification',
+    ]),
+  );
+
+  protected readonly descricaoCertificacao = computed(() =>
+    this.traducao.getTraducao([
+      'Os nossos certificados são reconhecidos nacionalmente como padrão de ouro em excelência técnica, abrindo portas nas maiores empresas do sector.',
+      'Our certificates are recognised nationwide as the gold standard in technical excellence, opening doors at the sector’s largest companies.',
+    ]),
+  );
+
+  protected readonly pilaresCertificacao = computed(() =>
+    PILARES_CERTIFICACAO.map((pilar) => ({
+      id: pilar.id,
+      icone: pilar.icone,
+      titulo: this.traducao.getTraducao(pilar.titulo),
+      descricao: this.traducao.getTraducao(pilar.descricao),
+    })),
+  );
 
   protected selecionarAmbito(ambito: string): void {
     this.ambitoSelecionado.set(ambito);

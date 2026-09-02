@@ -8,7 +8,8 @@
 <!-- 1 sessão — listagem de projectos, com filtro por categoria, pesquisa e paginação -->
 <section id="secao-projectos" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
-    <div class="flex flex-wrap items-center justify-between gap-4">
+    <app-cabecalho-secao [titulo]="traducao.getTraducao(['Projectos', 'Projects'])" />
+    <div class="flex flex-wrap items-center justify-between gap-4 mt-10">
       <div class="flex flex-wrap gap-2">
         @for (filtro of filtrosCategoria(); track filtro.id) {
         <button type="button" [attr.aria-pressed]="filtro.id === categoriaActiva()"
@@ -182,11 +183,11 @@
 </section>
 
 <!-- 6 sessão — investigadores principais, percorridos lote a lote com as setas do cabeçalho -->
-<section id="secao-investigadores" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+<section id="secao-investigadores" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8 mb-40">
   <app-container-pagina>
     <div class="flex flex-wrap items-end justify-between gap-6">
-      <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false"
-        [titulo]="tituloInvestigadores()" [descricao]="descricaoInvestigadores()" />
+      <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false" [titulo]="tituloInvestigadores()"
+        [descricao]="descricaoInvestigadores()" />
 
       <div class="flex items-center gap-3">
         <button type="button"

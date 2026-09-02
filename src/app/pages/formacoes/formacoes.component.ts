@@ -6,7 +6,7 @@ import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
-import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
+import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
 import {
@@ -14,6 +14,12 @@ import {
   CursoCurtaDuracaoCartao,
 } from '../../shared/componentes/cartao-curso-curta-duracao/cartao-curso-curta-duracao.component';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
+import { AlertModalService } from '../../shared/componentes/alert-modal/alert-modal.service';
+import {
+  DadosInscricaoCurso,
+  ID_MODAL_INSCRICAO_CURSO,
+  ModalInscricaoCursoComponent,
+} from '../../shared/componentes/modal-inscricao-curso/modal-inscricao-curso.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 
 /** Cursos de curta duração revelados de cada vez pelo botão "Ver mais". */
@@ -79,8 +85,11 @@ const VANTAGENS_BRUTAS: VantagemBruta[] = [
 export class FormacoesComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly cursosService = inject(CursosService);
+  private readonly modais = inject(AlertModalService);
   protected readonly cursosCurtaDuracao = this.cursosService.cursosCurtaDuracao;
-  protected readonly vantagens = computed(() => localizarProfundo(VANTAGENS_BRUTAS, this.traducao.idioma()));
+  protected readonly vantagens = computed(() =>
+    localizarProfundo(VANTAGENS_BRUTAS, this.traducao.idioma()),
+  );
 
   protected readonly tituloHero = computed(() =>
     this.traducao.getTraducao(['Centro de Formação Profissional', 'Professional Training Centre']),
@@ -135,6 +144,28 @@ export class FormacoesComponent {
   protected readonly mostrarBotaoCursosCurta = computed(
     () => this.cartoesCursosCurta().length > CURSOS_CURTA_POR_LOTE,
   );
+
+  /**
+   * "Inscrever-se" de um cartão: abre o formulário de inscrição com o curso clicado
+   * já escolhido. O cartão só avisa — quem conhece o modal é a página.
+   */
+  protected abrirInscricaoCurso(curso: CursoCurtaDuracaoCartao): void {
+    const dados: DadosInscricaoCurso = {
+      cursoSelecionado: curso,
+      cursos: this.cartoesCursosCurta(),
+    };
+
+    void this.modais.modal({
+      id: ID_MODAL_INSCRICAO_CURSO,
+      template: ModalInscricaoCursoComponent,
+      tamanho: 'xgrande',
+      temHeader: false,
+      semBotoes: true,
+      // É um formulário: um clique no fundo não o pode fazer desaparecer.
+      fecharAoClicarFundo: false,
+      data: dados,
+    });
+  }
 
   protected alternarCursosCurta(): void {
     if (this.temMaisCursosCurta()) {

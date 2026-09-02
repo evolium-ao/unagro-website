@@ -465,7 +465,7 @@ export class DesenvolvimentoComponent {
   protected colunasLinha(formato: FormatoLinhaInvestigacao): string {
     return COLUNAS_LINHA[formato];
   }
-
+  projectoServico = inject(EstatisticasService);
   /** Substituir por um sinal alimentado pelo endpoint de projectos. */
   private readonly projectosBrutos = signal<Projecto[]>(PROJECTOS_MOCK);
 

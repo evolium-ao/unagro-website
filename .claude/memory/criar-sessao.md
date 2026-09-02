@@ -114,6 +114,28 @@ os filtros vivem numa barra lateral. Não guarda estado: recebe `ativo` e emite
 
 **Usado em:** `eventos`
 
+### app-pilar-icone
+
+**Onde:** `src/app/shared/componentes/pilar-icone/pilar-icone.component.ts`
+**Criado para:** sessão "A Autoridade de uma Certificação UNAGRO" de `eventos` (2026-09-02)
+**Descrição:** pilar com ícone, **tudo centrado**: quadrado arredondado de 56px com o
+ícone, título pequeno em negrito e descrição curta por baixo. Sem cartão, sem moldura e
+sem sombra — assenta directamente no fundo da secção, ao contrário do `cartao-recurso`
+(cartão branco, alinhado à esquerda) e do `item-estatistica` (número + rótulo). No tema
+`escuro` a caixa é `bg-white/10` com ícone branco, título branco e descrição
+`text-white/60`; no `claro`, caixa `bg-primary/10` com ícone verde e título
+`primary-dark`. Trouxe o ícone `shield-check` a `dados-icones.ts`.
+
+**Inputs:** `icone: string` (obrigatório) · `titulo: string` (obrigatório) ·
+`descricao: string` (obrigatório) · `tema: 'escuro' | 'claro'` (por omissão `'escuro'`)
+
+**Como usar:**
+
+    <app-pilar-icone [icone]="pilar.icone" [titulo]="pilar.titulo"
+      [descricao]="pilar.descricao" [appRevelarAoScroll]="$index" />
+
+**Usado em:** `eventos`
+
 ### app-cartao-publicacao
 
 **Onde:** `src/app/shared/componentes/cartao-publicacao/cartao-publicacao.component.ts`
@@ -312,14 +334,70 @@ que mostra faculdade, grau e regime e não tem preço, selo sobreposto nem resum
 isso que não deu para reaproveitar. Trouxe a variante `sobreFotoEscuro`
 (`bg-gray-700 text-white`) ao `app-selo`.
 
+**O cartão inteiro é uma ligação** para `curso().link` (o detalhe do curso), feita com
+um `<a class="absolute inset-0">` sobreposto dentro do `<article class="relative">` —
+e não com um `<a>` a envolver tudo, porque um botão dentro de uma ligação é markup
+inválido. O "Inscrever-se" fica em `relative z-10`, por cima dessa camada, para
+continuar a abrir o modal em vez de navegar. Padrão a copiar em qualquer cartão que
+tenha de ser clicável e ter um botão próprio.
+
 **Inputs:** `curso: CursoCurtaDuracaoCartao` (obrigatório; interface exportada no
 próprio ficheiro — `id`, `titulo`, `resumo`, `cargaHoraria: number`, `preco: number`,
-`estadoInscricao: 'abertas' | 'proxima-turma'`, `proximaTurma?`, `link`, `imagem?`)
+`estadoInscricao: 'abertas' | 'proxima-turma'`, `proximaTurma?`, `link`, `imagem?`) ·
+`acaoComoBotao: boolean` (por omissão `false`, isto é, o "Inscrever-se" mantém-se o link
+para `curso().link`)
+**Outputs:** `inscricaoSolicitada: CursoCurtaDuracaoCartao` (só emite com
+`acaoComoBotao`, para a página abrir o `app-modal-inscricao-curso`)
 
 **Como usar:**
 
-    <app-cartao-curso-curta-duracao [curso]="curso"
+    <app-cartao-curso-curta-duracao [curso]="curso" [acaoComoBotao]="true"
+      (inscricaoSolicitada)="abrirInscricaoCurso($event)"
       [appRevelarAoScroll]="$index % cursosCurtaPorLote" />
+
+**Usado em:** `formacoes`
+
+### app-modal-inscricao-curso
+
+**Onde:** `src/app/shared/componentes/modal-inscricao-curso/modal-inscricao-curso.component.ts`
+(campos em `campos-inscricao-curso.component.ts`, na mesma pasta)
+**Criado para:** modal "Inscrição em Curso de Curta Duração" aberto do "Inscrever-se" do
+`app-cartao-curso-curta-duracao` na sessão "Cursos de Curta Duração" de `formacoes`
+(2026-09-02)
+**Descrição:** diálogo de inscrição num módulo de curta duração, em três zonas separadas
+por linhas finas: cabeçalho com o título a negrito em `text-primary-deep` e o subtítulo
+em cinzento; corpo com "Nome completo" a toda a largura, "E-mail" e "Telefone" a duas
+colunas (uma em ecrã pequeno) e "Curso desejado" a toda a largura; rodapé alinhado à
+direita com "Cancelar" (`contorno`) e "Confirmar Inscrição →" (`profundo`). Campos com
+`variante="caixa"` do `form-input-field` (ícones `users`/`mail`/`phone` pelo slot
+`leftIcon`) e do `field-select-v2` (sem ícone — não tem slot). Erros pelo
+`criarErrosFormulario` + `ValidacaoService`; o telefone usa o
+`validarTelefoneComIndicativo`, que passou a viver em
+`src/app/shared/formulario/validadores.ts` (partilhado com o `modal-agendar-visita`).
+Não é uma secção de página: renderiza-se como `template` do `AlertModalService`
+(`temHeader: false`, `semBotoes: true`, `fecharAoClicarFundo: false`) e o fecho é o X do
+canto. Submissão sem backend: fecha e mostra `modais.sucesso(...)`. Sem imagens.
+
+**Inputs:** nenhum — os dados entram por `ModalDataService` (`DadosInscricaoCurso`:
+`cursoSelecionado`, `cursos`). Exporta também `ID_MODAL_INSCRICAO_CURSO`.
+
+**Abre-se com:** `modais.modal({ id: ID_MODAL_INSCRICAO_CURSO, template: ModalInscricaoCursoComponent, … })`
+**Dados (`data`):** `DadosInscricaoCurso` — `cursoSelecionado` (chega já escolhido no
+select) e `cursos` (todos os cursos de curta duração da página, que constroem as opções;
+o modal não injecta o `CursosService`)
+
+**Como usar:** (na página, ao receber `inscricaoSolicitada` do
+`app-cartao-curso-curta-duracao`)
+
+    void this.modais.modal({
+      id: ID_MODAL_INSCRICAO_CURSO,
+      template: ModalInscricaoCursoComponent,
+      tamanho: 'xgrande',
+      temHeader: false,
+      semBotoes: true,
+      fecharAoClicarFundo: false,
+      data: { cursoSelecionado: curso, cursos: this.cartoesCursosCurta() },
+    });
 
 **Usado em:** `formacoes`
 
@@ -340,7 +418,9 @@ reutilizar. Lista de arranque, para consulta rápida; a fonte de verdade é semp
   `passos-formulario`, `lista-verificacao`, `item-requisito`, `item-contacto`,
   `dropdown-menu`, `painel-lateral`
 - **Formulário:** `campo-texto`, `campo-upload`, `seletor`, `input-field`,
-  `select-field-v2`, `botao`
+  `select-field-v2`, `botao`. Fora de `componentes/`, em `src/app/shared/formulario/`:
+  `erros-formulario.ts` (mensagens do `ValidacaoService` como signals) e
+  `validadores.ts` (validadores partilhados — `validarTelefoneComIndicativo`)
 - **Diversos:** `espaco-imagem` (marcador cinzento das imagens), `icone`, `selo`,
   `faixa-estatisticas`, `faixa-patrocinadores`, `contador-regressivo`,
   `modal-generico`, `alert-modal`, `modal-nossa-historia`, `barra-topo`

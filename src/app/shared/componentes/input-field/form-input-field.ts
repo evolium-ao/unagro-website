@@ -37,7 +37,7 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
 
 const CLASSES_TEXTO: Record<VarianteCampo, string> = {
   caixa: 'py-2 text-sm text-[#585959] placeholder:text-[#9A9A9A]',
-  minimalista: 'py-1.5 text-base text-text-primary placeholder:text-text-primary/55',
+  minimalista: 'py-1.5 text-base text-text-primary placeholder:text-text-primary/55 border-b border-gray-200',
 };
 
 @Component({

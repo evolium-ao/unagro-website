@@ -3,14 +3,24 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ProjetosService } from '../../core/servicos/projetos.service';
 import { SeoService } from '../../core/seo/seo.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { BannerDestaqueComponent, MetadadoBanner } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { CampoTextoComponent } from '../../shared/componentes/campo-texto/campo-texto.component';
+import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
 import { EspacoImagemComponent } from '../../shared/componentes/espaco-imagem/espaco-imagem.component';
 import { SeloComponent } from '../../shared/componentes/selo/selo.component';
 
 @Component({
   selector: 'app-detalhe-projeto',
-  imports: [EspacoImagemComponent, SeloComponent, ReactiveFormsModule, CampoTextoComponent, BotaoComponent],
+  imports: [
+    EspacoImagemComponent,
+    ReactiveFormsModule,
+    CampoTextoComponent,
+    BotaoComponent,
+    SeloComponent,
+    BannerDestaqueComponent,
+    ContainerBannerFaixaEstatisticaComponent,
+  ],
   templateUrl: './detalhe-projeto.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,6 +35,24 @@ export class DetalheProjetoComponent {
   protected readonly imagensGaleria = computed(() =>
     Array.from({ length: this.projeto()?.numeroImagensGaleria ?? 0 }, (_, indice) => indice),
   );
+
+  /** Os selos e metadados do hero são dados do projecto, não frases fixas da página. */
+  protected readonly selosHero = computed(() => {
+    const estado = this.projeto()?.estado;
+    return estado ? [estado] : [];
+  });
+
+  protected readonly metadadosHero = computed<MetadadoBanner[]>(() => {
+    const projeto = this.projeto();
+    if (!projeto) {
+      return [];
+    }
+    return [
+      { icone: 'map-pin', texto: projeto.local },
+      { icone: 'calendar', texto: projeto.periodo },
+      { icone: 'sprout', texto: projeto.categoria },
+    ];
+  });
 
   protected readonly estadoEnvio = signal<'ocioso' | 'enviando' | 'sucesso'>('ocioso');
   protected readonly formulario = new FormGroup({

@@ -56,3 +56,27 @@
     </div>
   </app-container-pagina>
 </section>
+
+<!-- 2 sessão — A Autoridade de uma Certificação UNAGRO: três pilares sobre fundo verde -->
+<section id="secao-autoridade-certificacao"
+  class="relative overflow-hidden bg-primary-dark px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <!-- Marca de água: o selo de certificação, cortado no canto superior direito como no mockup. -->
+  <svg class="pointer-events-none absolute -top-12 -right-6 h-70 w-72 text-white opacity-5 lg:h-105 lg:w-110"
+    viewBox="0 0 275 263" fill="none" aria-hidden="true">
+    <path
+      d="M95 262.5L71.25 222.5L26.25 212.5L30.625 166.25L0 131.25L30.625 96.25L26.25 50L71.25 40L95 0L137.5 18.125L180 0L203.75 40L248.75 50L244.375 96.25L275 131.25L244.375 166.25L248.75 212.5L203.75 222.5L180 262.5L137.5 244.375L95 262.5ZM105.625 230.625L137.5 216.875L170 230.625L187.5 200.625L221.875 192.5L218.75 157.5L241.875 131.25L218.75 104.375L221.875 69.375L187.5 61.875L169.375 31.875L137.5 45.625L105 31.875L87.5 61.875L53.125 69.375L56.25 104.375L33.125 131.25L56.25 157.5L53.125 193.125L87.5 200.625L105.625 230.625ZM124.375 175.625L195 105L177.5 86.875L124.375 140L97.5 113.75L80 131.25L124.375 175.625Z"
+      fill="currentColor" />
+  </svg>
+
+  <app-container-pagina class="relative z-10">
+    <app-cabecalho-secao [titulo]="tituloCertificacao()" [descricao]="descricaoCertificacao()" tema="branco"
+      [mostrarTracos]="false" />
+
+    <div class="mt-14 grid gap-12 sm:grid-cols-3 sm:gap-8">
+      @for (pilar of pilaresCertificacao(); track pilar.id) {
+      <app-pilar-icone [icone]="pilar.icone" [titulo]="pilar.titulo" [descricao]="pilar.descricao"
+        [appRevelarAoScroll]="$index" />
+      }
+    </div>
+  </app-container-pagina>
+</section>

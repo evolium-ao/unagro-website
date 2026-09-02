@@ -14,7 +14,9 @@
 
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       @for (curso of cursosCurtaVisiveis(); track curso.id) {
-      <app-cartao-curso-curta-duracao [curso]="curso" [appRevelarAoScroll]="$index % cursosCurtaPorLote" />
+      <app-cartao-curso-curta-duracao [curso]="curso" [acaoComoBotao]="true"
+        (inscricaoSolicitada)="abrirInscricaoCurso($event)"
+        [appRevelarAoScroll]="$index % cursosCurtaPorLote" />
       } @empty {
       <p class="col-span-full py-12 text-center text-sm text-text-secondary">
         {{ vazioCursosCurta() }}

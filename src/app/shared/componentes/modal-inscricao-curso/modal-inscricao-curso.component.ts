@@ -1,0 +1,152 @@
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ValidacaoService } from '../../../core/servicos/Validacao.service';
+import { TraducaoService } from '../../../core/traducao/traducao.service';
+import { validarTelefoneComIndicativo } from '../../formulario/validadores';
+import { AlertModalService } from '../alert-modal/alert-modal.service';
+import { ModalDataService } from '../alert-modal/modal-data.service';
+import { BotaoComponent } from '../botao/botao.component';
+import { CursoCurtaDuracaoCartao } from '../cartao-curso-curta-duracao/cartao-curso-curta-duracao.component';
+import { IconeComponent } from '../icone/icone.component';
+import { SelectOptionV2 } from '../select-field-v2/select-field-v2';
+import { CamposInscricaoCursoComponent } from './campos-inscricao-curso.component';
+
+/** Identificador do modal, para o abrir e fechar a partir de qualquer ponto da app. */
+export const ID_MODAL_INSCRICAO_CURSO = 'modal-inscricao-curso';
+
+/** O que a página passa em `data` ao abrir o modal. */
+export interface DadosInscricaoCurso {
+  /** Curso cujo "Inscrever-se" foi clicado — chega já escolhido no select. */
+  cursoSelecionado: CursoCurtaDuracaoCartao;
+  /** Todos os cursos de curta duração da página, para as opções do select. */
+  cursos: CursoCurtaDuracaoCartao[];
+}
+
+/**
+ * Formulário de inscrição num curso de curta duração, renderizado como template do
+ * `AlertModalService` (sem header nem botões próprios: o fecho é o X do canto e o
+ * rodapé é desenhado aqui com o `app-botao`).
+ */
+@Component({
+  selector: 'app-modal-inscricao-curso',
+  imports: [ReactiveFormsModule, BotaoComponent, IconeComponent, CamposInscricaoCursoComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="relative">
+      <!-- Fechar -->
+      <button
+        type="button"
+        class="absolute right-4 top-4 z-10 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-gray-300 bg-white/80 text-text-secondary transition-colors hover:border-primary-deep hover:text-primary-deep"
+        [attr.aria-label]="textos().fechar"
+        (click)="fechar()"
+      >
+        <app-icone nome="x" [tamanho]="16" />
+      </button>
+
+      <div class="border-b border-gray-200 px-6 pb-6 pt-9 sm:px-9">
+        <h2 class="max-w-sm text-2xl font-bold leading-tight text-primary-deep sm:text-3xl">
+          {{ textos().titulo }}
+        </h2>
+        <p class="mt-3 text-sm leading-relaxed text-text-secondary">
+          {{ textos().subtitulo }}
+        </p>
+      </div>
+
+      <form [formGroup]="formulario" (ngSubmit)="submeter()">
+        <div class="px-6 py-7 sm:px-9">
+          <!--
+            O @if não é decoração: os campos têm de nascer numa vista embebida, criada
+            no passe de actualização, depois de o [formGroup] acima já estar ligado.
+            Postos aqui directamente, eram construídos no passe de criação — antes do
+            binding — e o criarErrosFormulario deles encontrava o form do
+            FormGroupDirective a null.
+          -->
+          @if (opcoesCursos().length) {
+            <app-campos-inscricao-curso [cursos]="opcoesCursos()" />
+          }
+        </div>
+
+        <div
+          class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 px-6 py-5 sm:px-9"
+        >
+          <app-botao variante="contorno" (clicado)="fechar()">
+            {{ textos().cancelar }}
+          </app-botao>
+          <app-botao
+            tipo="submit"
+            variante="profundo"
+            icone="arrow-right"
+            posicaoIcone="direita"
+            paddingX="px-6"
+          >
+            {{ textos().submeter }}
+          </app-botao>
+        </div>
+      </form>
+    </div>
+  `,
+})
+export class ModalInscricaoCursoComponent {
+  private readonly traducao = inject(TraducaoService);
+  private readonly validacao = inject(ValidacaoService);
+  private readonly modais = inject(AlertModalService);
+  private readonly dadosModal = inject(ModalDataService);
+
+  private readonly dados = this.dadosModal.obterDados<DadosInscricaoCurso>();
+
+  protected readonly formulario = new FormGroup({
+    nome: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, this.validacao.validarEmail],
+    }),
+    telefone: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, validarTelefoneComIndicativo],
+    }),
+    // O curso clicado no cartão chega já escolhido; o utilizador pode trocar.
+    curso: new FormControl(this.dados?.cursoSelecionado.id ?? '', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+  });
+
+  /** As opções vêm da página, no `data` — o modal não conhece o `CursosService`. */
+  protected readonly opcoesCursos = computed<SelectOptionV2[]>(() =>
+    (this.dados?.cursos ?? []).map((curso) => ({ value: curso.id, label: curso.titulo })),
+  );
+
+  protected readonly textos = computed(() => ({
+    titulo: this.traducao.getTraducao([
+      'Inscrição em Curso de Curta Duração',
+      'Short Course Enrolment',
+    ]),
+    subtitulo: this.traducao.getTraducao([
+      'Preencha os dados abaixo para garantir sua vaga no módulo selecionado.',
+      'Fill in the details below to secure your place in the selected module.',
+    ]),
+    cancelar: this.traducao.getTraducao(['Cancelar', 'Cancel']),
+    submeter: this.traducao.getTraducao(['Confirmar Inscrição', 'Confirm Enrolment']),
+    fechar: this.traducao.getTraducao(['Fechar', 'Close']),
+    sucessoTitulo: this.traducao.getTraducao(['Inscrição enviada', 'Enrolment submitted']),
+    sucessoMensagem: this.traducao.getTraducao([
+      'Recebemos a sua inscrição. A equipa de formação confirma a vaga e envia as instruções de pagamento por e-mail dentro de dois dias úteis.',
+      'We have received your enrolment. Our training team will confirm your place and send the payment instructions by e-mail within two working days.',
+    ]),
+  }));
+
+  protected fechar(): void {
+    this.modais.fechar(ID_MODAL_INSCRICAO_CURSO);
+  }
+
+  protected submeter(): void {
+    if (this.formulario.invalid) {
+      this.formulario.markAllAsTouched();
+      return;
+    }
+
+    // TODO: enviar a inscrição ao endpoint de inscrições em cursos quando existir.
+    this.fechar();
+    void this.modais.sucesso(this.textos().sucessoMensagem, this.textos().sucessoTitulo);
+  }
+}

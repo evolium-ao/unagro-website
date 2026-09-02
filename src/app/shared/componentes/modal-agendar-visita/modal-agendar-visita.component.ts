@@ -15,6 +15,7 @@ import { ModalDataService } from '../alert-modal/modal-data.service';
 import { BotaoComponent } from '../botao/botao.component';
 import { OpcaoCartaoSelecao } from '../grupo-cartoes-selecao/grupo-cartoes-selecao.component';
 import { IconeComponent } from '../icone/icone.component';
+import { validarTelefoneComIndicativo } from '../../formulario/validadores';
 import { CamposAgendarVisitaComponent } from './campos-agendar-visita.component';
 
 /** Identificador do modal, para o abrir e fechar a partir de qualquer ponto da app. */
@@ -177,17 +178,4 @@ export class ModalAgendarVisitaComponent {
       ]),
     };
   }
-}
-
-/**
- * O campo mostra o número com indicativo (`+244 900 000 000`), formato que o
- * `ValidacaoService.validarTelefone` recusa por só aceitar os nove dígitos. Aceita-se
- * aqui o indicativo e os espaços, mas reaproveita-se a chave `telefoneInvalido` para a
- * mensagem continuar a vir do catálogo do serviço.
- */
-function validarTelefoneComIndicativo(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) return null;
-
-  const limpo = control.value.toString().replace(/[\s-]/g, '');
-  return /^(\+?244)?\d{9}$/.test(limpo) ? null : { telefoneInvalido: true };
 }

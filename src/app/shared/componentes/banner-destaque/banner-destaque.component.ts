@@ -3,6 +3,7 @@ import { BotaoComponent, PosicaoIcone, TamanhoBotao, VarianteBotao } from '../bo
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 import { SeloComponent } from '../selo/selo.component';
 import { ContainerPaginaComponent } from '../container-pagina/container-pagina.component';
+import { IconeComponent } from '../icone/icone.component';
 
 export interface CtaBannerDestaque {
   texto: string;
@@ -11,6 +12,13 @@ export interface CtaBannerDestaque {
   icone?: string;
   posicaoIcone?: PosicaoIcone;
 }
+/** Item da linha de metadados do banner — ver hero do detalhe de projecto. */
+export interface MetadadoBanner {
+  /** Nome de um ícone de `dados-icones.ts`. */
+  icone: string;
+  texto: string;
+}
+
 export interface HeroImage {
   url: string
   x: string
@@ -30,7 +38,7 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
 
 @Component({
   selector: 'app-banner-destaque',
-  imports: [BotaoComponent, EspacoImagemComponent, SeloComponent, ContainerPaginaComponent],
+  imports: [BotaoComponent, EspacoImagemComponent, SeloComponent, ContainerPaginaComponent, IconeComponent],
   template: `
     <section [class]="classesSecao()">
       <app-espaco-imagem
@@ -73,6 +81,16 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
           @if (subtitulo()) {
             <p [class]="classesSubtitulo()">{{ subtitulo() }}</p>
           }
+          @if (metadados().length) {
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:justify-start">
+              @for (metadado of metadados(); track metadado.texto) {
+                <span class="inline-flex items-center gap-2 text-sm text-white/90">
+                  <app-icone [nome]="metadado.icone" [tamanho]="16" class="text-white/70" />
+                  {{ metadado.texto }}
+                </span>
+              }
+            </div>
+          }
           @if (ctas().length) {
             <div class="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
               @for (cta of ctas(); track cta.texto) {
@@ -99,6 +117,11 @@ export class BannerDestaqueComponent {
   readonly subtitulo = input<string>();
   readonly selos = input<string[]>([]);
   readonly ctas = input<CtaBannerDestaque[]>([]);
+  /**
+   * Linha de metadados (local, período, categoria) abaixo do título. Vazia por
+   * omissão para não alterar os banners que já existem.
+   */
+  readonly metadados = input<MetadadoBanner[]>([]);
   readonly tipo = input<'HOME' | 'PAGINA'>();
   readonly temImagen = input(false)
   readonly heroImage = input<HeroImage>()

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { BotaoComponent } from '../botao/botao.component';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
@@ -49,11 +50,12 @@ function formatarPrecoKwanza(valor: number): string {
  */
 @Component({
   selector: 'app-cartao-curso-curta-duracao',
-  imports: [BotaoComponent, EspacoImagemComponent, IconeComponent, SeloComponent],
+  imports: [BotaoComponent, EspacoImagemComponent, IconeComponent, RouterLink, SeloComponent],
   host: { class: 'block h-full' },
   template: `
     <article
-      class="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs"
+    (click )="irParaDetalhes()"
+      class="relative cursor-pointer flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs transition-shadow duration-300 ease-in-out hover:shadow-md"
     >
       <div class="relative">
         <app-espaco-imagem proporcao="video" alturaMinima="0px" [imagem]="curso().imagem" />
@@ -77,19 +79,50 @@ function formatarPrecoKwanza(valor: number): string {
 
         <div class="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
           <span class="text-base font-bold text-text-primary">{{ precoFormatado() }}</span>
-          <app-botao variante="primario" tamanho="sm" [link]="curso().link">
+          <app-botao
+            class="relative z-10"
+            variante="primario"
+            tamanho="sm"
+            (clicado)="inscricaoSolicitada.emit(curso())"
+          >
             {{ rotuloInscricao() }}
           </app-botao>
         </div>
       </div>
+
+      <!--
+        O cartão inteiro leva ao detalhe do curso. É uma ligação sobreposta em vez de
+        um <a> a envolver tudo porque o "Inscrever-se" é um elemento interactivo — um
+        botão dentro de uma ligação é markup inválido. O botão fica em z-10, por cima
+        desta camada, para continuar a abrir o modal em vez de navegar.
+      -->
+      <a
+        class="absolute inset-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+        [routerLink]="curso().link"
+        [attr.aria-label]="rotuloVerCurso()"
+      ></a>
     </article>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartaoCursoCurtaDuracaoComponent {
   readonly curso = input.required<CursoCurtaDuracaoCartao>();
+  /**
+   * Por omissão o botão "Inscrever-se" é o link para `curso().link`, como sempre foi.
+   * A `true`, passa a ser um botão que emite `inscricaoSolicitada` e deixa a acção a
+   * quem usa o cartão — é assim que a página de formações abre o modal de inscrição.
+   */
+  readonly acaoComoBotao = input(false);
+
+  /** Pedido de inscrição no curso do cartão. Só emite com `acaoComoBotao` a `true`. */
+  readonly inscricaoSolicitada = output<CursoCurtaDuracaoCartao>();
 
   private readonly traducao = inject(TraducaoService);
+
+  /** Sem destino, o `app-botao` renderiza um `<button>` em vez de um `<a>`. */
+  protected readonly destino = computed(() =>
+    this.acaoComoBotao() ? undefined : this.curso().link,
+  );
 
   protected readonly cargaHorariaFormatada = computed(() => {
     const horas = this.curso().cargaHoraria;
@@ -111,7 +144,18 @@ export class CartaoCursoCurtaDuracaoComponent {
     return this.traducao.getTraducao([`Próxima Turma: ${turma}`, `Next Intake: ${turma}`]);
   });
 
+  protected readonly rotuloVerCurso = computed(() =>
+    this.traducao.getTraducao([
+      `Ver o curso ${this.curso().titulo}`,
+      `View the ${this.curso().titulo} course`,
+    ]),
+  );
+
   protected readonly rotuloInscricao = computed(() =>
     this.traducao.getTraducao(['Inscrever-se', 'Enrol']),
   );
+  router = inject(Router);
+  protected irParaDetalhes(): void {
+    this.router.navigate([this.destino()]);
+  }
 }

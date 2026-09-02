@@ -5,6 +5,10 @@ export const PROJETOS_MOCK: Projeto[] = [
     id: 'variedades-resistentes-seca',
     titulo: { pt: 'Variedades de Milho Resistentes à Seca', en: 'Drought-Resistant Maize Varieties' },
     faculdade: { pt: 'Faculdade de Ciências Agrárias', en: 'Faculty of Agricultural Sciences' },
+    estado: { pt: 'EM EXECUÇÃO', en: 'IN PROGRESS' },
+    local: { pt: 'Malanje, Angola', en: 'Malanje, Angola' },
+    periodo: { pt: 'Janeiro 2025 – Dezembro 2027', en: 'January 2025 – December 2027' },
+    categoria: { pt: 'Melhoramento de Culturas', en: 'Crop Improvement' },
     resumo: {
       pt: 'Seleção e teste de variedades de milho com maior tolerância a períodos de seca prolongada.',
       en: 'Selection and testing of maize varieties with greater tolerance to prolonged drought periods.',
@@ -29,6 +33,10 @@ export const PROJETOS_MOCK: Projeto[] = [
     id: 'saude-reprodutiva-bovinos',
     titulo: { pt: 'Saúde Reprodutiva em Rebanhos Bovinos', en: 'Reproductive Health in Cattle Herds' },
     faculdade: { pt: 'Faculdade de Medicina Veterinária e Zootecnia', en: 'Faculty of Veterinary Medicine and Animal Science' },
+    estado: { pt: 'EM EXECUÇÃO', en: 'IN PROGRESS' },
+    local: { pt: 'Huambo, Angola', en: 'Huambo, Angola' },
+    periodo: { pt: 'Março 2025 – Fevereiro 2027', en: 'March 2025 – February 2027' },
+    categoria: { pt: 'Sanidade Animal', en: 'Animal Health' },
     resumo: {
       pt: 'Diagnóstico e acompanhamento reprodutivo para reduzir a mortalidade neonatal em bovinos.',
       en: 'Reproductive diagnosis and monitoring to reduce neonatal mortality in cattle.',
@@ -51,6 +59,10 @@ export const PROJETOS_MOCK: Projeto[] = [
     id: 'cooperativas-cadeia-valor',
     titulo: { pt: 'Fortalecimento de Cooperativas na Cadeia de Valor', en: 'Strengthening Cooperatives in the Value Chain' },
     faculdade: { pt: 'Faculdade de Gestão e Economia Agrária', en: 'Faculty of Agribusiness Management and Economics' },
+    estado: { pt: 'EM EXECUÇÃO', en: 'IN PROGRESS' },
+    local: { pt: 'Luanda, Angola', en: 'Luanda, Angola' },
+    periodo: { pt: 'Janeiro 2025 – Dezembro 2026', en: 'January 2025 – December 2026' },
+    categoria: { pt: 'Agronegócio e Cooperativismo', en: 'Agribusiness and Cooperatives' },
     resumo: {
       pt: 'Apoio à gestão e comercialização coletiva de cooperativas de pequenos produtores.',
       en: 'Support for the management and collective marketing of smallholder cooperatives.',
@@ -73,6 +85,10 @@ export const PROJETOS_MOCK: Projeto[] = [
     id: 'restauro-areas-degradadas',
     titulo: { pt: 'Restauro de Áreas Florestais Degradadas', en: 'Restoration of Degraded Forest Areas' },
     faculdade: { pt: 'Faculdade de Ciências Ambientais e Florestais', en: 'Faculty of Environmental and Forestry Sciences' },
+    estado: { pt: 'CONCLUÍDO', en: 'COMPLETED' },
+    local: { pt: 'Uíge, Angola', en: 'Uíge, Angola' },
+    periodo: { pt: 'Fevereiro 2023 – Janeiro 2025', en: 'February 2023 – January 2025' },
+    categoria: { pt: 'Agricultura Sustentável', en: 'Sustainable Agriculture' },
     resumo: {
       pt: 'Reflorestação com espécies nativas em áreas afetadas por desmatamento.',
       en: 'Reforestation with native species in areas affected by deforestation.',
