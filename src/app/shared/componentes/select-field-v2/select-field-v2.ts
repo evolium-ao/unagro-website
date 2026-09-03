@@ -47,7 +47,7 @@ export type VarianteCampo = 'caixa' | 'minimalista';
 
 const CLASSES_ROTULO: Record<VarianteCampo, string> = {
   caixa: 'text-xs font-medium text-black truncate',
-  minimalista: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
+  minimalista: 'py-1.5 text-base text-text-primary placeholder:text-text-primary/55 border-b border-gray-200',
 };
 
 @Component({

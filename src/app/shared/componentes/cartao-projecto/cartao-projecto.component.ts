@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Projecto, ROTULOS_CATEGORIA_PROJECTO } from '../../../core/modelos/projecto.model';
+import { Projeto, ROTULOS_CATEGORIA_PROJECTO } from '../../../core/modelos/projeto.model';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 import { IconeComponent } from '../icone/icone.component';
 
 /**
  * Cartão de um projecto de desenvolvimento. Recebe a linha da API tal como ela
- * vem (`Projecto`) e resolve aqui os textos bilingues, para que a listagem só
- * tenha de lhe passar o objecto.
+ * vem (`Projeto`, já em texto simples) — só a categoria, que é rótulo de UI e
+ * não dado da API, passa por `getTraducao`.
  */
 @Component({
   selector: 'app-cartao-projecto',
@@ -32,19 +32,17 @@ import { IconeComponent } from '../icone/icone.component';
       </div>
 
       <div class="flex flex-1 flex-col p-6  pt-5">
-        <h3 class="text-lg font-semibold leading-snug text-text-primary">{{ titulo() }}</h3>
-        <p class="mt-3 text-sm leading-relaxed text-text-secondary mb-20">{{ descricao() }}</p>
+        <h3 class="text-lg font-semibold leading-snug text-text-primary">{{ projecto().titulo }}</h3>
+        <p class="mt-3 text-sm leading-relaxed text-text-secondary mb-20">{{ projecto().resumo }}</p>
 
         <div class="mt-auto flex items-end justify-between gap-4 border-t border-gray-100 pt-4">
           <div>
             <p class="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
               {{ traducao.getTraducao(['Resultado principal', 'Key outcome']) }}
             </p>
-            <p class="mt-1 font-semibold text-text-primary">{{ resultadoPrincipal() }}</p>
+            <p class="mt-1 font-semibold text-text-primary">{{ projecto().resultado_principal }}</p>
           </div>
 
-          <!-- TODO: a página de detalhe ainda lê o seu próprio mock, por isso estes ids
-               só resolvem quando ela passar a consumir a mesma origem de dados. -->
           <a
             [routerLink]="['/projetos', projecto().id]"
             [attr.aria-label]="traducao.getTraducao(['Ver projecto', 'View project'])"
@@ -59,17 +57,10 @@ import { IconeComponent } from '../icone/icone.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CartaoProjectoComponent {
-  readonly projecto = input.required<Projecto>();
+  readonly projecto = input.required<Projeto>();
 
   protected readonly traducao = inject(TraducaoService);
 
-  protected readonly titulo = computed(() => this.traducao.getTraducao(this.projecto().titulo));
-  protected readonly descricao = computed(() =>
-    this.traducao.getTraducao(this.projecto().descricao),
-  );
-  protected readonly resultadoPrincipal = computed(() =>
-    this.traducao.getTraducao(this.projecto().resultado_principal),
-  );
   protected readonly rotuloCategoria = computed(() =>
     this.traducao.getTraducao(ROTULOS_CATEGORIA_PROJECTO[this.projecto().categoria]),
   );

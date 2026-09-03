@@ -9,9 +9,8 @@ import {
 import {
   CategoriaProjecto,
   CATEGORIAS_PROJECTO,
-  Projecto,
   ROTULOS_CATEGORIA_PROJECTO,
-} from '../../core/modelos/projecto.model';
+} from '../../core/modelos/projeto.model';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
@@ -36,6 +35,8 @@ import { ContainerPaginaComponent } from '../../shared/componentes/container-pag
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
+import { ProjetosService } from '../../core/servicos/projetos.service';
+import { Projeto } from '../../core/modelos/projeto.model';
 import { FaixaEstatisticasComponent } from "../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component";
 import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 import { CartaoVidroComponent } from '../../shared/componentes/cartao-vidro/cartao-vidro.component';
@@ -96,43 +97,6 @@ const PROJECTOS_POR_PAGINA = 3;
  * seguir o estado do pedido.
  */
 const ESPERA_PAGINA_MS = 600;
-
-/** Substituir pela resposta do endpoint de projectos — a forma é a mesma. */
-const PROJECTOS_MOCK: Projecto[] = [
-  {
-    id: 'revitalizacao-fazenda-quiminha',
-    categoria: 'agricultura',
-    titulo: ['Revitalização da Fazenda da Quiminha', 'Revitalising the Quiminha Farm'],
-    descricao: [
-      'Implementação de sistemas de irrigação inteligentes e rotação de culturas para maximizar o uso da terra e dos recursos hídricos.',
-      'Smart irrigation systems and crop rotation to get the most out of the land and its water resources.',
-    ],
-    resultado_principal: ['+40% Produtividade', '+40% Productivity'],
-    imagem_url: '/imagens/desenvolvimento-projecto-1.png',
-  },
-  {
-    id: 'bio-sementes-resilientes',
-    categoria: 'tecnologia',
-    titulo: ['Bio-Sementes Resilientes', 'Resilient Bio-Seeds'],
-    descricao: [
-      'Pesquisa avançada em biotecnologia para o desenvolvimento de sementes adaptadas a climas áridos e pragas regionais.',
-      'Advanced biotechnology research to develop seeds adapted to arid climates and regional pests.',
-    ],
-    resultado_principal: ['Resiliência Hídrica', 'Water Resilience'],
-    imagem_url: '/imagens/desenvolvimento-projecto-2.png',
-  },
-  {
-    id: 'corredor-verde-cabinda',
-    categoria: 'meio_ambiente',
-    titulo: ['Corredor Verde de Cabinda', 'Cabinda Green Corridor'],
-    descricao: [
-      'Projecto de reflorestamento e protecção da biodiversidade integrado nas práticas de agricultura familiar da região.',
-      'Reforestation and biodiversity protection woven into the smallholder farming of the region.',
-    ],
-    resultado_principal: ['50k Árvores', '50k Trees'],
-    imagem_url: '/imagens/desenvolvimento-projecto-3.png',
-  },
-];
 
 /** Compara sem acentos nem maiúsculas, para a pesquisa não depender da escrita exacta. */
 const normalizar = (texto: string) =>
@@ -466,8 +430,9 @@ export class DesenvolvimentoComponent {
     return COLUNAS_LINHA[formato];
   }
   projectoServico = inject(EstatisticasService);
-  /** Substituir por um sinal alimentado pelo endpoint de projectos. */
-  private readonly projectosBrutos = signal<Projecto[]>(PROJECTOS_MOCK);
+  private readonly projetosService = inject(ProjetosService);
+  /** Mesma origem de dados da página de detalhe, para os ids dos cartões resolverem lá. */
+  private readonly projectosBrutos = computed<Projeto[]>(() => this.projetosService.projetos());
 
   protected readonly categoriaActiva = signal<CategoriaProjecto | 'todos'>('todos');
   protected readonly pesquisa = signal('');
@@ -492,8 +457,8 @@ export class DesenvolvimentoComponent {
       if (!termo) {
         return true;
       }
-      return [projecto.titulo, projecto.descricao, projecto.resultado_principal].some((texto) =>
-        normalizar(this.traducao.getTraducao(texto)).includes(termo),
+      return [projecto.titulo, projecto.resumo, projecto.resultado_principal].some((texto) =>
+        normalizar(texto).includes(termo),
       );
     });
   });

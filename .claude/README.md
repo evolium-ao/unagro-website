@@ -6,6 +6,41 @@ Evita `traducao.t()` para textos ou frases pequenas — em vez disso usa
 `traducao.getTraducao([pt, en])`. As chaves de dicionário ficam para texto
 estrutural e reutilizado.
 
+## Modelos de dados vindos da API
+
+As interfaces em `core/modelos/*.model.ts` que espelham uma linha da API (ex.:
+`Projeto`) só têm campos de **texto simples** (`string`) — nunca `TextoBilingue`
+nem `TextoTraduzido`. A API real devolve o texto já traduzido, não um par
+bilingue, e a interface tem de espelhar essa forma.
+
+O mock que simula essa API guarda os dois idiomas num tipo "bruto" à parte
+(ex.: `ProjetoBruto`, com campos `TextoBilingue`), no ficheiro `dados/*.mock.ts`.
+É o `*.service.ts` correspondente que traduz do bruto para a forma da API, com
+`traducao.getTraducao(...)` dentro de um `computed` — o mesmo sítio onde, mais
+tarde, entraria a chamada HTTP:
+
+```ts
+// core/dados/projetos.mock.ts — dados brutos, bilingues
+export interface ProjetoBruto {
+  titulo: TextoBilingue;
+  // ...
+}
+export const PROJETOS_MOCK: ProjetoBruto[] = [{ titulo: ['Título', 'Title'] /* ... */ }];
+
+// core/servicos/projetos.service.ts — traduz para a forma da API
+readonly projetos = computed<Projeto[]>(() =>
+  PROJETOS_MOCK.map((projeto) => ({
+    ...projeto,
+    titulo: this.traducao.getTraducao(projeto.titulo),
+  })),
+);
+```
+
+Os componentes que consomem o serviço recebem sempre texto já resolvido — não
+chamam `getTraducao` para dados vindos da API. A excepção são rótulos de UI que
+não vêm do serviço (ex.: `ROTULOS_CATEGORIA_PROJECTO`, os nomes dos filtros):
+esses continuam `TextoBilingue`, resolvidos com `getTraducao` onde são usados.
+
 ## Animações — sempre com Motion
 
 **Toda a animação do site é feita com o Motion (pacote `motion`).** Não escrevas

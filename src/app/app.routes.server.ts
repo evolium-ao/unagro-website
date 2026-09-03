@@ -11,6 +11,7 @@ const ROTAS_ESTATICAS = [
   'eventos',
   'formacoes',
   'candidaturas/admissao-candidatura',
+  'candidaturas/admissao-candidatura/inscricao',
   'candidaturas/docentes',
   'alumni',
   'estudantes',

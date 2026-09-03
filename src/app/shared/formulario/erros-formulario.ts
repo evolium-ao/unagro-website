@@ -1,6 +1,6 @@
-import { Signal, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { FormGroupDirective } from '@angular/forms';
+import { DestroyRef, Signal, computed, inject, signal } from '@angular/core';
+import { FormGroup, FormGroupDirective } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ValidacaoService } from '../../core/servicos/Validacao.service';
 
 /**
@@ -17,14 +17,33 @@ export function criarErrosFormulario<C extends string>(
   campos: readonly C[],
 ): Record<C, Signal<string | null>> {
   const validacao = inject(ValidacaoService);
-  const grupo = inject(FormGroupDirective).form;
-  const eventos = toSignal(grupo.events, { initialValue: null });
+  const diretiva = inject(FormGroupDirective);
+  const destroyRef = inject(DestroyRef);
+
+  /**
+   * O `[formGroup]` só é ligado depois de os filhos serem construídos: um componente
+   * criado dentro de um `@if` já apanha a diretiva preenchida, mas um filho directo do
+   * `<form>` vê `form` a nulo. Por isso o grupo é lido a cada leitura, e a subscrição
+   * dos eventos é feita na primeira vez que ele existe.
+   */
+  const versao = signal(0);
+  let inscricao: Subscription | null = null;
+
+  const grupoLigado = (): FormGroup | null => {
+    const grupo: FormGroup | null = diretiva.form ?? null;
+    if (grupo && !inscricao) {
+      inscricao = grupo.events.subscribe(() => versao.update((numero) => numero + 1));
+      destroyRef.onDestroy(() => inscricao?.unsubscribe());
+    }
+    return grupo;
+  };
 
   const erros = {} as Record<C, Signal<string | null>>;
   for (const campo of campos) {
     erros[campo] = computed(() => {
-      eventos();
-      return validacao.getErro(grupo, campo);
+      versao();
+      const grupo = grupoLigado();
+      return grupo ? validacao.getErro(grupo, campo) : null;
     });
   }
 

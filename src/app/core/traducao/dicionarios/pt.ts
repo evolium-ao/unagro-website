@@ -366,6 +366,10 @@ export const pt = {
       titulo: 'Candidatura de Docentes',
       descricao: 'Recrutamento docente da UNAGRO: vantagens, requisitos e processo de candidatura.',
     },
+    inscricao: {
+      titulo: 'Inscrição',
+      descricao: 'Formulário de inscrição no processo seletivo da UNAGRO.',
+    },
     detalheCurso: {
       titulo: 'Curso',
       descricao: 'Detalhes do curso na UNAGRO.',

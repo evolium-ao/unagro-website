@@ -60,6 +60,11 @@ export const routes: Routes = [
             data: { tituloChave: 'rotas.candidaturas.titulo', descricaoChave: 'rotas.candidaturas.descricao' },
           },
           {
+            path: 'admissao-candidatura/inscricao',
+            loadComponent: () => import('./pages/inscricao/inscricao.component').then((m) => m.InscricaoComponent),
+            data: { tituloChave: 'rotas.inscricao.titulo', descricaoChave: 'rotas.inscricao.descricao' },
+          },
+          {
             path: 'docentes',
             loadComponent: () =>
               import('./pages/candidatura-docentes/candidatura-docentes.component').then(

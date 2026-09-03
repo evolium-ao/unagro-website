@@ -1,4 +1,15 @@
-import { Component, computed, input } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  PLATFORM_ID,
+  afterNextRender,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { BotaoComponent, PosicaoIcone, TamanhoBotao, VarianteBotao } from '../botao/botao.component';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 import { SeloComponent } from '../selo/selo.component';
@@ -36,6 +47,42 @@ const CLASSES_CONTEUDO_BASE =
 const DESVIO_HERO = 'md:mt-35';
 const RECUO_CARTAO = 'sm:px-8 lg:px-14';
 
+/**
+ * Entrada em cascata do banner: cada linha sobe, ganha nitidez e assenta com
+ * mola, enquanto o fundo desamplia. O atraso de cada bloco vive aqui e é lido do
+ * `data-animar` do elemento, para o template não ter de saber números.
+ */
+const ATRASOS_S = {
+  fundo: 0,
+  imagem: 0.15,
+  selos: 0.05,
+  titulo: 0.12,
+  subtitulo: 0.2,
+  metadados: 0.26,
+  ctas: 0.32,
+} as const;
+type BlocoAnimado = keyof typeof ATRASOS_S;
+
+/** Distância que os blocos de texto sobem ao entrar. */
+const DESLOCAMENTO_TEXTO_PX = 16;
+/** O recorte entra da esquerda, de onde a coluna de texto o empurra. */
+const DESLOCAMENTO_IMAGEM_PX = -40;
+/** O desfoque a resolver é o que dá ao texto a leitura de foco a acertar. */
+const DESFOQUE_TEXTO = 'blur(8px)';
+const SEM_DESFOQUE = 'blur(0px)';
+/** O fundo entra ligeiramente ampliado e assenta — o `overflow-hidden` corta o excesso. */
+const ESCALA_FUNDO = 1.06;
+/** Mola curta: chega com um ressalto pequeno, sem parecer elástico. */
+const MOLA = { type: 'spring', bounce: 0.25, duration: 0.8 } as const;
+/** O fundo é grande e move-se pouco: precisa de mais tempo e de travagem suave. */
+const DURACAO_FUNDO_S = 1.2;
+const CURVA_FUNDO: [number, number, number, number] = [0.22, 1, 0.36, 1];
+/**
+ * Se o Motion falhar a carregar ou o `inView` nunca disparar, o banner não pode
+ * ficar invisível para sempre — é o conteúdo mais visível da página.
+ */
+const TEMPO_LIMITE_MS = 2000;
+
 @Component({
   selector: 'app-banner-destaque',
   imports: [BotaoComponent, EspacoImagemComponent, SeloComponent, ContainerPaginaComponent, IconeComponent],
@@ -45,6 +92,8 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
         proporcao="cover"
         alturaMinima="100%"
         class="absolute inset-0"
+        data-animar="fundo"
+        [style]="estiloFundo()"
         [imagem]="bg() ? bg() : '/imagens/campus-hero.png'" />
         @if (temBackdrop()) {
 
@@ -57,12 +106,17 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
             [src]="objectoImage.url"
             alt="Estudante"
             class="pointer-events-none absolute hidden h-[90%] object-contain lg:block"
+            data-animar="imagem"
+            [style]="estiloImagem()"
             [style.bottom]="objectoImage.y"
             [style.left]="objectoImage.x" />
         }
         <div [class]="classesConteudo()">
           @if (selos().length) {
-            <div class="mb-4 flex flex-wrap justify-center gap-2 md:justify-start">
+            <div
+              class="mb-4 flex flex-wrap justify-center gap-2 md:justify-start"
+              data-animar="selos"
+              [style]="estiloTexto()">
               @for (selo of selos(); track selo) {
                 <app-selo variante="segondary">{{ selo }}</app-selo>
               }
@@ -71,18 +125,21 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
 
           @if (titulo()) {
             @if (cartao()) {
-              <h2 [class]="classesTitulo()">{{ titulo()
+              <h2 [class]="classesTitulo()" data-animar="titulo" [style]="estiloTexto()">{{ titulo()
                 }}<span class="text-secondary">{{ destaqueComEspaco() }}</span>{{ fimComEspaco() }}</h2>
             } @else {
-              <h1 [class]="classesTitulo()">{{ titulo()
+              <h1 [class]="classesTitulo()" data-animar="titulo" [style]="estiloTexto()">{{ titulo()
                 }}<span class="text-secondary">{{ destaqueComEspaco() }}</span>{{ fimComEspaco() }}</h1>
             }
           }
           @if (subtitulo()) {
-            <p [class]="classesSubtitulo()">{{ subtitulo() }}</p>
+            <p [class]="classesSubtitulo()" data-animar="subtitulo" [style]="estiloTexto()">{{ subtitulo() }}</p>
           }
           @if (metadados().length) {
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:justify-start">
+            <div
+              class="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:justify-start"
+              data-animar="metadados"
+              [style]="estiloTexto()">
               @for (metadado of metadados(); track metadado.texto) {
                 <span class="inline-flex items-center gap-2 text-sm text-white/90">
                   <app-icone [nome]="metadado.icone" [tamanho]="16" class="text-white/70" />
@@ -92,7 +149,10 @@ const RECUO_CARTAO = 'sm:px-8 lg:px-14';
             </div>
           }
           @if (ctas().length) {
-            <div class="mt-8 flex flex-wrap justify-center gap-4 md:justify-start">
+            <div
+              class="mt-8 flex flex-wrap justify-center gap-4 md:justify-start"
+              data-animar="ctas"
+              [style]="estiloTexto()">
               @for (cta of ctas(); track cta.texto) {
                 <app-botao [variante]="cta.variante" [link]="cta.link" [icone]="cta.icone" [posicaoIcone]="cta.posicaoIcone"  [tamanho]="tamanhoCtas()">
                   {{ cta.texto }}
@@ -134,6 +194,48 @@ export class BannerDestaqueComponent {
   readonly cartao = input(false)
   /** Camada que escurece a fotografia — preta nos heros, verde nos cartões de secção. */
   readonly classeBackdrop = input('bg-black/50')
+
+  private readonly hospedeiro = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+  private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
+  /**
+   * Esconde os blocos animados. Fica `false` no servidor, para o HTML
+   * prerenderizado continuar a sair com o texto todo, e é ligado no construtor —
+   * antes da primeira pintura — quando há navegador e movimento permitido.
+   */
+  private readonly oculto = signal(false);
+  private readonly controles: { finished: Promise<unknown>; stop: () => void }[] = [];
+  private pararObservacao?: VoidFunction;
+  private idTempoLimite?: ReturnType<typeof setTimeout>;
+  private animado = false;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.limpar());
+
+    if (!this.ehNavegador || this.movimentoReduzido()) {
+      return;
+    }
+    this.oculto.set(true);
+    afterNextRender(() => void this.animar());
+  }
+
+  /** Estado inicial dos blocos de texto: em baixo, transparentes e desfocados. */
+  protected readonly estiloTexto = computed(() =>
+    this.oculto()
+      ? {
+          opacity: '0',
+          transform: `translateY(${DESLOCAMENTO_TEXTO_PX}px)`,
+          filter: DESFOQUE_TEXTO,
+        }
+      : null,
+  );
+
+  protected readonly estiloImagem = computed(() =>
+    this.oculto() ? { opacity: '0', transform: `translateX(${DESLOCAMENTO_IMAGEM_PX}px)` } : null,
+  );
+
+  protected readonly estiloFundo = computed(() =>
+    this.oculto() ? { transform: `scale(${ESCALA_FUNDO})` } : null,
+  );
 
   protected readonly classesSecao = computed(() =>
     this.cartao()
@@ -182,4 +284,98 @@ export class BannerDestaqueComponent {
     const fim = this.tituloFim();
     return fim ? ` ${fim}` : '';
   });
+
+  private movimentoReduzido(): boolean {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  /**
+   * Espera que a secção entre no ecrã antes de animar. No hero isso acontece no
+   * primeiro fotograma; no molde de cartão — que vive a meio da página — é o que
+   * evita a cascata correr sem ninguém a ver.
+   */
+  private async animar(): Promise<void> {
+    this.idTempoLimite = setTimeout(() => this.mostrarSemAnimacao(), TEMPO_LIMITE_MS);
+
+    try {
+      const { animate, inView } = await import('motion');
+      const secao = this.hospedeiro.querySelector('section') ?? this.hospedeiro;
+
+      this.pararObservacao = inView(
+        secao,
+        () => {
+          if (this.animado) {
+            return;
+          }
+          this.animado = true;
+          this.limpar();
+
+          const alvos = Array.from(
+            this.hospedeiro.querySelectorAll<HTMLElement>('[data-animar]'),
+          );
+
+          for (const alvo of alvos) {
+            const bloco = alvo.dataset['animar'] as BlocoAnimado | undefined;
+            if (!bloco) {
+              continue;
+            }
+
+            if (bloco === 'fundo') {
+              this.controles.push(
+                animate(
+                  alvo,
+                  { scale: [ESCALA_FUNDO, 1] },
+                  { duration: DURACAO_FUNDO_S, ease: CURVA_FUNDO },
+                ),
+              );
+            } else if (bloco === 'imagem') {
+              this.controles.push(
+                animate(
+                  alvo,
+                  { opacity: [0, 1], x: [DESLOCAMENTO_IMAGEM_PX, 0] },
+                  { ...MOLA, delay: ATRASOS_S[bloco] },
+                ),
+              );
+            } else {
+              this.controles.push(
+                animate(
+                  alvo,
+                  {
+                    opacity: [0, 1],
+                    y: [DESLOCAMENTO_TEXTO_PX, 0],
+                    filter: [DESFOQUE_TEXTO, SEM_DESFOQUE],
+                  },
+                  { ...MOLA, delay: ATRASOS_S[bloco] },
+                ),
+              );
+            }
+          }
+
+          // No fim retira-se o estado inicial: o destino da animação é o estado
+          // natural dos elementos, e assim o banner não fica com estilos em linha.
+          void Promise.allSettled(this.controles.map((controle) => controle.finished)).then(() =>
+            this.oculto.set(false),
+          );
+        },
+        { amount: 0.15 },
+      );
+    } catch {
+      this.mostrarSemAnimacao();
+    }
+  }
+
+  private mostrarSemAnimacao(): void {
+    if (this.animado) {
+      return;
+    }
+    this.animado = true;
+    this.limpar();
+    this.oculto.set(false);
+  }
+
+  private limpar(): void {
+    this.pararObservacao?.();
+    this.pararObservacao = undefined;
+    clearTimeout(this.idTempoLimite);
+  }
 }

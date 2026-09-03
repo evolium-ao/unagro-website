@@ -6,3 +6,121 @@
   <app-banner-destaque [titulo]="tituloHero()" [tituloDestaque]="tituloDestaqueHero()" [subtitulo]="subtituloHero()"
     bg="/imagens/campus-hero.png" [temBackdrop]="true" classeBackdrop="bg-black/55" />
 </app-container-banner-faixa-estatistica>
+
+<!-- 1 sessão — startups incubadas no Hub: cabeçalho à esquerda com "Ver todas" à
+     direita e uma grelha de três cartões de agritech. -->
+<section id="secao-startups" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao [titulo]="tituloStartups()" [descricao]="descricaoStartups()"
+      alinhamento="esquerda" [mostrarTracos]="false" tamanhoDescricao="pequeno"
+      [textoAcao]="verTodasStartups()" [linkAcao]="linkTodasStartups" />
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (startup of startups(); track startup.id) {
+        <app-cartao-startup [startup]="startup" [appRevelarAoScroll]="$index" />
+      } @empty {
+        <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+          {{ semStartups() }}
+        </p>
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 2 sessão — Projectos Inovadores: grelha bento de 4 células (o destacado ocupa
+     duas colunas, dois cartões simples e a chamada da Aceleradora a fechar).
+     Fundo bg-bg-light para os cartões brancos lerem contra a 1 sessão, que é
+     bg-bg-lighter. -->
+<section id="secao-projectos-inovadores" class="bg-bg-light px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao [titulo]="tituloProjectos()" [descricao]="descricaoProjectos()" />
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (projecto of projectosInovadores(); track projecto.id) {
+        <app-cartao-projecto-inovador [projecto]="projecto"
+          [formato]="projecto.destaque ? 'destaque' : 'simples'"
+          [class]="projecto.destaque ? 'sm:col-span-2' : 'sm:col-span-1'"
+          [appRevelarAoScroll]="$index" />
+      } @empty {
+        <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+          {{ semProjectos() }}
+        </p>
+      }
+
+      <!-- Chamada da Aceleradora: célula única e conteúdo estrutural da sessão, por
+           isso fica em markup da página e não no cartão nem no mock. -->
+      <div class="relative overflow-hidden rounded-xl bg-primary-dark p-7 sm:col-span-2 sm:p-9"
+        [appRevelarAoScroll]="projectosInovadores().length">
+        <app-icone nome="users" [tamanho]="180" [espessuraTraco]="1.5"
+          class="pointer-events-none absolute -bottom-12 -right-8 text-white opacity-5" />
+
+        <div class="relative z-10">
+          <h3 class="text-lg font-bold text-white sm:text-xl">{{ tituloAceleradora() }}</h3>
+          <p class="mt-3 max-w-xl text-sm leading-relaxed text-white/70">
+            {{ descricaoAceleradora() }}
+          </p>
+          <app-botao class="mt-6 inline-block" variante="branco" raio="medio" tamanho="sm"
+            [link]="linkAceleradora">
+            {{ textoAceleradora() }}
+          </app-botao>
+        </div>
+      </div>
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 3 sessão — Como Apoiar: cabeçalho à esquerda mas com os traços dourados, e três
+     cartões brancos iguais com o ícone em caixa verde e uma ligação de acção no
+     rodapé. Fundo bg-bg-lighter contra o bg-bg-light da 2 sessão. -->
+<section id="secao-como-apoiar" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao [titulo]="tituloComoApoiar()" [descricao]="descricaoComoApoiar()"
+      alinhamento="esquerda" tamanhoDescricao="pequeno" />
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (forma of formasApoio(); track forma.id) {
+        <app-cartao-recurso [caixaIcone]="true" [icone]="forma.icone" [titulo]="forma.titulo"
+          [descricao]="forma.descricao" [textoAcao]="forma.textoAcao" [linkAcao]="forma.linkAcao"
+          [iconeAcao]="forma.iconeAcao" [appRevelarAoScroll]="$index" />
+      } @empty {
+        <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+          {{ semFormasApoio() }}
+        </p>
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 4 sessão — Acompanhar Projectos: painel verde escuro em duas colunas com o
+     formulário de subscrição à direita. Bloco único, por isso fica em markup da
+     página; o estado do formulário vive no .ts. -->
+<section id="secao-acompanhar-projectos" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid gap-8 rounded-xl bg-primary-dark p-8 sm:p-10 lg:grid-cols-2 lg:items-center"
+      appRevelarAoScroll>
+      <div>
+        <h2 class="text-2xl font-bold text-white sm:text-3xl">{{ tituloAcompanhar() }}</h2>
+        <p class="mt-3 text-sm leading-relaxed text-white/70">{{ descricaoAcompanhar() }}</p>
+      </div>
+
+      <form [formGroup]="formularioSubscricao" (ngSubmit)="subscrever()"
+        class="w-full lg:max-w-md lg:justify-self-end">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <form-input-field class="w-full sm:flex-1" formControlName="email" [label]="''"
+            type="email" [placeholder]="placeholderEmail()" [erro]="erroEmail()" />
+          <!-- O mt-1 acompanha o gap do rótulo vazio do campo, para o botão assentar
+               à mesma altura da caixa de texto. -->
+          <app-botao variante="secundario" raio="medio" tipo="submit" class="shrink-0 sm:mt-1">
+            {{ rotuloAssinar() }}
+          </app-botao>
+        </div>
+
+        @if (estadoSubscricao() === 'enviado') {
+          <p class="mt-3 text-xs text-white/90" role="status">{{ confirmacaoSubscricao() }}</p>
+        } @else {
+          <p class="mt-3 text-xs text-white/50">{{ notaPrivacidade() }}</p>
+        }
+      </form>
+    </div>
+  </app-container-pagina>
+</section>

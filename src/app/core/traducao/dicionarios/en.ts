@@ -359,6 +359,10 @@ export const en = {
       titulo: 'Faculty Applications',
       descricao: 'UNAGRO faculty recruitment: benefits, requirements and how to apply.',
     },
+    inscricao: {
+      titulo: 'Enrolment',
+      descricao: 'UNAGRO admissions enrolment form.',
+    },
     detalheCurso: {
       titulo: 'Course',
       descricao: 'Course details at UNAGRO.',

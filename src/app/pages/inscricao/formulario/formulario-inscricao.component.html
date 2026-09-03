@@ -1,0 +1,34 @@
+<div class="mx-auto max-w-lg overflow-x-auto">
+  <app-passos-formulario
+    class="block min-w-[300px]"
+    formaDistintivo="circulo"
+    [passos]="rotulosPassos()"
+    [ativo]="passoAtual()"
+    [rotuloLista]="textos().progresso" />
+</div>
+
+<form
+  class="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10"
+  [formGroup]="formulario"
+  (ngSubmit)="avancar()">
+  <app-inscricao-dados-pessoais />
+
+  <div class="mt-12">
+    <app-inscricao-formacao-academica [cursos]="opcoesCursos()" />
+  </div>
+
+  <div class="mt-12">
+    <app-inscricao-motivacao-documentos />
+  </div>
+
+  <div class="mt-10 flex justify-end">
+    <app-botao
+      variante="primario"
+      raio="medio"
+      tipo="submit"
+      icone="arrow-right"
+      posicaoIcone="direita">
+      {{ textos().avancar }}
+    </app-botao>
+  </div>
+</form>

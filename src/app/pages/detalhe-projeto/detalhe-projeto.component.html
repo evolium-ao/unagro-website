@@ -1,100 +1,147 @@
 @if (projeto(); as p) {
-  <!-- Hero — o selo, o título e a linha de metadados vêm todos do próprio projecto. -->
-  <app-container-banner-faixa-estatistica>
-    <app-banner-destaque
-      [titulo]="p.titulo"
-      [selos]="selosHero()"
-      [metadados]="metadadosHero()"
-      bg="/imagens/bg-banner-desenvolvimento.png"
-      [temBackdrop]="true" />
-  </app-container-banner-faixa-estatistica>
-
-  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <!-- A faculdade e o resumo saíram do cabeçalho antigo para aqui, para não se perderem. -->
-    <app-selo variante="primario">{{ p.faculdade }}</app-selo>
-    <p class="mt-3 max-w-2xl text-text-secondary">{{ p.resumo }}</p>
-
-    <div class="mt-8 grid gap-8 lg:grid-cols-2">
+<!-- Hero — o selo, o título e a linha de metadados vêm todos do próprio projecto. -->
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque [titulo]="p.titulo" [selos]="selosHero()" [metadados]="metadadosHero()"
+    bg="/imagens/bg-banner-desenvolvimento.png" [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
+<!-- 1 sessão — contexto e desafio: o enquadramento do projecto, os indicadores da situação de partida e a fotografia -->
+@if (p.contexto || p.desafio) {
+<section id="secao-contexto-desafio" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
       <div>
-        <h2 class="text-xl font-semibold text-text-primary">
-          {{ traducao.t('paginas.detalheProjeto.desafioTitulo') }}
-        </h2>
-        <p class="mt-3 text-text-secondary">{{ p.desafio }}</p>
-      </div>
-      <div>
-        <h2 class="text-xl font-semibold text-text-primary">
-          {{ traducao.t('paginas.detalheProjeto.solucaoTitulo') }}
-        </h2>
-        <ul class="mt-3 flex flex-col gap-2">
-          @for (solucao of p.solucoes; track solucao) {
-            <li class="rounded-lg border border-gray-100 p-3 text-sm text-text-secondary shadow-sm">{{ solucao }}</li>
+        <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false" [titulo]="tituloContexto()"
+          appRevelarAoScroll />
+
+        <div class="mt-6 space-y-5 leading-relaxed text-text-secondary" appRevelarAoScroll>
+          @if (p.contexto) {
+          <p>{{ p.contexto }}</p>
           }
-        </ul>
+          @if (p.desafio) {
+          <p>{{ p.desafio }}</p>
+          }
+        </div>
+
+        @if (p.estatisticasContexto; as estatisticas) {
+        <div class="mt-10 flex flex-wrap gap-x-10 gap-y-6">
+          @for (estatistica of estatisticas; track estatistica.id) {
+          <app-item-estatistica formato="barra" tema="verde" [valor]="estatistica.valor" [rotulo]="estatistica.rotulo"
+            [appRevelarAoScroll]="$index + 1" />
+          }
+        </div>
+        }
+      </div>
+
+      <div appRevelarAoScroll>
+        @if (p.imagem_contexto_url) {
+
+        <img [src]="p.imagem_contexto_url" [alt]="p.titulo" loading="lazy"
+          class="h-80 w-full rounded-2xl object-cover shadow-lg lg:h-104" />
+        } @else {
+        <!-- TODO: falta a fotografia do bloco de contexto deste projecto — fica o marcador cinzento. -->
+        <app-espaco-imagem [imagem]="p.imagem_contexto_url" class="block overflow-hidden rounded-2xl" proporcao="auto"
+          alturaMinima="20rem" [legenda]="legendaImagemContexto()" />
+        }
       </div>
     </div>
-  </section>
+  </app-container-pagina>
+</section>
+}
+<!-- 2 sessão — objetivos: o objectivo geral do projecto ao lado da grelha de objectivos específicos -->
+@if (p.objetivoGeral || p.objetivosEspecificos?.length) {
+<section id="secao-objetivos" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="verde" [titulo]="tituloObjetivos()" appRevelarAoScroll />
 
-  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <h2 class="text-xl font-semibold text-text-primary">
-      {{ traducao.t('paginas.detalheProjeto.cronogramaTitulo') }}
-    </h2>
-    <ol class="mt-6 flex flex-col gap-8 border-l-2 border-primary/20 pl-6">
-      @for (etapa of p.cronograma; track etapa.titulo) {
-        <li class="relative">
-          <span class="absolute -left-[1.9rem] top-1 h-3 w-3 rounded-full bg-primary"></span>
-          <p class="text-sm font-semibold text-accent">{{ etapa.data }}</p>
-          <p class="font-medium text-text-primary">{{ etapa.titulo }}</p>
-          <p class="mt-1 text-sm text-text-secondary">{{ etapa.descricao }}</p>
-        </li>
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      @if (p.objetivoGeral; as objetivoGeral) {
+      <app-cartao-apoio formato="destaque" class="h-full" [titulo]="tituloObjetivoGeral()" [descricao]="objetivoGeral"
+        appRevelarAoScroll />
       }
-    </ol>
-  </section>
 
-  <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-    <h2 class="text-xl font-semibold text-text-primary">{{ traducao.t('paginas.detalheProjeto.galeriaTitulo') }}</h2>
-    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      @for (indice of imagensGaleria(); track indice) {
-        <app-espaco-imagem proporcao="quadrado" />
+      <div class="grid gap-6 sm:grid-cols-2 lg:col-span-2">
+        @for (objetivo of p.objetivosEspecificos ?? []; track objetivo.id) {
+        <app-cartao-recurso corIcone="dourado" [icone]="objetivo.icone" [titulo]="objetivo.titulo"
+          [descricao]="objetivo.descricao" [appRevelarAoScroll]="$index + 1" />
+        } @empty {
+        <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+          {{ traducao.getTraducao(['Os objetivos específicos deste projecto ainda não foram publicados.', 'The specific objectives of this project have not been published yet.']) }}
+        </p>
+        }
+      </div>
+    </div>
+  </app-container-pagina>
+</section>
+}
+<!-- 3 sessão — solução implementada: os componentes técnicos da solução deste projecto, em cartões claros sobre o verde escuro -->
+@if (p.descricaoSolucao || p.solucoes?.length) {
+<section id="secao-solucao" class="bg-primary-deep px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="branco" [titulo]="tituloSolucao()" [descricao]="p.descricaoSolucao" appRevelarAoScroll />
+
+    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      @for (solucao of p.solucoes ?? []; track solucao.id) {
+      <app-cartao-recurso formato="iconeInline" [icone]="solucao.icone" [titulo]="solucao.titulo"
+        [descricao]="solucao.descricao" [appRevelarAoScroll]="$index + 1" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-white/70">
+        {{ traducao.getTraducao(['A solução implementada neste projecto ainda não foi publicada.', 'The solution implemented in this project has not been published yet.']) }}
+      </p>
       }
     </div>
-  </section>
-
-  <section class="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8 lg:pb-20">
-    <h2 class="text-xl font-semibold text-text-primary">
-      {{ traducao.t('paginas.detalheProjeto.contactoTitulo') }}
-    </h2>
-    <p class="mt-1 text-sm text-text-secondary">{{ traducao.t('paginas.detalheProjeto.contactoDescricao') }}</p>
-    <form class="mt-4 flex flex-col gap-4" [formGroup]="formulario" (ngSubmit)="enviarMensagem()">
-      <app-campo-texto
-        formControlName="nome"
-        [rotulo]="traducao.t('paginas.contactos.campoNome')"
-        [obrigatorio]="true"
-        [mensagemErro]="traducao.t('comum.campoObrigatorio')"
-      />
-      <app-campo-texto
-        formControlName="email"
-        tipo="email"
-        [rotulo]="traducao.t('paginas.contactos.campoEmail')"
-        [obrigatorio]="true"
-        [mensagemErro]="traducao.t('comum.campoObrigatorio')"
-      />
-      <app-campo-texto
-        formControlName="mensagem"
-        [multilinha]="true"
-        [rotulo]="traducao.t('paginas.contactos.campoMensagem')"
-        [obrigatorio]="true"
-        [mensagemErro]="traducao.t('comum.campoObrigatorio')"
-      />
-      <app-botao tipo="submit" variante="primario" icone="send" [aCarregar]="estadoEnvio() === 'enviando'" class="self-start">
-        {{ traducao.t('comum.enviarMensagem') }}
-      </app-botao>
-      @if (estadoEnvio() === 'sucesso') {
-        <p class="text-sm font-medium text-primary">{{ traducao.t('comum.envioComSucesso') }}</p>
+  </app-container-pagina>
+</section>
+}
+<!-- 4 sessão — impacto do projecto: os números que o projecto já atingiu, sem cartões nem separadores, direitos sobre o branco -->
+@if (p.estatisticasImpacto?.length) {
+<section id="secao-impacto" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 sm:gap-8">
+      @for (estatistica of p.estatisticasImpacto ?? []; track estatistica.id) {
+      <app-item-estatistica formato="centrado" tema="verde" [valor]="estatistica.valor" [rotulo]="estatistica.rotulo"
+        [appRevelarAoScroll]="$index + 1" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Os números de impacto deste projecto ainda não foram publicados.', 'The impact figures for this project have not been published yet.']) }}
+      </p>
       }
-    </form>
-  </section>
+    </div>
+  </app-container-pagina>
+</section>
+}
+<!-- 5 sessão — cronograma: as etapas do projecto em linha temporal, com a fase actual em destaque -->
+@if (p.cronograma?.length) {
+<section id="secao-cronograma" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="verde" [titulo]="tituloCronograma()" appRevelarAoScroll />
+
+    <div class="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
+      @for (etapa of p.cronograma ?? []; track etapa.id) {
+      <app-etapa-cronograma [etapa]="etapa" [numero]="$index + 1" [appRevelarAoScroll]="$index + 1" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['O cronograma deste projecto ainda não foi publicado.', 'The timeline for this project has not been published yet.']) }}
+      </p>
+      }
+    </div>
+  </app-container-pagina>
+</section>
+}
+<!-- 6 sessão — galeria multimédia: o mosaico de fotografias do projecto, a maior com a legenda do estado inicial -->
+@if (p.galeria?.length) {
+<section id="secao-galeria" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false" [titulo]="tituloGaleria()"
+      appRevelarAoScroll />
+
+    <div class="mt-10">
+      <app-galeria-mosaico [itens]="p.galeria ?? []" [textoAlternativo]="p.titulo" />
+    </div>
+  </app-container-pagina>
+</section>
+}
 } @else {
-  <div class="mx-auto max-w-7xl px-4 py-20 text-center text-text-secondary">
-    {{ traducao.t('paginas.detalheProjeto.naoEncontrado') }}
-  </div>
+<div class="mx-auto max-w-7xl px-4 py-20 text-center text-text-secondary">
+  {{ traducao.getTraducao(['Projecto não encontrado', 'Project not found']) }}
+</div>
 }

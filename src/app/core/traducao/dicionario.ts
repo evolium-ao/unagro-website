@@ -311,6 +311,7 @@ export interface Dicionario {
     hub: { titulo: string; descricao: string };
     candidaturas: { titulo: string; descricao: string };
     candidaturaDocentes: { titulo: string; descricao: string };
+    inscricao: { titulo: string; descricao: string };
     detalheCurso: { titulo: string; descricao: string };
     estudantes: { titulo: string; descricao: string };
     detalheProjeto: { titulo: string; descricao: string };

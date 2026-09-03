@@ -15,6 +15,12 @@ import { IconeComponent } from '../icone/icone.component';
 type ErroFnOuTexto = (form: FormGroup) => string | null | boolean;
 
 /**
+ * `primario` = moldura tracejada verde e ícone solto (por omissão);
+ * `neutro` = moldura tracejada cinzenta com o ícone dentro de um círculo claro.
+ */
+export type TemaCampoUpload = 'primario' | 'neutro';
+
+/**
  * Área de carregamento com moldura tracejada verde: ícone de nuvem e, assim que há
  * anexo, o nome do ficheiro logo por baixo do ícone. Aceita largar ficheiros e
  * implementa `ControlValueAccessor` — o valor do controlo é o próprio `File`.
@@ -51,18 +57,30 @@ type ErroFnOuTexto = (form: FormGroup) => string | null | boolean;
         (dragleave)="aoArrastar($event, false)"
         (drop)="aoLargar($event)"
       >
-        <app-icone
-          [nome]="ficheiro() ? 'file-check' : 'cloud-upload'"
-          [tamanho]="34"
-          class="text-primary-dark"
-        />
+        @if (tema() === 'neutro') {
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-text-secondary"
+          >
+            <app-icone [nome]="ficheiro() ? 'file-check' : 'cloud-upload'" [tamanho]="22" />
+          </span>
+        } @else {
+          <app-icone
+            [nome]="ficheiro() ? 'file-check' : 'cloud-upload'"
+            [tamanho]="34"
+            class="text-primary-dark"
+          />
+        }
 
         @if (ficheiro(); as anexo) {
           <p class="mt-3 max-w-full truncate text-sm font-semibold text-primary-dark">{{ anexo.name }}</p>
           <p class="mt-1 text-xs text-text-secondary">{{ tamanhoLegivel() }} · {{ textoTrocar() }}</p>
         } @else {
           <p class="mt-4 text-sm text-text-secondary">
-            <span class="font-semibold text-primary-dark">{{ textoAcao() }}</span>
+            <span
+              class="font-semibold"
+              [class]="tema() === 'neutro' ? 'text-text-primary' : 'text-primary-dark'"
+              >{{ textoAcao() }}</span
+            >
             {{ textoArraste() }}
           </p>
           @if (textoLimite()) {
@@ -109,6 +127,7 @@ export class CampoUploadComponent implements ControlValueAccessor, OnInit {
   readonly textoArraste = input<string>('ou arraste e solte');
   readonly textoLimite = input<string>('');
   readonly textoTrocar = input<string>('Clique para trocar');
+  readonly tema = input<TemaCampoUpload>('primario');
 
   protected readonly id = crypto.randomUUID();
   protected readonly ficheiro = signal<File | null>(null);
@@ -124,6 +143,11 @@ export class CampoUploadComponent implements ControlValueAccessor, OnInit {
   protected readonly classesMoldura = computed(() => {
     if (this.__erro()) {
       return 'border-red-400 bg-red-50/40';
+    }
+    if (this.tema() === 'neutro') {
+      return this.aArrastar()
+        ? 'border-primary bg-primary/5'
+        : 'border-gray-300 bg-white hover:border-primary hover:bg-primary/5';
     }
     return this.aArrastar()
       ? 'border-primary bg-primary/10'

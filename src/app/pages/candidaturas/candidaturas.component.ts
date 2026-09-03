@@ -90,7 +90,7 @@ export class CandidaturasComponent {
   protected readonly ctaBannerDestaque = computed<CtaBannerDestaque[]>(() => {
     return [
       {
-        link: '/candidaturas/admissao-candidatura#secao-portal',
+        link: '/candidaturas/admissao-candidatura/inscricao',
         texto: this.traducao.getTraducao(['Iniciar Candidatura', 'Start Application']),
         variante: 'branco',
         icone: "arrow-right",

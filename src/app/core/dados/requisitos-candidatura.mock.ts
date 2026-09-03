@@ -61,3 +61,46 @@ export const REQUISITOS_POR_NIVEL_MOCK: RequisitosPorNivel[] = [
     },
   },
 ];
+
+/**
+ * Requisitos gerais mostrados no painel lateral do formulário de inscrição.
+ * Partilham a forma dos documentos de candidatura (ícone, título e descrição curta).
+ */
+export const REQUISITOS_GERAIS_INSCRICAO_MOCK: DocumentoCandidatura[] = [
+  {
+    id: 'certificado-ensino-medio',
+    icone: 'graduation-cap',
+    titulo: { pt: 'Certificado de Ensino Médio', en: 'Secondary Education Certificate' },
+    descricao: {
+      pt: 'Documento oficial comprovativo da conclusão do ensino médio ou equivalente internacional.',
+      en: 'Official document proving completion of secondary education or an international equivalent.',
+    },
+  },
+  {
+    id: 'media-minima',
+    icone: 'award',
+    titulo: { pt: 'Média Mínima de 14 Valores', en: 'Minimum Average of 14 Points' },
+    descricao: {
+      pt: 'Histórico escolar que demonstre excelência académica nas disciplinas de base científica.',
+      en: 'School transcript showing academic excellence in core science subjects.',
+    },
+  },
+  {
+    id: 'documento-identificacao',
+    icone: 'id-card',
+    titulo: { pt: 'Documento de Identificação', en: 'Identification Document' },
+    descricao: {
+      pt: 'Cópia actualizada do bilhete de identidade nacional ou passaporte válido.',
+      en: 'Up-to-date copy of the national ID card or a valid passport.',
+    },
+  },
+  {
+    id: 'proficiencia-linguistica',
+    icone: 'languages',
+    titulo: { pt: 'Proficiência Linguística', en: 'Language Proficiency' },
+    descricao: {
+      pt: 'Para estudantes internacionais, comprovativo de proficiência na língua de instrução.',
+      en: 'For international students, proof of proficiency in the language of instruction.',
+    },
+  },
+];
