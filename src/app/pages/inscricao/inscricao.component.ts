@@ -59,7 +59,7 @@ export class InscricaoComponent {
 
   protected readonly ctasHero = computed<CtaBannerDestaque[]>(() => [
     {
-      link: '/candidaturas/admissao-candidatura/inscricao#secao-formulario',
+      link: '/candidaturas/estudantes#secao-formulario',
       texto: this.traducao.getTraducao(['Candidatar-me', 'Apply now']),
       variante: 'branco',
       icone: 'arrow-right',
@@ -67,7 +67,7 @@ export class InscricaoComponent {
     },
     {
       // TODO: apontar para o PDF da brochura assim que o ficheiro/rota existir.
-      link: '/candidaturas/admissao-candidatura/inscricao#secao-formulario',
+      link: '/candidaturas/estudantes#secao-formulario',
       texto: this.traducao.getTraducao(['Baixar a brochura em PDF', 'Download the PDF brochure']),
       variante: 'glass',
     },

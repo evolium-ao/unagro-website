@@ -10,13 +10,13 @@ export interface PatrocinadorExibido {
 const SEGUNDOS_POR_ITEM = 4;
 
 /** Máximo de colunas visíveis (ecrãs lg); ver `--colunas` nos estilos. */
-const COLUNAS_MAX = 6;
+const COLUNAS_MAX = 4;
 
 @Component({
   selector: 'app-faixa-patrocinadores',
   template: `
     @if (patrocinadores().length) {
-      <section class="flex h-[145px] items-center overflow-hidden bg-white">
+      <section class="flex h-[145px] items-center overflow-hidden bg-transparent">
         <div
           class="faixa-rolagem grid w-full grid-flow-col items-center"
           [style.--total]="patrocinadores().length"
@@ -31,11 +31,11 @@ const COLUNAS_MAX = 6;
                 <img
                   [src]="patrocinador.logoUrl"
                   [alt]="patrocinador.nome"
-                  class="max-h-16 w-full max-w-[140px] object-contain grayscale transition-all duration-300 hover:grayscale-0"
+                  class="max-h-20 w-full max-w-[240px] object-contain transition-all duration-300"
                 />
               } @else {
                 <div
-                  class="flex h-16 w-full max-w-[140px] items-center justify-center rounded-md border border-dashed border-gray-300 px-3 text-center text-xs font-medium text-gray-400"
+                  class="flex h-20 w-full max-w-[240px] items-center justify-center rounded-md border border-dashed border-gray-300 px-3 text-center text-xs font-medium text-gray-400"
                 >
                   {{ patrocinador.nome }}
                 </div>
@@ -49,7 +49,7 @@ const COLUNAS_MAX = 6;
   styles: `
     /* Colunas de largura fixa: são elas que garantem quantos logos ficam visíveis de cada vez. */
     .faixa-rolagem {
-      --colunas: 3;
+      --colunas: 2;
       grid-auto-columns: calc(100% / var(--colunas));
       animation-name: rolagem-faixa;
       animation-timing-function: linear;
@@ -58,13 +58,13 @@ const COLUNAS_MAX = 6;
 
     @media (min-width: 768px) {
       .faixa-rolagem {
-        --colunas: 4;
+        --colunas: 3;
       }
     }
 
     @media (min-width: 1024px) {
       .faixa-rolagem {
-        --colunas: 6;
+        --colunas: 4;
       }
     }
 

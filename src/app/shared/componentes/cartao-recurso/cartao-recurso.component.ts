@@ -12,6 +12,21 @@ export type CorIconeCartaoRecurso = 'primario' | 'dourado';
  */
 export type FormatoCartaoRecurso = 'vertical' | 'iconeInline';
 
+/**
+ * Casca do cartão no formato `vertical`. `branca` é o cartão de sempre; `suave`
+ * assenta em cinzento muito claro, para grelhas sobre um fundo quase branco;
+ * `sombra` é o cartão branco sem moldura, de cantos maiores e sombra leve, para
+ * faixas de pilares assentes num fundo cinzento claro.
+ */
+export type SuperficieCartaoRecurso = 'branca' | 'suave' | 'sombra';
+
+/**
+ * Aspecto da caixa do ícone quando `caixaIcone` está ligado. `solida` é o
+ * quadrado verde escuro de sempre com o traço a branco; `suave` dá o quadrado
+ * menor de fundo verde muito claro com o ícone em verde escuro.
+ */
+export type EstiloCaixaIconeCartaoRecurso = 'solida' | 'suave';
+
 const CLASSES_ICONE: Record<CorIconeCartaoRecurso, string> = {
   primario: 'text-primary',
   dourado: 'text-secondary',
@@ -19,7 +34,14 @@ const CLASSES_ICONE: Record<CorIconeCartaoRecurso, string> = {
 
 const CLASSES_ARTIGO: Record<FormatoCartaoRecurso, string> = {
   vertical: 'flex h-full flex-col rounded-xl bg-white p-6  sm:p-7 border border-gray-200',
-  iconeInline: 'flex h-full flex-col rounded-2xl bg-bg-light p-6 sm:p-7 border border-gray-200/70',
+  iconeInline: 'flex h-full flex-col rounded-2xl bg-bg-light p-4 sm:p-7 border border-gray-200/70',
+};
+
+/** Só conta no formato `vertical`; a `branca` é, letra por letra, a casca de sempre. */
+const CLASSES_SUPERFICIE: Record<SuperficieCartaoRecurso, string> = {
+  branca: CLASSES_ARTIGO.vertical,
+  suave: 'flex h-full flex-col rounded-xl bg-bg-light p-6 sm:p-7 border border-gray-100',
+  sombra: 'flex h-full flex-col rounded-2xl bg-white p-6 shadow-sm',
 };
 
 /**
@@ -33,7 +55,7 @@ const CLASSES_ARTIGO: Record<FormatoCartaoRecurso, string> = {
   imports: [IconeComponent, RouterLink],
   host: { class: 'block h-full' },
   template: `
-    <article [class]="classeArtigo()">
+    <article [class]="classeArtigo()" class="">
       @if (formato() === 'iconeInline') {
         <div class="flex items-center gap-2.5">
           <app-icone [nome]="icone()" [tamanho]="16" class="shrink-0 text-primary-deep" />
@@ -42,9 +64,15 @@ const CLASSES_ARTIGO: Record<FormatoCartaoRecurso, string> = {
         <p class="mt-6 text-sm leading-relaxed text-text-secondary">{{ descricao() }}</p>
       } @else {
         @if (caixaIcone()) {
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-deep">
-            <app-icone [nome]="icone()" [tamanho]="22" class="text-white" />
-          </div>
+          @if (estiloCaixaIcone() === 'suave') {
+            <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+              <app-icone [nome]="icone()" [tamanho]="20" class="text-primary-deep" />
+            </div>
+          } @else {
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-deep">
+              <app-icone [nome]="icone()" [tamanho]="22" class="text-white" />
+            </div>
+          }
         } @else {
           <app-icone [nome]="icone()" [tamanho]="26" [class]="classeIcone()" />
         }
@@ -84,6 +112,19 @@ export class CartaoRecursoComponent {
    */
   readonly caixaIcone = input(false);
   /**
+   * Aspecto dessa caixa. `solida` (omissão) é o quadrado verde escuro de 48px de
+   * sempre; `suave` dá o quadrado de 44px em `bg-primary/10` com o ícone em
+   * `text-primary-deep`. Só conta com `caixaIcone` ligado.
+   */
+  readonly estiloCaixaIcone = input<EstiloCaixaIconeCartaoRecurso>('solida');
+  /**
+   * Casca do cartão no formato `vertical`. `branca` (omissão) é o cartão branco de
+   * moldura `border-gray-200` de sempre; `suave` troca-o pelo cinzento muito claro
+   * `bg-bg-light`, para grelhas assentes num fundo quase branco; `sombra` deixa-o
+   * branco mas sem moldura, com `rounded-2xl` e sombra leve.
+   */
+  readonly superficie = input<SuperficieCartaoRecurso>('branca');
+  /**
    * Ligação de acção encostada ao fundo do cartão. Sem `textoAcao` não se
    * desenha rodapé nenhum e o cartão fica exactamente como sempre foi.
    */
@@ -92,7 +133,11 @@ export class CartaoRecursoComponent {
   readonly iconeAcao = input('arrow-right');
 
   protected readonly classeIcone = computed(() => CLASSES_ICONE[this.corIcone()]);
-  protected readonly classeArtigo = computed(() => CLASSES_ARTIGO[this.formato()]);
+  protected readonly classeArtigo = computed(() =>
+    this.formato() === 'iconeInline'
+      ? CLASSES_ARTIGO.iconeInline
+      : CLASSES_SUPERFICIE[this.superficie()],
+  );
 
   // O fragmento vai separado da rota, como no `app-botao` e no `app-cabecalho-secao`.
   protected readonly rotaBaseAcao = computed(() => this.linkAcao().split('#')[0] || '.');

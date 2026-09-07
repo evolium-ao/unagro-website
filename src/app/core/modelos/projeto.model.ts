@@ -1,5 +1,6 @@
 import { TextoBilingue } from '../traducao/texto-bilingue';
 import { ItemGaleria } from './galeria.model';
+import { MembroEquipa } from './membro-equipa.model';
 
 export type CategoriaProjecto = 'agricultura' | 'meio_ambiente' | 'tecnologia' | 'infraestrutura';
 
@@ -46,6 +47,44 @@ export interface ObjetivoProjeto {
  * isso é uma irmã do `ObjetivoProjeto` e não uma interface duplicada.
  */
 export type SolucaoProjeto = ObjetivoProjeto;
+
+/**
+ * Ficheiro publicado do projecto — uma linha da lista "Documentos e Publicações".
+ * O `titulo` é o nome do ficheiro como se lê, com a extensão incluída.
+ */
+export interface DocumentoProjeto {
+  id: string;
+  titulo: string;
+  /**
+   * Caminho do ficheiro, já sem o `public/`. Enquanto os PDF não estiverem no
+   * servidor vem ausente, e o item desenha-se como bloco não clicável em vez de
+   * um link para lado nenhum.
+   */
+  url?: string;
+}
+
+/** Citação de uma pessoa sobre o projecto — um cartão da coluna "Testemunhos". */
+export interface TestemunhoProjeto {
+  id: string;
+  citacao: string;
+  /** Nome próprio de quem fala; não se traduz. */
+  autor: string;
+  /** Papel da pessoa no projecto, escrito normalmente — as maiúsculas são do componente. */
+  papel: string;
+  /** Retrato, já sem o `public/`; ausente, fica o círculo com as iniciais. */
+  foto?: string;
+}
+
+/**
+ * Canais de contacto próprios do projecto. Só os **valores** vivem aqui — os
+ * rótulos ("Email do líder de projecto") são texto de interface e traduzem-se na
+ * página que os mostra.
+ */
+export interface ContactoProjeto {
+  email: string;
+  telefone: string;
+  localizacao: string;
+}
 
 /**
  * Espelha a linha que a API de projectos devolve — já no idioma do pedido, por
@@ -98,6 +137,18 @@ export interface Projeto {
    * seguem numa fila normal — a disposição é do componente, não dos dados.
    */
   galeria?: ItemGaleria[];
+  /**
+   * Pessoas da secção "Equipa do Projecto"; sem elas a secção não aparece.
+   * Reutiliza o `MembroEquipa` genérico — o cargo vem escrito normalmente e as
+   * maiúsculas do mockup são do componente.
+   */
+  equipa?: MembroEquipa[];
+  /** Ficheiros da coluna "Documentos e Publicações"; sem eles a coluna não aparece. */
+  documentos?: DocumentoProjeto[];
+  /** Citações da coluna "Testemunhos"; sem elas a coluna não aparece. */
+  testemunhos?: TestemunhoProjeto[];
+  /** Canais de contacto do painel "Interessado no Projecto?"; ausente, a secção não aparece. */
+  contacto?: ContactoProjeto;
 }
 
 /** Ordem em que as categorias aparecem na barra de filtros. */

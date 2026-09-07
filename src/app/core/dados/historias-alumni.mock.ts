@@ -2,6 +2,45 @@ import { HistoriaAlumni } from '../modelos/historia-alumni.model';
 
 export const HISTORIAS_ALUMNI_MOCK: HistoriaAlumni[] = [
   {
+    id: 'helena-martins',
+    nome: 'Dra. Helena Martins',
+    curso: { pt: 'Engenharia Agroindustrial', en: 'Agro-industrial Engineering' },
+    anoConclusao: 2012,
+    cargoAtual: { pt: 'Fundadora da AgriTech Solutions', en: 'Founder of AgriTech Solutions' },
+    testemunho: {
+      pt: 'A UNAGRO deu-me as ferramentas para fundar a minha própria startup, que hoje ajuda milhares de produtores em todo o continente.',
+      en: 'UNAGRO gave me the tools to found my own startup, which today helps thousands of producers across the continent.',
+    },
+    foto: '/imagens/Dra-Helena-Martins.png',
+  },
+  {
+    id: 'samuel-costa',
+    nome: 'Dr. Samuel Costa',
+    curso: { pt: 'Biotecnologia Agrícola', en: 'Agricultural Biotechnology' },
+    anoConclusao: 2010,
+    cargoAtual: { pt: 'Investigador Chefe em Biotecnologia', en: 'Head Researcher in Biotechnology' },
+    testemunho: {
+      pt: 'O compromisso da instituição com a ciência rigorosa moldou a minha carreira como investigador focado em culturas resilientes.',
+      en: "The institution's commitment to rigorous science shaped my career as a researcher focused on resilient crops.",
+    },
+    foto: '/imagens/Dr-Samuel-Costa.png',
+  },
+  {
+    id: 'ricardo-vieira',
+    nome: 'Eng. Ricardo Vieira',
+    curso: { pt: 'Gestão Agroindustrial', en: 'Agribusiness Management' },
+    anoConclusao: 2008,
+    cargoAtual: {
+      pt: 'Director Regional da AgriCorp International',
+      en: 'Regional Director at AgriCorp International',
+    },
+    testemunho: {
+      pt: 'Gerir grandes operações requer visão sistémica, algo que aprendi nos corredores da UNAGRO e levo comigo todos os dias.',
+      en: "Running large operations requires systemic thinking, something I learned in UNAGRO's corridors and carry with me every day.",
+    },
+    foto: '/imagens/Eng-Ricardo-Vieira.png',
+  },
+  {
     id: 'ines-capitao',
     nome: 'Inês Capitão',
     curso: { pt: 'Engenharia Agronómica', en: 'Agronomic Engineering' },

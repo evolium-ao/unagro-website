@@ -24,9 +24,26 @@ export interface EventoDestaqueCartao {
   imports: [IconeComponent, ContadorRegressivoComponent, RouterLink],
   host: { class: 'block' },
   template: `
-    <article class="w-full overflow-hidden rounded-xl bg-primary-deep text-white border-l-6 border-secondary">
+    <article
+      class="relative w-full overflow-hidden rounded-xl bg-primary-deep text-white border-l-6 border-secondary"
+    >
+      @if (imagemFundo(); as fundo) {
+        <img
+          [src]="fundo"
+          alt=""
+          aria-hidden="true"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <!-- O verde tem de continuar legível por cima da fotografia: quase opaco à
+             esquerda, onde assenta o texto, e mais aberto à direita. -->
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-gradient-to-r from-primary-deep via-primary-deep/95 to-primary-deep/70"
+        ></div>
+      }
+
       <div
-        class="flex flex-col gap-8 p-10 sm:p-14 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
+        class="relative flex flex-col gap-8 p-10 sm:p-14 lg:flex-row lg:items-center lg:justify-between lg:gap-12"
       >
         <div>
           <div class="flex flex-wrap items-center gap-2.5">
@@ -74,6 +91,11 @@ export class CartaoEventoDestaqueComponent {
   readonly evento = input.required<EventoDestaqueCartao>();
   /** Destino do botão "Saber mais"; sem destino, o botão não é apresentado. */
   readonly link = input<string>();
+  /**
+   * Fotografia de fundo, escurecida pelo verde. Sem ela o cartão fica com o
+   * `bg-primary-deep` sólido de sempre.
+   */
+  readonly imagemFundo = input<string>();
 
   protected readonly traducao = inject(TraducaoService);
 

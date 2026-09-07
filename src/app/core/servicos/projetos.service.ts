@@ -62,6 +62,31 @@ export class ProjetosService {
         url: item.url,
         legenda: item.legenda ? this.traducao.getTraducao(item.legenda) : undefined,
       })),
+      equipa: projeto.equipa?.map((membro) => ({
+        id: membro.id,
+        nome: membro.nome,
+        cargo: this.traducao.getTraducao(membro.cargo),
+        foto_url: membro.foto_url,
+      })),
+      documentos: projeto.documentos?.map((documento) => ({
+        id: documento.id,
+        titulo: this.traducao.getTraducao(documento.titulo),
+        url: documento.url,
+      })),
+      testemunhos: projeto.testemunhos?.map((testemunho) => ({
+        id: testemunho.id,
+        citacao: this.traducao.getTraducao(testemunho.citacao),
+        autor: testemunho.autor,
+        papel: this.traducao.getTraducao(testemunho.papel),
+        foto: testemunho.foto,
+      })),
+      contacto: projeto.contacto
+        ? {
+            email: projeto.contacto.email,
+            telefone: projeto.contacto.telefone,
+            localizacao: this.traducao.getTraducao(projeto.contacto.localizacao),
+          }
+        : undefined,
     })),
   );
 

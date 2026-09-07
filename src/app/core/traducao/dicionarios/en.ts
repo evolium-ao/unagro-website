@@ -24,10 +24,9 @@ export const en = {
       governanca: 'Governance',
     },
     candidaturasMenu: {
-      secretariaAcademica: 'Academic registry',
-      gabineteInvestigacao: 'Research office',
-      admissaoCandidatura: 'Admissions and applications',
+      estudantes: 'Students',
       docentes: 'Faculty',
+      maisInformacoes: 'More information',
     },
   },
   comum: {
@@ -375,6 +374,10 @@ export const en = {
       titulo: 'Project',
       descricao: 'Research and outreach project details.',
     },
+    detalheNoticia: {
+      titulo: 'News',
+      descricao: 'UNAGRO news — the full article and other recent stories.',
+    },
     eventos: {
       titulo: 'Events',
       descricao: "UNAGRO's upcoming academic and institutional events.",
@@ -390,6 +393,14 @@ export const en = {
     alumni: {
       titulo: 'Alumni',
       descricao: 'UNAGRO alumni network.',
+    },
+    entrar: {
+      titulo: 'Sign in',
+      descricao: 'UNAGRO account access — applications, enrolments and academic record.',
+    },
+    registo: {
+      titulo: 'Create account',
+      descricao: 'Create your UNAGRO account to apply for courses and follow the process.',
     },
     naoEncontrada: {
       titulo: 'Page not found',

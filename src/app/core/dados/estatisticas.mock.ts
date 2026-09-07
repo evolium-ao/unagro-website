@@ -58,10 +58,16 @@ export const ESTATISTICAS_IMPACTO_ALUMNI_MOCK: Estatistica[] = [
     rotulo: { pt: 'Empresas Fundadas por Alumni', en: 'Companies Founded by Alumni' },
     icone: 'rocket',
   },
-  {
-    id: 'empresas-fundadas',
-    valor: '+150',
-    rotulo: { pt: 'Empresas Fundadas por Alumni', en: 'Companies Founded by Alumni' },
-    icone: 'rocket',
-  },
 ];
+
+/**
+ * Dimensão da rede de graduados — indicador único mostrado no cartão verde da sessão
+ * "Sobre a Alumni UNAGRO". Fica fora da lista de impacto de propósito: essa é a faixa
+ * de vários números, esta é uma medida só, com o seu próprio ícone.
+ */
+export const ESTATISTICA_MEMBROS_ALUMNI_MOCK: Estatistica = {
+  id: 'membros-rede',
+  valor: '+3000',
+  rotulo: { pt: 'Membros da Rede', en: 'Network Members' },
+  icone: 'users',
+};

@@ -17,6 +17,7 @@ export const EVENTOS_MOCK: Evento[] = [
       en: 'Gathering of researchers from several African universities on agricultural innovation.',
     },
     destaque: true,
+    imagem_url: '/imagens/bg-banner-estudantes.jpg',
   },
   {
     id: 'semana-da-veterinaria',

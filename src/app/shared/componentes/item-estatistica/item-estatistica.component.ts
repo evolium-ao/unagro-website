@@ -4,9 +4,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
  * `escuro` = sobre fundo verde (valor dourado, rótulo dourado esbatido);
  * `claro` = sobre fundo claro (valor verde escuro, rótulo cinzento);
  * `verde` = sobre fundo claro com o valor em `primary-deep`, o par do tema
- * homónimo do `app-cabecalho-secao`.
+ * homónimo do `app-cabecalho-secao`;
+ * `sobreEscuro` = sobre fundo verde escuro com o valor a branco e o rótulo em
+ * `text-white/70`, para cartões `bg-primary-deep` onde o dourado fica para o ícone.
  */
-export type TemaItemEstatistica = 'escuro' | 'claro' | 'verde';
+export type TemaItemEstatistica = 'escuro' | 'claro' | 'verde' | 'sobreEscuro';
 
 /**
  * `bloco` = número grande solto numa grelha de indicadores (o desenho original);
@@ -21,12 +23,14 @@ const CLASSES_VALOR: Record<TemaItemEstatistica, string> = {
   escuro: 'text-secondary',
   claro: 'text-primary-dark',
   verde: 'text-primary-deep',
+  sobreEscuro: 'text-white',
 };
 
 const CLASSES_ROTULO: Record<TemaItemEstatistica, string> = {
   escuro: 'text-secondary/75',
   claro: 'text-text-secondary',
   verde: 'text-text-secondary',
+  sobreEscuro: 'text-white/70',
 };
 
 const CLASSES_RAIZ: Record<FormatoItemEstatistica, string> = {

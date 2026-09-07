@@ -1,47 +1,104 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { noticiasQueries } from '../../core/consultas/noticias.queries';
+import { NOTICIAS_FALLBACK } from '../../core/dados/noticias.mock';
+import { Noticia } from '../../core/modelos/noticia.model';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { EventosService } from '../../core/servicos/eventos.service';
 import { NoticiasService } from '../../core/servicos/noticias.service';
+import { PatrocinadoresService } from '../../core/servicos/patrocinadores.service';
+import { localizarProfundo } from '../../core/traducao/localizar-profundo';
+import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { BannerDestaqueComponent, HeroImage } from '../../shared/componentes/banner-destaque/banner-destaque.component';
-import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { CartaoEventoDestaqueComponent } from '../../shared/componentes/cartao-evento-destaque/cartao-evento-destaque.component';
 import { CartaoNoticiaDestaqueComponent } from '../../shared/componentes/cartao-noticia-destaque/cartao-noticia-destaque.component';
+import { CartaoNoticiaDestaqueEsqueletoComponent } from '../../shared/componentes/cartao-noticia-destaque-esqueleto/cartao-noticia-destaque-esqueleto.component';
 import { CartaoNoticiaResumoComponent } from '../../shared/componentes/cartao-noticia-resumo/cartao-noticia-resumo.component';
-import { FaixaEstatisticasComponent } from '../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component';
-import {
-  FaixaPatrocinadoresComponent,
-  PatrocinadorExibido,
-} from '../../shared/componentes/faixa-patrocinadores/faixa-patrocinadores.component';
+import { CartaoNoticiaResumoEsqueletoComponent } from '../../shared/componentes/cartao-noticia-resumo-esqueleto/cartao-noticia-resumo-esqueleto.component';
+import { CartaoRecursoComponent } from '../../shared/componentes/cartao-recurso/cartao-recurso.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 import { ContainerPaginaComponent } from "../../shared/componentes/container-pagina/container-pagina.component";
+import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
+import { FaixaPatrocinadoresComponent } from "../../shared/componentes/faixa-patrocinadores/faixa-patrocinadores.component";
+import { FaixaEstatisticasComponent } from "../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component";
+
+interface PilarBruto {
+  id: string;
+  icone: string;
+  titulo: TextoTraduzido;
+  descricao: TextoTraduzido;
+}
+
+/**
+ * Os quatro pilares do modelo UNAGRO. É conteúdo estrutural da própria sessão —
+ * não uma lista que a API venha a servir —, por isso fica aqui, como as
+ * `VANTAGENS_BRUTAS` de `formacoes`.
+ */
+const PILARES_MODELO: PilarBruto[] = [
+  {
+    id: 'educacao-solo-real',
+    icone: 'sprout',
+    titulo: { pt: 'Educação em Solo Real', en: 'Education on Real Ground' },
+    descricao: {
+      pt: 'Aprendizagem prática diretamente nos campos experimentais e projetos reais da indústria.',
+      en: 'Hands-on learning straight from our experimental fields and real industry projects.',
+    },
+  },
+  {
+    id: 'tecnologia-inovacao',
+    icone: 'bot',
+    titulo: { pt: 'Tecnologia e Inovação', en: 'Technology and Innovation' },
+    descricao: {
+      pt: 'Domínio de ferramentas de agricultura de precisão, IoT e gestão inteligente de recursos.',
+      en: 'Mastery of precision farming tools, IoT and smart resource management.',
+    },
+  },
+  {
+    id: 'sustentabilidade',
+    icone: 'earth',
+    titulo: { pt: 'Sustentabilidade', en: 'Sustainability' },
+    descricao: {
+      pt: 'Foco em modelos de produção resilientes que preservam a biodiversidade de Angola.',
+      en: "A focus on resilient production models that safeguard Angola's biodiversity.",
+    },
+  },
+  {
+    id: 'conexao-mercado',
+    icone: 'handshake',
+    titulo: { pt: 'Conexão com o Mercado', en: 'Industry Connections' },
+    descricao: {
+      pt: 'Networking direto com grandes players do agronegócio e estágios garantidos.',
+      en: 'Direct networking with major agribusiness players and guaranteed internships.',
+    },
+  },
+];
 
 /** Uma notícia em destaque mais três secundárias preenchem a grelha da secção. */
 const NOTICIAS_POR_PAGINA = 4;
 
-/** Placeholder até existirem logótipos reais dos patrocinadores. */
-const PATROCINADORES_PLACEHOLDER: PatrocinadorExibido[] = [
-  { id: '1', nome: 'Patrocinador 1' },
-  { id: '2', nome: 'Patrocinador 2' },
-  { id: '3', nome: 'Patrocinador 3' },
-  { id: '4', nome: 'Patrocinador 4' },
-  { id: '5', nome: 'Patrocinador 5' },
-  { id: '6', nome: 'Patrocinador 6' },
-];
+/** Destaques primeiro; dentro de cada grupo, a mais recente à frente. */
+function porDestaqueEData(a: Noticia, b: Noticia): number {
+  if (a.destaque !== b.destaque) return a.destaque ? -1 : 1;
+  return new Date(b.data).getTime() - new Date(a.data).getTime();
+}
 
 @Component({
   selector: 'app-inicio',
   imports: [
     BannerDestaqueComponent,
-    FaixaEstatisticasComponent,
-    FaixaPatrocinadoresComponent,
-    CartaoNoticiaDestaqueComponent,
-    CartaoNoticiaResumoComponent,
+    ContainerBannerFaixaEstatisticaComponent,
+    ContainerPaginaComponent,
     CartaoEventoDestaqueComponent,
+    CartaoNoticiaDestaqueComponent,
+    CartaoNoticiaDestaqueEsqueletoComponent,
+    CartaoNoticiaResumoComponent,
+    CartaoNoticiaResumoEsqueletoComponent,
+    CartaoRecursoComponent,
     IconeComponent,
     RevelarAoScrollDirective,
-    ContainerPaginaComponent
+    FaixaPatrocinadoresComponent
   ],
   templateUrl: './inicio.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,21 +109,46 @@ export class InicioComponent {
   private readonly estatisticasService = inject(EstatisticasService);
   private readonly noticiasService = inject(NoticiasService);
   private readonly eventosService = inject(EventosService);
+  private readonly patrocinadoresService = inject(PatrocinadoresService);
 
   protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly pilares = this.estatisticasService.pilares;
   protected readonly eventoPrincipal = this.eventosService.emDestaque;
-  protected readonly patrocinadores = signal(PATROCINADORES_PLACEHOLDER);
+  protected readonly patrocinadores = this.patrocinadoresService.patrocinadores;
+
+  protected readonly pilaresModelo = computed(() =>
+    localizarProfundo(PILARES_MODELO, this.traducao.idioma()),
+  );
+
+  /** `GET /noticias` — a lista vem inteira, sem paginação nem filtros do lado da API. */
+  protected readonly consultaNoticias = injectQuery(() =>
+    noticiasQueries.lista(this.noticiasService),
+  );
+
+  /** O conteúdo local de recurso, já no idioma escolhido. */
+  private readonly noticiasFallback = computed<Noticia[]>(() =>
+    localizarProfundo(NOTICIAS_FALLBACK, this.traducao.idioma()),
+  );
+
+  /**
+   * A API manda tudo de uma vez, por isso a ordenação é feita aqui. Sem notícias
+   * do lado da API — lista vazia ou pedido falhado — a secção mostra o conteúdo
+   * de recurso em vez de ficar às moscas na página de entrada.
+   */
+  private readonly noticias = computed<Noticia[]>(() => {
+    const daApi = this.consultaNoticias.data();
+    return daApi?.length ? [...daApi].sort(porDestaqueEData) : this.noticiasFallback();
+  });
 
   private readonly paginaNoticias = signal(0);
 
   private readonly totalPaginasNoticias = computed(() =>
-    Math.max(1, Math.ceil(this.noticiasService.noticias().length / NOTICIAS_POR_PAGINA)),
+    Math.max(1, Math.ceil(this.noticias().length / NOTICIAS_POR_PAGINA)),
   );
 
   private readonly noticiasDaPagina = computed(() => {
     const inicio = this.paginaNoticias() * NOTICIAS_POR_PAGINA;
-    return this.noticiasService.noticias().slice(inicio, inicio + NOTICIAS_POR_PAGINA);
+    return this.noticias().slice(inicio, inicio + NOTICIAS_POR_PAGINA);
   });
 
   protected readonly noticiaDestaque = computed(() => this.noticiasDaPagina()[0]);
@@ -78,6 +160,13 @@ export class InicioComponent {
   protected readonly temNoticiasAnteriores = computed(() => this.paginaNoticias() > 0);
   protected readonly temNoticiasSeguintes = computed(
     () => this.paginaNoticias() < this.totalPaginasNoticias() - 1,
+  );
+
+  protected readonly noticiasTitulo = computed(() =>
+    this.traducao.getTraducao(['Notícias', 'News']),
+  );
+  protected readonly noticiasSubtitulo = computed(() =>
+    this.traducao.getTraducao(['Veja aqui notícias recentes', 'See the latest news here']),
   );
 
   protected noticiasAnteriores(): void {
@@ -93,4 +182,21 @@ export class InicioComponent {
     x: '0',
     y: '0px'
   }
+
+  readonly heroSubtitulo = computed(() => this.traducao.getTraducao([
+    "Ciência, inovação e sustentabilidade ao serviço do futuro agrícola de Angola, do campo ao mercado global.",
+    "Science, innovation and sustainability at the service of Angola's agricultural future, from the field to the global market."
+  ]));
+  readonly heroTitulo = computed(() => this.traducao.getTraducao([
+    "Formando os",
+    "Training"
+  ]));
+  readonly heroTituloDestaque = computed(() => this.traducao.getTraducao([
+    "lideres",
+    "Leaders"
+  ]));
+  readonly heroTituloFim = computed(() => this.traducao.getTraducao([
+    "do Agronegócio Africano!",
+    "African Agribusiness"
+  ]));
 }

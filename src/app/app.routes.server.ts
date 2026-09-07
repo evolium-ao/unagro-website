@@ -10,11 +10,13 @@ const ROTAS_ESTATICAS = [
   'contactos',
   'eventos',
   'formacoes',
-  'candidaturas/admissao-candidatura',
-  'candidaturas/admissao-candidatura/inscricao',
+  'candidaturas',
+  'candidaturas/estudantes',
   'candidaturas/docentes',
   'alumni',
   'estudantes',
+  'entrar',
+  'registo',
 ] as const;
 
 export const serverRoutes: ServerRoute[] = [
@@ -25,9 +27,14 @@ export const serverRoutes: ServerRoute[] = [
     }),
   ),
   {
-    // `/candidaturas` só redirecciona para a página de admissões: renderizado no
-    // servidor para devolver 200 em vez do 404 da rota catch-all abaixo.
-    path: 'candidaturas',
+    // Endereços antigos das candidaturas: continuam a redireccionar para as novas
+    // páginas. Renderizados no servidor para devolver 200 em vez do 404 da rota
+    // catch-all abaixo.
+    path: 'candidaturas/admissao-candidatura',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: 'candidaturas/admissao-candidatura/inscricao',
     renderMode: RenderMode.Server,
   },
   {
@@ -43,6 +50,14 @@ export const serverRoutes: ServerRoute[] = [
     async getPrerenderParams() {
       return PROJETOS_MOCK.map((projeto) => ({ id: projeto.id }));
     },
+  },
+  {
+    // Os ids das notícias vêm da API, não de um mock do repositório: não há lista
+    // fechada para prerenderizar no build, por isso a página é renderizada no
+    // servidor sob pedido. Sem esta entrada caía na catch-all abaixo e era servida
+    // com estado 404.
+    path: 'noticias/:id',
+    renderMode: RenderMode.Server,
   },
   {
     // Qualquer caminho não coberto pelas rotas acima é, por definição, desconhecido:

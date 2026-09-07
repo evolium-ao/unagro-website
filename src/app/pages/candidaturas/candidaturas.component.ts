@@ -28,6 +28,8 @@ import { SeloComponent } from '../../shared/componentes/selo/selo.component';
 import { RouterLink } from '@angular/router';
 import { CartaoBolsaComponent } from '../../shared/componentes/cartao-bolsa/cartao-bolsa.component';
 import { ItemContactoComponent } from '../../shared/componentes/item-contacto/item-contacto.component';
+import { ContactosComponent } from "../contactos/contactos.component";
+import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 
 type CursoOferta = ReturnType<CursosService['cursosGrau']> extends (infer U)[] ? U : never;
 
@@ -71,8 +73,10 @@ const REQUISITOS_BRUTOS: TextoTraduzido[] = [
     ItemAcordeaoComponent,
     CartaoBolsaComponent,
     ItemContactoComponent,
-    IconeComponent
-  ],
+    IconeComponent,
+    ContactosComponent,
+    ContainerBannerFaixaEstatisticaComponent
+],
   templateUrl: './candidaturas.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -90,14 +94,14 @@ export class CandidaturasComponent {
   protected readonly ctaBannerDestaque = computed<CtaBannerDestaque[]>(() => {
     return [
       {
-        link: '/candidaturas/admissao-candidatura/inscricao',
+        link: '/candidaturas/estudantes',
         texto: this.traducao.getTraducao(['Iniciar Candidatura', 'Start Application']),
         variante: 'branco',
         icone: "arrow-right",
         posicaoIcone: 'direita',
       },
       {
-        link: '/candidaturas/admissao-candidatura#secao-cursos',
+        link: '/candidaturas#secao-cursos',
         texto: this.traducao.getTraducao(['Ver cursos', 'View courses']),
         variante: 'glass'
       },

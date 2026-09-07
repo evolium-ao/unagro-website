@@ -24,10 +24,9 @@ export interface Dicionario {
     };
     /** Itens do submenu de "Candidaturas". */
     candidaturasMenu: {
-      secretariaAcademica: string;
-      gabineteInvestigacao: string;
-      admissaoCandidatura: string;
+      estudantes: string;
       docentes: string;
+      maisInformacoes: string;
     };
   };
   comum: {
@@ -315,10 +314,13 @@ export interface Dicionario {
     detalheCurso: { titulo: string; descricao: string };
     estudantes: { titulo: string; descricao: string };
     detalheProjeto: { titulo: string; descricao: string };
+    detalheNoticia: { titulo: string; descricao: string };
     eventos: { titulo: string; descricao: string };
     formacoes: { titulo: string; descricao: string };
     contactos: { titulo: string; descricao: string };
     alumni: { titulo: string; descricao: string };
+    entrar: { titulo: string; descricao: string };
+    registo: { titulo: string; descricao: string };
     naoEncontrada: { titulo: string; descricao: string };
   };
 }

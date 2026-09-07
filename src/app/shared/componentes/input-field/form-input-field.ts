@@ -12,9 +12,11 @@ type ErroFnOuTexto = (form: FormGroup) => string | null | boolean;
 
 /**
  * `caixa` = campo emoldurado clássico; `minimalista` = rótulo em maiúsculas e campo
- * sem moldura, sublinhado apenas em foco — o estilo do formulário de candidatura.
+ * sem moldura, sublinhado apenas em foco — o estilo do formulário de candidatura;
+ * `sublinhado` = uma única linha cinzenta sob todo o campo (ícone incluído) que se
+ * pinta a verde em foco — o estilo dos ecrãs de autenticação.
  */
-export type VarianteCampo = 'caixa' | 'minimalista';
+export type VarianteCampo = 'caixa' | 'minimalista' | 'sublinhado';
 
 import { Directive } from '@angular/core';
 
@@ -33,11 +35,15 @@ export class RightIconDirective { }
 const CLASSES_ROTULO: Record<VarianteCampo, string> = {
   caixa: 'text-xs font-medium text-black truncate',
   minimalista: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
+  sublinhado: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
 };
 
 const CLASSES_TEXTO: Record<VarianteCampo, string> = {
   caixa: 'py-2 text-sm text-[#585959] placeholder:text-[#9A9A9A]',
   minimalista: 'py-1.5 text-base text-text-primary placeholder:text-text-primary/55 border-b border-gray-200',
+  // Sem `border-b` próprio: nesta variante a linha é da moldura, para atravessar
+  // também o ícone à esquerda.
+  sublinhado: 'py-2 text-sm text-text-primary placeholder:text-text-secondary/70',
 };
 
 @Component({
@@ -53,12 +59,14 @@ const CLASSES_TEXTO: Record<VarianteCampo, string> = {
   ],
   template: `
     <div class="flex flex-col gap-y-1" [class.bg-white]="fundoBranco()">
-      <label [for]="id" [class]="classesRotulo()" animate.enter="animete-titulo-1">
-        {{ label() }}
-        @if (optional()) {
-          <span class="text-[#9A9A9A] font-normal normal-case">{{ textoOpcional() }}</span>
-        }
-      </label>
+      @if (mostrarRotulo()) {
+        <label [for]="id" [class]="classesRotulo()" animate.enter="animete-titulo-1">
+          {{ label() }}
+          @if (optional()) {
+            <span class="text-[#9A9A9A] font-normal normal-case">{{ textoOpcional() }}</span>
+          }
+        </label>
+      }
 
       <div class="group flex w-full items-center transition" [class]="classesMoldura()">
         <div class="mr-2 flex shrink-0 select-none items-center justify-center text-gray-400">
@@ -128,10 +136,19 @@ export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
   readonly disabled = input<boolean>(false);
   readonly bgTransparent = input<boolean>(false);
   readonly variante = input<VarianteCampo>('caixa');
+  /**
+   * Deixa cair o `<label>` quando não há texto nenhum para mostrar. Por omissão
+   * `false`, porque o rótulo vazio é usado como espaçador — ver o campo de
+   * subscrição em `hub-unagro`, onde é ele que alinha o botão com a caixa.
+   */
+  readonly ocultarRotuloVazio = input(false);
   id = crypto.randomUUID();
   value = '';
 
   protected readonly classesRotulo = computed(() => CLASSES_ROTULO[this.variante()]);
+  protected readonly mostrarRotulo = computed(
+    () => !this.ocultarRotuloVazio() || !!this.label() || this.optional(),
+  );
   protected readonly classesTexto = computed(() => CLASSES_TEXTO[this.variante()]);
   protected readonly fundoBranco = computed(
     () => !this.bgTransparent() && this.variante() === 'caixa',
@@ -148,6 +165,13 @@ export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
       return temErro
         ? 'rounded-md border border-red-500 bg-white px-3 pr-1 outline-2 outline-red-300'
         : 'rounded-md border border-[#E2E8F0] bg-white px-3 pr-1 focus-within:border-primary focus-within:outline-3 focus-within:outline-primary/20';
+    }
+
+    // A linha vive na moldura, por isso atravessa o ícone e o campo de uma ponta à outra.
+    if (this.variante() === 'sublinhado') {
+      return temErro
+        ? 'border-b border-red-400'
+        : 'border-b border-gray-200 focus-within:border-primary';
     }
 
     if (this.type() === 'textarea') {

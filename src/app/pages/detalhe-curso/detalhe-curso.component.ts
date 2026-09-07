@@ -172,7 +172,7 @@ export class DetalheCursoComponent {
 
   protected readonly ctasHero = computed<CtaBannerDestaque[]>(() => [
     {
-      link: '/candidaturas/admissao-candidatura#secao-portal',
+      link: '/candidaturas#secao-portal',
       texto: this.traducao.t('paginas.detalheCurso.heroCtaCandidatar'),
       variante: 'branco',
       icone: 'arrow-right',

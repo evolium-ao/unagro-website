@@ -1,7 +1,38 @@
 import { Routes } from '@angular/router';
+import { LayoutAutenticacaoComponent } from './layout/layout-autenticacao/layout-autenticacao.component';
 import { LayoutPrincipalComponent } from './layout/layout-principal/layout-principal.component';
 
 export const routes: Routes = [
+  // As páginas de autenticação vêm antes do layout principal de propósito: o
+  // `path: ''` de baixo casa por prefixo com qualquer URL, e a catch-all `**`
+  // que vive nos seus filhos apanharia `/entrar` e `/registo` como página 404.
+  //
+  // Cada uma traz a sua própria moldura em vez de partilharem um pai `path: ''`
+  // com filhos: um pai de caminho vazio casa também com `/`, e nesse caso o
+  // Angular renderiza a moldura com o outlet vazio em vez de recuar para o
+  // layout principal — a página inicial saía em branco.
+  {
+    path: 'entrar',
+    component: LayoutAutenticacaoComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/entrar/entrar.component').then((m) => m.EntrarComponent),
+        data: { tituloChave: 'rotas.entrar.titulo', descricaoChave: 'rotas.entrar.descricao' },
+      },
+    ],
+  },
+  {
+    path: 'registo',
+    component: LayoutAutenticacaoComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/registo/registo.component').then((m) => m.RegistoComponent),
+        data: { tituloChave: 'rotas.registo.titulo', descricaoChave: 'rotas.registo.descricao' },
+      },
+    ],
+  },
   {
     path: '',
     component: LayoutPrincipalComponent,
@@ -50,20 +81,25 @@ export const routes: Routes = [
       },
       {
         // Candidaturas é agora um ramo: cada público tem a sua própria página filha.
+        // `/candidaturas` deixou de redireccionar e passou a ser a própria página de
+        // informações gerais (o item "Mais informações" do menu).
         path: 'candidaturas',
         children: [
-          { path: '', redirectTo: 'admissao-candidatura', pathMatch: 'full' },
           {
-            path: 'admissao-candidatura',
+            path: '',
             loadComponent: () =>
               import('./pages/candidaturas/candidaturas.component').then((m) => m.CandidaturasComponent),
             data: { tituloChave: 'rotas.candidaturas.titulo', descricaoChave: 'rotas.candidaturas.descricao' },
           },
           {
-            path: 'admissao-candidatura/inscricao',
+            path: 'estudantes',
             loadComponent: () => import('./pages/inscricao/inscricao.component').then((m) => m.InscricaoComponent),
             data: { tituloChave: 'rotas.inscricao.titulo', descricaoChave: 'rotas.inscricao.descricao' },
           },
+          // Endereços antigos: mantidos como redireccionamentos para não quebrar
+          // links já partilhados fora do site.
+          { path: 'admissao-candidatura/inscricao', redirectTo: '/candidaturas/estudantes', pathMatch: 'full' },
+          { path: 'admissao-candidatura', redirectTo: '/candidaturas', pathMatch: 'full' },
           {
             path: 'docentes',
             loadComponent: () =>
@@ -86,6 +122,12 @@ export const routes: Routes = [
         path: 'estudantes',
         loadComponent: () => import('./pages/estudantes/estudantes.component').then((m) => m.EstudantesComponent),
         data: { tituloChave: 'rotas.estudantes.titulo', descricaoChave: 'rotas.estudantes.descricao' },
+      },
+      {
+        path: 'noticias/:id',
+        loadComponent: () =>
+          import('./pages/detalhe-noticia/detalhe-noticia.component').then((m) => m.DetalheNoticiaComponent),
+        data: { tituloChave: 'rotas.detalheNoticia.titulo', descricaoChave: 'rotas.detalheNoticia.descricao' },
       },
       {
         path: 'projetos/:id',

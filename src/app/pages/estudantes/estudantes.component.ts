@@ -140,11 +140,12 @@ export class EstudantesComponent {
   // TODO: trocar pelo endereço real do portal da intranet quando existir.
   protected readonly ctasIntranet = computed<CtaBannerDestaque[]>(() => [
     {
-      link: '/estudantes#secao-intranet',
+      link: '/entrar',
       texto: this.traducao.t('paginas.estudantes.intranetCartaoCta'),
       variante: 'secundario',
       icone: 'log-in',
       posicaoIcone: 'direita',
+
     },
   ]);
 

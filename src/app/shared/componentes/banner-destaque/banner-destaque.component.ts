@@ -46,6 +46,12 @@ const CLASSES_CONTEUDO_BASE =
 /** No hero o conteúdo é empurrado para baixo; no cartão fica centrado e recuado das margens. */
 const DESVIO_HERO = 'md:mt-35';
 const RECUO_CARTAO = 'sm:px-8 lg:px-14';
+/**
+ * Com o recorte do estudante o conteúdo recua 400px (`ml-100`), logo tem de
+ * perder essa mesma largura — senão os 90% do contentor passam a margem direita
+ * e o `overflow-hidden` corta o título em vez de o deixar quebrar.
+ */
+const DESVIO_HERO_IMAGEM = ' lg:ml-100 lg:w-[calc(90%-25rem)]';
 
 /**
  * Entrada em cascata do banner: cada linha sobe, ganha nitidez e assenta com
@@ -252,14 +258,14 @@ export class BannerDestaqueComponent {
   /** O desvio de 400px só entra em `lg`, onde o recorte do estudante é visível. */
   protected readonly classesConteudo = computed(() => {
     const molde = this.cartao() ? RECUO_CARTAO : DESVIO_HERO;
-    const desvioHeroImage = this.heroImage() ? ' lg:ml-100' : '';
+    const desvioHeroImage = this.heroImage() ? DESVIO_HERO_IMAGEM : '';
     return `${CLASSES_CONTEUDO_BASE} ${molde}${desvioHeroImage}`;
   });
 
   protected readonly classesTitulo = computed(() =>
     this.cartao()
-      ? 'text-2xl inter-900 text-white sm:text-3xl lg:text-4xl'
-      : 'text-3xl inter-900 text-white sm:text-4xl lg:text-5xl',
+      ? 'text-2xl inter-900 text-balance break-words text-white sm:text-3xl lg:text-4xl'
+      : 'text-3xl inter-900 text-balance break-words text-white sm:text-4xl lg:text-5xl',
   );
 
   protected readonly classesSubtitulo = computed(() =>

@@ -1,10 +1,92 @@
 <!-- Hero — realce dourado no meio do título, sem selos nem CTAs, como no mockup. -->
 <app-container-banner-faixa-estatistica>
-  <app-banner-destaque
-    [titulo]="tituloHero()"
-    [tituloDestaque]="tituloDestaqueHero()"
-    [tituloFim]="tituloFimHero()"
-    [subtitulo]="subtituloHero()"
-    bg="/imagens/campos-hero-candidatura.png"
-    [temBackdrop]="true" />
+  <app-banner-destaque [titulo]="tituloHero()" [tituloDestaque]="tituloDestaqueHero()" [tituloFim]="tituloFimHero()"
+    [subtitulo]="subtituloHero()" bg="/imagens/campos-hero-candidatura.png" [temBackdrop]="true" />
 </app-container-banner-faixa-estatistica>
+
+<!-- 1 sessão — formulário de mensagem à esquerda e apresentação institucional à direita -->
+<section id="secao-mensagem" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+      <div class="rounded-3xl bg-white p-6 shadow-xl shadow-black/5 sm:p-8" appRevelarAoScroll>
+        <h2 class="text-2xl font-bold text-primary-deep">{{ tituloFormulario() }}</h2>
+
+        <form [formGroup]="formulario" (ngSubmit)="enviar()" class="mt-6">
+          <div class="grid gap-x-6 sm:grid-cols-2">
+            <form-input-field variante="minimalista" formControlName="nome" [label]="rotuloNome()"
+              [placeholder]="placeholderNome()" [erro]="erroNome()" />
+
+            <form-input-field variante="minimalista" type="email" formControlName="email" [label]="rotuloEmail()"
+              [placeholder]="placeholderEmail()" [erro]="erroEmail()" />
+          </div>
+
+          <field-select-v2 class="mt-4 block" variante="minimalista" formControlName="assunto" [label]="rotuloAssunto()"
+            [placeholder]="placeholderAssunto()" [options]="opcoesAssuntoSelect()" [erro]="erroAssunto()" />
+
+          <form-input-field class="mt-4 block" variante="minimalista" type="textarea" [rows]="5"
+            formControlName="mensagem" [label]="rotuloMensagem()" [placeholder]="placeholderMensagem()"
+            [erro]="erroMensagem()" />
+
+          <!-- Pílula a toda a largura, com o avião de papel à direita do texto. -->
+          <app-botao class="mt-6" tipo="submit" variante="primario" tamanho="lg" raio="completo" icone="send"
+            posicaoIcone="direita" [larguraTotal]="true" [aCarregar]="estadoEnvio() === 'enviando'"
+            [desativado]="estadoEnvio() === 'enviando'">
+            {{ rotuloEnviar() }}
+          </app-botao>
+
+          @if (estadoEnvio() === 'sucesso') {
+          <p class="mt-4 text-sm text-primary" role="status">{{ mensagemSucesso() }}</p>
+          }
+        </form>
+      </div>
+
+      <div appRevelarAoScroll>
+        <app-selo variante="primario" tamanho="pequeno" class="font-semibold uppercase tracking-[0.16em]">
+          {{ etiquetaPonte() }}
+        </app-selo>
+
+        <h2 class="mt-6 text-3xl font-bold leading-tight text-primary-deep sm:text-4xl">
+          {{ tituloPonte() }}
+        </h2>
+
+        <p class="mt-5 text-base leading-relaxed text-text-secondary">{{ descricaoPonte() }}</p>
+
+        <div class="mt-10 flex flex-col gap-8">
+          @for (informacao of informacoes(); track informacao.id) {
+          <app-item-informacao [icone]="informacao.icone" [titulo]="informacao.titulo"
+            [descricao]="informacao.descricao" [appRevelarAoScroll]="$index" />
+          } @empty {
+          <p class="text-sm text-text-secondary">{{ semInformacoes() }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 2 sessão — localização institucional: painel escuro à esquerda e mapa embutido à direita.
+     Vai de bordo a bordo, por isso fica fora do `app-container-pagina`. -->
+<section id="secao-localizacao" class="bg-white mb-40">
+  <div class="grid lg:grid-cols-2">
+    <div class="flex flex-col justify-center bg-primary-deep px-6 py-16 sm:px-10 sm:py-20 lg:px-16" appRevelarAoScroll>
+      <h2 class="text-3xl font-bold text-white">{{ tituloLocalizacao() }}</h2>
+
+      <div class="mt-10 flex flex-col gap-8">
+        @for (detalhe of detalhesLocalizacao(); track detalhe.id) {
+        <app-item-detalhe-barra [rotulo]="detalhe.rotulo" [valor]="detalhe.valor" [appRevelarAoScroll]="$index + 1" />
+        } @empty {
+        <p class="text-sm text-white/70">{{ semInformacoes() }}</p>
+        }
+      </div>
+
+      <a class="mt-10 inline-flex w-fit items-center gap-2 text-sm font-bold text-secondary" [href]="linkGoogleMaps"
+        target="_blank" rel="noopener noreferrer">
+        {{ textoAbrirMapa() }}
+        <app-icone nome="external-link" [tamanho]="16" />
+      </a>
+    </div>
+
+    <app-mapa-google class="min-h-[420px]" [latitude]="latitudeCampus" [longitude]="longitudeCampus"
+      [titulo]="tituloMapa()" />
+  </div>
+</section>

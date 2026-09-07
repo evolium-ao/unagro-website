@@ -1,80 +1,104 @@
-<app-banner-destaque [subtitulo]="traducao.t('paginas.inicio.heroSubtitulo')" [ctas]="[]" [heroImage]="heroImageConfig"/>
 <div class="flex flex-col gap-40">
-  <!--
-    /* [selos]="[traducao.t('paginas.inicio.heroBadge')]" */
-     /* [titulo]="traducao.t('paginas.inicio.heroTitulo')" */
-    -->
-  <app-faixa-estatisticas [estatisticas]="estatisticas()" />
-  <app-container-pagina appRevelarAoScroll>
-    <!-- <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-20" appRevelarAoScroll> -->
-    <!-- <div class="mx-auto max-w-2xl text-center">
-        <h2 class="text-2xl font-bold text-text-primary sm:text-3xl">{{ traducao.t('paginas.inicio.pilaresTitulo') }}</h2>
-        <p class="mt-2 text-text-secondary">{{ traducao.t('paginas.inicio.pilaresSubtitulo') }}</p>
-      </div> -->
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      @for (pilar of pilares(); track pilar.id) {
-      <div
-        class="flex flex-col items-start gap-3 rounded-lg border border-[#E3E3E3] p-6 py-20 pt-10 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:border-b-secondary hover:border-b-5 bg-white">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-          <app-icone [nome]="pilar.icone" [tamanho]="24" />
-        </div>
-        <h3 class="font-semibold text-text-primary">{{ pilar.nome }}</h3>
-        <p class="text-xs text-text-secondary leading-6">{{ pilar.descricao }}</p>
-      </div>
-      }
-    </div>
-    <!-- </section> -->
-  </app-container-pagina>
+  <app-container-banner-faixa-estatistica>
+    <app-banner-destaque [subtitulo]="heroSubtitulo()" [ctas]="[]" [heroImage]="heroImageConfig" [titulo]="heroTitulo()"
+      [tituloDestaque]="heroTituloDestaque()" [tituloFim]="heroTituloFim()" />
+  </app-container-banner-faixa-estatistica>
 
-  <app-container-pagina>
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <div class="w-fit">
-          <h2 class="text-xl font-bold text-neutral-900 sm:text-2xl">
-            {{ traducao.t('paginas.inicio.noticiasTitulo') }}
-          </h2>
-          <div class="mt-2 h-1.25 w-full bg-primary-dark"></div>
-        </div>
-        <p class="text-xs text-neutral-500">{{ traducao.t('paginas.inicio.noticiasSubtitulo') }}</p>
-      </div>
-
-      <div class="flex items-center gap-1">
-        <button type="button"
-          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-white text-text-secondary transition-colors duration-200 hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
-          [disabled]="!temNoticiasAnteriores()" [attr.aria-label]="traducao.t('comum.anterior')"
-          (click)="noticiasAnteriores()">
-          <app-icone nome="chevron-left" [tamanho]="16" />
-        </button>
-        <button type="button"
-          class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-white text-text-secondary transition-colors duration-200 hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
-          [disabled]="!temNoticiasSeguintes()" [attr.aria-label]="traducao.t('comum.seguinte')"
-          (click)="noticiasSeguintes()">
-          <app-icone nome="chevron-right" [tamanho]="16" />
-        </button>
-      </div>
-    </div>
-    <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      @if (noticiaDestaque(); as destaque) {
-      <app-cartao-noticia-destaque [noticia]="destaque" />
-      }
-
-      @if (noticiasEmpilhadas().length) {
-      <div class="grid gap-6 lg:grid-rows-2">
-        @for (noticia of noticiasEmpilhadas(); track noticia.id) {
-        <app-cartao-noticia-resumo [noticia]="noticia" />
+  <!-- 1 sessão — pilares do modelo UNAGRO (conteúdo estrutural da sessão) -->
+  <section id="secao-pilares" class="bg-bg-lighter py-12 sm:py-14">
+    <app-container-pagina>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        @for (pilar of pilaresModelo(); track pilar.id) {
+        <app-cartao-recurso superficie="sombra" [caixaIcone]="true" estiloCaixaIcone="suave" [icone]="pilar.icone"
+          [titulo]="pilar.titulo" [descricao]="pilar.descricao" [appRevelarAoScroll]="$index" />
+        } @empty {
+        <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+          {{ traducao.getTraducao(['Nada a mostrar.', 'Nothing to show.']) }}
+        </p>
         }
       </div>
-      }
+    </app-container-pagina>
+  </section>
 
-      @if (noticiaLateral(); as lateral) {
-      <app-cartao-noticia-resumo [noticia]="lateral" class="md:col-span-2 lg:col-span-1" />
+  <!-- 2 sessão — notícias recentes (GET /noticias; sem resposta, o conteúdo de recurso) -->
+  <section id="secao-noticias">
+    <app-container-pagina>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <div class="w-fit">
+            <h2 class="text-xl font-bold text-neutral-900 sm:text-2xl">{{ noticiasTitulo() }}</h2>
+            <div class="mt-2 h-1.25 w-full bg-primary-dark"></div>
+          </div>
+          <p class="text-xs text-neutral-500">{{ noticiasSubtitulo() }}</p>
+        </div>
+
+        <div class="flex items-center gap-1">
+          <button type="button"
+            class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-white text-text-secondary transition-colors duration-200 hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            [disabled]="!temNoticiasAnteriores()" [attr.aria-label]="traducao.t('comum.anterior')"
+            (click)="noticiasAnteriores()">
+            <app-icone nome="chevron-left" [tamanho]="16" />
+          </button>
+          <button type="button"
+            class="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-gray-200 bg-white text-text-secondary transition-colors duration-200 hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+            [disabled]="!temNoticiasSeguintes()" [attr.aria-label]="traducao.t('comum.seguinte')"
+            (click)="noticiasSeguintes()">
+            <app-icone nome="chevron-right" [tamanho]="16" />
+          </button>
+        </div>
+      </div>
+
+      @if (consultaNoticias.isPending()) {
+      <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <app-cartao-noticia-destaque-esqueleto />
+        <div class="grid gap-6 lg:grid-rows-2">
+          <app-cartao-noticia-resumo-esqueleto />
+          <app-cartao-noticia-resumo-esqueleto />
+        </div>
+        <app-cartao-noticia-resumo-esqueleto class="md:col-span-2 lg:col-span-1" />
+      </div>
+      } @else if (noticiaDestaque()) {
+      <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        @if (noticiaDestaque(); as destaque) {
+        <app-cartao-noticia-destaque [noticia]="destaque" [mostrarSelo]="destaque.destaque"
+          [link]="'/noticias/' + destaque.id" [appRevelarAoScroll]="0" />
+        }
+
+        @if (noticiasEmpilhadas().length) {
+        <div class="grid gap-6 lg:grid-rows-2">
+          @for (noticia of noticiasEmpilhadas(); track noticia.id) {
+          <app-cartao-noticia-resumo [noticia]="noticia" [link]="'/noticias/' + noticia.id"
+            [appRevelarAoScroll]="$index + 1" />
+          }
+        </div>
+        }
+
+        @if (noticiaLateral(); as lateral) {
+        <app-cartao-noticia-resumo [noticia]="lateral" class="md:col-span-2 lg:col-span-1"
+          [link]="'/noticias/' + lateral.id" [appRevelarAoScroll]="3" />
+        }
+      </div>
+      } @else {
+      <p class="py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Ainda não há notícias publicadas.', 'No news published yet.']) }}
+      </p>
       }
-    </div>
-  </app-container-pagina>
-  <app-faixa-patrocinadores [patrocinadores]="patrocinadores()" />
-  <!-- @if (eventoPrincipal(); as evento) { -->
-  <app-container-pagina class="mb-40">
-    <app-cartao-evento-destaque [evento]="eventoPrincipal()" link="/eventos" />
-  </app-container-pagina>
-  <!-- } -->
+    </app-container-pagina>
+  </section>
+
+  <!-- 3 sessão — evento em destaque com contagem decrescente (GET /eventos, o marcado como destaque) -->
+  <section id="secao-evento-destaque" class="bg-bg-lighter py-12 sm:py-14">
+    <app-container-pagina>
+      @if (eventoPrincipal(); as destaque) {
+      <app-cartao-evento-destaque [evento]="destaque" [imagemFundo]="destaque.imagem_url" link="/eventos"
+        appRevelarAoScroll />
+      } @else {
+      <p class="py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Ainda não há eventos agendados.', 'No events scheduled yet.']) }}
+      </p>
+      }
+    </app-container-pagina>
+  </section>
+  <app-faixa-patrocinadores [patrocinadores]="patrocinadores()" class="mb-18"></app-faixa-patrocinadores>
+
 </div>

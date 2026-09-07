@@ -22,6 +22,7 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
     @if (modo() === 'horizontal') {
       <article
         class="flex h-full gap-4 overflow-hidden rounded-lg border border-gray-200 bg-[#EBEFED] p-4 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
+        [class.relative]="!!link()"
       >
         <app-espaco-imagem
           class="w-2/5 max-w-52 shrink-0 self-stretch"
@@ -48,26 +49,44 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
           @if (link(); as destino) {
             <a
               [routerLink]="destino"
-              class="mt-2 text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
+              class="relative z-20 mt-2 text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
               >{{ traducao.t('comum.lerMais') }}</a
             >
           }
         </div>
+
+        <!-- Ligação sobreposta: o cartão inteiro abre a notícia. Decorativa para o
+             leitor de ecrã e fora da ordem de tabulação — quem navega por teclado
+             usa a ligação "Ler mais", que vai ao mesmo sítio. -->
+        @if (link(); as destino) {
+          <a [routerLink]="destino" class="absolute inset-0 z-10" aria-hidden="true" tabindex="-1"></a>
+        }
       </article>
     } @else {
       <article
         class="flex h-full flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg"
+        [class.relative]="!!link()"
       >
-        <div class="relative min-h-32 flex-1">
+        <!--
+          Até lg a imagem é uma faixa 16:9 no topo: ter altura própria é o que
+          impede a fotografia de crescer até à altura intrínseca e tapar o texto.
+          Em lg passa a absorver a altura sobrante da célula, mas com um mínimo
+          baixo — nos cartões empilhados a metade de altura é o texto que manda,
+          e é a imagem que cede.
+        -->
+        <div
+          class="relative aspect-video w-full shrink-0 overflow-hidden lg:aspect-auto lg:min-h-20 lg:flex-1"
+        >
           <app-espaco-imagem
             class="absolute inset-0"
+            proporcao="cover"
             alturaMinima="100%"
             [imagem]="noticia().imagem"
             [legenda]="legendaImagem()"
           />
         </div>
 
-        <div class="flex flex-col p-5">
+        <div class="flex shrink-0 flex-col p-5">
           <p class="text-[10px] font-semibold uppercase tracking-wider text-accent">
             {{ dataFormatada() }}
             @if (noticia().categoria) {
@@ -83,11 +102,18 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
           @if (link(); as destino) {
             <a
               [routerLink]="destino"
-              class="mt-4 text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
+              class="relative z-20 mt-4 text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
               >{{ traducao.t('comum.lerMais') }}</a
             >
           }
         </div>
+
+        <!-- Ligação sobreposta: o cartão inteiro abre a notícia. Decorativa para o
+             leitor de ecrã e fora da ordem de tabulação — quem navega por teclado
+             usa a ligação "Ler mais", que vai ao mesmo sítio. -->
+        @if (link(); as destino) {
+          <a [routerLink]="destino" class="absolute inset-0 z-10" aria-hidden="true" tabindex="-1"></a>
+        }
       </article>
     }
   `,

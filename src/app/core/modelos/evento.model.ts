@@ -13,4 +13,6 @@ export interface Evento {
   dataFim?: string;
   descricao: TextoTraduzido;
   destaque?: boolean;
+  /** Fotografia de fundo do evento; sem ela o cartão de destaque fica só com o verde sólido. */
+  imagem_url?: string;
 }

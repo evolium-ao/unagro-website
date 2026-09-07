@@ -54,7 +54,7 @@ function formatarPrecoKwanza(valor: number): string {
   host: { class: 'block h-full' },
   template: `
     <article
-    (click )="irParaDetalhes()"
+      (click)="irParaDetalhes()"
       class="relative cursor-pointer flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs transition-shadow duration-300 ease-in-out hover:shadow-md"
     >
       <div class="relative">

@@ -36,6 +36,49 @@ interface ItemGaleriaBruto {
 }
 
 /**
+ * Um membro da equipa, na forma bruta: o nome próprio não se traduz, o cargo
+ * sim. A `foto_url` já vem sem o `public/`.
+ */
+interface MembroEquipaBruto {
+  id: string;
+  nome: string;
+  cargo: TextoBilingue;
+  foto_url?: string;
+}
+
+/**
+ * Um ficheiro publicado, na forma bruta. O nome do ficheiro traduz-se; a `url`
+ * fica **em falta** de propósito enquanto não houver PDF no servidor.
+ */
+interface DocumentoProjetoBruto {
+  id: string;
+  titulo: TextoBilingue;
+  url?: string;
+}
+
+/**
+ * Um testemunho, na forma bruta: o nome de quem fala não se traduz, a citação e
+ * o papel sim. A `foto` já vem sem o `public/`.
+ */
+interface TestemunhoProjetoBruto {
+  id: string;
+  citacao: TextoBilingue;
+  autor: string;
+  papel: TextoBilingue;
+  foto?: string;
+}
+
+/**
+ * Contactos do projecto, na forma bruta. Endereço de e-mail e telefone são
+ * literais; só a localização de campo se escreve nos dois idiomas.
+ */
+interface ContactoProjetoBruto {
+  email: string;
+  telefone: string;
+  localizacao: TextoBilingue;
+}
+
+/**
  * Forma bruta (bilingue) do projecto, antes de passar por `getTraducao`. É o
  * `ProjetosService` que a traduz para a forma da API (`Projeto`, só texto).
  */
@@ -62,6 +105,10 @@ export interface ProjetoBruto {
   estatisticasImpacto?: EstatisticaProjetoBruta[];
   cronograma?: EtapaCronogramaBruta[];
   galeria?: ItemGaleriaBruto[];
+  equipa?: MembroEquipaBruto[];
+  documentos?: DocumentoProjetoBruto[];
+  testemunhos?: TestemunhoProjetoBruto[];
+  contacto?: ContactoProjetoBruto;
 }
 
 export const PROJETOS_MOCK: ProjetoBruto[] = [
@@ -268,6 +315,72 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       { id: 'germinacao-estufa', url: '/imagens/campos-a-germinar.png' },
       { id: 'equipa-viveiro', url: '/imagens/impacto-numerico.png' },
     ],
+    equipa: [
+      {
+        id: 'coordenacao-geral',
+        nome: 'Prof. Dr. João Silva',
+        cargo: ['Coordenador Geral', 'General Coordinator'],
+        foto_url: '/imagens/staff-projecto-dr-joao.png',
+      },
+      {
+        id: 'lideranca-agronomia',
+        nome: 'Engª. Maria Bento',
+        cargo: ['Líder de Agronomia', 'Agronomy Lead'],
+        foto_url: '/imagens/staff-projecto-dr-maria.png',
+      },
+      {
+        id: 'especialista-irrigacao',
+        nome: 'Sr. Paulo Kassoma',
+        cargo: ['Especialista em Irrigação', 'Irrigation Specialist'],
+        foto_url: '/imagens/staff-projecto-dr-Paulo.png',
+      },
+      {
+        id: 'analise-dados-iot',
+        nome: 'Dra. Ana Luísa',
+        cargo: ['Analista de Dados IoT', 'IoT Data Analyst'],
+        foto_url: '/imagens/staff-projecto-dr-luis.png',
+      },
+    ],
+    // TODO: os PDF ainda não estão no servidor — sem `url` cada item fica como bloco
+    // não clicável, em vez de apontar para um ficheiro que não existe.
+    documentos: [
+      {
+        id: 'relatorio-tecnico-q1-2025',
+        titulo: ['Relatório Técnico Q1 2025.pdf', 'Technical Report Q1 2025.pdf'],
+      },
+      {
+        id: 'estudo-impacto-ambiental',
+        titulo: ['Estudo de Impacto Ambiental.pdf', 'Environmental Impact Assessment.pdf'],
+      },
+      {
+        id: 'manual-boas-praticas',
+        titulo: [
+          'Manual de Boas Práticas Agrícolas.pdf',
+          'Good Agricultural Practices Handbook.pdf',
+        ],
+      },
+    ],
+    testemunhos: [
+      {
+        id: 'beneficiario-local',
+        citacao: [
+          'Este projecto não é apenas sobre plantar sementes, é sobre plantar esperança numa nova geração de agricultores angolanos que agora têm acesso a ferramentas que antes eram um sonho.',
+          'This project is not just about planting seeds, it is about planting hope in a new generation of Angolan farmers who now have access to tools that once were a dream.',
+        ],
+        autor: 'Mateus Kassange',
+        papel: ['Beneficiário local', 'Local beneficiary'],
+        // TODO: retrato provisório — falta a fotografia do Mateus Kassange.
+        foto: '/imagens/homem-do-campo.png',
+      },
+    ],
+    contacto: {
+      email: 'milho.malanje@unagro.edu.ao',
+      telefone: '+244 923 000 000',
+      localizacao: [
+        'Estação Experimental de Cangandala, Malanje',
+        'Cangandala Experimental Station, Malanje',
+      ],
+    },
   },
   {
     id: 'saude-reprodutiva-bovinos',
@@ -471,7 +584,66 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       { id: 'pastagem-melhorada', url: '/imagens/estufa-campos.png' },
       { id: 'acompanhamento-tecnico', url: '/imagens/desenvolvimento-projecto-2.png' },
     ],
+    equipa: [
+      {
+        id: 'coordenacao-geral',
+        nome: 'Prof. Dr. Aurélio Chivela',
+        cargo: ['Coordenador Geral', 'General Coordinator'],
+        foto_url: '/imagens/staff-projecto-dr-joao.png',
+      },
+      {
+        id: 'lideranca-sanidade',
+        nome: 'Dra. Teresa Muanza',
+        cargo: ['Líder de Sanidade Animal', 'Animal Health Lead'],
+        foto_url: '/imagens/staff-projecto-dr-maria.png',
+      },
+      {
+        id: 'especialista-reproducao',
+        nome: 'Sr. Domingos Bumba',
+        cargo: ['Especialista em Reprodução', 'Reproduction Specialist'],
+        foto_url: '/imagens/staff-projecto-dr-Paulo.png',
+      },
+      {
+        id: 'analise-dados-zootecnicos',
+        nome: 'Eng.º Nelson Kapuka',
+        cargo: ['Analista de Dados Zootécnicos', 'Livestock Data Analyst'],
+        foto_url: '/imagens/staff-projecto-dr-luis.png',
+      },
+    ],
     imagem_contexto_url: '/imagens/homem-do-campo.png',
+    documentos: [
+      {
+        id: 'protocolo-diagnostico-reprodutivo',
+        titulo: [
+          'Protocolo de Diagnóstico Reprodutivo.pdf',
+          'Reproductive Diagnosis Protocol.pdf',
+        ],
+      },
+      {
+        id: 'relatorio-sanitario-2025',
+        titulo: ['Relatório Sanitário Semestral 2025.pdf', 'Half-Year Herd Health Report 2025.pdf'],
+      },
+      {
+        id: 'manual-manejo-bezerro',
+        titulo: ['Manual de Manejo do Bezerro.pdf', 'Calf Management Handbook.pdf'],
+      },
+    ],
+    testemunhos: [
+      {
+        id: 'criador-parceiro',
+        citacao: [
+          'Antes perdíamos bezerros todas as campanhas sem saber a razão. Com o acompanhamento da equipa aprendemos a ler os sinais do rebanho e hoje cada nascimento conta para a família.',
+          'We used to lose calves every season without knowing why. With the team following our herd we learned to read its signs, and today every birth counts for the family.',
+        ],
+        autor: 'Domingos Chivukuvuku',
+        papel: ['Criador de gado parceiro', 'Partner cattle farmer'],
+      },
+    ],
+    contacto: {
+      email: 'bovinos.huambo@unagro.edu.ao',
+      telefone: '+244 923 000 120',
+      localizacao: ['Centro Veterinário do Huambo, Huambo', 'Huambo Veterinary Centre, Huambo'],
+    },
   },
   {
     id: 'cooperativas-cadeia-valor',
@@ -675,7 +847,66 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       { id: 'formacao-associados', url: '/imagens/impacto-numerico.png' },
       { id: 'escoamento-producao', url: '/imagens/campos-de-bananeiras.png' },
     ],
+    equipa: [
+      {
+        id: 'coordenacao-geral',
+        nome: 'Prof.ª Dra. Ivone Sacala',
+        cargo: ['Coordenadora Geral', 'General Coordinator'],
+        foto_url: '/imagens/staff-projecto-dr-maria.png',
+      },
+      {
+        id: 'lideranca-economia-agraria',
+        nome: 'Dr. Bernardo Ndala',
+        cargo: ['Líder de Economia Agrária', 'Agricultural Economics Lead'],
+        foto_url: '/imagens/staff-projecto-dr-joao.png',
+      },
+      {
+        id: 'especialista-cooperativismo',
+        nome: 'Sr. Alberto Chissola',
+        cargo: ['Especialista em Cooperativismo', 'Cooperative Development Specialist'],
+        foto_url: '/imagens/staff-projecto-dr-Paulo.png',
+      },
+      {
+        id: 'analise-cadeias-valor',
+        nome: 'Eng.ª Luzia Ferraz',
+        cargo: ['Analista de Cadeias de Valor', 'Value Chain Analyst'],
+        foto_url: '/imagens/staff-projecto-dr-luis.png',
+      },
+    ],
     imagem_contexto_url: '/imagens/homem-do-campo.png',
+    documentos: [
+      {
+        id: 'diagnostico-gestao-cooperativas',
+        titulo: [
+          'Diagnóstico de Gestão das Cooperativas.pdf',
+          'Cooperative Management Assessment.pdf',
+        ],
+      },
+      {
+        id: 'guia-comercializacao-coletiva',
+        titulo: ['Guia de Comercialização Coletiva.pdf', 'Collective Marketing Guide.pdf'],
+      },
+      {
+        id: 'relatorio-financeiro-2025',
+        titulo: ['Relatório Financeiro Anual 2025.pdf', 'Annual Financial Report 2025.pdf'],
+      },
+    ],
+    testemunhos: [
+      {
+        id: 'presidente-cooperativa',
+        citacao: [
+          'Vendíamos cada um por sua conta e aceitávamos o preço que nos davam. Depois da formação passámos a negociar em conjunto e a cooperativa deixou de ser um nome no papel.',
+          'We each used to sell on our own and accept whatever price we were offered. After the training we began negotiating together, and the cooperative stopped being just a name on paper.',
+        ],
+        autor: 'Esperança Nzuzi',
+        papel: ['Presidente de cooperativa', 'Cooperative chairwoman'],
+      },
+    ],
+    contacto: {
+      email: 'cooperativas.quiminha@unagro.edu.ao',
+      telefone: '+244 923 000 240',
+      localizacao: ['Sector 4, Quiminha, Luanda', 'Sector 4, Quiminha, Luanda'],
+    },
   },
   {
     id: 'restauro-areas-degradadas',
@@ -858,12 +1089,71 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
     galeria: [
       {
         id: 'area-degradada',
-        url: '/imagens/campos-a-germinar.png',
+        url: '/imagens/campos-de-bananeiras.png',
         legenda: ['Estado Inicial (2024)', 'Initial State (2024)'],
       },
       { id: 'viveiro-nativas', url: '/imagens/estufa-campos.png' },
       { id: 'plantio-encostas', url: '/imagens/campo-de-milho-3.png' },
       { id: 'linhas-de-agua', url: '/imagens/recursos-idricos.png' },
     ],
+    equipa: [
+      {
+        id: 'coordenacao-geral',
+        nome: 'Prof. Dr. Simão Kalunga',
+        cargo: ['Coordenador Geral', 'General Coordinator'],
+        foto_url: '/imagens/staff-projecto-dr-joao.png',
+      },
+      {
+        id: 'lideranca-silvicultura',
+        nome: 'Eng.ª Rosária Neto',
+        cargo: ['Líder de Silvicultura', 'Forestry Lead'],
+        foto_url: '/imagens/staff-projecto-dr-maria.png',
+      },
+      {
+        id: 'especialista-conservacao-solos',
+        nome: 'Sr. Tomás Mbala',
+        cargo: ['Especialista em Conservação de Solos', 'Soil Conservation Specialist'],
+        foto_url: '/imagens/staff-projecto-dr-Paulo.png',
+      },
+      {
+        id: 'analise-sensoriamento-remoto',
+        nome: 'Dra. Helena Kiala',
+        cargo: ['Analista de Sensoriamento Remoto', 'Remote Sensing Analyst'],
+        foto_url: '/imagens/staff-projecto-dr-luis.png',
+      },
+    ],
+    documentos: [
+      {
+        id: 'relatorio-final-restauro',
+        titulo: ['Relatório Final de Restauro Florestal.pdf', 'Final Forest Restoration Report.pdf'],
+      },
+      {
+        id: 'estudo-impacto-ambiental',
+        titulo: ['Estudo de Impacto Ambiental.pdf', 'Environmental Impact Assessment.pdf'],
+      },
+      {
+        id: 'manual-viveiros-nativas',
+        titulo: [
+          'Manual de Viveiros de Espécies Nativas.pdf',
+          'Native Species Nursery Handbook.pdf',
+        ],
+      },
+    ],
+    testemunhos: [
+      {
+        id: 'autoridade-tradicional',
+        citacao: [
+          'A encosta que os nossos filhos conheciam pelada voltou a ter sombra e as nascentes voltaram a correr. O que a comunidade plantou com a universidade fica para quem vem depois de nós.',
+          'The hillside our children knew bare has shade again, and the springs are flowing once more. What the community planted with the university stays for those who come after us.',
+        ],
+        autor: 'Bernardo Makengo',
+        papel: ['Soba da comunidade de Quitexe', 'Community chief of Quitexe'],
+      },
+    ],
+    contacto: {
+      email: 'restauro.uige@unagro.edu.ao',
+      telefone: '+244 923 000 360',
+      localizacao: ['Viveiro Florestal de Quitexe, Uíge', 'Quitexe Forest Nursery, Uíge'],
+    },
   },
 ];

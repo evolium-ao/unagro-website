@@ -185,6 +185,7 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
   ],
   x: [p('M18 6 6 18'), p('m6 6 12 12')],
   check: [p('M20 6 9 17l-5-5')],
+  lock: [r('3', '11', '18', '11', '2'), p('M7 11V7a5 5 0 0 1 10 0v4')],
   'log-in': [p('M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'), p('m10 17 5-5-5-5'), p('M15 12H3')],
   'id-card': [
     p('M16 10h2'),
@@ -276,6 +277,22 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
     p(
       'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
     ),
+  ],
+  /** Seta a sair de uma caixa — ligação que abre num separador novo. */
+  'external-link': [
+    p('M15 3h6v6'),
+    p('M10 14 21 3'),
+    p('M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6'),
+  ],
+  /** Duas mãos a apertar-se — parceria e networking. */
+  handshake: [
+    p('m11 17 2 2a1 1 0 1 0 3-3'),
+    p(
+      'm14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4',
+    ),
+    p('m21 3 1 11h-2'),
+    p('M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3'),
+    p('M3 4h8'),
   ],
   /** Escudo com visto — validação e segurança dos certificados. */
   'shield-check': [

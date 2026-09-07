@@ -24,10 +24,9 @@ export const pt = {
       governanca: 'Governança',
     },
     candidaturasMenu: {
-      secretariaAcademica: 'Secretaria académica',
-      gabineteInvestigacao: 'Gabinete de investigação',
-      admissaoCandidatura: 'Admissões e candidaturas',
+      estudantes: 'Estudantes',
       docentes: 'Docentes',
+      maisInformacoes: 'Mais informações',
     },
   },
   comum: {
@@ -382,6 +381,10 @@ export const pt = {
       titulo: 'Projeto',
       descricao: 'Detalhes do projeto de investigação e extensão.',
     },
+    detalheNoticia: {
+      titulo: 'Notícia',
+      descricao: 'Notícia da UNAGRO — o artigo completo e outras notícias recentes.',
+    },
     eventos: {
       titulo: 'Eventos',
       descricao: 'Próximos eventos académicos e institucionais da UNAGRO.',
@@ -397,6 +400,14 @@ export const pt = {
     alumni: {
       titulo: 'Alumni',
       descricao: 'Rede de antigos alunos da UNAGRO.',
+    },
+    entrar: {
+      titulo: 'Entrar',
+      descricao: 'Acesso à conta UNAGRO — candidaturas, inscrições e percurso académico.',
+    },
+    registo: {
+      titulo: 'Criar conta',
+      descricao: 'Crie a sua conta UNAGRO para se candidatar aos cursos e acompanhar o processo.',
     },
     naoEncontrada: {
       titulo: 'Página não encontrada',

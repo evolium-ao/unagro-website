@@ -59,7 +59,7 @@
         appRevelarAoScroll />
       }
 
-      <div class="grid gap-6 sm:grid-cols-2 lg:col-span-2">
+      <div class="grid grid-cols-2 gap-4 sm:gap-6 lg:col-span-2">
         @for (objetivo of p.objetivosEspecificos ?? []; track objetivo.id) {
         <app-cartao-recurso corIcone="dourado" [icone]="objetivo.icone" [titulo]="objetivo.titulo"
           [descricao]="objetivo.descricao" [appRevelarAoScroll]="$index + 1" />
@@ -79,7 +79,7 @@
   <app-container-pagina>
     <app-cabecalho-secao tema="branco" [titulo]="tituloSolucao()" [descricao]="p.descricaoSolucao" appRevelarAoScroll />
 
-    <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+    <div class="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 lg:gap-8">
       @for (solucao of p.solucoes ?? []; track solucao.id) {
       <app-cartao-recurso formato="iconeInline" [icone]="solucao.icone" [titulo]="solucao.titulo"
         [descricao]="solucao.descricao" [appRevelarAoScroll]="$index + 1" />
@@ -115,7 +115,7 @@
   <app-container-pagina>
     <app-cabecalho-secao tema="verde" [titulo]="tituloCronograma()" appRevelarAoScroll />
 
-    <div class="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
+    <div class="mt-12 grid grid-cols-2 gap-8 sm:gap-10 lg:grid-cols-5 lg:gap-6">
       @for (etapa of p.cronograma ?? []; track etapa.id) {
       <app-etapa-cronograma [etapa]="etapa" [numero]="$index + 1" [appRevelarAoScroll]="$index + 1" />
       } @empty {
@@ -136,6 +136,128 @@
 
     <div class="mt-10">
       <app-galeria-mosaico [itens]="p.galeria ?? []" [textoAlternativo]="p.titulo" />
+    </div>
+  </app-container-pagina>
+</section>
+}
+<!-- 7 sessão — equipa do projecto: a fila de retratos circulares com o nome e o cargo de cada membro -->
+@if (p.equipa?.length) {
+<section id="secao-equipa" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="verde" [titulo]="tituloEquipa()" appRevelarAoScroll />
+
+    <div class="mt-12 grid grid-cols-2 gap-8 sm:gap-10 lg:grid-cols-4 lg:gap-8">
+      @for (membro of p.equipa ?? []; track membro.id) {
+      <app-membro-equipa [membro]="membro" [appRevelarAoScroll]="$index + 1" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['A equipa deste projecto ainda não foi publicada.', 'The team for this project has not been published yet.']) }}
+      </p>
+      }
+    </div>
+  </app-container-pagina>
+</section>
+}
+<!-- 8 sessão — parceiros estratégicos: rótulo discreto e a faixa de logótipos institucionais em rolagem -->
+<section id="secao-parceiros" class="border-t border-gray-200 bg-white py-14 sm:py-16">
+  <app-container-pagina>
+    <p class="px-4 text-center text-xs font-semibold tracking-[0.2em] text-text-secondary uppercase sm:px-6 lg:px-8"
+      appRevelarAoScroll>
+      {{ rotuloParceiros() }}
+    </p>
+  </app-container-pagina>
+
+  <!-- Fora do container e sem `appRevelarAoScroll`: a faixa precisa da largura toda e a
+       revelação por opacidade colidiria com o `transform` da rolagem contínua dela. -->
+  <div class="mt-8">
+    <app-faixa-patrocinadores [patrocinadores]="patrocinadores()" />
+  </div>
+</section>
+<!-- 9 sessão — documentos e publicações à esquerda e testemunhos de quem beneficia do projecto à direita -->
+@if (p.documentos?.length || p.testemunhos?.length) {
+<section id="secao-documentos" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false"
+          [titulo]="tituloDocumentos()" appRevelarAoScroll />
+
+        <div class="mt-6 space-y-3">
+          @for (documento of p.documentos ?? []; track documento.id) {
+          <app-item-documento [documento]="documento" [appRevelarAoScroll]="$index + 1" />
+          } @empty {
+          <p class="py-8 text-sm text-text-secondary">
+            {{ traducao.getTraducao(['Os documentos deste projecto ainda não foram publicados.', 'The documents for this project have not been published yet.']) }}
+          </p>
+          }
+        </div>
+      </div>
+
+      <div>
+        <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false"
+          [titulo]="tituloTestemunhos()" appRevelarAoScroll />
+
+        <div class="mt-6 space-y-6">
+          @for (testemunho of p.testemunhos ?? []; track testemunho.id) {
+          <app-cartao-testemunho [testemunho]="testemunho" [appRevelarAoScroll]="$index + 1" />
+          } @empty {
+          <p class="py-8 text-sm text-text-secondary">
+            {{ traducao.getTraducao(['Os testemunhos deste projecto ainda não foram recolhidos.', 'The testimonials for this project have not been collected yet.']) }}
+          </p>
+          }
+        </div>
+      </div>
+    </div>
+  </app-container-pagina>
+</section>
+}
+<!-- 10 sessão — interessado no projecto: painel verde com os contactos do projecto e o formulário de mensagem -->
+@if (p.contacto) {
+<section id="secao-contacto" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid overflow-hidden rounded-2xl shadow-xl shadow-black/5 lg:grid-cols-2" appRevelarAoScroll>
+      <div class="bg-primary-deep px-6 py-10 sm:px-10 sm:py-12">
+        <h2 class="text-2xl font-bold text-white sm:text-3xl">{{ tituloContacto() }}</h2>
+        <p class="mt-4 text-sm leading-relaxed text-white/80">{{ descricaoContacto() }}</p>
+
+        <div class="mt-8 space-y-6">
+          @for (item of itensContacto(); track item.id) {
+          <app-item-contacto tema="escuro" formato="rotuloAcima" [icone]="item.icone" [rotulo]="item.rotulo"
+            [valor]="item.valor" />
+          }
+        </div>
+      </div>
+
+      <div class="bg-white px-6 py-10 sm:px-10 sm:py-12">
+        <form [formGroup]="formulario" (ngSubmit)="enviarMensagem()">
+          <div class="grid gap-x-6 sm:grid-cols-2">
+            <form-input-field variante="minimalista" formControlName="nome" [label]="rotuloNome()"
+              [placeholder]="placeholderNome()" [erro]="validacao.getErro('nome')" />
+
+            <form-input-field variante="minimalista" type="email" formControlName="email" [label]="rotuloEmail()"
+              [placeholder]="placeholderEmail()" [erro]="validacao.getErro('email')" />
+          </div>
+
+          <field-select-v2 class="mt-4 block" variante="minimalista" formControlName="tipoInteressado"
+            [label]="rotuloTipoInteressado()" [placeholder]="placeholderTipoInteressado()"
+            [options]="opcoesTipoInteressado()" [erro]="validacao.getErro('tipoInteressado')" />
+
+          <form-input-field class="mt-4 block" variante="minimalista" type="textarea" [rows]="4"
+            formControlName="mensagem" [label]="rotuloMensagem()" [placeholder]="placeholderMensagem()"
+            [erro]="validacao.getErro('mensagem')" />
+
+          <!-- Pílula bege a toda a largura: a variante `secundario` é a que usa o `accent` do mockup. -->
+          <app-botao class="mt-6" tipo="submit" variante="secundario" tamanho="lg" raio="completo"
+            [larguraTotal]="true" [aCarregar]="estadoEnvio() === 'enviando'"
+            [desativado]="estadoEnvio() === 'enviando'">
+            {{ rotuloEnviar() }}
+          </app-botao>
+
+          @if (estadoEnvio() === 'sucesso') {
+          <p class="mt-4 text-sm text-primary" role="status">{{ mensagemSucesso() }}</p>
+          }
+        </form>
+      </div>
     </div>
   </app-container-pagina>
 </section>

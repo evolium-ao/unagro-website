@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { formatarDataCurta } from '../../../core/traducao/formatar-data';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { NoticiaCartao } from '../../modelos/noticia-cartao.model';
+import { RouterLink } from '@angular/router';
 import { BotaoComponent } from '../botao/botao.component';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 
@@ -11,12 +12,13 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
  */
 @Component({
   selector: 'app-cartao-noticia-destaque',
-  imports: [EspacoImagemComponent, BotaoComponent],
+  imports: [EspacoImagemComponent, BotaoComponent, RouterLink],
   host: { class: 'block h-full' },
   template: `
     <article class="relative flex h-full min-h-80 flex-col justify-end overflow-hidden rounded-lg">
       <app-espaco-imagem
         class="absolute inset-0"
+        proporcao="cover"
         alturaMinima="100%"
         [imagem]="noticia().imagem"
         [legenda]="legendaImagem()" />
@@ -24,7 +26,7 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
         class="absolute inset-0 bg-gradient-to-t from-primary-dark via-primary-dark/70 to-primary-dark/10"
       ></div>
 
-      @if (variante() === 'padrao') {
+      @if (variante() === 'padrao' && mostrarSelo()) {
         <span
           class="absolute right-3 top-5 rounded bg-secondary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary-dark"
         >
@@ -52,11 +54,18 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
         <p class="mt-3 text-xs leading-5 text-white/75">{{ noticia().resumo }}</p>
 
         @if (link(); as destino) {
-          <app-botao variante="secundario" tamanho="sm" [link]="destino" class="mt-6">
+          <app-botao variante="secundario" tamanho="sm" [link]="destino" class="relative z-20 mt-6">
             {{ traducao.t('comum.lerArtigo') }}
           </app-botao>
         }
       </div>
+
+      <!-- Ligação sobreposta: o cartão inteiro abre a notícia. Decorativa para o
+           leitor de ecrã e fora da ordem de tabulação — quem navega por teclado
+           usa o botão "Ler artigo", que vai ao mesmo sítio. -->
+      @if (link(); as destino) {
+        <a [routerLink]="destino" class="absolute inset-0 z-10" aria-hidden="true" tabindex="-1"></a>
+      }
     </article>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +77,12 @@ export class CartaoNoticiaDestaqueComponent {
    * categoria em selo sobre o gradiente (secção de notícias académicas).
    */
   readonly variante = input<'padrao' | 'simples'>('padrao');
+  /**
+   * Selo "Em destaque" no canto (só na variante `padrao`). Por omissão fica
+   * visível, como sempre foi; desliga-se quando o cartão ocupa o lugar grande da
+   * grelha sem que a notícia esteja marcada como destaque na API.
+   */
+  readonly mostrarSelo = input(true);
   /** Descrição da fotografia a colocar no espaço reservado enquanto não há imagem real. */
   readonly legendaImagem = input<string>();
   /** Destino do botão "Ler artigo"; sem destino, o botão não é apresentado. */
