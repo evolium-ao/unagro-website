@@ -28,7 +28,7 @@ export interface EstruturaOrganizacional {
  * Organograma da UNAGRO. Fica no componente (e não em `data`) porque quem abre o modal é
  * um item de menu, que não tem contexto nenhum para passar.
  */
-const ESTRUTURA: EstruturaOrganizacional = {
+export const ESTRUTURA: EstruturaOrganizacional = {
   conselho: {
     id: 'conselho-universitario',
     icone: 'landmark',

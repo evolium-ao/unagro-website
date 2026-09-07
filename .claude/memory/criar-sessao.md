@@ -2005,3 +2005,58 @@ interceptor que põe o `Authorization: Bearer` nos pedidos de escrita; a entrada
 Office 365 não tem endpoint (`entrarCom` só avisa na consola); não há página de recuperação
 de palavra-passe (a ligação fica na própria página); e o `ROTA_APOS_ENTRAR` aponta para
 `/estudantes`, que é o portal que existe hoje.
+
+### app-abas (existente, estendido)
+
+**Onde:** `src/app/shared/componentes/abas/abas.component.ts`
+**Estendido para:** abas de `/sobre` (2026-09-07)
+**Descrição:** barra de abas com sublinhado na aba activa; o conteúdo de cada aba é de
+quem a usa. **Estendido** com o input `rolavel`, aditivo: `false` (omissão) é a barra de
+sempre — exactamente o que `candidaturas` já mostrava — e `true` deixa a fila deslizar na
+horizontal (`overflow-x-auto`, barra de scroll escondida) com os botões em `shrink-0
+whitespace-nowrap`, para as sete abas de `/sobre` caberem em telemóvel sem quebrar
+rótulos. As classes passaram de literais no template para `computed`/método; com
+`rolavel` a `false` o conjunto de classes é o mesmo de antes.
+
+**Inputs:** `abas: ItemAba[]` (por omissão `[]`) · `rolavel: boolean` (por omissão
+`false`) — **Model:** `ativa: string`
+
+**Como usar:**
+
+    <app-abas [abas]="abasRequisitos()" [(ativa)]="nivelRequisitosAtivo" />
+
+    <app-abas class="block" [abas]="abas()" [(ativa)]="abaAtiva" [rolavel]="true" />
+
+**Usado em:** `candidaturas`, `sobre`
+
+### Abas de `/sobre` — os modais do submenu passaram a página (2026-09-07)
+
+Proposta alternativa à do cliente: em vez de cada item do submenu "Sobre UNAGRO" abrir um
+modal, "Sobre UNAGRO" é uma ligação simples para `/sobre`, e os sete itens são **abas**
+dessa página. Um componente por aba, em `src/app/pages/sobre/<aba>/`:
+`nossa-historia`, `pilares-institucionais`, `orgaos-gestao`, `estrutura-organizacional`,
+`faculdades-departamentos`, `aba-unagro`, `governanca`.
+
+**Os modais não foram tocados** — continuam em `shared/componentes/modal-*` e o
+`CabecalhoComponent` continua a saber abri-los. Para voltar à proposta do cliente basta
+`SOBRE_COM_SUBMENU_MODAIS = true` em `layout/cabecalho/menu.config.ts`, que devolve o
+`SUBMENU_SOBRE_MODAIS` ao menu.
+
+**Sem conteúdo duplicado:** as abas reusam as listas que os modais já tinham, agora
+exportadas — `PILARES`, `MEMBROS_GESTAO`, `ESTRUTURA` — e a aba "Nossa História" lê as
+mesmas chaves `modais.nossaHistoria.*` do dicionário. Os rótulos das abas são as chaves
+`nav.sobreMenu.*` do submenu.
+
+**Faculdades e departamentos** não tinha modal: deriva as faculdades dos cursos de grau do
+`CursosService` (agrupados por `faculdade`, cada uma com os seus cursos a ligar para
+`/cursos/:id`), em vez de repetir uma lista à mão.
+
+**Pendente:** "Aba Unagro" e "Governança" não tinham modal nem texto, e o rótulo "Aba
+Unagro" não diz o que a secção deve mostrar. Ambas mostram o
+`app-sobre-conteudo-em-preparacao` (`pages/sobre/conteudo-em-preparacao/`) — caixa
+tracejada com ícone, título, aviso e botão para `/contactos` — em vez de conteúdo
+institucional inventado. Quando o texto chegar, troca-se o componente pela secção real.
+
+**Reversão:** a página `/sobre` anterior (hero simples, Missão/Visão, quatro valores em
+cartões, parágrafo da história) está inteira e fora do routing em
+`pages/sobre/legado/sobre-legado.component.ts`.

@@ -25,20 +25,40 @@ export interface ItemMenu {
 
 export const CHAVE_SUBMENU_CURSOS = 'cursos';
 
+/**
+ * Interruptor entre as duas propostas para o "Sobre UNAGRO":
+ *
+ * - `false` (proposta nova, em vigor) — "Sobre UNAGRO" é uma entrada simples que leva a
+ *   `/sobre`; os antigos itens do submenu passaram a **abas** dessa página
+ *   (`src/app/pages/sobre/`). Os modais continuam todos em `shared/componentes/modal-*`
+ *   e o `CabecalhoComponent` continua a saber abri-los.
+ * - `true` (proposta do cliente) — devolve o submenu ao menu, com os itens a abrirem os
+ *   modais exactamente como antes.
+ *
+ * Mudar este valor é tudo o que é preciso para trocar de proposta.
+ */
+export const SOBRE_COM_SUBMENU_MODAIS: boolean = false;
+
+/**
+ * O submenu do "Sobre UNAGRO" da proposta do cliente. Fica aqui, intacto, para
+ * `SOBRE_COM_SUBMENU_MODAIS` o poder voltar a ligar sem se reescrever nada.
+ */
+export const SUBMENU_SOBRE_MODAIS: ItemMenuFilho[] = [
+  { label: 'nav.sobreMenu.nossaHistoria', modal: 'nossaHistoria' },
+  { label: 'nav.sobreMenu.pilares', modal: 'pilares' },
+  { label: 'nav.sobreMenu.orgaosGestao', modal: 'orgaosGestao' },
+  { label: 'nav.sobreMenu.estruturaOrganizacional', modal: 'estruturaOrganizacional' },
+  { label: 'nav.sobreMenu.faculdadesDepartamentos', path: '/sobre' },
+  { label: 'nav.sobreMenu.abaUnagro', path: '/sobre' },
+  { label: 'nav.sobreMenu.governanca', path: '/sobre' },
+];
+
 export const MENU_PRINCIPAL: ItemMenu[] = [
   {
     label: 'nav.sobreUnagro',
     path: '/sobre',
-    // As páginas dedicadas ainda não existem: por agora todos os itens abrem `/sobre`.
-    children: [
-      { label: 'nav.sobreMenu.nossaHistoria', modal: 'nossaHistoria' },
-      { label: 'nav.sobreMenu.pilares', modal: 'pilares' },
-      { label: 'nav.sobreMenu.orgaosGestao', modal: 'orgaosGestao' },
-      { label: 'nav.sobreMenu.estruturaOrganizacional', modal: 'estruturaOrganizacional' },
-      { label: 'nav.sobreMenu.faculdadesDepartamentos', path: '/sobre' },
-      { label: 'nav.sobreMenu.abaUnagro', path: '/sobre' },
-      { label: 'nav.sobreMenu.governanca', path: '/sobre' },
-    ],
+    // Sem `children` o cabeçalho trata-o como ligação simples — é o que a proposta nova quer.
+    ...(SOBRE_COM_SUBMENU_MODAIS ? { children: SUBMENU_SOBRE_MODAIS } : {}),
   },
   {
     label: 'nav.candidaturas',

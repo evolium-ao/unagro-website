@@ -1,58 +1,81 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { localizarProfundo } from '../../core/traducao/localizar-profundo';
-import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { CaminhoDicionario } from '../../core/traducao/dicionario';
 import { TraducaoService } from '../../core/traducao/traducao.service';
-import { EspacoImagemComponent } from '../../shared/componentes/espaco-imagem/espaco-imagem.component';
-import { IconeComponent } from '../../shared/componentes/icone/icone.component';
+import { AbasComponent, ItemAba } from '../../shared/componentes/abas/abas.component';
+import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
+import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
+import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
+import { SobreAbaUnagroComponent } from './aba-unagro/aba-unagro.component';
+import { SobreEstruturaOrganizacionalComponent } from './estrutura-organizacional/estrutura-organizacional.component';
+import { SobreFaculdadesDepartamentosComponent } from './faculdades-departamentos/faculdades-departamentos.component';
+import { SobreGovernancaComponent } from './governanca/governanca.component';
+import { SobreNossaHistoriaComponent } from './nossa-historia/nossa-historia.component';
+import { SobreOrgaosGestaoComponent } from './orgaos-gestao/orgaos-gestao.component';
+import { SobrePilaresInstitucionaisComponent } from './pilares-institucionais/pilares-institucionais.component';
 
-interface ValorBruto {
-  icone: string;
-  titulo: TextoTraduzido;
-  descricao: TextoTraduzido;
-}
+/** As abas de `/sobre`, na ordem do submenu que o cliente propôs. */
+export type IdAbaSobre =
+  | 'nossa-historia'
+  | 'pilares'
+  | 'orgaos-gestao'
+  | 'estrutura-organizacional'
+  | 'faculdades-departamentos'
+  | 'aba-unagro'
+  | 'governanca';
 
-const VALORES_BRUTOS: ValorBruto[] = [
-  {
-    icone: 'sprout',
-    titulo: { pt: 'Sustentabilidade', en: 'Sustainability' },
-    descricao: {
-      pt: 'Práticas agrícolas e de gestão que respeitam o ambiente e as gerações futuras.',
-      en: 'Agricultural and management practices that respect the environment and future generations.',
-    },
-  },
-  {
-    icone: 'flask-conical',
-    titulo: { pt: 'Rigor Científico', en: 'Scientific Rigor' },
-    descricao: {
-      pt: 'Investigação aplicada com metodologia sólida e resultados verificáveis.',
-      en: 'Applied research with solid methodology and verifiable results.',
-    },
-  },
-  {
-    icone: 'users',
-    titulo: { pt: 'Compromisso Comunitário', en: 'Community Commitment' },
-    descricao: {
-      pt: 'Trabalho lado a lado com produtores e cooperativas locais.',
-      en: 'Working side by side with local farmers and cooperatives.',
-    },
-  },
-  {
-    icone: 'award',
-    titulo: { pt: 'Excelência Académica', en: 'Academic Excellence' },
-    descricao: {
-      pt: 'Formação exigente que prepara profissionais para os desafios reais do sector.',
-      en: "Demanding training that prepares professionals for the sector's real challenges.",
-    },
-  },
+/**
+ * Os rótulos são as **mesmas** chaves do submenu (`nav.sobreMenu.*`): assim a aba e o
+ * item de menu nunca dizem coisas diferentes, e voltar ao submenu
+ * (`SOBRE_COM_SUBMENU_MODAIS`) não obriga a retocar textos.
+ */
+const ABAS_SOBRE: readonly { id: IdAbaSobre; label: CaminhoDicionario }[] = [
+  { id: 'nossa-historia', label: 'nav.sobreMenu.nossaHistoria' },
+  { id: 'pilares', label: 'nav.sobreMenu.pilares' },
+  { id: 'orgaos-gestao', label: 'nav.sobreMenu.orgaosGestao' },
+  { id: 'estrutura-organizacional', label: 'nav.sobreMenu.estruturaOrganizacional' },
+  { id: 'faculdades-departamentos', label: 'nav.sobreMenu.faculdadesDepartamentos' },
+  { id: 'aba-unagro', label: 'nav.sobreMenu.abaUnagro' },
+  { id: 'governanca', label: 'nav.sobreMenu.governanca' },
 ];
 
+/**
+ * Página `/sobre` da proposta nova: banner de página (como em `/formacoes`) e, abaixo,
+ * as sete abas que substituem os modais do submenu "Sobre UNAGRO". Cada aba é um
+ * componente próprio em `./<aba>/`; esta página só escolhe qual mostrar.
+ *
+ * A implementação anterior está inteira em `./legado/sobre-legado.component.ts`.
+ */
 @Component({
   selector: 'app-sobre',
-  imports: [IconeComponent, EspacoImagemComponent],
+  imports: [
+    AbasComponent,
+    BannerDestaqueComponent,
+    ContainerBannerFaixaEstatisticaComponent,
+    ContainerPaginaComponent,
+    SobreNossaHistoriaComponent,
+    SobrePilaresInstitucionaisComponent,
+    SobreOrgaosGestaoComponent,
+    SobreEstruturaOrganizacionalComponent,
+    SobreFaculdadesDepartamentosComponent,
+    SobreAbaUnagroComponent,
+    SobreGovernancaComponent,
+  ],
   templateUrl: './sobre.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SobreComponent {
   protected readonly traducao = inject(TraducaoService);
-  protected readonly valores = computed(() => localizarProfundo(VALORES_BRUTOS, this.traducao.idioma()));
+
+  protected readonly abaAtiva = signal<string>(ABAS_SOBRE[0].id);
+
+  protected readonly abas = computed<ItemAba[]>(() =>
+    ABAS_SOBRE.map((aba) => ({ id: aba.id, rotulo: this.traducao.t(aba.label) })),
+  );
+
+  protected readonly tituloHero = computed(() => this.traducao.getTraducao(['Sobre a', 'About']));
+  protected readonly tituloDestaqueHero = computed(() => 'UNAGRO');
+
+  protected readonly subtituloHero = computed(() =>
+    this.traducao.t('paginas.sobre.subtitulo'),
+  );
 }

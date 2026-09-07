@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 
 export interface ItemAba {
   id: string;
@@ -12,18 +12,15 @@ export interface ItemAba {
 @Component({
   selector: 'app-abas',
   template: `
-    <div class="flex gap-6 border-b border-gray-200" role="tablist">
+
+    <div [class]="classesLista()" role="tablist">
       @for (aba of abas(); track aba.id) {
         <button
           type="button"
           role="tab"
           [attr.aria-selected]="aba.id === ativa()"
-          class="-mb-px cursor-pointer border-b-2 pb-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          [class]="
-            aba.id === ativa()
-              ? 'border-primary font-semibold text-primary'
-              : 'border-transparent font-medium text-text-secondary hover:text-text-primary'
-          "
+          class="-mb-px cursor-pointer border-b-2 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary"
+          [class]="classesBotao(aba.id)"
           (click)="ativa.set(aba.id)"
         >
           {{ aba.rotulo }}
@@ -36,4 +33,25 @@ export interface ItemAba {
 export class AbasComponent {
   readonly abas = input<ItemAba[]>([]);
   readonly ativa = model<string>('');
+
+  /**
+   * Com muitas abas (ver `/sobre`) a fila não cabe em telemóvel: `rolavel` deixa-a
+   * deslizar na horizontal e impede os rótulos de quebrarem a linha. Por omissão
+   * `false` — a barra é exactamente a de sempre.
+   */
+  readonly rolavel = input(false);
+
+  protected readonly classesLista = computed(
+    () =>
+      `flex gap-6 border-b border-gray-200${this.rolavel() ? ' overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden' : ''}`,
+  );
+
+  protected classesBotao(id: string): string {
+    const estado =
+      id === this.ativa()
+        ? 'border-primary font-semibold text-primary'
+        : 'border-transparent font-medium text-text-secondary hover:text-text-primary';
+
+    return this.rolavel() ? `${estado} shrink-0 whitespace-nowrap` : estado;
+  }
 }

@@ -22,7 +22,7 @@ export interface PilarInstitucional {
  * Os três pilares da UNAGRO. Ficam no componente (e não em `data`) porque quem abre o
  * modal é um item de menu, que não tem contexto nenhum para passar.
  */
-const PILARES: readonly PilarInstitucional[] = [
+export const PILARES: readonly PilarInstitucional[] = [
   {
     id: 'missao',
     icone: 'target',

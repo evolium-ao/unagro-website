@@ -21,7 +21,7 @@ export interface MembroGestao {
  * Estrutura directiva da UNAGRO. Fica no componente (e não em `data`) porque quem abre
  * o modal é um item de menu, que não tem contexto nenhum para passar.
  */
-const MEMBROS_GESTAO: readonly MembroGestao[] = [
+export const MEMBROS_GESTAO: readonly MembroGestao[] = [
   {
     id: 'reitoria',
     etiqueta: ['Reitoria', 'Rectorate'],
