@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
+import { eventosQueries } from '../../core/consultas/eventos.queries';
 import { noticiasQueries } from '../../core/consultas/noticias.queries';
 import { NOTICIAS_FALLBACK } from '../../core/dados/noticias.mock';
+import { Evento } from '../../core/modelos/evento.model';
 import { Noticia } from '../../core/modelos/noticia.model';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { EventosService } from '../../core/servicos/eventos.service';
@@ -113,8 +115,23 @@ export class InicioComponent {
 
   protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly pilares = this.estatisticasService.pilares;
-  protected readonly eventoPrincipal = this.eventosService.emDestaque;
   protected readonly patrocinadores = this.patrocinadoresService.patrocinadores;
+
+  /** `GET /eventos` — a lista vem inteira, sem paginação nem filtros do lado da API. */
+  protected readonly consultaEventos = injectQuery(() => eventosQueries.lista(this.eventosService));
+
+  /**
+   * A API ainda não dá a data do evento (ver `evento.model.ts`), e sem ela o
+   * `app-cartao-evento-destaque` não tem o que mostrar na contagem decrescente.
+   * Enquanto isso não mudar do lado do Laravel, esta secção fica na mensagem de
+   * "sem eventos" já prevista no template, em vez de mostrar uma contagem para
+   * uma data inventada.
+   */
+  protected readonly eventoPrincipal = computed<(Evento & { dataInicio: string }) | undefined>(() =>
+    this.consultaEventos
+      .data()
+      ?.find((evento): evento is Evento & { dataInicio: string } => !!evento.dataInicio),
+  );
 
   protected readonly pilaresModelo = computed(() =>
     localizarProfundo(PILARES_MODELO, this.traducao.idioma()),

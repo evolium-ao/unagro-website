@@ -211,6 +211,74 @@ o site não consegue apagar. O caminho de sucesso (201 + ficheiro guardado no `s
 por confirmar com uma submissão real.
 
 
+## eventos
+
+**Integrado em:** 2026-09-08, para a sessão "Próximos Eventos" de
+`pages/eventos/eventos.component.html`. Arrastou também `pages/inicio` (secção
+"evento em destaque"), que já consumia o `EventosService` antigo.
+
+**Camadas:**
+
+- `src/app/core/servicos/eventos.service.ts` — `listar(signal)` e
+  `obterPorId(id, signal)`; a interface crua `EventoApi` e a função `paraEvento`
+  ficam neste ficheiro. **Reescrito**: antes era um `computed` sobre
+  `EVENTOS_MOCK` com `localizarProfundo`, sem tocar na API.
+- `src/app/core/consultas/eventos.queries.ts` — `eventosQueries.raiz`, `.lista(servico)`
+  e `.porId(servico, id)`.
+- `src/app/core/modelos/evento.model.ts` — `Evento` passou de campos
+  `TextoTraduzido` para texto simples (regra dos modelos vindos da API); ganhou
+  `AMBITOS_EVENTO` e `ROTULOS_AMBITO_EVENTO` (rótulos de UI, não dados da API —
+  o mesmo padrão do `ROTULOS_CATEGORIA_PROJECTO`).
+- `src/app/pages/eventos/eventos.component.ts` — `injectQuery(() => eventosQueries.lista(...))`;
+  os `computed` de filtro por âmbito, paginação, destaque/secundários e mensagem
+  de lista vazia continuam todos, só que sobre `consultaEventos.data()`.
+- `src/app/pages/inicio/inicio.component.ts` — idem, com `eventoPrincipal`
+  recalculado (ver abaixo).
+- `src/app/shared/componentes/cartao-evento-foto-esqueleto/` — esqueleto novo,
+  com os dois formatos (`vertical`/`destaque`) do `app-cartao-evento-foto`.
+
+**Mapeamento** (`EventoResource` → `Evento`): `id` → `String(id)`,
+`localizacao` → `local`, `capa_url` → `imagem_url` (via `capaUtilizavel`),
+`abrangencia` → `ambito`, com `nacional`/`internacional` inalterados e
+**`unagro_prometed` → `unagro`** (a API escreve "prometed", erro tipográfico de
+"promovido"). `titulo`/`descricao` mantêm o nome. `created_at`/`updated_at` não
+são usados pelo site.
+
+**A API não dá:**
+
+1. **Data do evento.** O `EventoResource` só tem `id`, `capa_url`, `titulo`,
+   `descricao`, `localizacao`, `abrangencia`, `created_at`, `updated_at` — nenhum
+   campo de data/hora do acontecimento em si. `dataInicio`/`dataFim` ficaram
+   **opcionais** no `Evento`, e:
+   - no `app-cartao-evento-foto`, o selo de data (ícone de calendário) some
+     quando `dataInicio` falta — o que acontece para todos os eventos reais
+     de momento;
+   - em `pages/inicio`, a secção "evento em destaque" (`app-cartao-evento-destaque`,
+     que exige `dataInicio` para a contagem decrescente) só mostra um evento se
+     `dataInicio` existir; como nenhum evento da API a tem, a secção cai sempre
+     na mensagem "Ainda não há eventos agendados." já prevista no template —
+     não se inventou data nenhuma para preencher a contagem.
+2. **Sem `destaque`/flag de evento principal.** O antigo mock marcava um evento
+   como `destaque: true`; a API não tem equivalente. `pages/inicio` já não
+   escolhe por essa flag (o `find` procura o primeiro com `dataInicio`, que por
+   agora nunca acontece — ver ponto 1).
+3. **Sem categoria/selo textual separado do âmbito.** O mock antigo tinha um
+   campo `selo` bilingue independente (ex.: "Cooperativa" para um evento
+   `corporacao`); a API só dá `abrangencia`. O selo do cartão passou a ser o
+   rótulo traduzido do próprio `ambito` (`ROTULOS_AMBITO_EVENTO`).
+4. **Sem âmbito "corporação".** O filtro lateral de `eventos.component.ts` tinha
+   uma opção "Corporações" que não corresponde a nenhum valor de `abrangencia`
+   da API (só `nacional`, `internacional`, `unagro_prometed`); foi removida da
+   barra de filtros em vez de ficar como opção permanentemente vazia.
+
+**Mock apagado:** `core/dados/eventos.mock.ts` (`EVENTOS_MOCK`, bilingue) — só o
+`EventosService` antigo o consumia.
+
+**SSR: o servidor não espera pela query**, o mesmo problema já registado para
+`noticias` e `laboratorios` acima. Confirmado no `dist`: o prerender de
+`/eventos` sai com os `app-cartao-evento-foto-esqueleto` e sem evento nenhum.
+
+
 ## Notas de campo
 
 **2026-09-04, ~13h50: a tabela de notícias da API ficou vazia.** `GET /noticias` devolve
@@ -224,3 +292,17 @@ se a base foi reposta ou remigrada.
 vez de `localhost` — as fotografias já carregam no site. O guarda `capaUtilizavel` do
 `NoticiasService` deixou de disparar sozinho, como estava previsto; fica lá para o caso
 de o `APP_URL` voltar a apontar para `localhost`.
+
+**2026-09-08: a API passou a devolver `capa_url` como caminho relativo** (`eventos/xxx.jpg`,
+`noticias/xxx.jpg`, `laboratorios/xxx.jpg` — sem host nem `/storage/`), em vez do URL
+absoluto de antes. Todas as imagens dos três recursos ficaram partidas ao mesmo tempo,
+porque os três passam pelo mesmo `capaUtilizavel` (`core/api/capa-utilizavel.ts`), que só
+sabia tratar URLs absolutos (guardando o caso `localhost`) e devolvia o caminho relativo
+tal e qual — o `<img src>` ficava `eventos/xxx.jpg`, relativo à página, em vez do ficheiro
+no `storage`. **Corrigido no próprio `capaUtilizavel`**: quando o valor não começa por
+`http(s)://`, prefixa-se com `environment.apiUrl` sem o `/api` final mais `/storage`
+(`RAIZ_STORAGE`). Continua a aceitar o caso absoluto (incluindo o guarda de `localhost`)
+para não regredir se a API voltar a mandar URL completo. **Corrige-se aqui e não em cada
+serviço** pela mesma razão do guarda de `localhost`: é um problema da API, comum a todos
+os recursos com imagem — só falta aplicar quando um recurso novo tiver `capa_url` e ainda
+não usar esta função.

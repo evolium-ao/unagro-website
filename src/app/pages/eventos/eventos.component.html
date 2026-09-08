@@ -39,7 +39,18 @@
           </div>
         </div>
 
-        @if (eventoDestacado(); as destacado) {
+        @if (consultaEventos.isPending()) {
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="sm:col-span-2">
+            <app-cartao-evento-foto-esqueleto formato="destaque" />
+          </div>
+          @for (_ of [1, 2, 3]; track $index) {
+          <app-cartao-evento-foto-esqueleto />
+          }
+        </div>
+        } @else if (consultaEventos.isError()) {
+        <p class="mt-8 py-12 text-center text-sm text-text-secondary">{{ erroEventos() }}</p>
+        } @else if (eventoDestacado(); as destacado) {
         <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div class="sm:col-span-2" [appRevelarAoScroll]="0">
             <app-cartao-evento-foto [evento]="destacado" formato="destaque" />

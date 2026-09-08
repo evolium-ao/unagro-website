@@ -15,7 +15,8 @@ export interface EventoFotoCartao {
   descricao: string;
   /** Rótulo do selo — âmbito ou tipo do evento, já traduzido pela página. */
   categoria: string;
-  dataInicio: string;
+  /** A API ainda não dá a data do evento; sem ela o selo de data não aparece. */
+  dataInicio?: string;
   local: string;
   link: string;
   /** Sem fotografia fica o marcador cinzento do `app-espaco-imagem`. */
@@ -45,10 +46,12 @@ export interface EventoFotoCartao {
             <app-selo variante="neutro" class="uppercase tracking-wide">
               {{ evento().categoria }}
             </app-selo>
-            <span class="flex items-center gap-1.5 text-xs text-text-secondary">
-              <app-icone nome="calendar" [tamanho]="13" />
-              {{ dataFormatada() }}
-            </span>
+            @if (dataFormatada(); as data) {
+              <span class="flex items-center gap-1.5 text-xs text-text-secondary">
+                <app-icone nome="calendar" [tamanho]="13" />
+                {{ data }}
+              </span>
+            }
           </div>
 
           <h3 class="mt-4 text-lg font-bold leading-snug text-text-primary sm:text-xl">
@@ -82,10 +85,12 @@ export interface EventoFotoCartao {
 
         <div class="flex flex-1 flex-col p-5">
           <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-secondary">
-            <span class="flex items-center gap-1.5">
-              <app-icone nome="calendar" [tamanho]="13" />
-              {{ dataFormatada() }}
-            </span>
+            @if (dataFormatada(); as data) {
+              <span class="flex items-center gap-1.5">
+                <app-icone nome="calendar" [tamanho]="13" />
+                {{ data }}
+              </span>
+            }
             <span class="flex items-center gap-1.5">
               <app-icone nome="map-pin" [tamanho]="13" />
               {{ evento().local }}
@@ -124,9 +129,10 @@ export class CartaoEventoFotoComponent {
 
   protected readonly traducao = inject(TraducaoService);
 
-  protected readonly dataFormatada = computed(() =>
-    formatarDataCurta(this.evento().dataInicio, this.traducao.idioma()),
-  );
+  protected readonly dataFormatada = computed(() => {
+    const dataInicio = this.evento().dataInicio;
+    return dataInicio ? formatarDataCurta(dataInicio, this.traducao.idioma()) : undefined;
+  });
 
   protected readonly textoInscricao = computed(() =>
     this.traducao.getTraducao(['Inscrever-se', 'Register']),

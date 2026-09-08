@@ -1,10 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { eventosQueries } from '../../core/consultas/eventos.queries';
+import { AMBITOS_EVENTO, AmbitoEvento, ROTULOS_AMBITO_EVENTO } from '../../core/modelos/evento.model';
+import { EventosService } from '../../core/servicos/eventos.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import {
   BannerDestaqueComponent,
   CtaBannerDestaque,
 } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
+import { CartaoEventoFotoEsqueletoComponent } from '../../shared/componentes/cartao-evento-foto-esqueleto/cartao-evento-foto-esqueleto.component';
 import {
   CartaoEventoFotoComponent,
   EventoFotoCartao,
@@ -15,97 +20,10 @@ import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { ItemFiltroLateralComponent } from '../../shared/componentes/item-filtro-lateral/item-filtro-lateral.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 
-/** Âmbito do evento — é por ele que a barra lateral filtra a listagem. */
-type AmbitoEventoProximo = 'nacional' | 'internacional' | 'corporacao' | 'unagro';
-
 const TODOS_OS_AMBITOS = '__todos__';
 
 /** Uma linha com o cartão de destaque mais uma coluna, e outra linha com três cartões. */
 const EVENTOS_POR_PAGINA = 5;
-
-/** Par `[pt, en]` resolvido em `computed`, para a lista mudar de idioma sem recarregar. */
-type TextoBilingue = [string, string];
-
-interface EventoProximoApi {
-  id: string;
-  ambito: AmbitoEventoProximo;
-  /** Rótulo do selo do cartão; não tem de coincidir com o âmbito. */
-  selo: TextoBilingue;
-  titulo: TextoBilingue;
-  descricao: TextoBilingue;
-  local: TextoBilingue;
-  dataInicio: string;
-  imagem: string;
-}
-
-// TODO: substituir pelo EventosService quando o back-end devolver fotografia e âmbito.
-const EVENTOS_PROXIMOS_MOCK: EventoProximoApi[] = [
-  {
-    id: 'workshop-recursos-hidricos',
-    ambito: 'corporacao',
-    selo: ['Cooperativa', 'Cooperative'],
-    titulo: ['Workshop de Gestão de Recursos Hídricos', 'Water Resources Management Workshop'],
-    descricao: [
-      'Exploração de técnicas avançadas de irrigação gota-a-gota e reaproveitamento de água em explorações agrícolas.',
-      'A hands-on look at advanced drip irrigation techniques and water reuse on working farms.',
-    ],
-    local: ['Quiminha', 'Quiminha'],
-    dataInicio: '2026-10-15T09:00:00',
-    imagem: '/imagens/recursos-idricos.png',
-  },
-  {
-    id: 'dia-campo-culturas-milho',
-    ambito: 'nacional',
-    selo: ['Nacional', 'National'],
-    titulo: ['Dia de Campo: Inovação em Culturas de Milho', 'Field Day: Innovation in Maize Crops'],
-    descricao: [
-      'Demonstração prática de novas variedades de sementes resilientes a pragas.',
-      'Field demonstration of new seed varieties resilient to pests.',
-    ],
-    local: ['Huambo Hub', 'Huambo Hub'],
-    dataInicio: '2026-11-22T08:30:00',
-    imagem: '/imagens/cultivo-milho.png',
-  },
-  {
-    id: 'conferencia-economia-agraria-2026',
-    ambito: 'internacional',
-    selo: ['Internacional', 'International'],
-    titulo: ['Conferência de Economia Agrária 2026', '2026 Agricultural Economics Conference'],
-    descricao: [
-      'Análise das tendências de mercado global para produtos tropicais.',
-      'A read on global market trends for tropical produce.',
-    ],
-    local: ['Auditório Principal da UNAGRO', 'UNAGRO Main Auditorium'],
-    dataInicio: '2026-11-05T09:00:00',
-    imagem: '/imagens/conferencia-agronomia.png',
-  },
-  {
-    id: 'forum-melhoramento-genetico',
-    ambito: 'unagro',
-    selo: ['Promovido pela UNAGRO', 'UNAGRO Promoted'],
-    titulo: ['Fórum de Melhoramento Genético', 'Genetic Improvement Forum'],
-    descricao: [
-      'Avanços em CRISPR para a agricultura de precisão em África.',
-      'CRISPR advances for precision agriculture in Africa.',
-    ],
-    local: ['Estação Experimental', 'Experimental Station'],
-    dataInicio: '2026-11-28T10:00:00',
-    imagem: '/imagens/forum-melhoramento-genetico.png',
-  },
-  {
-    id: 'seminario-agricultura-precisao',
-    ambito: 'nacional',
-    selo: ['Nacional', 'National'],
-    titulo: ['Seminário: Agricultura de Precisão', 'Seminar: Precision Agriculture'],
-    descricao: [
-      'O papel do Big Data na otimização de colheitas em larga escala.',
-      'The role of big data in optimising harvests at scale.',
-    ],
-    local: ['Campus da UNAGRO', 'UNAGRO Campus'],
-    dataInicio: '2026-12-04T14:00:00',
-    imagem: '/imagens/agricultura-de-precisao.png',
-  },
-];
 
 interface FiltroAmbito {
   valor: string;
@@ -113,12 +31,20 @@ interface FiltroAmbito {
   icone: string;
 }
 
+/** Ícone da barra de filtros lateral, por âmbito. */
+const ICONES_AMBITO: Record<AmbitoEvento, string> = {
+  nacional: 'map-pin',
+  internacional: 'globe',
+  unagro: 'award',
+};
+
 @Component({
   selector: 'app-eventos',
   imports: [
     BannerDestaqueComponent,
     CabecalhoSecaoComponent,
     CartaoEventoFotoComponent,
+    CartaoEventoFotoEsqueletoComponent,
     ContainerBannerFaixaEstatisticaComponent,
     ContainerPaginaComponent,
     IconeComponent,
@@ -130,6 +56,7 @@ interface FiltroAmbito {
 })
 export class EventosComponent {
   protected readonly traducao = inject(TraducaoService);
+  private readonly servico = inject(EventosService);
 
   protected readonly tituloHero = computed(() =>
     this.traducao.getTraducao(['Simpósio', 'International']),
@@ -164,7 +91,9 @@ export class EventosComponent {
   // 1 sessão — Próximos Eventos: filtros por âmbito à esquerda, grelha paginada à direita
   protected readonly TODOS_OS_AMBITOS = TODOS_OS_AMBITOS;
 
-  private readonly eventosBrutos = signal(EVENTOS_PROXIMOS_MOCK);
+  /** `GET /eventos` — a lista vem inteira, sem paginação nem filtros do lado da API. */
+  protected readonly consultaEventos = injectQuery(() => eventosQueries.lista(this.servico));
+
   protected readonly ambitoSelecionado = signal(TODOS_OS_AMBITOS);
   private readonly pagina = signal(0);
 
@@ -190,6 +119,13 @@ export class EventosComponent {
     ]),
   );
 
+  protected readonly erroEventos = computed(() =>
+    this.traducao.getTraducao([
+      'Não foi possível carregar os eventos.',
+      'Could not load the events.',
+    ]),
+  );
+
   protected readonly rotuloAnterior = computed(() =>
     this.traducao.getTraducao(['Eventos anteriores', 'Previous events']),
   );
@@ -204,40 +140,25 @@ export class EventosComponent {
       rotulo: this.traducao.getTraducao(['Todos os eventos', 'All events']),
       icone: 'square-check-list',
     },
-    {
-      valor: 'nacional',
-      rotulo: this.traducao.getTraducao(['Nacionais', 'National']),
-      icone: 'map-pin',
-    },
-    {
-      valor: 'internacional',
-      rotulo: this.traducao.getTraducao(['Internacionais', 'International']),
-      icone: 'globe',
-    },
-    {
-      valor: 'corporacao',
-      rotulo: this.traducao.getTraducao(['Corporações', 'Corporate']),
-      icone: 'users',
-    },
-    {
-      valor: 'unagro',
-      rotulo: this.traducao.getTraducao(['Promovidos pela UNAGRO', 'UNAGRO promoted']),
-      icone: 'award',
-    },
+    ...AMBITOS_EVENTO.map((ambito) => ({
+      valor: ambito,
+      rotulo: this.traducao.getTraducao(ROTULOS_AMBITO_EVENTO[ambito]),
+      icone: ICONES_AMBITO[ambito],
+    })),
   ]);
 
   private readonly eventosFiltrados = computed<EventoFotoCartao[]>(() => {
     const ambito = this.ambitoSelecionado();
-    return this.eventosBrutos()
+    return (this.consultaEventos.data() ?? [])
       .filter((evento) => ambito === TODOS_OS_AMBITOS || evento.ambito === ambito)
       .map((evento) => ({
         id: evento.id,
-        titulo: this.traducao.getTraducao(evento.titulo),
-        descricao: this.traducao.getTraducao(evento.descricao),
-        categoria: this.traducao.getTraducao(evento.selo),
-        local: this.traducao.getTraducao(evento.local),
+        titulo: evento.titulo,
+        descricao: evento.descricao,
+        categoria: this.traducao.getTraducao(ROTULOS_AMBITO_EVENTO[evento.ambito]),
+        local: evento.local,
         dataInicio: evento.dataInicio,
-        imagem: evento.imagem,
+        imagem: evento.imagem_url,
         // TODO: trocar por /eventos/:id quando existir a rota de detalhe do evento.
         link: '/contactos',
       }));
