@@ -12,4 +12,11 @@ export const environment = {
    * (o esquema OpenAPI em bruto está em `/docs/api.json`).
    */
   apiUrl: 'http://192.168.1.252:8000/api',
+  /**
+   * E-mail opcional enviado à MyMemory (`api.mymemory.translated.net`) para
+   * traduzir conteúdo vindo da API — ver `TraducaoAutomaticaService`. Sem
+   * chave nenhuma, mas com este campo preenchido o limite diário de tradução
+   * sobe de ~1000 para ~10000 palavras. Deixa vazio para não mandar nenhum.
+   */
+  traducaoEmail: '',
 };

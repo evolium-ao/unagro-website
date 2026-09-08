@@ -2,13 +2,16 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input } f
 import { RouterLink } from '@angular/router';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { noticiasQueries } from '../../core/consultas/noticias.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { NOTICIAS_FALLBACK } from '../../core/dados/noticias.mock';
 import { Noticia } from '../../core/modelos/noticia.model';
 import { SeoService } from '../../core/seo/seo.service';
 import { NoticiasService } from '../../core/servicos/noticias.service';
 import { formatarDataCurta } from '../../core/traducao/formatar-data';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, aplicarTraducaoTextos, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { BotaoCompartilharComponent } from '../../shared/componentes/botao-compartilhar/botao-compartilhar.component';
 import { CartaoNoticiaResumoComponent } from '../../shared/componentes/cartao-noticia-resumo/cartao-noticia-resumo.component';
@@ -20,6 +23,9 @@ import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scro
 
 /** Quantas notícias acompanham o artigo na coluna da direita. */
 const OUTRAS_NOTICIAS = 4;
+
+/** Campos de texto traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_NOTICIA = ['titulo', 'resumo', 'categoria'] as const;
 
 @Component({
   selector: 'app-detalhe-noticia',
@@ -43,6 +49,7 @@ export class DetalheNoticiaComponent {
 
   protected readonly traducao = inject(TraducaoService);
   private readonly noticiasService = inject(NoticiasService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly seo = inject(SeoService);
 
   /**
@@ -65,13 +72,51 @@ export class DetalheNoticiaComponent {
     noticiasQueries.lista(this.noticiasService),
   );
 
+  /**
+   * A API só devolve português (ver `.claude/README.md`). O conteúdo de
+   * recurso (`noticiasFallback`) já vem bilingue por `localizarProfundo` — só
+   * o que vier da API precisa desta tradução automática.
+   */
+  private readonly consultaTraducaoNoticia = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(
+        this.consultaNoticia.data() ? [this.consultaNoticia.data()!] : [],
+        CAMPOS_TRADUZIVEIS_NOTICIA,
+      ),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly noticiaApiTraduzida = computed(() => {
+    const noticia = this.consultaNoticia.data();
+    if (!noticia) return undefined;
+    return aplicarTraducao([noticia], CAMPOS_TRADUZIVEIS_NOTICIA, this.consultaTraducaoNoticia.data())[0];
+  });
+
+  private readonly consultaTraducaoOutras = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaOutras.data() ?? [], CAMPOS_TRADUZIVEIS_NOTICIA),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly outrasApiTraduzidas = computed(() =>
+    aplicarTraducao(
+      this.consultaOutras.data() ?? [],
+      CAMPOS_TRADUZIVEIS_NOTICIA,
+      this.consultaTraducaoOutras.data(),
+    ),
+  );
+
   private readonly noticiasFallback = computed<Noticia[]>(() =>
     localizarProfundo(NOTICIAS_FALLBACK, this.traducao.idioma()),
   );
 
-  /** A notícia da API; sem ela, a do conteúdo de recurso com o mesmo id. */
+  /** A notícia da API (já traduzida); sem ela, a do conteúdo de recurso com o mesmo id. */
   protected readonly noticia = computed<Noticia | undefined>(
-    () => this.consultaNoticia.data() ?? this.noticiasFallback().find((n) => n.id === this.id()),
+    () => this.noticiaApiTraduzida() ?? this.noticiasFallback().find((n) => n.id === this.id()),
   );
 
   /** Enquanto o pedido corre ainda não se pode dizer que a notícia não existe. */
@@ -80,8 +125,8 @@ export class DetalheNoticiaComponent {
   );
 
   protected readonly outrasNoticias = computed<Noticia[]>(() => {
-    const daApi = this.consultaOutras.data();
-    const lista = daApi?.length ? daApi : this.noticiasFallback();
+    const daApi = this.outrasApiTraduzidas();
+    const lista = daApi.length ? daApi : this.noticiasFallback();
     return lista
       .filter((n) => n.id !== this.id())
       .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
@@ -98,11 +143,31 @@ export class DetalheNoticiaComponent {
    * branco (ou por linhas simples, quando é assim que vem escrito) para o artigo
    * sair em parágrafos em vez de um bloco só.
    */
-  protected readonly paragrafos = computed(() =>
+  private readonly paragrafosOriginais = computed(() =>
     (this.noticia()?.conteudo ?? '')
       .split(/\r?\n\s*\r?\n|\r?\n/)
       .map((paragrafo) => paragrafo.trim())
       .filter(Boolean),
+  );
+
+  /**
+   * Traduz o corpo do artigo parágrafo a parágrafo, em vez de o artigo todo
+   * numa só chamada — a MyMemory tem um limite de caracteres por pedido, e um
+   * parágrafo isolado tem muito mais hipótese de ficar dentro dele. Só se
+   * aplica ao conteúdo vindo da API: o do conteúdo de recurso já é bilingue.
+   */
+  private readonly consultaTraducaoParagrafos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      this.idApi() !== null ? this.paragrafosOriginais() : [],
+      this.traducao.idioma(),
+    ),
+  );
+
+  protected readonly paragrafos = computed(() =>
+    this.idApi() !== null
+      ? aplicarTraducaoTextos(this.paragrafosOriginais(), this.consultaTraducaoParagrafos.data())
+      : this.paragrafosOriginais(),
   );
 
   protected readonly rotuloVoltar = computed(() =>

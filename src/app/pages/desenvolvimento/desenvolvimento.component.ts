@@ -21,7 +21,10 @@ import {
 } from '../../core/modelos/projeto.model';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import {
   BannerDestaqueComponent,
   CtaBannerDestaque,
@@ -124,6 +127,9 @@ const normalizar = (texto: string) =>
  * desenho é o de sempre, e só acima disso aparecem as setas.
  */
 const UNIDADES_EM_GRELHA = 3;
+
+/** Campos de texto traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_UNIDADE = ['nome', 'area'] as const;
 
 /** Esqueletos enquanto os laboratórios não chegam — uma linha cheia da grelha. */
 const ESQUELETOS_UNIDADES = Array.from({ length: UNIDADES_EM_GRELHA }, (_, indice) => indice);
@@ -412,14 +418,28 @@ export class DesenvolvimentoComponent {
   );
 
   private readonly laboratoriosService = inject(LaboratoriosService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
 
   /** `GET /laboratorios` — os cartões de "Centros e Laboratórios". */
   protected readonly consultaUnidades = injectQuery(() =>
     laboratoriosQueries.lista(this.laboratoriosService),
   );
 
-  protected readonly unidades = computed<UnidadeInvestigacao[]>(
-    () => this.consultaUnidades.data() ?? [],
+  /** A API só devolve português (ver `.claude/README.md`). */
+  private readonly consultaTraducaoUnidades = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaUnidades.data() ?? [], CAMPOS_TRADUZIVEIS_UNIDADE),
+      this.traducao.idioma(),
+    ),
+  );
+
+  protected readonly unidades = computed<UnidadeInvestigacao[]>(() =>
+    aplicarTraducao(
+      this.consultaUnidades.data() ?? [],
+      CAMPOS_TRADUZIVEIS_UNIDADE,
+      this.consultaTraducaoUnidades.data(),
+    ),
   );
 
   /**

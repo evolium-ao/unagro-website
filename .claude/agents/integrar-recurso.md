@@ -140,6 +140,13 @@ No componente que consome:
    cartão traz a sua diretiva.
 5. Não mexas no `getTraducao` dos rótulos de interface. O que deixa de levar
    tradução é só o texto que vem da API.
+6. **Aplica sempre a tradução automática ao conteúdo da API**, seguindo a
+   secção "Tradução automática do conteúdo da API" do `.claude/README.md`:
+   identifica os campos de texto do recurso que aparecem no ecrã, injecta o
+   `TraducaoAutomaticaService`, junta uma `traducaoQueries.lista(…)` à query do
+   recurso e troca a leitura dos `computed` existentes (filtro, ordenação,
+   paginação) de `consulta<Recurso>.data()` para o `computed` traduzido — nunca
+   deixes o conteúdo da API por traduzir só porque "é sempre em português".
 
 Se o mock passar a não ter consumidor nenhum, apaga o `core/dados/<recurso>.mock.ts`
 e o tipo bruto que só ele usava. Confirma primeiro com
@@ -190,6 +197,7 @@ hora um campo que nunca existiu.
 - o mapeamento de campos, numa linha;
 - **os campos que a página mostra e a API não tem** — em destaque, porque é o que
   o utilizador precisa de decidir;
+- quais os campos que ligaste à tradução automática (`CAMPOS_TRADUZIVEIS_<recurso>`);
 - se apagaste algum mock;
 - o resultado do build e do prerender.
 

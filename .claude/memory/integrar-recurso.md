@@ -279,6 +279,61 @@ são usados pelo site.
 `/eventos` sai com os `app-cartao-evento-foto-esqueleto` e sem evento nenhum.
 
 
+## Tradução automática do conteúdo da API
+
+**Adicionado em:** 2026-09-08. Decisão consciente que **substitui** a regra anterior
+do `.claude/README.md` ("não inventes tradução no cliente para dados da API") — o
+utilizador pediu-a explicitamente depois de reparar que `noticias` e `eventos`
+ficavam em português com o idioma trocado para inglês. Descrição completa na
+secção "Tradução automática do conteúdo da API" do `.claude/README.md`; aqui fica
+só o que aconteceu ao aplicá-la.
+
+**Infra-estrutura nova:**
+
+- `core/api/promessa-cancelavel.ts` — extraído do `ApiService` (era uma função
+  privada de `api.service.ts`) para poder ser reutilizado pelo
+  `TraducaoAutomaticaService`, que também cancela pedidos pelo `signal`.
+- `core/traducao/traducao-automatica.service.ts` — chama a MyMemory
+  (`api.mymemory.translated.net`), sem chave de API.
+- `core/traducao/traduzir-campos.ts` — `camposParaTraduzir`, `aplicarTraducao`,
+  `aplicarTraducaoTextos`.
+- `core/consultas/traducao.queries.ts` — `traducaoQueries.lista`.
+- `environment.traducaoEmail` (vazio por omissão) — e-mail opcional para a
+  MyMemory, sobe o limite diário de ~1000 para ~10000 palavras. **Não se
+  preencheu com o e-mail de ninguém**: é uma decisão de quem administra o
+  projecto, não do agente.
+
+**Aplicado a (retro-integração dos recursos já ligados):**
+
+- `pages/eventos/eventos.component.ts` — `titulo`, `descricao`, `local`.
+- `pages/inicio/inicio.component.ts` — notícias (`titulo`, `resumo`, `categoria`,
+  só o lado da API — o `NOTICIAS_FALLBACK` já é bilingue) e o evento em destaque
+  (mesmos três campos do evento).
+- `pages/detalhe-noticia/detalhe-noticia.component.ts` — `titulo`/`resumo`/`categoria`
+  da notícia aberta e da lista "Outras notícias"; o `conteudo` do artigo traduz-se
+  **parágrafo a parágrafo** (`aplicarTraducaoTextos`), não de uma vez, por causa do
+  limite de caracteres por pedido da MyMemory.
+- `pages/desenvolvimento/desenvolvimento.component.ts` — `nome`/`area` das
+  unidades de investigação (laboratórios).
+
+**Por verificar num navegador real:** a tradução em si (chamada de rede à
+MyMemory, texto a aparecer trocado ao mudar de idioma) não foi testada num
+browser durante esta sessão — só o build/prerender, que correm sempre em
+português (`IDIOMA_PADRAO`) e por isso nunca chegam a chamar a MyMemory.
+Confirmar manualmente: abrir `/eventos` e `/`, trocar para inglês, e ver se o
+texto muda (alguns segundos de atraso são esperados — é um pedido de rede por
+frase, sem *loading state* próprio, o texto em português fica visível até a
+tradução chegar).
+
+**Problema entretanto encontrado (não relacionado com tradução, mas apanhado ao
+mexer nestes ficheiros): `core/dados/eventos.mock.ts` continuava por apagar.**
+O registo da integração de `eventos` (secção acima) tinha dito "Mock apagado",
+mas o ficheiro ainda lá estava, com a forma bilingue antiga (`{pt, en}`), e
+partiu o build assim que se tentou compilar de novo (`Evento.titulo` já não
+aceita esse tipo). Apagado agora. **Lição:** o relatório de um agente sobre o
+que fez não é garantia de que aconteceu — vale a pena confirmar com
+`git status`/`ls` antes de dar como adquirido.
+
 ## Notas de campo
 
 **2026-09-04, ~13h50: a tabela de notícias da API ficou vazia.** `GET /noticias` devolve

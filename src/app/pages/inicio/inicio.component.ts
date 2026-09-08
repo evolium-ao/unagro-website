@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { eventosQueries } from '../../core/consultas/eventos.queries';
 import { noticiasQueries } from '../../core/consultas/noticias.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { NOTICIAS_FALLBACK } from '../../core/dados/noticias.mock';
 import { Evento } from '../../core/modelos/evento.model';
 import { Noticia } from '../../core/modelos/noticia.model';
@@ -11,7 +12,9 @@ import { NoticiasService } from '../../core/servicos/noticias.service';
 import { PatrocinadoresService } from '../../core/servicos/patrocinadores.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { BannerDestaqueComponent, HeroImage } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { CartaoEventoDestaqueComponent } from '../../shared/componentes/cartao-evento-destaque/cartao-evento-destaque.component';
 import { CartaoNoticiaDestaqueComponent } from '../../shared/componentes/cartao-noticia-destaque/cartao-noticia-destaque.component';
@@ -80,6 +83,10 @@ const PILARES_MODELO: PilarBruto[] = [
 /** Uma notícia em destaque mais três secundárias preenchem a grelha da secção. */
 const NOTICIAS_POR_PAGINA = 4;
 
+/** Campos de texto traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_NOTICIA = ['titulo', 'resumo', 'categoria'] as const;
+const CAMPOS_TRADUZIVEIS_EVENTO = ['titulo', 'descricao', 'local'] as const;
+
 /** Destaques primeiro; dentro de cada grupo, a mais recente à frente. */
 function porDestaqueEData(a: Noticia, b: Noticia): number {
   if (a.destaque !== b.destaque) return a.destaque ? -1 : 1;
@@ -112,6 +119,7 @@ export class InicioComponent {
   private readonly noticiasService = inject(NoticiasService);
   private readonly eventosService = inject(EventosService);
   private readonly patrocinadoresService = inject(PatrocinadoresService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
 
   protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly pilares = this.estatisticasService.pilares;
@@ -119,6 +127,23 @@ export class InicioComponent {
 
   /** `GET /eventos` — a lista vem inteira, sem paginação nem filtros do lado da API. */
   protected readonly consultaEventos = injectQuery(() => eventosQueries.lista(this.eventosService));
+
+  /** A API só devolve português (ver `.claude/README.md`); traduzido antes do `find`. */
+  private readonly consultaTraducaoEventos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaEventos.data() ?? [], CAMPOS_TRADUZIVEIS_EVENTO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly eventosTraduzidos = computed(() =>
+    aplicarTraducao(
+      this.consultaEventos.data() ?? [],
+      CAMPOS_TRADUZIVEIS_EVENTO,
+      this.consultaTraducaoEventos.data(),
+    ),
+  );
 
   /**
    * A API ainda não dá a data do evento (ver `evento.model.ts`), e sem ela o
@@ -128,9 +153,9 @@ export class InicioComponent {
    * uma data inventada.
    */
   protected readonly eventoPrincipal = computed<(Evento & { dataInicio: string }) | undefined>(() =>
-    this.consultaEventos
-      .data()
-      ?.find((evento): evento is Evento & { dataInicio: string } => !!evento.dataInicio),
+    this.eventosTraduzidos().find(
+      (evento): evento is Evento & { dataInicio: string } => !!evento.dataInicio,
+    ),
   );
 
   protected readonly pilaresModelo = computed(() =>
@@ -140,6 +165,27 @@ export class InicioComponent {
   /** `GET /noticias` — a lista vem inteira, sem paginação nem filtros do lado da API. */
   protected readonly consultaNoticias = injectQuery(() =>
     noticiasQueries.lista(this.noticiasService),
+  );
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`). O conteúdo de
+   * recurso (`noticiasFallback`) já vem bilingue por `localizarProfundo` — só
+   * o que vier da API precisa desta tradução automática.
+   */
+  private readonly consultaTraducaoNoticias = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaNoticias.data() ?? [], CAMPOS_TRADUZIVEIS_NOTICIA),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly noticiasApiTraduzidas = computed(() =>
+    aplicarTraducao(
+      this.consultaNoticias.data() ?? [],
+      CAMPOS_TRADUZIVEIS_NOTICIA,
+      this.consultaTraducaoNoticias.data(),
+    ),
   );
 
   /** O conteúdo local de recurso, já no idioma escolhido. */
@@ -153,8 +199,8 @@ export class InicioComponent {
    * de recurso em vez de ficar às moscas na página de entrada.
    */
   private readonly noticias = computed<Noticia[]>(() => {
-    const daApi = this.consultaNoticias.data();
-    return daApi?.length ? [...daApi].sort(porDestaqueEData) : this.noticiasFallback();
+    const daApi = this.noticiasApiTraduzidas();
+    return daApi.length ? [...daApi].sort(porDestaqueEData) : this.noticiasFallback();
   });
 
   private readonly paginaNoticias = signal(0);

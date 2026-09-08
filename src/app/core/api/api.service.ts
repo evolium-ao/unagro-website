@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ErroApi } from './erro-api';
+import { promessaCancelavel } from './promessa-cancelavel';
 import { RespostaApi } from './resposta-api';
 
 /** Valores aceites na query string. As chaves com `undefined`/`null` são omitidas. */
@@ -93,38 +94,4 @@ export class ApiService {
       throw ErroApi.aPartirDe(erro);
     }
   }
-}
-
-/**
- * Converte o observable do `HttpClient` numa promessa que **cancela o pedido**
- * quando o `AbortSignal` dispara. O `firstValueFrom` do RxJS não serve aqui:
- * ele nunca se dessubscreve por si, e um pedido que já não interessa a ninguém
- * continuaria a ocupar a rede.
- */
-function promessaCancelavel<T>(fonte: Observable<T>, signal?: AbortSignal): Promise<T> {
-  return new Promise<T>((resolver, rejeitar) => {
-    if (signal?.aborted) {
-      rejeitar(signal.reason);
-      return;
-    }
-    let aoAbortar: (() => void) | undefined;
-    const limpar = () => {
-      if (aoAbortar) signal?.removeEventListener('abort', aoAbortar);
-    };
-    const subscricao = fonte.subscribe({
-      next: (valor) => {
-        limpar();
-        resolver(valor);
-      },
-      error: (erro) => {
-        limpar();
-        rejeitar(erro);
-      },
-    });
-    aoAbortar = () => {
-      subscricao.unsubscribe();
-      rejeitar(signal?.reason);
-    };
-    signal?.addEventListener('abort', aoAbortar, { once: true });
-  });
 }

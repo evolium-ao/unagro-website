@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { eventosQueries } from '../../core/consultas/eventos.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { AMBITOS_EVENTO, AmbitoEvento, ROTULOS_AMBITO_EVENTO } from '../../core/modelos/evento.model';
 import { EventosService } from '../../core/servicos/eventos.service';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import {
   BannerDestaqueComponent,
   CtaBannerDestaque,
@@ -38,6 +41,9 @@ const ICONES_AMBITO: Record<AmbitoEvento, string> = {
   unagro: 'award',
 };
 
+/** Campos de texto do evento traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_EVENTO = ['titulo', 'descricao', 'local'] as const;
+
 @Component({
   selector: 'app-eventos',
   imports: [
@@ -57,6 +63,7 @@ const ICONES_AMBITO: Record<AmbitoEvento, string> = {
 export class EventosComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly servico = inject(EventosService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
 
   protected readonly tituloHero = computed(() =>
     this.traducao.getTraducao(['Simpósio', 'International']),
@@ -93,6 +100,28 @@ export class EventosComponent {
 
   /** `GET /eventos` — a lista vem inteira, sem paginação nem filtros do lado da API. */
   protected readonly consultaEventos = injectQuery(() => eventosQueries.lista(this.servico));
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`); em inglês,
+   * `titulo`/`descricao`/`local` passam pela tradução automática antes de
+   * chegar a `eventosFiltrados`. Enquanto a tradução carrega, ou se falhar,
+   * fica o texto original em português — nunca uma lista vazia.
+   */
+  private readonly consultaTraducaoEventos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaEventos.data() ?? [], CAMPOS_TRADUZIVEIS_EVENTO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly eventosTraduzidos = computed(() =>
+    aplicarTraducao(
+      this.consultaEventos.data() ?? [],
+      CAMPOS_TRADUZIVEIS_EVENTO,
+      this.consultaTraducaoEventos.data(),
+    ),
+  );
 
   protected readonly ambitoSelecionado = signal(TODOS_OS_AMBITOS);
   private readonly pagina = signal(0);
@@ -149,7 +178,7 @@ export class EventosComponent {
 
   private readonly eventosFiltrados = computed<EventoFotoCartao[]>(() => {
     const ambito = this.ambitoSelecionado();
-    return (this.consultaEventos.data() ?? [])
+    return this.eventosTraduzidos()
       .filter((evento) => ambito === TODOS_OS_AMBITOS || evento.ambito === ambito)
       .map((evento) => ({
         id: evento.id,

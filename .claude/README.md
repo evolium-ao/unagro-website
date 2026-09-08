@@ -113,8 +113,9 @@ Três coisas que a API **não** faz, e que moldam o código deste lado:
 2. **É monolingue — devolve só português.** Não há parâmetro `?lang=` nem
    `Accept-Language`. A regra de "Modelos de dados vindos da API" acima descreve o
    alvo (texto já traduzido pela API), mas **esta** API ainda não o cumpre: em
-   inglês, o conteúdo editorial vem em português. Não inventes tradução no cliente
-   para dados da API — quando for para resolver, resolve-se na API.
+   inglês, o conteúdo editorial viria em português. Por isso o site traduz esse
+   conteúdo do lado do cliente — ver "Tradução automática do conteúdo da API"
+   mais abaixo — em vez de mostrar português com o idioma em inglês.
 3. **A forma dos recursos não é a dos modelos do site.** O `ProjectoResource` tem
    `nome`, `categoria_id`, `valor_arrecadado`; o `Projeto` do site tem `titulo`,
    `periodo`, `cronograma`. Traduzir entre as duas formas é o trabalho do serviço
@@ -335,6 +336,68 @@ ligar aos campos do formulário.
 - **Aviso conhecido:** os `capa_url`/`imagem_url` que a API devolve apontam para
   `http://localhost:8000/storage/…`. Fora da máquina da API essas imagens não
   carregam — falta corrigir o `APP_URL` do lado do Laravel.
+
+### Tradução automática do conteúdo da API
+
+A API é monolingue (ponto 2 acima). Em vez de mostrar português quando o
+idioma escolhido é inglês, o site traduz automaticamente os campos de texto
+que vêm da API, usando a **MyMemory** (`api.mymemory.translated.net`) — não
+pede chave, e aceita um e-mail opcional em `environment.traducaoEmail` para
+subir o limite diário (~1000 → ~10000 palavras).
+
+**As três camadas, em `core/traducao/`:**
+
+- `traducao-automatica.service.ts` — `TraducaoAutomaticaService.traduzirLista(textos, idioma, signal)`,
+  uma chamada por texto (em paralelo). Um texto vazio devolve `''` sem chamar a
+  API; uma tradução que falhe devolve o texto original — nunca rejeita a lista
+  toda por causa de uma frase.
+- `traduzir-campos.ts` — `camposParaTraduzir(itens, campos)` achata os campos
+  pedidos de uma lista de itens da API numa única lista de strings (a ordem é
+  `item0.campo0, item0.campo1, …`); `aplicarTraducao(itens, campos, traduzidos)`
+  desfaz o achatamento, devolvendo os itens com os campos traduzidos no lugar
+  dos originais. `aplicarTraducaoTextos(originais, traduzidos)` é a mesma ideia
+  para uma lista de textos soltos (por exemplo, os parágrafos do corpo de um
+  artigo, para não mandar o artigo inteiro numa só chamada).
+- `core/consultas/traducao.queries.ts` — `traducaoQueries.lista(servico, textos, idioma)`,
+  uma query por lista de textos, com `staleTime`/`gcTime` em `Infinity` (uma
+  tradução não fica desactualizada sozinha) e `enabled: idioma !== 'pt'`.
+
+**No componente**, ao lado da query normal do recurso — não a troca, junta-se-lhe:
+
+```ts
+private readonly consultaTraducaoEventos = injectQuery(() =>
+  traducaoQueries.lista(
+    this.servicoTraducaoAutomatica,
+    camposParaTraduzir(this.consultaEventos.data() ?? [], CAMPOS_TRADUZIVEIS_EVENTO),
+    this.traducao.idioma(),
+  ),
+);
+
+private readonly eventosTraduzidos = computed(() =>
+  aplicarTraducao(this.consultaEventos.data() ?? [], CAMPOS_TRADUZIVEIS_EVENTO, this.consultaTraducaoEventos.data()),
+);
+```
+
+Os `computed` de filtro, ordenação e paginação que já existiam passam a ler
+`eventosTraduzidos()` em vez de `consultaEventos.data()` — o resto do
+componente não muda.
+
+**Regras para quando um recurso novo mostra conteúdo da API:**
+
+1. Só os campos de texto que aparecem no ecrã entram em `CAMPOS_TRADUZIVEIS_<recurso>`
+   — não traduzir `id`, datas, URLs, nem campos que o site não mostra.
+2. **Enquanto o idioma é português, a tradução nem chama a API** (`enabled: idioma !== 'pt'`)
+   — não há custo nem pedido extra no caminho mais comum.
+3. Um corpo de artigo longo (`conteudo`) traduz-se **parágrafo a parágrafo**
+   (`aplicarTraducaoTextos` sobre a lista já dividida), não o texto inteiro
+   de uma vez — a MyMemory tem um limite de caracteres por pedido.
+4. Uma lista que combina dados da API com conteúdo de recurso local (como o
+   `NOTICIAS_FALLBACK` de `inicio`) só traduz o lado da API — o conteúdo de
+   recurso já é bilingue por `localizarProfundo`, traduzi-lo outra vez
+   inventaria uma segunda tradução em cima da primeira.
+5. Como o SSR renderiza sempre em português (`IDIOMA_PADRAO`), a tradução
+   nunca corre no servidor nem no prerender — só depois de o visitante trocar
+   de idioma no navegador.
 
 ### Devtools
 
