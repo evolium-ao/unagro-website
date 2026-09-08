@@ -54,7 +54,6 @@ const REQUISITOS_BRUTOS: TextoTraduzido[] = [
   selector: 'app-candidaturas',
   imports: [
     BannerDestaqueComponent,
-    FaixaEstatisticasComponent,
     ContainerPaginaComponent,
     CabecalhoSecaoComponent,
     IndicadorPassosComponent,
@@ -74,7 +73,6 @@ const REQUISITOS_BRUTOS: TextoTraduzido[] = [
     CartaoBolsaComponent,
     ItemContactoComponent,
     IconeComponent,
-    ContactosComponent,
     ContainerBannerFaixaEstatisticaComponent
 ],
   templateUrl: './candidaturas.component.html',

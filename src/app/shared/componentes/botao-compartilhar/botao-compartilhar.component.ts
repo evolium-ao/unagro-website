@@ -2,7 +2,6 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   PLATFORM_ID,
   computed,
   inject,
@@ -10,6 +9,9 @@ import {
   signal,
 } from '@angular/core';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
+import { DropdownMenuItemDirective } from '../dropdown-menu/dropdown-menu-item.directive';
+import { DropdownMenuTriggerDirective } from '../dropdown-menu/dropdown-menu-trigger.directive';
+import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu.component';
 import { IconeComponent } from '../icone/icone.component';
 
 /**
@@ -27,6 +29,18 @@ const CLASSES_GATILHO: Record<VarianteBotaoCompartilhar, string> = {
   rotulo:
     'gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-primary-dark hover:border-primary hover:text-primary',
 };
+
+/**
+ * Os itens do painel repetem à mão o aspecto da variante `padrao` do
+ * `app-dropdown-menu` (`CLASSES_ITEM.padrao` e `CLASSES_ICONE.padrao`): entram
+ * por `dropdownMenuItem`, e não por `itemListDropdown`, porque o `iconLeft` da
+ * configuração desenha sempre o mesmo círculo — não sabe mostrar os logótipos
+ * das redes.
+ */
+const CLASSES_ITEM =
+  'flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left text-sm text-[#282727] transition-colors hover:bg-[#F8F3EE]';
+
+const CLASSES_ICONE_ITEM = 'text-[#E47202]';
 
 /** Rede social de destino: o rótulo é a marca, logo não passa pelo dicionário. */
 interface RedeCompartilhar {
@@ -69,85 +83,82 @@ const REDES: readonly RedeCompartilhar[] = [
 /** Quanto tempo o painel fica a dizer "Link copiado" antes de se fechar. */
 const DURACAO_AVISO_COPIA = 2000;
 
-/** Largura do painel (`w-52`), usada para o encostar à direita do gatilho. */
-const LARGURA_PAINEL = 208;
-
-/** Folga entre o painel e o gatilho, e entre o painel e os limites da janela. */
-const MARGEM_PAINEL = 8;
-
 /**
  * Botão de compartilhar de uma notícia (ou de qualquer página com título e
  * endereço próprios).
  *
- * O painel de opções é posicionado em `fixed`, e não em `absolute` dentro do
- * gatilho: os cartões de notícia têm `overflow-hidden` para arredondar a
- * fotografia, e um painel em fluxo normal saía cortado pela moldura do cartão.
+ * O painel é o `app-dropdown-menu` do projecto: o gatilho entra por
+ * `dropdownMenuTrigger` (para manter as três variantes de aspecto) e as opções
+ * por `dropdownMenuItem` (para cada uma poder trazer o logótipo da sua rede).
+ * O posicionamento, a camada de fundo e o fecho ficam a cargo do menu padrão.
  *
  * O URL absoluto só é montado no momento do clique, a partir de
- * `window.location`: durante o SSR não há origem conhecida, e pré-calcular o
- * endereço no servidor deixaria links errados no HTML servido.
+ * `window.location`: durante o SSR não há origem conhecida, e pré-calculá-lo no
+ * servidor deixaria links errados no HTML servido.
  */
 @Component({
   selector: 'app-botao-compartilhar',
-  imports: [IconeComponent],
-  host: {
-    class: 'relative inline-flex',
-    '(document:keydown.escape)': 'fechar()',
-    '(window:resize)': 'fechar()',
-  },
+  imports: [
+    DropdownMenuComponent,
+    DropdownMenuTriggerDirective,
+    DropdownMenuItemDirective,
+    IconeComponent,
+  ],
+  host: { class: 'inline-flex' },
   template: `
-    <button
-      type="button"
-      class="inline-flex cursor-pointer items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-      [class]="classesGatilho()"
-      [attr.aria-label]="traducao.t('comum.compartilhar')"
-      [attr.aria-expanded]="aberto()"
-      aria-haspopup="menu"
-      (click)="alternar($event)"
+    <app-dropdown-menu
+      [ariaLabel]="traducao.t('comum.compartilhar')"
+      menuMinWidth="208px"
+      menuMaxWidth="260px"
     >
-      <app-icone nome="share-2" [tamanho]="variante() === 'rotulo' ? 14 : 15" />
-      @if (variante() === 'rotulo') {
-        <span>{{ traducao.t('comum.compartilhar') }}</span>
-      }
-    </button>
-
-    @if (aberto()) {
-      <!-- Camada de fundo: fecha o painel a qualquer clique fora dele. -->
-      <div class="fixed inset-0 z-9998" (click)="fechar()"></div>
-
-      <div
-        class="fixed z-9999 w-52 overflow-hidden rounded-lg bg-white py-1 text-left shadow-2xl ring-1 ring-black/5"
-        [style.top.px]="posicao().top"
-        [style.left.px]="posicao().left"
-        role="menu"
+      <ng-template
+        dropdownMenuTrigger
+        let-alternar="toggleMenu"
+        let-aberto="menuOpen"
+        let-rotulo="ariaLabel"
       >
-        @for (rede of redes; track rede.id) {
-          <button
-            type="button"
-            role="menuitem"
-            class="flex w-full cursor-pointer items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-text-primary transition-colors duration-200 hover:bg-bg-lighter"
-            (click)="abrirRede(rede)"
-          >
-            <app-icone [nome]="rede.icone" [tamanho]="15" class="text-primary-dark" />
-            {{ rede.rotulo }}
-          </button>
-        }
-
         <button
           type="button"
-          role="menuitem"
-          class="flex w-full cursor-pointer items-center gap-2.5 border-t border-gray-100 px-4 py-2.5 text-xs font-medium text-text-primary transition-colors duration-200 hover:bg-bg-lighter"
-          (click)="copiarLink()"
+          class="inline-flex cursor-pointer items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          [class]="classesGatilho()"
+          [attr.aria-label]="rotulo"
+          [attr.aria-expanded]="aberto"
+          aria-haspopup="menu"
+          (click)="alternarPainel($event, alternar)"
         >
-          <app-icone
-            [nome]="copiado() ? 'check' : 'link'"
-            [tamanho]="15"
-            [class]="copiado() ? 'text-primary' : 'text-primary-dark'"
-          />
-          {{ copiado() ? traducao.t('comum.linkCopiado') : traducao.t('comum.copiarLink') }}
+          <app-icone nome="share-2" [tamanho]="variante() === 'rotulo' ? 14 : 15" />
+          @if (variante() === 'rotulo') {
+            <span>{{ traducao.t('comum.compartilhar') }}</span>
+          }
         </button>
-      </div>
-    }
+      </ng-template>
+
+      @for (rede of redes; track rede.id) {
+        <ng-template dropdownMenuItem [dropdownMenuItemOrder]="$index" let-fechar="closeMenu">
+          <button type="button" [class]="classesItem" (click)="abrirRede(rede); fechar()">
+            <span class="flex items-center justify-center" [class]="classesIconeItem">
+              <app-icone [nome]="rede.icone" [tamanho]="16" />
+            </span>
+            <span>{{ rede.rotulo }}</span>
+          </button>
+        </ng-template>
+      }
+
+      <ng-template
+        dropdownMenuItem
+        [dropdownMenuItemOrder]="redes.length"
+        let-fechar="closeMenu"
+      >
+        <button type="button" [class]="classesItem" (click)="copiarLink(fechar)">
+          <span class="flex items-center justify-center" [class]="classesIconeItem">
+            <app-icone [nome]="copiado() ? 'check' : 'link'" [tamanho]="16" />
+          </span>
+          <span>{{
+            copiado() ? traducao.t('comum.linkCopiado') : traducao.t('comum.copiarLink')
+          }}</span>
+        </button>
+      </ng-template>
+    </app-dropdown-menu>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -163,36 +174,23 @@ export class BotaoCompartilharComponent {
   readonly variante = input<VarianteBotaoCompartilhar>('icone');
 
   protected readonly traducao = inject(TraducaoService);
-  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly redes = REDES;
-  protected readonly aberto = signal(false);
+  protected readonly classesItem = CLASSES_ITEM;
+  protected readonly classesIconeItem = CLASSES_ICONE_ITEM;
   protected readonly copiado = signal(false);
-  protected readonly posicao = signal({ top: 0, left: 0 });
 
   protected readonly classesGatilho = computed(() => CLASSES_GATILHO[this.variante()]);
 
-  protected alternar(evento: Event): void {
+  protected alternarPainel(evento: Event, alternar: () => void): void {
     // Os cartões de notícia têm uma ligação sobreposta que cobre a área toda: sem
     // travar a propagação, o clique no botão abria também a notícia.
     evento.stopPropagation();
     evento.preventDefault();
 
-    if (this.aberto()) {
-      this.fechar();
-      return;
-    }
-
-    this.posicionar();
-    this.aberto.set(true);
-  }
-
-  protected fechar(): void {
-    if (this.aberto()) {
-      this.aberto.set(false);
-      this.copiado.set(false);
-    }
+    this.copiado.set(false);
+    alternar();
   }
 
   protected abrirRede(rede: RedeCompartilhar): void {
@@ -203,10 +201,13 @@ export class BotaoCompartilharComponent {
         'noopener,noreferrer',
       );
     }
-    this.fechar();
   }
 
-  protected async copiarLink(): Promise<void> {
+  /**
+   * Recebe o `closeMenu` do menu padrão em vez de fechar logo: o painel fica
+   * aberto o tempo do aviso, para se ver que o link foi copiado.
+   */
+  protected async copiarLink(fechar: () => void): Promise<void> {
     if (!this.ehNavegador) {
       return;
     }
@@ -214,28 +215,15 @@ export class BotaoCompartilharComponent {
     try {
       await navigator.clipboard.writeText(this.urlAbsoluta());
       this.copiado.set(true);
-      // O painel fica aberto o tempo do aviso, para se ver que o link foi copiado.
-      setTimeout(() => this.fechar(), DURACAO_AVISO_COPIA);
+      setTimeout(() => {
+        this.copiado.set(false);
+        fechar();
+      }, DURACAO_AVISO_COPIA);
     } catch {
       // Sem acesso à área de transferência (contexto não seguro, permissão negada):
       // resta fechar o painel sem confirmar a cópia.
-      this.fechar();
+      fechar();
     }
-  }
-
-  /** Coloca o painel debaixo do gatilho, alinhado à direita e dentro da janela. */
-  private posicionar(): void {
-    if (!this.ehNavegador) {
-      return;
-    }
-
-    const caixa = this.host.nativeElement.getBoundingClientRect();
-    const left = Math.min(
-      Math.max(MARGEM_PAINEL, caixa.right - LARGURA_PAINEL),
-      window.innerWidth - LARGURA_PAINEL - MARGEM_PAINEL,
-    );
-
-    this.posicao.set({ top: caixa.bottom + MARGEM_PAINEL, left });
   }
 
   private urlAbsoluta(): string {
