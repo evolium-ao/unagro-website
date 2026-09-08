@@ -1,5 +1,4 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
-import { CURSOS_MOCK } from './core/dados/cursos.mock';
 
 const ROTAS_ESTATICAS = [
   '',
@@ -44,11 +43,12 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    // Os ids dos cursos vêm da API, não de um mock do repositório (era
+    // `CURSOS_MOCK`, com ids em slug e lista fechada) — mesma razão do
+    // `noticias/:id` abaixo: sem lista fechada para o build, renderiza-se no
+    // servidor sob pedido.
     path: 'cursos/:id',
-    renderMode: RenderMode.Prerender,
-    async getPrerenderParams() {
-      return CURSOS_MOCK.map((curso) => ({ id: curso.id }));
-    },
+    renderMode: RenderMode.Server,
   },
   {
     // Os ids das notícias vêm da API, não de um mock do repositório: não há lista

@@ -20,27 +20,39 @@
     <app-cabecalho-secao [titulo]="traducao.t('paginas.candidaturas.ofertaTitulo')"
       [descricao]="traducao.t('paginas.candidaturas.ofertaSubtitulo')" />
 
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroFaculdadeRotulo')"
-        [opcoes]="opcoesFaculdade()" [(valor)]="filtroFaculdade" />
-      <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroGrauRotulo')" [opcoes]="opcoesGrau()"
-        [(valor)]="filtroGrau" />
-      <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroRegimeRotulo')" [opcoes]="opcoesRegime()"
-        [(valor)]="filtroRegime" />
-    </div>
-
-    <div class="mt-12 flex flex-col gap-12">
-      @for (grupo of gruposOferta(); track grupo.faculdade) {
-      <div>
-        <h3 class="text-base font-semibold text-text-primary">{{ grupo.faculdade }}</h3>
-        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          @for (curso of grupo.cursos; track curso.id) {
-          <app-cartao-curso variante="academica" [curso]="curso" />
-          }
-        </div>
+    @if (consultaCursosOferta.isPending()) {
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        @for (_ of [1, 2, 3]; track $index) {
+          <app-cartao-curso-esqueleto />
+        }
       </div>
-      }
-    </div>
+    } @else if (consultaCursosOferta.isError()) {
+      <p class="mt-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Não foi possível carregar a oferta académica.', 'Could not load the academic offer.']) }}
+      </p>
+    } @else {
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroFaculdadeRotulo')"
+          [opcoes]="opcoesFaculdade()" [(valor)]="filtroFaculdade" />
+        <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroGrauRotulo')" [opcoes]="opcoesGrau()"
+          [(valor)]="filtroGrau" />
+        <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroRegimeRotulo')" [opcoes]="opcoesRegime()"
+          [(valor)]="filtroRegime" />
+      </div>
+
+      <div class="mt-12 flex flex-col gap-12">
+        @for (grupo of gruposOferta(); track grupo.faculdade) {
+        <div>
+          <h3 class="text-base font-semibold text-text-primary">{{ grupo.faculdade }}</h3>
+          <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @for (curso of grupo.cursos; track curso.id; let i = $index) {
+            <app-cartao-curso variante="academica" [curso]="curso" [appRevelarAoScroll]="i % 6" />
+            }
+          </div>
+        </div>
+        }
+      </div>
+    }
   </section>
 
   <!-- 3 sessaão -->

@@ -1,7 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { cursosQueries } from '../../core/consultas/cursos.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { CursosService } from '../../core/servicos/cursos.service';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducaoTextos } from '../../core/traducao/traduzir-campos';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { BarraTopoComponent } from '../../shared/componentes/barra-topo/barra-topo.component';
 import { CHAVE_SUBMENU_CURSOS, MENU_PRINCIPAL, ModalMenu } from './menu.config';
@@ -53,9 +58,37 @@ interface ItemSubmenu {
 export class CabecalhoComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly cursosService = inject(CursosService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly modais = inject(AlertModalService);
 
   protected readonly menuPrincipal = MENU_PRINCIPAL;
+
+  /** `GET /cursos` — só os títulos e os ids que o submenu precisa. */
+  private readonly consultaCursos = injectQuery(() => cursosQueries.lista(this.cursosService));
+
+  /** A API só devolve português (ver `.claude/README.md`); os títulos do submenu traduzem-se automaticamente. */
+  private readonly titulosCursosOriginais = computed(() =>
+    (this.consultaCursos.data() ?? []).map((curso) => curso.titulo),
+  );
+
+  private readonly consultaTraducaoCursos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      this.titulosCursosOriginais(),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly cursosMenu = computed(() => {
+    const titulos = aplicarTraducaoTextos(
+      this.titulosCursosOriginais(),
+      this.consultaTraducaoCursos.data(),
+    );
+    return (this.consultaCursos.data() ?? []).map((curso, indice) => ({
+      texto: titulos[indice] ?? curso.titulo,
+      path: `/cursos/${curso.id}`,
+    }));
+  });
 
   /**
    * Submenus indexados pelo label do item pai. Um item ganha submenu ao declarar
@@ -66,12 +99,7 @@ export class CabecalhoComponent {
 
     for (const item of MENU_PRINCIPAL) {
       if (item.chaveDinamica === CHAVE_SUBMENU_CURSOS) {
-        mapa.set(
-          item.label,
-          this.cursosService
-            .cursosGrau()
-            .map((curso) => ({ texto: curso.titulo, path: `/cursos/${curso.id}` })),
-        );
+        mapa.set(item.label, this.cursosMenu());
       } else if (item.children?.length) {
         mapa.set(
           item.label,

@@ -1,4 +1,8 @@
-@if (curso(); as c) {
+@if (aCarregar()) {
+<div class="mx-auto max-w-7xl px-4 py-20 text-center text-text-secondary">
+  {{ traducao.getTraducao(['A carregar o curso…', 'Loading the course…']) }}
+</div>
+} @else if (curso(); as c) {
 <!-- Hero — mesma estrutura do hero de candidaturas, com a última palavra do título a dourado -->
 <app-banner-destaque [titulo]="tituloPartes().inicio" [tituloDestaque]="tituloPartes().destaque" [subtitulo]="c.resumo"
   [ctas]="ctasHero()" [selos]="selosHero()" bg="/imagens/bg-candidatura-curso.png" [temBackdrop]="true" />
@@ -43,7 +47,8 @@
   </app-container-pagina>
 </section>
 
-<!-- 2 sessão — objectivos do curso, um cartão por categoria -->
+<!-- 2 sessão — objectivos do curso, um cartão por categoria. A API não dá objetivos de curso; sem eles, a secção não aparece. -->
+@if (c.objetivos?.length) {
 <section class="bg-bg-light px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
     <app-cabecalho-secao [titulo]="traducao.t('paginas.detalheCurso.objetivosTitulo')" />
@@ -60,6 +65,7 @@
     </div>
   </app-container-pagina>
 </section>
+}
 
 <!-- 3 sessão — plano curricular sobre fundo verde escuro (destino do CTA do hero) -->
 <section id="plano-curricular" class="bg-primary-deep px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
@@ -124,7 +130,8 @@
     </div>
   </section>
 
-  <!-- 5 sessão — saídas profissionais, dúvidas frequentes e chamada à ação final -->
+  <!-- 5 sessão — saídas profissionais. A API não dá saídas profissionais; sem elas, a secção não aparece. -->
+  @if (c.saidasProfissionais?.length) {
   <section class="pb-16 sm:pb-20">
     <app-cabecalho-secao [titulo]="traducao.t('paginas.detalheCurso.saidasTitulo')" />
 
@@ -134,6 +141,7 @@
       }
     </div>
   </section>
+  }
 
   <section class="pb-16 sm:pb-20">
     <app-cabecalho-secao [titulo]="traducao.t('paginas.detalheCurso.faqTitulo')" />
@@ -165,4 +173,8 @@
     </div>
   </section>
 </app-container-pagina>
+} @else {
+<div class="mx-auto max-w-7xl px-4 py-20 text-center text-text-secondary">
+  {{ traducao.getTraducao(['Curso não encontrado', 'Course not found']) }}
+</div>
 }

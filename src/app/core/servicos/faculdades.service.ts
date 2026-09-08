@@ -85,6 +85,7 @@ function paraFaculdade(linha: FaculdadeApi): Faculdade {
   return {
     id: String(linha.id),
     nome: linha.nome,
+    descricao: linha.descricao ?? undefined,
     cursos: semCursosDuplicados(linha.cursos).map((curso) => ({
       id: String(curso.id),
       titulo: curso.nome,

@@ -658,6 +658,134 @@ trocar de idioma) se, quando a aba está activa no cliente, a query resolve e a
 tradução do `nome`/dos títulos de curso funciona — o mesmo "por verificar"
 já registado para `treinamentos`/`startups`.
 
+## cursos
+
+**Integrado em:** 2026-09-08, para a secção "Oferta Académica" de
+`/candidaturas` (`app-cartao-curso`, variante `academica`) e para
+`/cursos/:id` (`detalhe-curso`). Este era o primeiro recurso "cursos" a ligar
+— `CursosService`/`CURSOS_MOCK` alimentavam também `cabecalho` (submenu de
+cursos), `formulario-inscricao` (select "Curso de interesse") e, até serem
+migrados noutras integrações, `faculdades-departamentos` e `formacoes`
+(cursos de curta duração, agora `treinamentos`). Como o serviço foi
+**reescrito** (deixou de ter sinais/`computed` sobre o mock), `cabecalho` e
+`formulario-inscricao` tiveram de ser adaptados na mesma corrida para não
+partir o build, mesmo não sendo o pedido original — ver "Consumidores
+arrastados" abaixo.
+
+**Camadas:**
+
+- `src/app/core/servicos/cursos.service.ts` — `listar(signal)` e
+  `obterPorId(id, signal)`; a interface crua `CursoApi` (mais `PlanoCurricularApi`
+  e `FaculdadeCursoApi`, reduzida a `id`/`nome`) e as funções `paraCurso`/
+  `paraAnoCurricular`/`paraDisciplinas` ficam neste ficheiro. **Reescrito**:
+  antes era um `computed` sobre `CURSOS_MOCK` com `localizarProfundo`, sem
+  tocar na API.
+- `src/app/core/consultas/cursos.queries.ts` — `cursosQueries.raiz`,
+  `.lista(servico)` e `.porId(servico, id)`.
+- `src/app/core/modelos/curso.model.ts` — `Curso` passou de campos
+  `TextoTraduzido` para texto simples (regra dos modelos vindos da API) e
+  **perdeu a distinção `tipo: 'grau' | 'curta-duracao'`** e os campos só de
+  curta duração (`cargaHoraria`, `preco`, `estadoInscricao`, `proximaTurma`,
+  `proximaData`, o tipo `EstadoInscricao`): `GET /cursos` só devolve
+  graduações (curta duração já tem o seu próprio recurso, `treinamentos`, com
+  o seu próprio modelo `Treinamento` e cartão `CursoCurtaDuracaoCartao` —
+  nenhum dos dois dependia de `Curso`, confirmado por grep antes de apagar).
+  `AnoCurricular` perdeu o campo `tema` (a API já embute o tema no `titulo`).
+- `src/app/pages/candidaturas/candidaturas.component.ts` —
+  `injectQuery(() => cursosQueries.lista(...))`; os `computed` de filtro
+  (`opcoesFaculdade/Grau/Regime`) e de agrupamento (`gruposOferta`) continuam
+  todos, só que sobre a lista traduzida em vez de `cursosService.cursosGrau`.
+- `src/app/pages/detalhe-curso/detalhe-curso.component.ts` —
+  `injectQuery(() => cursosQueries.porId(...))` com `enabled` (mesmo padrão do
+  `detalhe-noticia`/`detalhe-projeto`: um `id` não-numérico nem chama a API) e
+  uma query de `lista` à parte para "outros cursos da mesma faculdade"
+  (`outrosCursos`, sem consumidor no template mas mantido a pedido). Os
+  `computed` derivados (`tituloPartes`, `metricas`, `anosPlano`,
+  `totalDisciplinas`, `outrosCursos`) continuam todos, só que sobre o curso
+  traduzido; a métrica "próxima data" foi removida (ver "A API não dá").
+- `src/app/shared/componentes/cartao-curso-esqueleto/` — esqueleto novo, com a
+  mesma moldura sem padding do `app-cartao-curso` variante `academica` (ver
+  "Fix de padding" abaixo).
+
+**Consumidores arrastados (fora do pedido original, adaptados para não
+partir o build):**
+
+- `src/app/layout/cabecalho/cabecalho.component.ts` — o submenu de cursos
+  usava `cursosService.cursosGrau()` directamente num `computed` síncrono;
+  passou a `injectQuery(() => cursosQueries.lista(...))` mais uma
+  `traducaoQueries.lista` para os títulos (achatados com `aplicarTraducaoTextos`,
+  mesma técnica dos títulos de curso em `faculdades-departamentos`).
+- `src/app/pages/inscricao/formulario/formulario-inscricao.component.ts` — o
+  select "Curso de interesse" (`opcoesCursos`) tinha o mesmo padrão síncrono;
+  mesma adaptação (`injectQuery` + tradução dos títulos das opções).
+- `src/app/app.routes.server.ts` — `cursos/:id` deixou de ser
+  `RenderMode.Prerender` com `getPrerenderParams` a ler os ids-slug de
+  `CURSOS_MOCK`; passou a `RenderMode.Server`, mesma razão e mesmo comentário
+  já usados em `noticias/:id` e `projetos/:id` (ids da API, sem lista fechada
+  no build).
+
+**Mapeamento** (`CursoResource` → `Curso`): `id` → `String(id)`, `nome` →
+`titulo`, **`faculdade.nome` → `faculdade`** (a API dá a faculdade como
+relação embutida, `{id, nome, descricao, …}`, não como string solta — a
+hipótese registada no pedido, "confirma se a API dá objecto relacionado",
+confirmou-se: é objecto, e só o `nome` interessa ao site), `tipo_grau` →
+`grau`, `duracao` e `regime` mantêm o nome, `capa_url` → `imagem` (via
+`capaUtilizavel`). `planosCurriculares[].ordem` → `planoCurricular[].ano`,
+`.titulo` mantém o nome (já traz o tema embutido, ex.: "1.º Ano — Fundamentos
+Científicos"), `.conteudo` → `.disciplinas` (uma disciplina por linha do
+texto, `\n`-separado). `faculdade_id`, `data_inicio`, `data_fim`,
+`created_at`, `updated_at` não são usados pelo site.
+
+**A API não dá:**
+
+1. **Resumo/descrição do curso.** O `CursoResource` não tem nenhum campo de
+   texto livre sobre o curso — só nome, faculdade, duração, regime e grau.
+   `Curso.resumo` ficou **opcional**; sem ele, o subtítulo do hero de
+   `detalhe-curso` desaparece sozinho (o `app-banner-destaque` já esconde o
+   `subtitulo` quando vazio).
+2. **Objetivos do curso.** Nada equivalente a `ObjetivoCurso[]` (rótulo +
+   ícone + texto por objectivo). `Curso.objetivos` ficou **opcional**; a
+   secção 2 de `detalhe-curso` ("Objetivos do Curso") só se desenha com
+   `@if (c.objetivos?.length)` — nos 10 cursos actuais, nunca.
+3. **Saídas profissionais.** Nada equivalente a `saidasProfissionais`.
+   `Curso.saidasProfissionais` ficou **opcional**; a secção 5 de
+   `detalhe-curso` só se desenha com `@if (c.saidasProfissionais?.length)` —
+   nos 10 cursos actuais, nunca.
+4. **Plano curricular incompleto, não em falta.** `planosCurriculares` existe
+   e mapeia bem (`titulo`, `ordem`, `conteudo` com uma disciplina por linha),
+   mas só 4 dos 10 cursos têm alguma entrada (ids 1, 2, 3, 5 — o resto vem
+   `[]`). Isto **não** é tratado como "a API não dá": é uma resposta real
+   (dados de seed incompletos), por isso `Curso.planoCurricular` continua
+   obrigatório (lista, possivelmente vazia) e o acordeão da secção 3
+   simplesmente fica sem itens para os cursos sem plano — sem esconder a
+   secção, ao contrário dos pontos 1–3.
+
+**Fix de padding do cartão (não é integração de API):**
+`src/app/shared/componentes/cartao-curso/cartao-curso.component.ts`, variante
+`academica` — o `<article>` tinha `p-3` a envolver o cartão inteiro, o que
+empurrava a fotografia (`app-espaco-imagem`) para dentro de uma margem branca
+em vez de ocupar toda a largura do cartão. O `p-3` saiu do `article` (que já
+tem `overflow-hidden rounded-xl`, suficiente para arredondar os cantos de
+cima da fotografia sem precisar do `[arredondado]="true"` que a imagem tinha
+antes — removido) e passou a `p-4` só no `div` do texto, que é o único bloco
+que continua com respiro à volta.
+
+**Tradução automática:** `titulo`, `faculdade`, `grau`, `duracao` e `regime`
+entram em `CAMPOS_TRADUZIVEIS_CURSO_OFERTA` (`candidaturas`) e nos mesmos
+mais `resumo` em `CAMPOS_TRADUZIVEIS_CURSO` (`detalhe-curso`, `cabecalho` só
+traduz `titulo` porque é a única coisa que o submenu mostra,
+`formulario-inscricao` idem para as opções do select) — cada consumidor
+declara a lista consoante o que mostra mesmo, em vez de partilhar uma
+constante comum (mesma decisão já tomada para `projetos`, sem um sítio óbvio
+para partilhar entre páginas tão diferentes).
+
+**SSR: funciona graças à correcção geral do `notifyManager` (nota de campo de
+2026-09-08).** Confirmado no `dist`: o prerender de `/candidaturas` traz
+cursos reais da API na secção "Oferta Académica" (`Agronomia`, `Mestrado em
+Ciências do Solo`, …). `/cursos/:id` deixou de ser prerenderizado (ver
+`app.routes.server.ts` acima), por isso não há nada para verificar no `dist`
+para essa rota — só em runtime.
+
 ## contatos
 
 **Integrado em:** 2026-09-08, para o formulário de mensagem de
@@ -873,6 +1001,100 @@ confirmar se ainda é um caso não exercitado.
 reais da API nos cartões (`Variedades de milho tolerantes à seca…`,
 `Multiplicação de mandioca livre de viroses`, `Caracterização das raças
 bovinas autóctones angolanas`), sem esqueleto nenhum.
+
+
+## candidaturas (alunos)
+
+**Integrado em:** 2026-09-08, para `pages/inscricao/formulario/formulario-inscricao.component.ts`
+(o formulário de candidatura de aluno a uma graduação, em `/candidaturas/estudantes`).
+Só escrita — o site nunca lê a lista. Endpoint diferente do já registado em
+"candidaturas (docentes)" acima: `POST /candidaturas/aluno`, não `POST /candidaturas`.
+
+**Camadas:**
+
+- `src/app/core/servicos/candidatura-alunos.service.ts` — `criar(dados, signal)`
+  para o `POST /candidaturas/aluno`; a função `paraPedido` (que monta o
+  `FormData`) fica neste ficheiro. **Nome próprio, mesma razão já registada para
+  `candidatura-docentes.service.ts`**: não colide nem com `candidaturas.service.ts`
+  (o conteúdo/mock da página `/candidaturas`) nem com o serviço de docentes.
+- `src/app/core/modelos/candidatura-aluno.model.ts` — `NovaCandidaturaAluno`, a
+  forma do formulário (é o serviço que a traduz para os nomes da API).
+- `src/app/pages/inscricao/formulario/formulario-inscricao.component.ts` —
+  `injectMutation<void, ErroApi, NovaCandidaturaAluno>` num novo `submeter()`.
+- **Sem ficheiro em `core/consultas/`**: não há `GET` público deste lado
+  (mesma decisão do `agendamento-visitas`, `inscricoes` e `candidatura-docentes`).
+
+**O corpo vai em `multipart/form-data`**, não em JSON — leva o certificado de
+habilitações em PDF. O `ApiService.post` já aceita um `FormData` tal e qual.
+
+**Mapeamento** (`NovaCandidaturaAluno` → `CandidaturaAlunoRequest`): `nome` →
+`nome_completo`, `email` → `email`, `telefone` → `telefone`, `nascimento` →
+`data_nascimento` (o `<input type="date">` já dá `AAAA-MM-DD`, aceite apesar de
+o esquema declarar `format: date-time` — mesmo padrão já visto em
+`agendamento-visitas`), `genero` → `genero` (valor em bruto do select:
+`feminino`/`masculino`/`nao-indicado`, sem tradução para português "bonito" —
+a API guarda texto livre), `escola` → `escola_origem`, `anoConclusao` →
+`ano_conclusao`, `media` → `media_final` (o campo aceita vírgula decimal,
+"16,5"; convertida para ponto antes de enviar, porque a API só entende
+`number`), `curso` → `curso_id`, `motivacao` → `desc_motivacao`, `certificado`
+→ `certificado_habilitacoes`. Os opcionais vazios não entram no `FormData`.
+
+**Nenhum campo da API ficou por preencher, e nenhum campo do formulário ficou
+sem correspondência.** O `CandidaturaAlunoRequest` tem exactamente os onze
+campos que o formulário já recolhe (mais o certificado) — coincidência rara
+nas integrações deste projecto, sem "a API não dá" a registar aqui.
+
+**Escrita verificada contra a API antes de escrever o código** (`POST` com
+corpos que falham a validação, sem criar registo):
+
+1. Obrigatórios: **só `nome_completo` e `email`**. Tudo o resto é opcional do
+   lado da API (o formulário exige mais — `Validators.required` locais em
+   `telefone`, `nascimento`, `genero`, `escola`, `anoConclusao`, `media`,
+   `curso`, `motivacao`, `certificado` —, o que é uma escolha do site, não um
+   requisito da API).
+2. `certificado_habilitacoes`: **só `pdf`**, até 5120 KB — já era o que o
+   formulário validava (`EXTENSOES_CERTIFICADO`, `TAMANHO_MAXIMO_CERTIFICADO_MB
+   = 5`), sem mudança nenhuma.
+3. `media_final`: **entre 0 e 20**. O formulário não valida esse intervalo do
+   lado do cliente (só `Validators.required`) — fica registado como possível
+   melhoria (`Validators.min(0)`/`Validators.max(20)`), não implementada nesta
+   integração por não ter sido pedida.
+4. `ano_conclusao`: **inteiro de 4 dígitos** — já é o que `ValidacaoService.validarAno`
+   garante.
+5. Todos os nomes dos campos opcionais foram confirmados um a um, com valores
+   que violam as regras deles (300 caracteres nos `max:255`, data inválida,
+   ficheiro `.txt` em vez de `.pdf`, `curso_id` inexistente): todos responderam
+   com o nome certo no 422.
+6. Os 422 chegam **todos em português** nesta chamada (ao contrário de
+   `candidaturas`/`inscricoes`, onde vinham misturados com inglês).
+
+**Ligado ao formulário de forma mínima, sem construir os passos 2/3 que ainda
+não têm ecrã:** o `formulario-inscricao.component.ts` só tem um ecrã (todos os
+onze campos aparecem juntos, apesar de o indicador mostrar três passos:
+"Dados pessoais", "Académico", "Submissão"). O botão único do formulário, que
+antes só validava e não submetia nada (`avancar()`, com um `TODO` explícito),
+passou a `submeter()`: valida os mesmos campos e, se válidos, chama a mutation
+— o rótulo do botão mudou de "Avançar para a revisão" para "Submeter
+candidatura", porque é isso que ele já faz. Ecrã de confirmação e faixa de
+erro sob o formulário, mesmo padrão do `formulario-docente.component.ts`.
+`passoAtual`/`rotulosPassos` não foram tocados (continuam a mostrar sempre o
+passo 0) — fica **por implementar** um ecrã de revisão/confirmação
+(passos 2 e 3) para o indicador deixar de estar parado; quando existir, a
+submissão real deve mudar para o último passo, como já acontece no formulário
+de docentes.
+
+**Por verificar: nenhuma candidatura de aluno foi criada de facto.** Toda a
+verificação foi feita com pedidos que morrem na validação, para não deixar um
+registo de teste numa base partilhada que o site não consegue apagar. O
+caminho de sucesso (201 + ficheiro guardado no `storage`) está por confirmar
+com uma submissão real.
+
+**SSR:** não aplicável a este endpoint — não há `GET` nem query, o
+`injectMutation` só corre a pedido do utilizador. O `injectQuery` que o mesmo
+componente já tinha para `GET /cursos` (select "Curso de interesse") não foi
+tocado; o prerender de `/candidaturas/estudantes` continua a trazer cursos
+reais (confirmado no `dist`, "Agronomia" aparece no HTML), e agora também o
+botão "Submeter candidatura".
 
 
 ## Tradução automática do conteúdo da API

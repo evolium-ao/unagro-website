@@ -15,5 +15,7 @@ export interface CursoFaculdade {
 export interface Faculdade {
   id: string;
   nome: string;
+  /** Anulável na API; ausente quando a faculdade não tem descrição registada. */
+  descricao?: string;
   cursos: CursoFaculdade[];
 }

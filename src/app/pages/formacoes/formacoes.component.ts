@@ -211,8 +211,10 @@ export class FormacoesComponent {
           preco,
           estadoInscricao: curso.estadoInscricao ?? 'abertas',
           proximaTurma: curso.proximaTurma,
-          // TODO: `/cursos/:id` ainda lê o mock de graduações (`CursosService`);
-          // um treinamento vindo da API não tem página de detalhe própria.
+          // TODO: `/cursos/:id` já lê `GET /cursos` (graduações) em vez do mock,
+          // mas os ids de `/treinamentos` são de outra tabela — um treinamento
+          // vindo da API não tem página de detalhe própria (ver `.claude/memory/
+          // integrar-recurso.md`, secção `treinamentos`).
           link: `/cursos/${curso.id}`,
           imagem: curso.imagem,
         },

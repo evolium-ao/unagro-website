@@ -1,6 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { cursosQueries } from '../../core/consultas/cursos.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { CandidaturasService } from '../../core/servicos/candidaturas.service';
 import { PerguntasFrequentesService } from '../../core/servicos/perguntas-frequentes.service';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
@@ -15,8 +20,8 @@ import { FaixaEstatisticasComponent } from "../../shared/componentes/faixa-estat
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
 import { CursosService } from '../../core/servicos/cursos.service';
 import { CartaoCursoComponent, CursoExibidoCard } from '../../shared/componentes/cartao-curso/cartao-curso.component';
+import { CartaoCursoEsqueletoComponent } from '../../shared/componentes/cartao-curso-esqueleto/cartao-curso-esqueleto.component';
 import { FiltroPilulaComponent, OpcaoFiltroPilula } from '../../shared/componentes/filtro-pilula/filtro-pilula.component';
-import { Curso } from '../../core/modelos/curso.model';
 import { ListaVerificacaoComponent } from "../../shared/componentes/lista-verificacao/lista-verificacao.component";
 import { AbasComponent } from "../../shared/componentes/abas/abas.component";
 import { CartaoRequisitoComponent } from "../../shared/componentes/cartao-requisito/cartao-requisito.component";
@@ -30,8 +35,10 @@ import { CartaoBolsaComponent } from '../../shared/componentes/cartao-bolsa/cart
 import { ItemContactoComponent } from '../../shared/componentes/item-contacto/item-contacto.component';
 import { ContactosComponent } from "../contactos/contactos.component";
 import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
+import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 
-type CursoOferta = ReturnType<CursosService['cursosGrau']> extends (infer U)[] ? U : never;
+/** Campos de texto do curso traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_CURSO_OFERTA = ['titulo', 'faculdade', 'grau', 'duracao', 'regime'] as const;
 
 const BENEFICIOS_RECRUTAMENTO_BRUTOS: TextoTraduzido[] = [
   {
@@ -59,6 +66,7 @@ const REQUISITOS_BRUTOS: TextoTraduzido[] = [
     IndicadorPassosComponent,
     FiltroPilulaComponent,
     CartaoCursoComponent,
+    CartaoCursoEsqueletoComponent,
     ListaVerificacaoComponent,
     AbasComponent,
     CartaoRequisitoComponent,
@@ -73,7 +81,8 @@ const REQUISITOS_BRUTOS: TextoTraduzido[] = [
     CartaoBolsaComponent,
     ItemContactoComponent,
     IconeComponent,
-    ContainerBannerFaixaEstatisticaComponent
+    ContainerBannerFaixaEstatisticaComponent,
+    RevelarAoScrollDirective
 ],
   templateUrl: './candidaturas.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,6 +93,7 @@ export class CandidaturasComponent {
   private readonly faqService = inject(PerguntasFrequentesService);
   private readonly estatisticasService = inject(EstatisticasService);
   private readonly cursosService = inject(CursosService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly passos = this.candidaturasService.passos;
   protected readonly bolsas = this.candidaturasService.bolsas;
@@ -148,7 +158,27 @@ export class CandidaturasComponent {
   );
 
   // --- Secção 2: oferta académica ---
-  protected readonly cursosOferta = this.cursosService.cursosGrau;
+  protected readonly consultaCursosOferta = injectQuery(() => cursosQueries.lista(this.cursosService));
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`); em inglês, os
+   * campos de texto do curso passam pela tradução automática.
+   */
+  private readonly consultaTraducaoCursosOferta = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaCursosOferta.data() ?? [], CAMPOS_TRADUZIVEIS_CURSO_OFERTA),
+      this.traducao.idioma(),
+    ),
+  );
+
+  protected readonly cursosOferta = computed(() =>
+    aplicarTraducao(
+      this.consultaCursosOferta.data() ?? [],
+      CAMPOS_TRADUZIVEIS_CURSO_OFERTA,
+      this.consultaTraducaoCursosOferta.data(),
+    ),
+  );
 
   protected readonly filtroFaculdade = signal('');
   protected readonly filtroGrau = signal('');

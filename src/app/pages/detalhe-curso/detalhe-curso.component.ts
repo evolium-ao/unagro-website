@@ -1,9 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
-import { CursosService } from '../../core/servicos/cursos.service';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { cursosQueries } from '../../core/consultas/cursos.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
+import { Curso } from '../../core/modelos/curso.model';
 import { SeoService } from '../../core/seo/seo.service';
+import { CursosService } from '../../core/servicos/cursos.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { AcordeaoComponent } from '../../shared/componentes/acordeao/acordeao.component';
 import { ItemAcordeaoComponent } from '../../shared/componentes/acordeao/item-acordeao.component';
 import {
@@ -36,6 +42,9 @@ interface PerguntaCurso {
   pergunta: TextoTraduzido;
   resposta: TextoTraduzido;
 }
+
+/** Campos de texto do curso traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_CURSO = ['titulo', 'faculdade', 'grau', 'duracao', 'regime', 'resumo'] as const;
 
 /**
  * Metodologia, requisitos de admissão e dúvidas frequentes são iguais para toda a
@@ -114,14 +123,64 @@ const FAQ_CURSO_BRUTO: PerguntaCurso[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DetalheCursoComponent {
-  /** Vem do segmento `:id` da rota `/cursos/:id` — é o nome do curso em slug. */
+  /** Vem do segmento `:id` da rota `/cursos/:id` — o `id` numérico da API. */
   readonly id = input.required<string>();
 
   protected readonly traducao = inject(TraducaoService);
   private readonly cursosService = inject(CursosService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly seo = inject(SeoService);
 
-  protected readonly curso = computed(() => this.cursosService.cursos().find((c) => c.id === this.id()));
+  /**
+   * Os ids da API são inteiros. Um id que não seja número não pode existir em
+   * `GET /cursos/{id}` — nesse caso nem se chama a API, e o curso fica logo
+   * por "não encontrado" (mesmo padrão do `detalhe-noticia`/`detalhe-projeto`).
+   */
+  private readonly idApi = computed(() => {
+    const numero = Number(this.id());
+    return Number.isInteger(numero) && numero > 0 ? numero : null;
+  });
+
+  protected readonly consultaCurso = injectQuery(() => ({
+    ...cursosQueries.porId(this.cursosService, this.idApi() ?? 0),
+    enabled: this.idApi() !== null,
+  }));
+
+  /** A lista inteira serve "outros cursos da mesma faculdade" — sem endpoint de relacionados. */
+  private readonly consultaCursos = injectQuery(() => cursosQueries.lista(this.cursosService));
+
+  /** A API só devolve português (ver `.claude/README.md`). */
+  private readonly consultaTraducaoCurso = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(
+        this.consultaCurso.data() ? [this.consultaCurso.data()!] : [],
+        CAMPOS_TRADUZIVEIS_CURSO,
+      ),
+      this.traducao.idioma(),
+    ),
+  );
+
+  protected readonly curso = computed<Curso | undefined>(() => {
+    const dados = this.consultaCurso.data();
+    if (!dados) return undefined;
+    return aplicarTraducao([dados], CAMPOS_TRADUZIVEIS_CURSO, this.consultaTraducaoCurso.data())[0];
+  });
+
+  /** Enquanto o pedido corre ainda não se pode dizer que o curso não existe. */
+  protected readonly aCarregar = computed(() => this.idApi() !== null && this.consultaCurso.isPending());
+
+  private readonly consultaTraducaoOutros = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaCursos.data() ?? [], CAMPOS_TRADUZIVEIS_CURSO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly cursosTraduzidos = computed(() =>
+    aplicarTraducao(this.consultaCursos.data() ?? [], CAMPOS_TRADUZIVEIS_CURSO, this.consultaTraducaoOutros.data()),
+  );
 
   protected readonly totalDisciplinas = computed(() =>
     (this.curso()?.planoCurricular ?? []).reduce((total, ano) => total + ano.disciplinas.length, 0),
@@ -151,11 +210,11 @@ export class DetalheCursoComponent {
       .replace('{curso}', this.curso()?.titulo ?? ''),
   );
 
-  /** O acordeão mostra "1º Ano: Fundamentos Científicos" quando o ano tem tema definido. */
+  /** O acordeão mostra o título do ano tal como a API o devolve, já com o tema embutido. */
   protected readonly anosPlano = computed(() =>
     (this.curso()?.planoCurricular ?? []).map((ano) => ({
       ano: ano.ano,
-      titulo: ano.tema ? `${ano.titulo}: ${ano.tema}` : ano.titulo,
+      titulo: ano.titulo,
       disciplinas: ano.disciplinas,
     })),
   );
@@ -191,7 +250,7 @@ export class DetalheCursoComponent {
       return [];
     }
 
-    const metricas: MetricaCurso[] = [
+    return [
       {
         id: 'duracao',
         icone: 'clock',
@@ -217,18 +276,6 @@ export class DetalheCursoComponent {
         rotulo: this.traducao.t('paginas.detalheCurso.metricaDisciplinas'),
       },
     ];
-
-    // Só os cursos de curta duração anunciam a data da próxima entrada.
-    if (curso.proximaData) {
-      metricas.push({
-        id: 'proxima-data',
-        icone: 'calendar',
-        valor: curso.proximaData,
-        rotulo: this.traducao.t('paginas.detalheCurso.metricaProximaData'),
-      });
-    }
-
-    return metricas;
   });
 
   protected readonly outrosCursos = computed(() => {
@@ -236,8 +283,7 @@ export class DetalheCursoComponent {
     if (!curso) {
       return [];
     }
-    return this.cursosService
-      .cursos()
+    return this.cursosTraduzidos()
       .filter((c) => c.faculdade === curso.faculdade && c.id !== curso.id)
       .slice(0, 3);
   });
