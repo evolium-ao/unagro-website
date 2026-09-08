@@ -1,5 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { injectMutation } from '@tanstack/angular-query-experimental';
+import { ErroApi } from '../../../core/api/erro-api';
+import { NovaInscricaoCurso } from '../../../core/modelos/inscricao-curso.model';
+import { InscricoesService } from '../../../core/servicos/inscricoes.service';
 import { ValidacaoService } from '../../../core/servicos/Validacao.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { validarTelefoneComIndicativo } from '../../formulario/validadores';
@@ -64,6 +68,17 @@ export interface DadosInscricaoCurso {
           @if (opcoesCursos().length) {
             <app-campos-inscricao-curso [cursos]="opcoesCursos()" />
           }
+
+          <!-- A falha do POST fica aqui, e não num segundo modal por cima deste:
+               o formulário continua preenchido e o pedido repete-se com um clique. -->
+          @if (enviar.isError()) {
+            <p
+              role="alert"
+              class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-relaxed text-red-700"
+            >
+              {{ mensagemErro() }}
+            </p>
+          }
         </div>
 
         <div
@@ -78,6 +93,8 @@ export interface DadosInscricaoCurso {
             icone="arrow-right"
             posicaoIcone="direita"
             paddingX="px-6"
+            [aCarregar]="enviar.isPending()"
+            [desativado]="enviar.isPending()"
           >
             {{ textos().submeter }}
           </app-botao>
@@ -91,6 +108,7 @@ export class ModalInscricaoCursoComponent {
   private readonly validacao = inject(ValidacaoService);
   private readonly modais = inject(AlertModalService);
   private readonly dadosModal = inject(ModalDataService);
+  private readonly inscricoes = inject(InscricoesService);
 
   private readonly dados = this.dadosModal.obterDados<DadosInscricaoCurso>();
 
@@ -116,6 +134,45 @@ export class ModalInscricaoCursoComponent {
     (this.dados?.cursos ?? []).map((curso) => ({ value: curso.id, label: curso.titulo })),
   );
 
+  /**
+   * `POST /inscricoes` — endpoint público, sem `Authorization`. Não há nada
+   * para invalidar a seguir: a lista de inscrições da API pede autenticação e
+   * o site nunca a lê.
+   */
+  protected readonly enviar = injectMutation<void, ErroApi, NovaInscricaoCurso>(() => ({
+    mutationFn: (dados) => this.inscricoes.criar(dados),
+  }));
+
+  /**
+   * O que se mostra na faixa vermelha do formulário. Os 422 do Laravel trazem a
+   * mensagem por campo e chegam **só em português** — a API é monolingue —, mas
+   * dizem exactamente o que está errado, por isso passam à frente do texto
+   * genérico.
+   */
+  protected readonly mensagemErro = computed(() => {
+    const erro = this.enviar.error();
+    if (!erro) {
+      return '';
+    }
+
+    const doServidor = Object.values(erro.errosValidacao).flat();
+    if (doServidor.length) {
+      return doServidor.join(' ');
+    }
+
+    if (erro.estado === 0) {
+      return this.traducao.getTraducao([
+        'Não foi possível contactar o servidor. Verifique a ligação e tente novamente.',
+        'Could not reach the server. Check your connection and try again.',
+      ]);
+    }
+
+    return this.traducao.getTraducao([
+      'Não foi possível registar a inscrição. Tente novamente dentro de alguns instantes.',
+      'Could not register the enrolment. Please try again in a few moments.',
+    ]);
+  });
+
   protected readonly textos = computed(() => ({
     titulo: this.traducao.getTraducao([
       'Inscrição em Curso de Curta Duração',
@@ -140,13 +197,31 @@ export class ModalInscricaoCursoComponent {
   }
 
   protected submeter(): void {
+    if (this.enviar.isPending()) {
+      return;
+    }
+
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
 
-    // TODO: enviar a inscrição ao endpoint de inscrições em cursos quando existir.
-    this.fechar();
-    void this.modais.sucesso(this.textos().sucessoMensagem, this.textos().sucessoTitulo);
+    const valores = this.formulario.getRawValue();
+
+    this.enviar.mutate(
+      {
+        cursoId: valores.curso,
+        nome: valores.nome,
+        email: valores.email,
+        telefone: valores.telefone,
+      },
+      {
+        // O modal fecha primeiro: o de sucesso ocupa o lugar dele, não se empilha por cima.
+        onSuccess: () => {
+          this.fechar();
+          void this.modais.sucesso(this.textos().sucessoMensagem, this.textos().sucessoTitulo);
+        },
+      },
+    );
   }
 }

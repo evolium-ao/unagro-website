@@ -1,10 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CursosService } from '../../core/servicos/cursos.service';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { treinamentosQueries } from '../../core/consultas/treinamentos.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
+import { TreinamentosService } from '../../core/servicos/treinamentos.service';
 import { ProximasDatasService } from '../../core/servicos/proximas-datas.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
@@ -14,6 +19,7 @@ import {
   CartaoCursoCurtaDuracaoComponent,
   CursoCurtaDuracaoCartao,
 } from '../../shared/componentes/cartao-curso-curta-duracao/cartao-curso-curta-duracao.component';
+import { CartaoCursoCurtaDuracaoEsqueletoComponent } from '../../shared/componentes/cartao-curso-curta-duracao-esqueleto/cartao-curso-curta-duracao-esqueleto.component';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { AlertModalService } from '../../shared/componentes/alert-modal/alert-modal.service';
 import {
@@ -25,6 +31,9 @@ import { CartaoProximaDataComponent } from '../../shared/componentes/cartao-prox
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { PilarIconeComponent } from '../../shared/componentes/pilar-icone/pilar-icone.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
+
+/** Campos de texto do treinamento traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_TREINAMENTO = ['titulo', 'resumo'] as const;
 
 /** Cursos de curta duração revelados de cada vez pelo botão "Ver mais". */
 const CURSOS_CURTA_POR_LOTE = 3;
@@ -120,6 +129,7 @@ const PILARES_CERTIFICACAO: PilarBruto[] = [
     BotaoComponent,
     CabecalhoSecaoComponent,
     CartaoCursoCurtaDuracaoComponent,
+    CartaoCursoCurtaDuracaoEsqueletoComponent,
     CartaoProximaDataComponent,
     ContainerPaginaComponent,
     IconeComponent,
@@ -132,10 +142,10 @@ const PILARES_CERTIFICACAO: PilarBruto[] = [
 })
 export class FormacoesComponent {
   protected readonly traducao = inject(TraducaoService);
-  private readonly cursosService = inject(CursosService);
+  private readonly treinamentosService = inject(TreinamentosService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly proximasDatasService = inject(ProximasDatasService);
   private readonly modais = inject(AlertModalService);
-  protected readonly cursosCurtaDuracao = this.cursosService.cursosCurtaDuracao;
   protected readonly vantagens = computed(() =>
     localizarProfundo(VANTAGENS_BRUTAS, this.traducao.idioma()),
   );
@@ -158,10 +168,37 @@ export class FormacoesComponent {
   protected readonly cursosCurtaPorLote = CURSOS_CURTA_POR_LOTE;
   private readonly lotesCursosCurta = signal(1);
 
+  /** `GET /treinamentos` — a lista vem inteira, sem paginação nem filtros do lado da API. */
+  protected readonly consultaTreinamentos = injectQuery(() =>
+    treinamentosQueries.lista(this.treinamentosService),
+  );
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`); em inglês,
+   * `titulo`/`resumo` passam pela tradução automática antes de chegar a
+   * `cartoesCursosCurta`. Enquanto a tradução carrega, ou se falhar, fica o
+   * texto original em português — nunca uma lista vazia.
+   */
+  private readonly consultaTraducaoTreinamentos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaTreinamentos.data() ?? [], CAMPOS_TRADUZIVEIS_TREINAMENTO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly treinamentosTraduzidos = computed(() =>
+    aplicarTraducao(
+      this.consultaTreinamentos.data() ?? [],
+      CAMPOS_TRADUZIVEIS_TREINAMENTO,
+      this.consultaTraducaoTreinamentos.data(),
+    ),
+  );
+
   private readonly cartoesCursosCurta = computed<CursoCurtaDuracaoCartao[]>(() =>
-    this.cursosCurtaDuracao().flatMap((curso) => {
+    this.treinamentosTraduzidos().flatMap((curso) => {
       const { cargaHoraria, preco } = curso;
-      // Sem carga horária nem preço o cartão do mockup não tem o que mostrar.
+      // Sem carga horária nem preço o cartão não tem o que mostrar.
       if (cargaHoraria === undefined || preco === undefined) {
         return [];
       }
@@ -174,6 +211,8 @@ export class FormacoesComponent {
           preco,
           estadoInscricao: curso.estadoInscricao ?? 'abertas',
           proximaTurma: curso.proximaTurma,
+          // TODO: `/cursos/:id` ainda lê o mock de graduações (`CursosService`);
+          // um treinamento vindo da API não tem página de detalhe própria.
           link: `/cursos/${curso.id}`,
           imagem: curso.imagem,
         },
@@ -248,6 +287,13 @@ export class FormacoesComponent {
     this.traducao.getTraducao([
       'Ainda não há cursos de curta duração com inscrições anunciadas.',
       'There are no short courses with announced enrolment yet.',
+    ]),
+  );
+
+  protected readonly erroCursosCurta = computed(() =>
+    this.traducao.getTraducao([
+      'Não foi possível carregar os cursos de curta duração.',
+      'Could not load the short courses.',
     ]),
   );
 

@@ -1,16 +1,22 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { startupsQueries } from '../../core/consultas/startups.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { EspacoImagemComponent } from '../../shared/componentes/espaco-imagem/espaco-imagem.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
-import { CartaoStartupComponent } from '../../shared/componentes/cartao-startup/cartao-startup.component';
+import { CartaoStartupComponent, StartupCartao } from '../../shared/componentes/cartao-startup/cartao-startup.component';
+import { CartaoStartupEsqueletoComponent } from '../../shared/componentes/cartao-startup-esqueleto/cartao-startup-esqueleto.component';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 import { StartupsService } from '../../core/servicos/startups.service';
@@ -19,6 +25,9 @@ import { ProjectosInovadoresService } from '../../core/servicos/projectos-inovad
 import { CartaoRecursoComponent } from '../../shared/componentes/cartao-recurso/cartao-recurso.component';
 import { FormFieldInputComponentV2 } from '../../shared/componentes/input-field/form-input-field';
 import { ValidacaoService } from '../../core/servicos/Validacao.service';
+
+/** Campos de texto da startup traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_STARTUP = ['nome', 'categoria', 'descricao'] as const;
 
 interface ServicoBruto {
   icone: string;
@@ -132,6 +141,7 @@ type EstadoSubscricao = 'ocioso' | 'enviado';
     ContainerPaginaComponent,
     CabecalhoSecaoComponent,
     CartaoStartupComponent,
+    CartaoStartupEsqueletoComponent,
     CartaoProjectoInovadorComponent,
     CartaoRecursoComponent,
     FormFieldInputComponentV2,
@@ -146,10 +156,58 @@ type EstadoSubscricao = 'ocioso' | 'enviado';
 export class HubUnagroComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly startupsService = inject(StartupsService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly projectosInovadoresService = inject(ProjectosInovadoresService);
   private readonly validacao = inject(ValidacaoService);
 
-  protected readonly startups = this.startupsService.startups;
+  /** `GET /startups` — a lista vem inteira, sem paginação nem filtros do lado da API. */
+  protected readonly consultaStartups = injectQuery(() => startupsQueries.lista(this.startupsService));
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`); em inglês,
+   * `nome`/`categoria`/`descricao` passam pela tradução automática antes de
+   * chegar ao cartão. Enquanto a tradução carrega, ou se falhar, fica o texto
+   * original em português — nunca uma lista vazia.
+   */
+  private readonly consultaTraducaoStartups = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaStartups.data() ?? [], CAMPOS_TRADUZIVEIS_STARTUP),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly startupsTraduzidas = computed(() =>
+    aplicarTraducao(
+      this.consultaStartups.data() ?? [],
+      CAMPOS_TRADUZIVEIS_STARTUP,
+      this.consultaTraducaoStartups.data(),
+    ),
+  );
+
+  /**
+   * A API não devolve destino de detalhe — `app.routes.ts` também não tem
+   * listagem própria de startups — por isso todos os cartões apontam para a
+   * âncora da própria sessão, como o "Ver todas" acima.
+   */
+  protected readonly startups = computed<StartupCartao[]>(() =>
+    this.startupsTraduzidas().map((startup) => ({
+      id: startup.id,
+      categoria: startup.categoria,
+      nome: startup.nome,
+      descricao: startup.descricao,
+      imagem_url: startup.imagem_url,
+      link: this.linkTodasStartups,
+    })),
+  );
+
+  protected readonly erroStartups = computed(() =>
+    this.traducao.getTraducao([
+      'Não foi possível carregar as startups.',
+      'Could not load the startups.',
+    ]),
+  );
+
   protected readonly projectosInovadores = this.projectosInovadoresService.projectos;
   protected readonly servicos = computed(() =>
     localizarProfundo(SERVICOS_BRUTOS, this.traducao.idioma()),

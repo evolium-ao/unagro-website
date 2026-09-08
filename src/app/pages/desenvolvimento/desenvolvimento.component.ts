@@ -23,7 +23,11 @@ import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
-import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
+import {
+  aplicarTraducao,
+  aplicarTraducaoTextos,
+  camposParaTraduzir,
+} from '../../core/traducao/traduzir-campos';
 import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import {
   BannerDestaqueComponent,
@@ -61,6 +65,9 @@ import { Publicacao } from '../../core/modelos/publicacao.model';
 import { CartaoPublicacaoComponent } from '../../shared/componentes/cartao-publicacao/cartao-publicacao.component';
 import { PassoMetodologiaComponent } from '../../shared/componentes/passo-metodologia/passo-metodologia.component';
 import { CartaoInvestigadorComponent } from '../../shared/componentes/cartao-investigador/cartao-investigador.component';
+import { CartaoInvestigadorEsqueletoComponent } from '../../shared/componentes/cartao-investigador-esqueleto/cartao-investigador-esqueleto.component';
+import { InvestigadoresService } from '../../core/servicos/investigadores.service';
+import { investigadoresQueries } from '../../core/consultas/investigadores.queries';
 
 interface EixoBruto {
   icone: string;
@@ -296,52 +303,22 @@ const PASSOS_METODOLOGIA_MOCK: PassoMetodologia[] = [
   },
 ];
 
-/** Substituir pela resposta do endpoint dos investigadores principais. */
-const INVESTIGADORES_MOCK: Investigador[] = [
-  {
-    id: 'amara-okafor',
-    nome: 'Dra. Amara Okafor',
-    cargo: ['Directora de Biotecnologia', 'Director of Biotechnology'],
-    foto_url: '/imagens/avatar-directora-biotecnologia.png',
-    especialidades: [
-      ['Genética', 'Genetics'],
-      ['Sustentabilidade', 'Sustainability'],
-    ],
-  },
-  {
-    id: 'joao-silva',
-    nome: 'Prof. João Silva',
-    cargo: ['Especialista em Engenharia Rural', 'Rural Engineering Specialist'],
-    foto_url: '/imagens/avatar-especialista-engenharia.png',
-    especialidades: [
-      ['Mecanização', 'Mechanisation'],
-      ['Irrigação', 'Irrigation'],
-    ],
-  },
-  {
-    id: 'maria-zungu',
-    nome: 'Dra. Maria Zungu',
-    cargo: ['Coordenadora de Solos', 'Soil Coordinator'],
-    foto_url: '/imagens/avatar-coordenadora-solo.png',
-    especialidades: [
-      ['Microbiologia', 'Microbiology'],
-      ['Edafologia', 'Soil Science'],
-    ],
-  },
-  {
-    id: 'carlos-mendes',
-    nome: 'Dr. Carlos Mendes',
-    cargo: ['Investigador de Mercados Agrícolas', 'Agricultural Markets Researcher'],
-    foto_url: '/imagens/avatar-investigador-mercado.png',
-    especialidades: [
-      ['Agro-negócio', 'Agribusiness'],
-      ['Cadeias de Valor', 'Value Chains'],
-    ],
-  },
-];
-
 /** Quantos investigadores entram na fila; as setas andam de lote em lote. */
 const INVESTIGADORES_POR_PAGINA = 4;
+
+/**
+ * Campos de texto do investigador traduzidos automaticamente quando o idioma
+ * não é português. O `nome` fica de fora de propósito — nome próprio não se
+ * traduz; as `especialidades` são uma lista e traduzem-se à parte (ver
+ * `consultaTraducaoEspecialidades`).
+ */
+const CAMPOS_TRADUZIVEIS_INVESTIGADOR = ['cargo'] as const;
+
+/** Esqueletos enquanto os investigadores não chegam — um lote cheio da fila. */
+const ESQUELETOS_INVESTIGADORES = Array.from(
+  { length: INVESTIGADORES_POR_PAGINA },
+  (_, indice) => indice,
+);
 
 /** Como cada formato se estende na grelha de 4 colunas. */
 const COLUNAS_LINHA: Record<FormatoLinhaInvestigacao, string> = {
@@ -371,6 +348,7 @@ const COLUNAS_LINHA: Record<FormatoLinhaInvestigacao, string> = {
     CartaoPublicacaoComponent,
     PassoMetodologiaComponent,
     CartaoInvestigadorComponent,
+    CartaoInvestigadorEsqueletoComponent,
   ],
   templateUrl: './desenvolvimento.component.html',
   styles: `
@@ -701,19 +679,83 @@ export class DesenvolvimentoComponent {
 
   // ---- 6 sessão: Investigadores Principais ----
 
-  /** Substituir por um sinal alimentado pelo endpoint dos investigadores. */
-  private readonly investigadoresBrutos = signal<Investigador[]>(INVESTIGADORES_MOCK);
+  private readonly investigadoresService = inject(InvestigadoresService);
+
+  /** `GET /investigadores` — os cartões de "Investigadores Principais". */
+  protected readonly consultaInvestigadores = injectQuery(() =>
+    investigadoresQueries.lista(this.investigadoresService),
+  );
+
+  /** A API só devolve português (ver `.claude/README.md`). */
+  private readonly consultaTraducaoInvestigadores = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(
+        this.consultaInvestigadores.data() ?? [],
+        CAMPOS_TRADUZIVEIS_INVESTIGADOR,
+      ),
+      this.traducao.idioma(),
+    ),
+  );
+
+  /**
+   * As especialidades são uma lista por investigador, e o `camposParaTraduzir`
+   * só sabe achatar campos de texto simples — por isso vai numa consulta
+   * própria, com todas as pílulas de todos os investigadores numa única lista
+   * (a mesma ordem em que se voltam a distribuir abaixo).
+   */
+  private readonly especialidadesParaTraduzir = computed(() =>
+    (this.consultaInvestigadores.data() ?? []).flatMap(
+      (investigador) => investigador.especialidades ?? [],
+    ),
+  );
+
+  private readonly consultaTraducaoEspecialidades = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      this.especialidadesParaTraduzir(),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly investigadores = computed<Investigador[]>(() => {
+    const comCargo = aplicarTraducao(
+      this.consultaInvestigadores.data() ?? [],
+      CAMPOS_TRADUZIVEIS_INVESTIGADOR,
+      this.consultaTraducaoInvestigadores.data(),
+    );
+
+    const especialidadesTraduzidas = this.consultaTraducaoEspecialidades.data();
+    if (!especialidadesTraduzidas) return comCargo;
+
+    // Desfaz o achatamento: cada investigador leva de volta tantas pílulas
+    // quantas tinha, na ordem em que foram mandadas a traduzir.
+    let cursor = 0;
+    return comCargo.map((investigador) => {
+      const originais = investigador.especialidades ?? [];
+      if (!originais.length) return investigador;
+
+      const traduzidas = aplicarTraducaoTextos(
+        originais,
+        especialidadesTraduzidas.slice(cursor, cursor + originais.length),
+      );
+      cursor += originais.length;
+      return { ...investigador, especialidades: traduzidas };
+    });
+  });
 
   private readonly paginaInvestigadores = signal(0);
 
   private readonly totalPaginasInvestigadores = computed(() =>
-    Math.max(1, Math.ceil(this.investigadoresBrutos().length / INVESTIGADORES_POR_PAGINA)),
+    Math.max(1, Math.ceil(this.investigadores().length / INVESTIGADORES_POR_PAGINA)),
   );
 
   protected readonly investigadoresVisiveis = computed(() => {
     const inicio = this.paginaInvestigadores() * INVESTIGADORES_POR_PAGINA;
-    return this.investigadoresBrutos().slice(inicio, inicio + INVESTIGADORES_POR_PAGINA);
+    return this.investigadores().slice(inicio, inicio + INVESTIGADORES_POR_PAGINA);
   });
+
+  protected readonly esqueletosInvestigadores = ESQUELETOS_INVESTIGADORES;
 
   protected readonly temInvestigadoresAnteriores = computed(() => this.paginaInvestigadores() > 0);
   protected readonly temInvestigadoresSeguintes = computed(
@@ -741,6 +783,13 @@ export class DesenvolvimentoComponent {
     this.traducao.getTraducao([
       'Mentes brilhantes dedicadas à transformação do panorama agrário através da ciência aplicada.',
       'Brilliant minds devoted to transforming the agricultural landscape through applied science.',
+    ]),
+  );
+
+  protected readonly erroInvestigadores = computed(() =>
+    this.traducao.getTraducao([
+      'Não foi possível carregar os investigadores.',
+      'Could not load the researchers.',
     ]),
   );
 

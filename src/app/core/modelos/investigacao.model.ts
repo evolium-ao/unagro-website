@@ -60,13 +60,25 @@ export interface PassoMetodologia {
   descricao: TextoBilingue;
 }
 
-/** Investigador principal — um cartão da fila da equipa científica. */
+/**
+ * Investigador principal — um cartão da fila da equipa científica.
+ *
+ * Segue a regra dos modelos vindos da API (`.claude/README.md`): campos de texto
+ * simples (`string`), não pares bilingues. Quem traduz do
+ * `InvestigadorResource` para esta forma é o `InvestigadoresService`; o inglês
+ * do `cargo` e das especialidades vem da tradução automática do conteúdo da
+ * API, no componente que consome.
+ */
 export interface Investigador {
   id: string;
-  /** Nome próprio, igual nos dois idiomas, logo sem `TextoBilingue`. */
   nome: string;
-  cargo: TextoBilingue;
-  foto_url: string;
-  /** Áreas de especialidade; o cartão mostra-as como pílulas em maiúsculas. */
-  especialidades: TextoBilingue[];
+  /** Ausente (a API dá-o `null`), a linha do cargo não aparece no cartão. */
+  cargo?: string;
+  /** Sem fotografia, o cartão cai no espaço reservado do `app-espaco-imagem`. */
+  foto_url?: string;
+  /**
+   * Áreas de especialidade; o cartão mostra-as como pílulas em maiúsculas.
+   * Ausente ou vazia, o bloco das pílulas não aparece.
+   */
+  especialidades?: string[];
 }

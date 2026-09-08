@@ -16,12 +16,22 @@
       [textoAcao]="verTodasStartups()" [linkAcao]="linkTodasStartups" />
 
     <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      @for (startup of startups(); track startup.id) {
-        <app-cartao-startup [startup]="startup" [appRevelarAoScroll]="$index" />
-      } @empty {
+      @if (consultaStartups.isPending()) {
+        @for (_ of [1, 2, 3]; track $index) {
+          <app-cartao-startup-esqueleto />
+        }
+      } @else if (consultaStartups.isError()) {
         <p class="col-span-full py-12 text-center text-sm text-text-secondary">
-          {{ semStartups() }}
+          {{ erroStartups() }}
         </p>
+      } @else {
+        @for (startup of startups(); track startup.id) {
+          <app-cartao-startup [startup]="startup" [appRevelarAoScroll]="$index" />
+        } @empty {
+          <p class="col-span-full py-12 text-center text-sm text-text-secondary">
+            {{ semStartups() }}
+          </p>
+        }
       }
     </div>
   </app-container-pagina>

@@ -18,5 +18,5 @@ export const environment = {
    * chave nenhuma, mas com este campo preenchido o limite diário de tradução
    * sobe de ~1000 para ~10000 palavras. Deixa vazio para não mandar nenhum.
    */
-  traducaoEmail: '',
+  traducaoEmail: 'admiro.andre@evolium.ao',
 };

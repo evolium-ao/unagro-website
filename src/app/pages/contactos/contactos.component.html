@@ -29,13 +29,16 @@
 
           <!-- Pílula a toda a largura, com o avião de papel à direita do texto. -->
           <app-botao class="mt-6" tipo="submit" variante="primario" tamanho="lg" raio="completo" icone="send"
-            posicaoIcone="direita" [larguraTotal]="true" [aCarregar]="estadoEnvio() === 'enviando'"
-            [desativado]="estadoEnvio() === 'enviando'">
+            posicaoIcone="direita" [larguraTotal]="true" [aCarregar]="envio.isPending()"
+            [desativado]="envio.isPending()">
             {{ rotuloEnviar() }}
           </app-botao>
 
-          @if (estadoEnvio() === 'sucesso') {
+          @if (envio.isSuccess()) {
           <p class="mt-4 text-sm text-primary" role="status">{{ mensagemSucesso() }}</p>
+          } @else if (envio.isError()) {
+          <p class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-relaxed text-red-700"
+            role="alert">{{ mensagemErro() }}</p>
           }
         </form>
       </div>

@@ -279,6 +279,385 @@ são usados pelo site.
 `/eventos` sai com os `app-cartao-evento-foto-esqueleto` e sem evento nenhum.
 
 
+## treinamentos
+
+**Integrado em:** 2026-09-08, só para a 1ª sessão de `formacoes`
+("Cursos de Curta Duração e Treinamentos Técnicos", grelha de 3 por lote
+revelada pelo "Ver mais"). Pedido explícito para não tocar nas restantes
+sessões da página nem no `CursosService`/`CURSOS_MOCK` que serve os cursos de
+grau (usados por `detalhe-curso`, `candidaturas`, `formulario-inscricao`,
+`faculdades-departamentos`, `cabecalho`).
+
+**Camadas:**
+
+- `src/app/core/servicos/treinamentos.service.ts` — `listar(signal)`; a
+  interface crua `TreinamentoApi` e a função `paraTreinamento` ficam neste
+  ficheiro. **Sem `obterPorId`**: não há página de detalhe de treinamento
+  (mesma decisão do `laboratorios.service.ts`) — uma fábrica que ninguém chama
+  é código morto.
+- `src/app/core/consultas/treinamentos.queries.ts` — `treinamentosQueries.raiz`
+  e `.lista(servico)`. Sem `porId`, pela mesma razão.
+- `src/app/core/modelos/treinamento.model.ts` — `Treinamento`, campos de texto
+  simples (regra dos modelos vindos da API).
+- `src/app/pages/formacoes/formacoes.component.ts` —
+  `injectQuery(() => treinamentosQueries.lista(...))` só na 1ª sessão; os
+  `computed` de lote/paginação (`cursosCurtaVisiveis`, `temMaisCursosCurta`,
+  `mostrarBotaoCursosCurta`) continuam todos, só que sobre a lista traduzida.
+  `this.cursosService.cursosCurtaDuracao` **deixou de ser lido** — o
+  `CursosService`/`CURSOS_MOCK` não foram tocados, porque `cursosGrau` (cursos
+  de grau) continua a servir várias outras páginas a partir do mesmo mock.
+- `src/app/shared/componentes/cartao-curso-curta-duracao-esqueleto/` —
+  esqueleto novo, com a mesma moldura do `app-cartao-curso-curta-duracao`
+  (fotografia, selo, carga horária, título, resumo, rodapé com preço e botão).
+
+**Mapeamento** (`TreinamentoResource` → `Treinamento`): `id` → `String(id)`,
+`nome` → `titulo`, `descricao` → `resumo` (`''` se `null`), `capa_url` →
+`imagem` (via `capaUtilizavel`). **`carga_horaria` e `preco` chegam como texto**
+("48 horas", "45000.00"), não como número — `paraCargaHoraria` extrai o
+primeiro grupo de dígitos da string, `paraPreco` faz `Number()` directo.
+`created_at`/`updated_at`/`data_inicio`/`data_fim` não são usados por este
+cartão.
+
+**A API não dá:**
+
+1. **Sem estado de inscrição nem "próxima turma".** O `TreinamentoResource`
+   não tem nada equivalente a `estadoInscricao`/`proximaTurma` — só
+   `data_inicio`/`data_fim` (datas da edição registada, sem relação clara com
+   "há uma próxima turma a abrir"). Os dois campos ficaram **opcionais** em
+   `Treinamento`; ausentes, o cartão assume `'abertas'` (mesmo fallback que já
+   existia quando o mock não os tinha) e nunca mostra o selo escuro de
+   "Próxima Turma". Não se inventou lógica de datas para simular o estado.
+2. **Sem página de detalhe própria.** O cartão continua a apontar para
+   `/cursos/${id}` (como antes), mas essa rota (`detalhe-curso.component.ts`)
+   lê o `CursosService`/`CURSOS_MOCK`, que não tem os ids numéricos da API —
+   clicar num treinamento vindo da API cai numa página de curso vazia. Fora do
+   âmbito desta integração (a instrução foi não tocar nas outras sessões nem
+   no `CursosService`); fica registado como próximo passo: ou a API precisa de
+   uma rota de detalhe de treinamento, ou o `detalhe-curso` passa a saber ler
+   os dois recursos.
+
+**Ficou por usar (não apagado, por estar fora do âmbito):**
+`CursosService.cursosCurtaDuracao`, os cursos com `tipo: 'curta-duracao'` no
+`CURSOS_MOCK`, e os campos `cargaHoraria`/`preco`/`estadoInscricao`/
+`proximaTurma`/`EstadoInscricao` de `curso.model.ts` deixaram de ter qualquer
+consumidor fora do próprio `cursos.service.spec.ts`. Não foram removidos
+porque `CURSOS_MOCK` continua a servir `cursosGrau` para outras páginas — mas
+convém que quem tratar do recurso `cursos` (graduações) saiba que essa fatia
+específica do mock ficou órfã.
+
+**SSR: o servidor não espera pela query**, o mesmo problema já registado para
+`noticias`, `laboratorios` e `eventos`. Confirmado no `dist`: o prerender de
+`/formacoes` sai com os `app-cartao-curso-curta-duracao-esqueleto` e sem
+nenhum dos cinco treinamentos da API.
+
+**Tradução automática:** `titulo` e `resumo` entram em
+`CAMPOS_TRADUZIVEIS_TREINAMENTO`, aplicados antes do `cartoesCursosCurta`
+(mesma cadeia `traducaoQueries.lista` → `aplicarTraducao`, ver secção
+"Tradução automática do conteúdo da API" abaixo).
+
+
+## startups
+
+**Integrado em:** 2026-09-08, só para a 1ª sessão de `hub-unagro`
+("Startups & Incubação", grelha de três cartões). Pedido explícito para não
+tocar nas restantes três sessões da página (Projectos Inovadores, Como Apoiar,
+Acompanhar Projectos).
+
+**Camadas:**
+
+- `src/app/core/servicos/startups.service.ts` — `listar(signal)` e
+  `obterPorId(id, signal)`; a interface crua `StartupApi` e a função
+  `paraStartup` ficam neste ficheiro. **Reescrito**: antes era um `computed`
+  sobre `STARTUPS_MOCK` com `localizarProfundo`, sem tocar na API.
+- `src/app/core/consultas/startups.queries.ts` — `startupsQueries.raiz`,
+  `.lista(servico)` e `.porId(servico, id)`.
+- `src/app/core/modelos/startup.model.ts` — `Startup` passou de campos
+  `TextoTraduzido` (`nome`, `categoria`, `descricao`) para texto simples
+  (regra dos modelos vindos da API) e **perdeu o campo `link`** (a API não dá
+  destino de detalhe — ver "A API não dá" abaixo).
+- `src/app/pages/hub-unagro/hub-unagro.component.ts` —
+  `injectQuery(() => startupsQueries.lista(...))`; o cartão continua a receber
+  `StartupCartao` (interface do próprio `cartao-startup.component.ts`, com
+  `link`), montado num `computed` que junta o `link` fixo da âncora da secção
+  aos dados traduzidos da API.
+- `src/app/shared/componentes/cartao-startup-esqueleto/` — esqueleto novo, com
+  a mesma moldura do `app-cartao-startup` (fotografia, categoria, nome,
+  descrição, ligação "Saiba Mais").
+
+**Mapeamento** (`StartupResource` → `Startup`): `id` → `String(id)`, `nome`
+mantém o nome, `categoria` e `descricao` com fallback `''` quando `null`,
+`capa_url` → `imagem_url` (via `capaUtilizavel`). `data_inicio`, `data_fim`,
+`created_at`, `updated_at` não são usados pelo cartão.
+
+**A API não dá:**
+
+1. **Sem destino de detalhe (`link`).** O `StartupResource` não tem nenhum
+   campo de URL/rota própria, e `app.routes.ts` não tem listagem nem detalhe
+   de startup. O `link` deixou de fazer parte do modelo `Startup` (ao
+   contrário do mock antigo, que o guardava por item) — o componente monta o
+   `StartupCartao` com o mesmo `linkTodasStartups` usado no "Ver todas"
+   (`/hub-unagro#secao-startups`) para todos os cartões, até existir rota de
+   detalhe.
+
+**Mock apagado:** `core/dados/startups.mock.ts` (`STARTUPS_MOCK`, bilingue) —
+só o `StartupsService` antigo o consumia.
+
+**SSR: o servidor não espera pela query**, o mesmo problema já registado para
+`noticias`, `laboratorios`, `eventos` e `treinamentos` acima. Confirmado no
+`dist`: o prerender de `/hub-unagro` sai com três
+`app-cartao-startup-esqueleto` e sem startup nenhuma da API.
+
+**Tradução automática:** `nome`, `categoria` e `descricao` entram em
+`CAMPOS_TRADUZIVEIS_STARTUP`, aplicados antes do `computed` que monta o
+`StartupCartao` (mesma cadeia `traducaoQueries.lista` → `aplicarTraducao`, ver
+secção "Tradução automática do conteúdo da API" abaixo).
+
+
+## inscricoes
+
+**Integrado em:** 2026-09-08, para `shared/componentes/modal-inscricao-curso`
+(o modal de inscrição num curso de curta duração, aberto por `formacoes`).
+Só escrita — o site nunca lê a lista.
+
+**Camadas:**
+
+- `src/app/core/servicos/inscricoes.service.ts` — `criar(dados, signal)` para o
+  `POST /inscricoes`; a interface crua `InscricaoRequest` e a função
+  `paraPedido` ficam neste ficheiro.
+- `src/app/core/modelos/inscricao-curso.model.ts` — `NovaInscricaoCurso`, a
+  forma do formulário do modal (é o serviço que a traduz para os nomes da API).
+- `src/app/shared/componentes/modal-inscricao-curso/modal-inscricao-curso.component.ts` —
+  `injectMutation<void, ErroApi, NovaInscricaoCurso>` no `submeter()`; faixa de
+  erro sob o formulário e `aCarregar`/`desativado` no botão de submissão,
+  mesmo padrão do `modal-agendar-visita`.
+- **Sem ficheiro em `core/consultas/`**: não há `GET` público deste lado
+  (`GET /inscricoes` pede autenticação e o site nunca a lê), mesma decisão do
+  `agendamento-visitas` e do `candidaturas`.
+
+**Mapeamento** (`NovaInscricaoCurso` → `InscricaoRequest`): `cursoId` →
+`curso_id` (`Number`), `nome` → `nome`, `email` → `email`, `telefone` →
+`telefone` (`undefined` se vazio, embora o formulário já o exija). Sem campos
+do lado do site sem correspondência na API.
+
+**Escrita verificada contra a API antes de escrever o código** (`POST` com
+corpos que falham a validação, sem criar registo):
+
+1. Obrigatórios: `curso_id`, `nome`, `email`. `telefone` é opcional do lado
+   da API (o formulário já o exige).
+2. Os 422 chegam misturados: `curso_id`/`nome` respondem em português ("O
+   campo curso id é obrigatório."), `email` em inglês ("The email field must
+   be a valid email address.") — mesmo padrão observado em `candidaturas`.
+
+**Problema grave da API registado (não inventado deste lado) — a decidir por
+quem administra o Laravel:**
+
+**`curso_id` valida contra a tabela `cursos` (cursos de grau/faculdade), não
+contra `treinamentos` (cursos de curta duração).** Confirmado a mandar
+`curso_id: 10` (id que só existe em `/cursos`, fora do intervalo 1–5 de
+`/treinamentos`) — a validação **passou**; com `curso_id` inexistente em
+`cursos` a API responde "O curso indicado não existe.". Não há endpoint
+próprio para inscrição em treinamento (só `/inscricoes` e `/inscricoes/{id}`,
+ao lado de `/treinamentos` e `/treinamentos/{id}`, sem nada como
+`/matriculas` ou `/inscricoes-treinamento`).
+
+O modal deste registo serve exactamente os cursos de curta duração
+(`CursoCurtaDuracaoCartao`, alimentados pelo recurso `treinamentos` — ver
+secção `treinamentos` abaixo), e o `id` que envia é o `id` do treinamento. Como
+os ids de `treinamentos` (1–5) coincidem, por agora, com ids que também
+existem em `cursos`, o `POST` **não falha a validação** — mas associa a
+inscrição ao curso de grau errado (ex.: inscrever-se no treinamento id 3
+regista, do lado da API, uma inscrição no curso de grau id 3, que é uma coisa
+diferente). Isto não foi corrigido deste lado porque não há forma de o
+corrigir sem um endpoint que aceite `treinamento_id`: fica registado como
+trabalho para o Laravel, e o utilizador foi avisado no relatório desta
+integração. Nenhuma inscrição real chegou a ser criada (todos os testes
+morreram na validação, com e-mail/curso inválidos de propósito).
+
+**SSR:** não aplicável — não há `GET` nem query, o `injectMutation` só corre a
+pedido do utilizador.
+
+
+## investigadores
+
+**Integrado em:** 2026-09-08, só para a 6ª sessão de `desenvolvimento`
+(`#secao-investigadores`, "Investigadores Principais" — a fila de quatro
+cartões percorrida com as setas do cabeçalho). Pedido explícito para não tocar
+nos outros mocks da página: `PROJECTOS_MOCK` (via `ProjetosService`),
+`LINHAS_INVESTIGACAO_MOCK`, `PASSOS_METODOLOGIA_MOCK` e `PUBLICACOES_MOCK`
+ficaram como estavam.
+
+**Camadas:**
+
+- `src/app/core/servicos/investigadores.service.ts` — `listar(signal)`; a
+  interface crua `InvestigadorApi` e as funções `paraInvestigador`/
+  `paraEspecialidades` ficam neste ficheiro. **Sem `obterPorId`**: não há
+  página de detalhe de investigador (mesma decisão de `laboratorios` e
+  `treinamentos`).
+- `src/app/core/consultas/investigadores.queries.ts` —
+  `investigadoresQueries.raiz` e `.lista(servico)`. Sem `porId`, pela mesma razão.
+- `src/app/core/modelos/investigacao.model.ts` — o `Investigador` passou de
+  pares bilingues (`cargo: TextoBilingue`, `especialidades: TextoBilingue[]`)
+  para texto simples, e `cargo`/`foto_url`/`especialidades` ficaram
+  **opcionais** (a API dá-os como anuláveis). O resto do ficheiro
+  (`LinhaInvestigacao`, `PassoMetodologia`) continua bilingue, porque continua
+  a vir de mock.
+- `src/app/pages/desenvolvimento/desenvolvimento.component.ts` —
+  `injectQuery(() => investigadoresQueries.lista(...))`; a paginação com as
+  setas (`paginaInvestigadores`, `investigadoresVisiveis`,
+  `temInvestigadoresAnteriores/Seguintes`, `investigadoresPorPagina`)
+  continua igual, só que sobre a lista traduzida em vez do
+  `INVESTIGADORES_MOCK`. A animação dos cartões mantém-se como estava
+  (`direcaoRevelacao="direita"`, ao contrário do resto do site).
+- `src/app/shared/componentes/cartao-investigador/cartao-investigador.component.ts` —
+  deixou de chamar `getTraducao` (o texto já chega resolvido) e esconde a linha
+  do cargo quando ele falta.
+- `src/app/shared/componentes/cartao-investigador-esqueleto/` — esqueleto novo,
+  com a mesma moldura branca, a fotografia de bordo a bordo em `aspect-[4/5]` e
+  o bloco de texto com `p-4` (nome, cargo e duas pílulas) do cartão real.
+
+**Mapeamento** (`InvestigadorResource` -> `Investigador`): `id` -> `String(id)`,
+`nome` mantém o nome, `cargo` -> `cargo` (nulo vira ausente),
+**`areas_especializacao` -> `especialidades`** (entradas nulas e vazias
+descartadas; lista vazia vira ausente), `foto_url` -> `foto_url` via
+`capaUtilizavel`. `equipaProjectos`, `created_at` e `updated_at` não são usados
+pelo cartão.
+
+**`foto_url` vem como caminho relativo** (`investigadores/xxx.jpg`, sem host nem
+`/storage/`), como já acontece com os `capa_url` dos outros recursos — passa
+pelo `capaUtilizavel`, e `http://192.168.1.252:8000/storage/investigadores/...`
+responde 200, logo as fotografias carregam.
+
+**A API não dá:**
+
+1. **Nada além de nome, cargo, foto e áreas.** O cartão só mostra estes quatro
+   campos, e todos existem — não houve campo do site a ficar a descoberto
+   nesta sessão. O que a API tem a mais (`equipaProjectos`, com
+   `funcao_no_projecto` e datas por projecto) fica sem uso: não há nada no
+   desenho da sessão para o mostrar, e seria a matéria-prima de uma futura
+   página de detalhe de investigador ou da equipa de um projecto.
+2. **`cargo`, `foto_url` e `areas_especializacao` são anuláveis no esquema** (e
+   `areas_especializacao` tem `items: {}`, sem tipo declarado). Nos cinco
+   registos actuais chegam todos preenchidos com texto, mas o modelo trata-os
+   como opcionais: sem cargo a linha cinzenta desaparece, sem áreas o bloco de
+   pílulas desaparece, sem foto o cartão cai no `app-espaco-imagem`.
+3. **Sem ordem nem destaque.** `GET /investigadores` devolve por `id`
+   descendente (5, 4, 3, 2, 1) e não há campo de ordem, de senioridade nem de
+   "principal" — a sessão chama-se "Investigadores Principais" mas mostra
+   simplesmente os primeiros quatro da lista que a API mandar.
+
+**Mock apagado:** `INVESTIGADORES_MOCK`, que vivia dentro do próprio
+`desenvolvimento.component.ts` (nunca teve ficheiro em `core/dados/`).
+
+**Tradução automática:** `cargo` entra em
+`CAMPOS_TRADUZIVEIS_INVESTIGADOR`; o `nome` fica **de fora** de propósito (nome
+próprio não se traduz). As `especialidades` são uma lista por investigador e o
+`camposParaTraduzir` só sabe achatar campos de texto simples, por isso vão numa
+**segunda `traducaoQueries.lista`** com todas as pílulas de todos os
+investigadores numa única lista, redistribuídas depois por
+`aplicarTraducaoTextos` e um cursor (cada investigador leva de volta tantas
+quantas tinha). Padrão a reutilizar quando um recurso tiver campos de lista.
+
+**SSR: o prerender de `/desenvolvimento` passou a trazer os investigadores** —
+e não só eles. Ver a nota de campo "2026-09-08: porque o conteúdo da API não
+aparecia no HTML do servidor", no fim deste ficheiro: a causa foi encontrada e
+corrigida durante esta integração, o que invalida os parágrafos "SSR: o
+servidor não espera pela query" das entradas de `noticias`, `laboratorios`,
+`eventos`, `treinamentos` e `startups` acima.
+
+
+## faculdades
+
+**Integrado em:** 2026-09-08, para `pages/sobre/faculdades-departamentos`
+("Faculdades e Departamentos", uma das sete abas de `/sobre`). Antes derivava
+a lista agrupando `curso.faculdade` (uma string) sobre `CursosService.cursosGrau()`
+(`CursosService`/`CURSOS_MOCK`); não foi tocado, porque continua a servir
+`detalhe-curso`, `candidaturas`, `formulario-inscricao`, `cabecalho`.
+
+**Camadas:**
+
+- `src/app/core/servicos/faculdades.service.ts` — `listar(signal)`; a
+  interface crua `FaculdadeApi` (mais `CursoApi`, reduzida a `id`/`nome`) e a
+  função `paraFaculdade` ficam neste ficheiro. **Sem `obterPorId`**: não há
+  página de detalhe de faculdade — mesma decisão do `laboratorios.service.ts`.
+- `src/app/core/consultas/faculdades.queries.ts` — `faculdadesQueries.raiz` e
+  `.lista(servico)`. Sem `porId`, pela mesma razão.
+- `src/app/core/modelos/faculdade.model.ts` — `Faculdade` (`id`, `nome`,
+  `cursos: CursoFaculdade[]`), campos de texto simples.
+- `src/app/pages/sobre/faculdades-departamentos/faculdades-departamentos.component.ts` —
+  `injectQuery(() => faculdadesQueries.lista(...))`; o `computed` `faculdades`
+  continua a montar ícone-por-posição e a contagem, só que sobre os dados
+  (traduzidos) da query em vez do `Map` que agrupava cursos por nome de faculdade.
+- `src/app/shared/componentes/cartao-faculdade-esqueleto/` — esqueleto novo,
+  com a mesma moldura do cartão inline (ícone, nome, contagem, lista de
+  cursos).
+
+**Decisão sobre a relação faculdades↔cursos: já não é preciso cruzar com o
+`CursosService`.** Ao contrário do que a descrição do pedido admitia como
+hipótese, o `FaculdadeResource` da API **já traz os cursos de cada faculdade
+embutidos** (`cursos: CursoResource[]`, reduzido a `id`/`nome` pelo site) — o
+mesmo padrão que `LaboratorioResource.faculdade` já mostrava ao contrário
+(laboratório → nome da faculdade). Não há relação nenhuma com o
+`CursosService`/`CURSOS_MOCK` neste caminho: os cursos de grau que o cartão
+lista vêm de dentro da própria resposta de `GET /faculdades`, com o `id`
+numérico da API (que já é o mesmo `id` que `GET /cursos` usa), por isso o link
+`/cursos/${curso.id}` continua a apontar para a rota existente sem tradução de
+id nenhuma.
+
+**Mapeamento** (`FaculdadeResource` → `Faculdade`): `id` → `String(id)`,
+`nome` mantém o nome, `cursos[].id` → `String(id)`, `cursos[].nome` →
+`cursos[].titulo`. `descricao`, `conteudo`, `capa_url`, `laboratorios`,
+`bolsas`, `created_at`, `updated_at` não são usados por este cartão (o cartão
+nunca mostrou imagem nem resumo de faculdade).
+
+**A API não dá:**
+
+1. **Ícone.** Continua atribuído por posição (`ICONES_FACULDADE`), como já
+   acontecia com o mock — a API não classifica faculdades por área nem lhes
+   dá ícone.
+
+**Dois problemas de dados duplicados encontrados e corrigidos do lado do
+serviço (não inventados, confirmados em `GET /faculdades`, 2026-09-08):**
+
+1. **A tabela de faculdades tem duplicados, na mesma família de problema já
+   registada para `laboratorios`** (ids 1–5 e 6–10 com os cinco nomes
+   repetidos) — mas aqui a duplicação é mais grave: os ids 6–10 vêm sempre
+   com `cursos`/`laboratorios`/`bolsas` **vazios**, e a API devolve a lista
+   por ordem decrescente de id, por isso as cinco faculdades vazias
+   apareceriam **primeiro**. Ao contrário da decisão tomada para
+   `laboratorios` ("não é problema do site: a tira mostra o que a API
+   mandar" — lá a duplicação produz cartões idênticos numa lista plana,
+   inofensivo), aqui produziria cartões de faculdade **vazios** (0 cursos,
+   sem lista), o que contradiz o propósito da aba. Por isso o
+   `FaculdadesService.listar()` agrupa por `nome` e fica com a entrada que
+   tiver mais cursos (`semFaculdadesDuplicadas`) — decisão tomada
+   conscientemente diferente da de `laboratorios`, e registada aqui para
+   quem for arrumar os dados de seed do lado do Laravel.
+2. **Dentro de uma mesma faculdade "real" (ids 1–5), o próprio array
+   `cursos` também duplica**: cada faculdade tem 2 cursos com o mesmo
+   `nome` e `id`s diferentes (ex.: faculdade 1 tem "Licenciatura em
+   Agronomia" com `id: 1` e outra vez com `id: 6`). Sem correcção, o cartão
+   listaria o mesmo curso duas vezes — visivelmente errado dentro de uma
+   única lista, ao contrário do caso anterior. `semCursosDuplicados` agrupa
+   por `nome` e fica com o menor `id`.
+
+**Mock:** não havia `core/dados/faculdades.mock.ts` — a lista antiga não vinha
+de um mock próprio, era derivada do `cursos.mock.ts`, que continua a existir
+para outros consumidores. Nada para apagar.
+
+**Prerender: não aplicável a este caso, mas por uma razão diferente da dos
+outros recursos.** `/sobre` mostra sete abas num `@switch`, e só a aba activa
+está no DOM; a aba activa por omissão é `nossa-historia`, não
+`faculdades-departamentos` (`ABAS_SOBRE[0]`, ver `sobre.component.ts`). Isto
+já acontecia com o mock: `app-sobre-faculdades-departamentos` nunca chegou a
+ser instanciado no prerender de `/sobre`, muito menos a query que lê agora.
+Confirmado no `dist`: `sobre/index.html` tem o título "Faculdades e
+Departamentos" do item de menu, mas nem um nome de faculdade nem o esqueleto —
+o componente da aba simplesmente não existe nessa árvore. Não há regressão
+face ao mock; fica por verificar manualmente num browser (trocar de aba,
+trocar de idioma) se, quando a aba está activa no cliente, a query resolve e a
+tradução do `nome`/dos títulos de curso funciona — o mesmo "por verificar"
+já registado para `treinamentos`/`startups`.
+
 ## Tradução automática do conteúdo da API
 
 **Adicionado em:** 2026-09-08. Decisão consciente que **substitui** a regra anterior
@@ -315,6 +694,12 @@ só o que aconteceu ao aplicá-la.
   limite de caracteres por pedido da MyMemory.
 - `pages/desenvolvimento/desenvolvimento.component.ts` — `nome`/`area` das
   unidades de investigação (laboratórios).
+- `pages/formacoes/formacoes.component.ts` — `titulo`/`resumo` dos
+  treinamentos, só na 1ª sessão (integrado directamente com tradução, não em
+  retro-integração — ver secção `treinamentos` acima).
+- `pages/hub-unagro/hub-unagro.component.ts` — `nome`/`categoria`/`descricao`
+  das startups, só na 1ª sessão (integrado directamente com tradução, não em
+  retro-integração — ver secção `startups` acima).
 
 **Por verificar num navegador real:** a tradução em si (chamada de rede à
 MyMemory, texto a aparecer trocado ao mudar de idioma) não foi testada num
@@ -324,6 +709,29 @@ Confirmar manualmente: abrir `/eventos` e `/`, trocar para inglês, e ver se o
 texto muda (alguns segundos de atraso são esperados — é um pedido de rede por
 frase, sem *loading state* próprio, o texto em português fica visível até a
 tradução chegar).
+
+**2026-09-08, à tarde: "os recursos integrados não traduzem ao trocar de
+idioma" — não era bug de código, era a quota grátis da MyMemory esgotada.**
+`curl "https://api.mymemory.translated.net/get?q=...&langpair=pt|en"`
+respondia **HTTP 429** ("YOU USED ALL AVAILABLE FREE TRANSLATIONS FOR
+TODAY..."). O `HttpClient` trata qualquer resposta não-2xx como erro, cai no
+`catch` de `traduzirTexto` (`traducao-automatica.service.ts`) e devolve o
+texto original — exactamente como desenhado ("nunca partir a lista por causa
+de uma frase"), só que com a quota esgotada **toda** frase falha, e o
+resultado visível é indistinguível de "não traduz". A arquitectura em si
+(queryKey com o idioma, `enabled: idioma !== 'pt'`, `aplicarTraducao`/
+`aplicarTraducaoTextos`) foi revista em `eventos`, `hub-unagro` e
+`faculdades-departamentos` e reage correctamente à troca de idioma — não há
+nada para corrigir no código. **Causa provável:** `environment.traducaoEmail`
+tinha ficado vazio de propósito (ver acima), por isso o limite diário era o
+mais baixo (~1000 palavras), esgotado ao testar os seis recursos ligados
+nesta sessão. **Resolvido preenchendo `traducaoEmail` com
+`admiro.andre@evolium.ao`** em `environment.ts` e
+`environment.production.ts` — confirmado com o mesmo `curl` acrescentando
+`&de=admiro.andre@evolium.ao`: passou a responder 200. **Lição:** quando a
+tradução automática "não aparece", testar primeiro o próprio endpoint da
+MyMemory com `curl` antes de mexer no código Angular — um 429 ali explica
+tudo e poupa tempo a vasculhar `injectQuery`/`computed`.
 
 **Problema entretanto encontrado (não relacionado com tradução, mas apanhado ao
 mexer nestes ficheiros): `core/dados/eventos.mock.ts` continuava por apagar.**
@@ -361,3 +769,37 @@ para não regredir se a API voltar a mandar URL completo. **Corrige-se aqui e n�
 serviço** pela mesma razão do guarda de `localhost`: é um problema da API, comum a todos
 os recursos com imagem — só falta aplicar quando um recurso novo tiver `capa_url` e ainda
 não usar esta função.
+
+
+**2026-09-08: porque o conteúdo da API não aparecia no HTML do servidor — causa
+encontrada e corrigida.** Todas as entradas acima até `startups` registaram o mesmo
+sintoma: o prerender e o SSR saíam com os esqueletos e sem dados, apesar de o pedido
+ser feito do lado do servidor e responder. **A causa não é o `PendingTasks` do
+adaptador — é o agendador do `notifyManager` do `query-core`.** Ele avisa os
+subscritores (e portanto escreve os sinais do `injectQuery`) dentro de um
+`setTimeout(cb, 0)` (`defaultScheduler` = `systemSetTimeoutZero`, query-core 5.102).
+Quando um `GET` termina, a tarefa pendente que o `HttpClient` registou é libertada
+no mesmo instante; se não houver outro pedido em voo, o Angular dá a aplicação por
+estável e serializa o HTML **antes** de esse `setTimeout` correr. Foi confirmado com
+`console.log` datado nos dois serviços de `/desenvolvimento`: os laboratórios
+(a responder primeiro) apareciam no HTML e os investigadores (a responder 300 ms
+depois, já sem ninguém a segurar a estabilidade) não — **quem perdia era sempre a
+última query a responder**, o que explica páginas de uma só query saírem
+completamente vazias.
+
+**Corrigido em `src/app/app.config.server.ts`** (só no servidor), com um
+`provideEnvironmentInitializer` que faz
+`notifyManager.setScheduler((avisar) => queueMicrotask(avisar))`: o sinal passa a ser
+escrito antes de o Angular avaliar a estabilidade, a vista fica suja e o agendador de
+detecção de mudanças registra a sua própria tarefa pendente, pelo que o render espera
+pelo ciclo que põe os dados no HTML. **Não guarda estado nenhum por pedido** — o
+`notifyManager` é global ao processo Node e não pode conhecer o `PendingTasks` de um
+visitante em particular, por isso a correcção é só de agendamento (a alternativa,
+segurar uma tarefa pendente por notificação, vazaria a instância de um pedido para o
+seguinte). No navegador fica o `setTimeout` por omissão, que agrupa melhor os avisos.
+
+Verificado no `dist` do mesmo build: `/desenvolvimento` (investigadores e
+laboratórios), `/` (notícias), `/eventos`, `/formacoes` (treinamentos) e
+`/hub-unagro` (startups) passaram todos a sair **sem um único esqueleto** e com o
+conteúdo da API no HTML. Quem integrar um recurso novo já pode contar com o
+prerender: se sair vazio, é problema desse recurso e não desta corrida.

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
@@ -7,6 +7,10 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { injectMutation } from '@tanstack/angular-query-experimental';
+import { ErroApi } from '../../core/api/erro-api';
+import { NovoContacto } from '../../core/modelos/contacto.model';
+import { ContatosService } from '../../core/servicos/contatos.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
@@ -27,7 +31,8 @@ import { OpcaoSeletor } from '../../shared/componentes/seletor/seletor.component
 import { SeloComponent } from '../../shared/componentes/selo/selo.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 
-type EstadoEnvio = 'ocioso' | 'enviando' | 'sucesso' | 'erro';
+/** `nome`/`email` levam `maxLength: 255` no `ContatoRequest`; validado também aqui, para poupar uma ida ao servidor. */
+const MAXIMO_TEXTO_CURTO = 255;
 
 interface InformacaoBruta {
   id: string;
@@ -115,8 +120,16 @@ const DETALHES_LOCALIZACAO_BRUTOS: DetalheLocalizacaoBruto[] = [
 })
 export class ContactosComponent {
   protected readonly traducao = inject(TraducaoService);
+  private readonly contatos = inject(ContatosService);
 
-  protected readonly estadoEnvio = signal<EstadoEnvio>('ocioso');
+  /**
+   * `POST /contatos` — endpoint público, sem `Authorization`. Não há nada para
+   * invalidar a seguir: a lista de contactos da API pede autenticação e o site
+   * nunca a lê.
+   */
+  protected readonly envio = injectMutation<void, ErroApi, NovoContacto>(() => ({
+    mutationFn: (dados) => this.contatos.criar(dados),
+  }));
 
   protected readonly tituloHero = computed(() =>
     this.traducao.getTraducao(['Entre em', 'Get in']),
@@ -150,21 +163,39 @@ export class ContactosComponent {
   );
 
   protected readonly formulario = new FormGroup({
-    nome: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    nome: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
+    }),
     assunto: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     mensagem: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
-  protected readonly erroNome = this.sinalErro(this.formulario.controls.nome, () =>
-    this.traducao.getTraducao(['Indique o seu nome.', 'Please enter your name.']),
+  protected readonly erroNome = this.sinalErro(this.formulario.controls.nome, (erros) =>
+    erros['required']
+      ? this.traducao.getTraducao(['Indique o seu nome.', 'Please enter your name.'])
+      : this.traducao.getTraducao([
+          'O nome não pode ter mais de 255 caracteres.',
+          'The name cannot be longer than 255 characters.',
+        ]),
   );
 
-  protected readonly erroEmail = this.sinalErro(this.formulario.controls.email, (erros) =>
-    erros['required']
-      ? this.traducao.getTraducao(['Indique o seu e-mail.', 'Please enter your e-mail.'])
-      : this.traducao.getTraducao(['E-mail inválido.', 'Invalid e-mail address.']),
-  );
+  protected readonly erroEmail = this.sinalErro(this.formulario.controls.email, (erros) => {
+    if (erros['required']) {
+      return this.traducao.getTraducao(['Indique o seu e-mail.', 'Please enter your e-mail.']);
+    }
+    if (erros['maxlength']) {
+      return this.traducao.getTraducao([
+        'O e-mail não pode ter mais de 255 caracteres.',
+        'The e-mail cannot be longer than 255 characters.',
+      ]);
+    }
+    return this.traducao.getTraducao(['E-mail inválido.', 'Invalid e-mail address.']);
+  });
 
   protected readonly erroAssunto = this.sinalErro(this.formulario.controls.assunto, () =>
     this.traducao.getTraducao(['Escolha um assunto.', 'Please choose a subject.']),
@@ -209,7 +240,7 @@ export class ContactosComponent {
   );
 
   protected readonly rotuloEnviar = computed(() =>
-    this.estadoEnvio() === 'enviando'
+    this.envio.isPending()
       ? this.traducao.getTraducao(['A enviar…', 'Sending…'])
       : this.traducao.getTraducao(['Enviar Mensagem', 'Send Message']),
   );
@@ -220,6 +251,36 @@ export class ContactosComponent {
       'Message sent. Our team will reply within two working days.',
     ]),
   );
+
+  /**
+   * O que se mostra na faixa vermelha do formulário. Os 422 do Laravel trazem a
+   * mensagem por campo e chegam **só em português** — a API é monolingue —, mas
+   * dizem exactamente o que está errado, por isso passam à frente do texto
+   * genérico (mesmo padrão do `app-modal-inscricao-curso`).
+   */
+  protected readonly mensagemErro = computed(() => {
+    const erro = this.envio.error();
+    if (!erro) {
+      return '';
+    }
+
+    const doServidor = Object.values(erro.errosValidacao).flat();
+    if (doServidor.length) {
+      return doServidor.join(' ');
+    }
+
+    if (erro.estado === 0) {
+      return this.traducao.getTraducao([
+        'Não foi possível contactar o servidor. Verifique a ligação e tente novamente.',
+        'Could not reach the server. Check your connection and try again.',
+      ]);
+    }
+
+    return this.traducao.getTraducao([
+      'Não foi possível enviar a mensagem. Tente novamente dentro de alguns instantes.',
+      'Could not send the message. Please try again in a few moments.',
+    ]);
+  });
 
   protected readonly etiquetaPonte = computed(() =>
     this.traducao.getTraducao(['Excelência Académica', 'Academic Excellence']),
@@ -273,15 +334,30 @@ export class ContactosComponent {
   );
 
   protected enviar(): void {
+    if (this.envio.isPending()) {
+      return;
+    }
+
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
       return;
     }
-    this.estadoEnvio.set('enviando');
-    setTimeout(() => {
-      this.estadoEnvio.set('sucesso');
-      this.formulario.reset({ nome: '', email: '', assunto: '', mensagem: '' });
-    }, 700);
+
+    const valores = this.formulario.getRawValue();
+
+    this.envio.mutate(
+      {
+        nome: valores.nome,
+        email: valores.email,
+        assunto: valores.assunto,
+        mensagem: valores.mensagem,
+      },
+      {
+        onSuccess: () => {
+          this.formulario.reset({ nome: '', email: '', assunto: '', mensagem: '' });
+        },
+      },
+    );
   }
 
   /**

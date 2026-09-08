@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { Investigador } from '../../../core/modelos/investigacao.model';
-import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 import { SeloComponent } from '../selo/selo.component';
 
@@ -32,7 +31,9 @@ import { SeloComponent } from '../selo/selo.component';
 
       <div class="flex flex-1 flex-col p-4">
         <h3 class="text-base font-bold text-primary-deep">{{ investigador().nome }}</h3>
-        <p class="mt-1 text-xs text-text-secondary">{{ cargo() }}</p>
+        @if (investigador().cargo) {
+          <p class="mt-1 text-xs text-text-secondary">{{ investigador().cargo }}</p>
+        }
 
         @if (especialidades().length) {
           <div class="mt-4 flex flex-wrap gap-2">
@@ -51,12 +52,6 @@ import { SeloComponent } from '../selo/selo.component';
 export class CartaoInvestigadorComponent {
   readonly investigador = input.required<Investigador>();
 
-  private readonly traducao = inject(TraducaoService);
-
-  protected readonly cargo = computed(() => this.traducao.getTraducao(this.investigador().cargo));
-  protected readonly especialidades = computed(() =>
-    this.investigador().especialidades.map((especialidade) =>
-      this.traducao.getTraducao(especialidade),
-    ),
-  );
+  /** A API pode não dar especialidade nenhuma; sem elas o bloco das pílulas some. */
+  protected readonly especialidades = computed(() => this.investigador().especialidades ?? []);
 }
