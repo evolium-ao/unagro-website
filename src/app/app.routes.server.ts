@@ -1,6 +1,5 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 import { CURSOS_MOCK } from './core/dados/cursos.mock';
-import { PROJETOS_MOCK } from './core/dados/projetos.mock';
 
 const ROTAS_ESTATICAS = [
   '',
@@ -52,18 +51,19 @@ export const serverRoutes: ServerRoute[] = [
     },
   },
   {
-    path: 'projetos/:id',
-    renderMode: RenderMode.Prerender,
-    async getPrerenderParams() {
-      return PROJETOS_MOCK.map((projeto) => ({ id: projeto.id }));
-    },
-  },
-  {
     // Os ids das notícias vêm da API, não de um mock do repositório: não há lista
     // fechada para prerenderizar no build, por isso a página é renderizada no
     // servidor sob pedido. Sem esta entrada caía na catch-all abaixo e era servida
     // com estado 404.
     path: 'noticias/:id',
+    renderMode: RenderMode.Server,
+  },
+  {
+    // Os ids dos projectos passaram a vir da API (antes eram os do
+    // `PROJETOS_MOCK`, prerenderizados por uma lista fechada) — mesma razão do
+    // `noticias/:id` acima: sem lista fechada para o build, renderiza-se no
+    // servidor sob pedido.
+    path: 'projetos/:id',
     renderMode: RenderMode.Server,
   },
   {

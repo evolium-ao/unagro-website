@@ -1,11 +1,17 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { projetosQueries } from '../../core/consultas/projetos.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
+import { MembroEquipa } from '../../core/modelos/membro-equipa.model';
 import { PatrocinadoresService } from '../../core/servicos/patrocinadores.service';
 import { ProjetosService } from '../../core/servicos/projetos.service';
 import { ValidacaoService } from '../../core/servicos/Validacao.service';
 import { TextoBilingue } from '../../core/traducao/texto-bilingue';
 import { SeoService } from '../../core/seo/seo.service';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, aplicarTraducaoTextos, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import { BannerDestaqueComponent, MetadadoBanner } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
@@ -27,6 +33,13 @@ import { ItemEstatisticaComponent } from '../../shared/componentes/item-estatist
 import { MembroEquipaComponent } from '../../shared/componentes/membro-equipa/membro-equipa.component';
 import { SeloComponent } from '../../shared/componentes/selo/selo.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
+
+/**
+ * Campos de texto traduzidos automaticamente quando o idioma não é português —
+ * só os que a API dá mesmo (ver `ProjetosService`); os que ela não dá já saem
+ * do serviço resolvidos no idioma certo, a partir do mock bilingue.
+ */
+const CAMPOS_TRADUZIVEIS_PROJETO = ['titulo', 'resumo', 'estado', 'areaTematica'] as const;
 
 /**
  * Opções do campo "Tipo de Interessado". É conteúdo estrutural do formulário, não
@@ -75,10 +88,88 @@ export class DetalheProjetoComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly projetosService = inject(ProjetosService);
   private readonly patrocinadoresService = inject(PatrocinadoresService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly seo = inject(SeoService);
   protected readonly validacao = inject(ValidacaoService);
 
-  protected readonly projeto = computed(() => this.projetosService.projetos().find((p) => p.id === this.id()));
+  /**
+   * Os ids da API são inteiros. Um id que não seja número não pode existir em
+   * `GET /projectos/{id}` — nesse caso nem se chama a API, e o projecto fica
+   * logo por "não encontrado" (mesmo padrão do `detalhe-noticia`).
+   */
+  private readonly idApi = computed(() => {
+    const numero = Number(this.id());
+    return Number.isInteger(numero) && numero > 0 ? numero : null;
+  });
+
+  protected readonly consultaProjeto = injectQuery(() => ({
+    ...projetosQueries.porId(this.projetosService, this.idApi() ?? 0, this.traducao.idioma()),
+    enabled: this.idApi() !== null,
+  }));
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`). Os campos que o
+   * `ProjetosService` empresta ao mock (contexto, cronograma quando vazio,
+   * galeria, documentos, testemunhos, contacto, …) já saem resolvidos no
+   * idioma pedido — só os campos que vêm mesmo da API precisam desta tradução.
+   */
+  private readonly consultaTraducaoProjeto = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(
+        this.consultaProjeto.data() ? [this.consultaProjeto.data()!] : [],
+        CAMPOS_TRADUZIVEIS_PROJETO,
+      ),
+      this.traducao.idioma(),
+    ),
+  );
+
+  /**
+   * A equipa vem, ou toda da API (`funcao_no_projecto`, em português) ou toda
+   * do mock (já resolvida no idioma certo pelo `ProjetosService`) — nunca
+   * misturada dentro do mesmo projecto. Traduzir de novo um cargo que já veio
+   * do mock é inofensivo em português (a tradução automática nem chega a
+   * correr, `enabled: idioma !== 'pt'`) mas arriscaria um resultado estranho
+   * em inglês nesse caso raro — registado em
+   * `.claude/memory/integrar-recurso.md`.
+   */
+  private readonly cargosEquipaParaTraduzir = computed(
+    () => this.consultaProjeto.data()?.equipa?.map((membro) => membro.cargo) ?? [],
+  );
+
+  private readonly consultaTraducaoEquipa = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      this.cargosEquipaParaTraduzir(),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly equipaTraduzida = computed<MembroEquipa[] | undefined>(() => {
+    const equipa = this.consultaProjeto.data()?.equipa;
+    if (!equipa) return undefined;
+    const cargos = aplicarTraducaoTextos(
+      this.cargosEquipaParaTraduzir(),
+      this.consultaTraducaoEquipa.data(),
+    );
+    return equipa.map((membro, indice) => ({ ...membro, cargo: cargos[indice] ?? membro.cargo }));
+  });
+
+  protected readonly projeto = computed(() => {
+    const dados = this.consultaProjeto.data();
+    if (!dados) return undefined;
+    const [traduzido] = aplicarTraducao(
+      [dados],
+      CAMPOS_TRADUZIVEIS_PROJETO,
+      this.consultaTraducaoProjeto.data(),
+    );
+    return { ...traduzido, equipa: this.equipaTraduzida() ?? traduzido.equipa };
+  });
+
+  /** Enquanto o pedido corre ainda não se pode dizer que o projecto não existe. */
+  protected readonly aCarregarProjeto = computed(
+    () => this.idApi() !== null && this.consultaProjeto.isPending(),
+  );
 
   /** Os selos e metadados do hero são dados do projecto, não frases fixas da página. */
   protected readonly selosHero = computed(() => {

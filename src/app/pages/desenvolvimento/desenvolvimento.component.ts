@@ -56,6 +56,7 @@ import { laboratoriosQueries } from '../../core/consultas/laboratorios.queries';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { ProjetosService } from '../../core/servicos/projetos.service';
 import { Projeto } from '../../core/modelos/projeto.model';
+import { projetosQueries } from '../../core/consultas/projetos.queries';
 import { FaixaEstatisticasComponent } from "../../shared/componentes/faixa-estatisticas/faixa-estatisticas.component";
 import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 import { CartaoVidroComponent } from '../../shared/componentes/cartao-vidro/cartao-vidro.component';
@@ -112,6 +113,12 @@ const EIXOS_BRUTOS: EixoBruto[] = [
 
 /** Quantos cartões entram de cada vez que se carrega mais projectos. */
 const PROJECTOS_POR_PAGINA = 3;
+
+/** Campos de texto traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_PROJETO = ['titulo', 'resumo', 'estado', 'areaTematica'] as const;
+
+/** Esqueletos do primeiro carregamento — um lote cheio, como a "carregar mais" já usava. */
+const ESQUELETOS_PROJECTOS = Array.from({ length: PROJECTOS_POR_PAGINA }, (_, indice) => indice);
 
 /**
  * Espera que os esqueletos preenchem enquanto a página seguinte não chega. Fica
@@ -490,8 +497,39 @@ export class DesenvolvimentoComponent {
   }
   projectoServico = inject(EstatisticasService);
   private readonly projetosService = inject(ProjetosService);
+
+  /** `GET /projectos` — a listagem da 1ª sessão; mesma origem de dados da página de detalhe. */
+  protected readonly consultaProjectos = injectQuery(() =>
+    projetosQueries.lista(this.projetosService, this.traducao.idioma()),
+  );
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`). Os campos que o
+   * `ProjetosService` empresta ao mock já saem resolvidos no idioma pedido —
+   * só os campos que vêm mesmo da API precisam desta tradução automática.
+   */
+  private readonly consultaTraducaoProjectos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaProjectos.data() ?? [], CAMPOS_TRADUZIVEIS_PROJETO),
+      this.traducao.idioma(),
+    ),
+  );
+
   /** Mesma origem de dados da página de detalhe, para os ids dos cartões resolverem lá. */
-  private readonly projectosBrutos = computed<Projeto[]>(() => this.projetosService.projetos());
+  private readonly projectosBrutos = computed<Projeto[]>(() =>
+    aplicarTraducao(
+      this.consultaProjectos.data() ?? [],
+      CAMPOS_TRADUZIVEIS_PROJETO,
+      this.consultaTraducaoProjectos.data(),
+    ),
+  );
+
+  protected readonly esqueletosProjectosIniciais = ESQUELETOS_PROJECTOS;
+
+  protected readonly erroProjectos = computed(() =>
+    this.traducao.getTraducao(['Não foi possível carregar os projectos.', 'Could not load the projects.']),
+  );
 
   protected readonly categoriaActiva = signal<CategoriaProjecto | 'todos'>('todos');
   protected readonly pesquisa = signal('');

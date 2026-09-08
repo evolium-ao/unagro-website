@@ -658,6 +658,223 @@ trocar de idioma) se, quando a aba está activa no cliente, a query resolve e a
 tradução do `nome`/dos títulos de curso funciona — o mesmo "por verificar"
 já registado para `treinamentos`/`startups`.
 
+## contatos
+
+**Integrado em:** 2026-09-08, para o formulário de mensagem de
+`pages/contactos/contactos.component.ts` (sessão "Envie-nos uma Mensagem").
+Só escrita — o site nunca lê a lista.
+
+**Camadas:**
+
+- `src/app/core/servicos/contatos.service.ts` — `criar(dados, signal)` para o
+  `POST /contatos`; a interface crua `ContatoRequest` e a função `paraPedido`
+  ficam neste ficheiro.
+- `src/app/core/modelos/contacto.model.ts` — `NovoContacto`, a forma do
+  formulário (é o serviço que a traduz para os nomes da API).
+- `src/app/pages/contactos/contactos.component.ts` —
+  `injectMutation<void, ErroApi, NovoContacto>` (`envio`) no `enviar()`; faixa
+  de erro sob o formulário e `aCarregar`/`desativado` no botão de submissão,
+  mesmo padrão do `modal-agendar-visita`/`modal-inscricao-curso`. O antigo
+  `estadoEnvio` (sinal com `setTimeout` a fingir o envio) foi removido —
+  `envio.isPending()`/`.isSuccess()`/`.isError()` fazem o mesmo papel.
+- **Sem ficheiro em `core/consultas/`**: não há `GET` público deste lado
+  (`GET /contatos` pede autenticação e o site nunca a lê), mesma decisão do
+  `agendamento-visitas`, do `candidaturas` e do `inscricoes`.
+
+**Mapeamento** (`NovoContacto` → `ContatoRequest`): `nome` → `nome`, `email` →
+`email`, **`assunto` → `tipo_interesse`** (o `id` do select, `'geral'` |
+`'candidaturas'` | `'cursos'` | `'imprensa'`, é traduzido para o rótulo **em
+português** antes de seguir — `ROTULOS_ASSUNTO_PT` — porque a API é monolingue
+e guarda `tipo_interesse` como texto livre; mesmo padrão do
+`DocenciaService.rotuloTitulacaoEmPortugues`), `mensagem` → `mensagem`. Sem
+campo do lado do site sem correspondência na API; o `ContatoRequest` também
+aceita `data_criacao`, que o formulário não tem e por isso nunca é enviado
+(fica para o Laravel preencher).
+
+**Escrita verificada contra a API antes de escrever o código** (`POST` com
+corpos que falham a validação, sem criar registo):
+
+1. Obrigatórios: só `nome` e `email`. `tipo_interesse` e `mensagem` são
+   opcionais e não têm lista fechada de valores — confirmado a mandar um
+   `tipo_interesse` arbitrário (`"valor-arbitrario-xyz"`), que passou a
+   validação sem erro.
+2. Os 422 de "campo obrigatório" chegam em português: "O campo nome é
+   obrigatório.", "O campo email é obrigatório." — mesmo padrão já observado
+   em `candidaturas` e `inscricoes`.
+3. **As mensagens de "tipo errado" saem sempre em inglês, mesmo quando o
+   "obrigatório" do mesmo campo sairia em português**: mandando
+   `tipo_interesse`/`mensagem` como número e `data_criacao` como texto
+   inválido, a API respondeu "The tipo interesse field must be a string.",
+   "The mensagem field must be a string." e "The data criacao field must be a
+   valid date." — o site nunca chega a mandar tipos errados (o formulário só
+   tem `string`), por isso não é um problema prático, só mais uma
+   inconsistência de idioma na mesma família já registada noutros recursos.
+
+**Formulário:** `nome`/`email` ganharam `Validators.maxLength(255)`
+(`MAXIMO_TEXTO_CURTO`), a acompanhar o `maxLength` do `ContatoRequest` —
+falhar no formulário poupa uma ida ao servidor. `mensagem` não tem
+`maxLength` na API (string livre, sem limite declarado), por isso também não
+ganhou um no formulário.
+
+**A API não dá:** nada — os quatro campos do formulário (`nome`, `email`,
+`assunto`, `mensagem`) têm todos correspondência directa no `ContatoRequest`.
+
+**Por verificar: nenhuma mensagem de contacto foi criada de facto.** Toda a
+verificação foi feita com pedidos que morrem na validação ou com tipos
+errados, para não deixar um registo de teste numa base partilhada que o site
+não consegue apagar (`GET`/`PUT`/`DELETE /contatos` pedem autenticação). O
+caminho de sucesso (201) está por confirmar com uma submissão real.
+
+**SSR:** não aplicável — não há `GET` nem query, o `injectMutation` só corre a
+pedido do utilizador. Confirmado no `dist`: `/contactos` prerenderiza o
+formulário normalmente (não depende de nenhuma query).
+
+
+## projectos
+
+**Integrado em:** 2026-09-08, para a 1ª sessão de `desenvolvimento`
+(`#secao-projectos`, listagem com filtro/pesquisa/paginação) e para
+`pages/detalhe-projeto` (a página que cada cartão abre). Pedido explícito e
+**diferente do padrão das outras integrações**: em vez de tornar opcional e
+esconder o que a API não dá, os campos sem correspondência continuam a vir do
+`PROJETOS_MOCK` — o mock não foi apagado, passou a ser a segunda fonte de
+dados de todo projecto real.
+
+**Camadas:**
+
+- `src/app/core/servicos/projetos.service.ts` — `listar(idioma, signal)` e
+  `obterPorId(id, idioma, signal)`; as interfaces cruas (`ProjetoApi`,
+  `CategoriaApi`, `EquipaProjectoApi`, `CronogramaApi`) e a função `paraProjeto`
+  ficam neste ficheiro. **Reescrito**: antes era um `computed` sobre
+  `PROJETOS_MOCK` com `getTraducao`; agora é assíncrono e junta a API ao mock.
+  Também injecta o `InvestigadoresService` (`GET /investigadores`) para
+  resolver o nome e a fotografia da equipa — ver "Equipa" abaixo.
+- `src/app/core/consultas/projetos.queries.ts` — `projetosQueries.raiz`,
+  `.lista(servico, idioma)` e `.porId(servico, id, idioma)`. **O `idioma` entra
+  na `queryKey`**, ao contrário dos outros recursos: aqui o próprio serviço
+  resolve os campos bilingues do mock (`resolver`, o `getTraducao` sem
+  depender de sinais), por isso trocar de idioma só actualiza o ecrã se o
+  `queryFn` for chamado outra vez.
+- `src/app/pages/desenvolvimento/desenvolvimento.component.ts` —
+  `injectQuery(() => projetosQueries.lista(this.projetosService, this.traducao.idioma()))`;
+  os `computed` de filtro por categoria, pesquisa e paginação
+  (`projectosFiltrados`, `projectosVisiveis`, `esqueletos`/`aCarregar` da
+  "Carregar Mais") continuam todos, só que sobre a lista traduzida. Esqueleto
+  inicial reaproveita o `app-cartao-projecto-esqueleto` que já existia (antes
+  só usado na paginação "Carregar Mais").
+- `src/app/pages/detalhe-projeto/detalhe-projeto.component.ts` —
+  `injectQuery(() => projetosQueries.porId(...))` com `enabled` (mesmo padrão
+  do `detalhe-noticia`: um `id` não-numérico nem chama a API), mais um estado
+  "A carregar o projecto…" distinto de "Projecto não encontrado" enquanto o
+  pedido está pendente.
+
+**Emparelhamento com o mock — pelo id, não pela posição na lista.** Cada
+projecto da API é ligado a `PROJETOS_MOCK[(id - 1) % PROJETOS_MOCK.length]`
+(o mock só tem 4 entradas, os ids da API cobrem 20 registos — o resto do id
+decide qual entrada empresta contexto, objectivos, solução, galeria,
+documentos, testemunhos e contacto). Ser pelo **id** e não pela posição no
+array devolvido é o que garante que `listar()` (a grelha) e `obterPorId()` (o
+detalhe, chamado sozinho, sem ver a lista) escolhem sempre a mesma entrada do
+mock para o mesmo projecto — indispensável para o clique no cartão levar a
+uma página de detalhe coerente com o que o cartão mostrou.
+
+**Mapeamento** (`ProjectoResource` → `Projeto`) — campos que a API **dá**:
+
+- `id` → `String(id)`.
+- `nome` → `titulo`.
+- `descricao` → `resumo` (fallback ao mock só se vier `null`; nos 20 projectos
+  actuais nunca vem).
+- `status` → `estado`, em maiúsculas (`.toUpperCase()`) — a API manda
+  `"activo"`/`"Em execução"`, o modelo já documentava "em maiúsculas".
+- **`categoria.nome` → `areaTematica`** — não é o campo óbvio (chama-se
+  "categoria" nos dois lados), mas é o que description-mente combina: a API
+  dá uma relação com nome livre (`"Segurança Alimentar"`, `"Conservação do
+  Solo"`, …) e o `areaTematica` do site é exactamente o metadado temático do
+  hero do detalhe.
+- `imagem` → `imagem_url`, via `capaUtilizavel` (caminho relativo
+  `projectos/xxx.jpg`); fallback à imagem do mock quando vem `null`.
+- `equipaProjectos` → `equipa`, quando não vier vazio (ids 1–5 dos dados
+  actuais): cada linha traz só `investigador_id` e `funcao_no_projecto` — o
+  nome e a fotografia vêm de um segundo pedido a `GET /investigadores`
+  (`InvestigadoresService.listar()`, já integrado — ver secção
+  `investigadores` acima, que já apontava esta equipa como "matéria-prima de
+  uma futura página de detalhe"). `funcao_no_projecto` vai para `cargo`
+  (fallback ao cargo académico do investigador se vier `null`).
+- `cronogramas` → `cronograma`, quando não vier vazio (nos 20 projectos
+  actuais **vem sempre vazio** — nunca exercitado com dados reais; o mapeamento
+  (`paraCronogramaApi`, ordena por `ordem`, normaliza `estado` para
+  `'concluida'|'atual'|'futura'` com fallback `'futura'`) está escrito
+  defensivamente para quando a API o vier a preencher).
+
+**Continua a vir do `PROJETOS_MOCK`, por pedido explícito** (nenhum destes é
+"a API não dá — logo esconde-se": aqui esconde-se-ia a maior parte da página
+de detalhe, e foi pedido para não acontecer):
+
+`categoria` (o `CategoriaProjecto` fechado dos filtros — a API só tem a
+relação livre `categoria.nome`, sem correspondência com
+`agricultura`/`meio_ambiente`/`tecnologia`/`infraestrutura`; **o selo do
+filtro pode não bater com o tema real do projecto**, é um efeito colateral
+conhecido de manter o filtro a funcionar sem inventar uma tabela de
+correspondência), `faculdade`, `local`, `periodo`, `resultado_principal`,
+`contexto`, `desafio`, `estatisticasContexto`, `imagem_contexto_url`,
+`objetivoGeral`, `objetivosEspecificos`, `descricaoSolucao`, `solucoes`,
+`estatisticasImpacto`, `galeria`, `documentos`, `testemunhos`, `contacto`, e
+`equipa`/`cronograma` nos projectos em que a API os dá vazios.
+
+**A API dá campos que o site não usa:** `categoria_id`, `meta_financeira`,
+`valor_arrecadado`, `percentagem_meta`, `tipo_apoio`, `destaque`, `ativo`,
+`created_at`, `updated_at`. Não há secção no desenho actual da página para
+metas financeiras nem para o selo "em destaque" — fica registado para o dia
+em que a faixa "Impacto do Projecto" ou o cartão quiserem mostrar dinheiro
+angariado a sério em vez do `resultado_principal` do mock.
+
+**Duplicados na tabela de projectos, mesma família já registada para
+`laboratorios`/`faculdades`:** 15 das 20 linhas de `GET /projectos`
+partilham o `nome` "Recuperação de Solos Degradados" e são **idênticas em
+tudo** (descrição, valores financeiros, `imagem: null`, sem equipa nem
+cronograma) — só o `id` e os timestamps mudam. Mostrar os 15 na grelha seria
+visivelmente um erro de dados (a mesma "Recuperação de Solos Degradados"
+repetida 15 vezes ao lado de 5 projectos reais e distintos), pior do que o
+caso de `laboratorios` (lá a duplicação é inofensiva numa tira). `ProjetosService`
+agrupa por `nome` e fica com a entrada mais "rica" (com imagem, equipa ou
+cronograma) ou, em empate total como aqui, com o menor id
+(`semProjectosDuplicados`) — resultado: 6 projectos na grelha (5 reais + 1
+representante do grupo duplicado), ordenados por id.
+
+**`/projetos/:id` deixou de ser prerenderizado.** Antes era
+`RenderMode.Prerender` com `getPrerenderParams` a ler os 4 ids de
+`PROJETOS_MOCK`; como os ids agora vêm da API (numéricos, sem lista fechada
+no build), passou a `RenderMode.Server`, tal como já acontecia com
+`noticias/:id` — mesmo motivo, mesmo comentário reaproveitado em
+`app.routes.server.ts`. O `PROJETOS_MOCK` continua importado (agora só em
+`projetos.service.ts`), por isso não foi apagado.
+
+**Tradução automática:** `titulo`, `resumo`, `estado` e `areaTematica` entram
+em `CAMPOS_TRADUZIVEIS_PROJETO` (declarado duas vezes — uma em
+`desenvolvimento.component.ts` para a grelha, outra em
+`detalhe-projeto.component.ts` para o projecto aberto — não há um sítio
+partilhado óbvio entre as duas páginas para esta constante de 4 strings).
+Na página de detalhe, os **cargos da equipa** (`membro.cargo`) também
+traduzem, numa segunda `traducaoQueries.lista` à parte (mesmo padrão das
+especialidades de investigador). **Limitação conhecida e aceite:** estes
+campos traduzem-se sempre, mesmo nos casos raros em que vieram do mock em vez
+da API (`resumo`/`estado`/`areaTematica` quando a API manda `null`, ou a
+equipa/cargo de um projecto duplicado sem `equipaProjectos`) — nesse caso o
+texto já está em inglês (resolvido pelo `ProjetosService` via `getTraducao`
+do mock) e passaria pela MyMemory outra vez. Não acontece com os 20 projectos
+actuais (todos têm `descricao`/`status`/`categoria` preenchidos), mas se a
+API algum dia devolver esses campos vazios, o resultado da segunda tradução é
+imprevisível — fica para quem integrar a próxima alteração de dados
+confirmar se ainda é um caso não exercitado.
+
+**SSR: funciona graças à correcção geral registada na nota de campo de
+2026-09-08 mais abaixo** (`notifyManager.setScheduler`). Confirmado no
+`dist`: o prerender de `/desenvolvimento` traz os três primeiros projectos
+reais da API nos cartões (`Variedades de milho tolerantes à seca…`,
+`Multiplicação de mandioca livre de viroses`, `Caracterização das raças
+bovinas autóctones angolanas`), sem esqueleto nenhum.
+
+
 ## Tradução automática do conteúdo da API
 
 **Adicionado em:** 2026-09-08. Decisão consciente que **substitui** a regra anterior

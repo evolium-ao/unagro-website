@@ -179,9 +179,9 @@ export class ContactosComponent {
     erros['required']
       ? this.traducao.getTraducao(['Indique o seu nome.', 'Please enter your name.'])
       : this.traducao.getTraducao([
-          'O nome não pode ter mais de 255 caracteres.',
-          'The name cannot be longer than 255 characters.',
-        ]),
+        'O nome não pode ter mais de 255 caracteres.',
+        'The name cannot be longer than 255 characters.',
+      ]),
   );
 
   protected readonly erroEmail = this.sinalErro(this.formulario.controls.email, (erros) => {
@@ -247,8 +247,8 @@ export class ContactosComponent {
 
   protected readonly mensagemSucesso = computed(() =>
     this.traducao.getTraducao([
-      'Mensagem enviada. A nossa equipa responde dentro de dois dias úteis.',
-      'Message sent. Our team will reply within two working days.',
+      'Mensagem enviada. A nossa equipa responderá dentro de instantes.',
+      'Message sent. Our team will respond shortly.',
     ]),
   );
 
