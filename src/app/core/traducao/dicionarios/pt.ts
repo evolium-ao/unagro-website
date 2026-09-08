@@ -54,6 +54,10 @@ export const pt = {
     aCarregar: 'A carregar…',
     publicado: 'Publicado',
     verTodasNoticias: 'Ver todas as notícias',
+    entrar: 'Entrar',
+    compartilhar: 'Compartilhar',
+    copiarLink: 'Copiar link',
+    linkCopiado: 'Link copiado',
   },
   rodape: {
     lema: '"Do campo ao mundo — inovação e sustentabilidade comprometidas com o futuro agrícola de Angola desde 2026."',

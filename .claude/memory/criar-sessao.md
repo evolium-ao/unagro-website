@@ -1079,6 +1079,61 @@ HTML do servidor).
 
 **Usado em:** `contactos`
 
+### app-cartao-unidade-esqueleto
+
+**Onde:** `src/app/shared/componentes/cartao-unidade-esqueleto/cartao-unidade-esqueleto.component.ts`
+**Criado para:** sessão "Centros e Laboratórios" de `desenvolvimento` (2026-09-07)
+**Descrição:** espera de um `app-cartao-unidade` — a mesma moldura alta
+(`min-h-80 rounded-xl`) com os blocos do selo, das duas linhas do nome e do botão no
+sítio onde eles ficam no cartão real, para a grelha não saltar quando os laboratórios
+chegam da API. `aria-hidden`, sem texto nem foco.
+
+**Inputs:** nenhum.
+
+**Como usar:**
+
+    @if (consultaUnidades.isPending()) {
+      @for (esqueleto of esqueletosUnidades; track esqueleto) {
+        <app-cartao-unidade-esqueleto />
+      }
+    }
+
+**Usado em:** `desenvolvimento`
+
+### appTiraHorizontal (diretiva)
+
+**Onde:** `src/app/shared/diretivas/tira-horizontal.directive.ts`
+**Criada para:** sessão "Centros e Laboratórios" de `desenvolvimento` (2026-09-07)
+**Descrição:** diretiva, não componente. Põe-se no elemento `overflow-x-auto` de uma tira
+que rola na horizontal e expõe `podeRecuar()`, `podeAvancar()` e `rolar(1 | -1)`, para os
+dois botões de seta do **canto superior direito** da secção — que ficam noutro ponto do
+template e por isso não podem viver dentro da tira. O passo é a largura do primeiro
+cartão mais o `column-gap`, o que faz o `snap` encaixar o seguinte no lugar. Mede no
+`afterNextRender` e mantém-se actualizada com um `MutationObserver` (os cartões só chegam
+quando a query resolve) e um `ResizeObserver` (a largura da janela). No servidor não
+mede: assume o início da tira, que é onde ela começa.
+
+Distingue-se da `app-galeria-mosaico`, que tem a sua própria tira **só em telemóvel**,
+com setas sobrepostas ao centro e gradientes nos extremos, e não serve fora da galeria.
+
+**Como usar:**
+
+    <button [disabled]="!tiraUnidades()?.podeRecuar()" (click)="rolarUnidades(-1)">…</button>
+    <button [disabled]="!tiraUnidades()?.podeAvancar()" (click)="rolarUnidades(1)">…</button>
+
+    <div appTiraHorizontal class="flex snap-x snap-mandatory gap-6 overflow-x-auto">
+      @for (unidade of unidades(); track unidade.id) {
+        <app-cartao-unidade class="w-[85%] shrink-0 snap-start sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]" … />
+      }
+    </div>
+
+No componente: `protected readonly tiraUnidades = viewChild(TiraHorizontalDirective);`.
+A barra de scroll esconde-se numa classe do próprio componente (`.tira-unidades`), e não
+numa variante arbitrária do Tailwind: o `[&::-webkit-scrollbar]` teria de ir escapado no
+HTML e o Tailwind já não reconheceria a classe ao varrer o ficheiro.
+
+**Usado em:** `desenvolvimento`
+
 ## Sessões sem componente novo
 
 Blocos únicos que ficaram em markup da página — registados aqui para não se procurar

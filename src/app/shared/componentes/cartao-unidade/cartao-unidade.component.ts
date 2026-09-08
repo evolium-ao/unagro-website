@@ -35,13 +35,16 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
       ></div>
 
       <div class="relative flex flex-col items-start p-5">
-        <span
-          class="rounded-md bg-white/15 px-2 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm"
-        >
-          {{ area() }}
-        </span>
+        <!-- O selo depende da faculdade embutida no laboratório; sem ela não há área a mostrar. -->
+        @if (unidade().area) {
+          <span
+            class="rounded-md bg-white/15 px-2 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm"
+          >
+            {{ unidade().area }}
+          </span>
+        }
 
-        <h3 class="mt-3 text-lg font-semibold leading-snug text-white">{{ nome() }}</h3>
+        <h3 class="mt-3 text-lg font-semibold leading-snug text-white">{{ unidade().nome }}</h3>
         <app-botao
           variante="glass"
           tamanho="sm"
@@ -78,7 +81,4 @@ export class CartaoUnidadeComponent {
   protected readonly destino = computed(() =>
     this.acaoComoBotao() ? undefined : this.unidade().link,
   );
-
-  protected readonly area = computed(() => this.traducao.getTraducao(this.unidade().area));
-  protected readonly nome = computed(() => this.traducao.getTraducao(this.unidade().nome));
 }

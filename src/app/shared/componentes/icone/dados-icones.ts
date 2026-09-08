@@ -301,4 +301,20 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
     ),
     p('m9 12 2 2 4-4'),
   ],
+  /** Dois elos de cadeia — copiar o endereço da página. */
+  link: [
+    p('M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'),
+    p('M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'),
+  ],
+  linkedin: [
+    p('M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z'),
+    r('2', '9', '4', '12'),
+    c('4', '4', '2'),
+  ],
+  /** Pássaro do X (ex-Twitter), no traço do conjunto Lucide. */
+  twitter: [
+    p(
+      'M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z',
+    ),
+  ],
 };

@@ -54,6 +54,10 @@ export const en = {
     aCarregar: 'Loading…',
     publicado: 'Published',
     verTodasNoticias: 'See all news',
+    entrar: 'Sign in',
+    compartilhar: 'Share',
+    copiarLink: 'Copy link',
+    linkCopiado: 'Link copied',
   },
   rodape: {
     lema: '"From the field to the world — innovation and sustainability committed to the agricultural future of Angola since 2026."',

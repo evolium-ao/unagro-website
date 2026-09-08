@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { formatarDataCurta, formatarTempoRelativo } from '../../../core/traducao/formatar-data';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { NoticiaCartao } from '../../modelos/noticia-cartao.model';
+import { BotaoCompartilharComponent } from '../botao-compartilhar/botao-compartilhar.component';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 
 /** `vertical` = imagem em cima; `horizontal` = miniatura à esquerda, para listas laterais. */
@@ -16,7 +17,7 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
  */
 @Component({
   selector: 'app-cartao-noticia-resumo',
-  imports: [EspacoImagemComponent, RouterLink],
+  imports: [EspacoImagemComponent, BotaoCompartilharComponent, RouterLink],
   host: { class: 'block h-full' },
   template: `
     @if (modo() === 'horizontal') {
@@ -47,11 +48,14 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
           </p>
 
           @if (link(); as destino) {
-            <a
-              [routerLink]="destino"
-              class="relative z-20 mt-2 text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
-              >{{ traducao.t('comum.lerMais') }}</a
-            >
+            <div class="relative z-20 mt-2 flex items-center gap-3">
+              <a
+                [routerLink]="destino"
+                class="text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
+                >{{ traducao.t('comum.lerMais') }}</a
+              >
+              <app-botao-compartilhar [titulo]="noticia().titulo" [link]="destino" />
+            </div>
           }
         </div>
 
@@ -100,11 +104,14 @@ export type ModoCartaoNoticiaResumo = 'vertical' | 'horizontal';
           <p class="mt-2 text-xs leading-snug text-text-secondary">{{ noticia().resumo }}</p>
 
           @if (link(); as destino) {
-            <a
-              [routerLink]="destino"
-              class="relative z-20 mt-4 text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
-              >{{ traducao.t('comum.lerMais') }}</a
-            >
+            <div class="relative z-20 mt-4 flex items-center gap-3">
+              <a
+                [routerLink]="destino"
+                class="text-xs font-semibold text-primary-dark transition-colors duration-200 hover:text-primary"
+                >{{ traducao.t('comum.lerMais') }}</a
+              >
+              <app-botao-compartilhar [titulo]="noticia().titulo" [link]="destino" />
+            </div>
           }
         </div>
 

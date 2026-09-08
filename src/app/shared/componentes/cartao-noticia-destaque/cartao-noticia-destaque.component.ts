@@ -4,6 +4,7 @@ import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { NoticiaCartao } from '../../modelos/noticia-cartao.model';
 import { RouterLink } from '@angular/router';
 import { BotaoComponent } from '../botao/botao.component';
+import { BotaoCompartilharComponent } from '../botao-compartilhar/botao-compartilhar.component';
 import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component';
 
 /**
@@ -12,7 +13,7 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
  */
 @Component({
   selector: 'app-cartao-noticia-destaque',
-  imports: [EspacoImagemComponent, BotaoComponent, RouterLink],
+  imports: [EspacoImagemComponent, BotaoComponent, BotaoCompartilharComponent, RouterLink],
   host: { class: 'block h-full' },
   template: `
     <article class="relative flex h-full min-h-80 flex-col justify-end overflow-hidden rounded-lg">
@@ -54,9 +55,12 @@ import { EspacoImagemComponent } from '../espaco-imagem/espaco-imagem.component'
         <p class="mt-3 text-xs leading-5 text-white/75">{{ noticia().resumo }}</p>
 
         @if (link(); as destino) {
-          <app-botao variante="secundario" tamanho="sm" [link]="destino" class="relative z-20 mt-6">
-            {{ traducao.t('comum.lerArtigo') }}
-          </app-botao>
+          <div class="relative z-20 mt-6 flex items-center gap-3">
+            <app-botao variante="secundario" tamanho="sm" [link]="destino">
+              {{ traducao.t('comum.lerArtigo') }}
+            </app-botao>
+            <app-botao-compartilhar variante="claro" [titulo]="noticia().titulo" [link]="destino" />
+          </div>
         }
       </div>
 

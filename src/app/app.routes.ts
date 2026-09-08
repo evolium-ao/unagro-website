@@ -33,6 +33,9 @@ export const routes: Routes = [
       },
     ],
   },
+  // `/login` é o endereço que muita gente escreve à mão: encaminha para a rota
+  // canónica em português em vez de cair na página 404.
+  { path: 'login', redirectTo: '/entrar', pathMatch: 'full' },
   {
     path: '',
     component: LayoutPrincipalComponent,

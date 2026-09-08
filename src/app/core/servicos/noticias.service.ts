@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiService } from '../api/api.service';
+import { capaUtilizavel } from '../api/capa-utilizavel';
 import { Noticia } from '../modelos/noticia.model';
 
 /**
@@ -54,18 +55,4 @@ function paraNoticia(linha: NoticiaApi): Noticia {
     imagem: capaUtilizavel(linha.capa_url),
     destaque: Boolean(linha.destaque),
   };
-}
-
-/**
- * A API devolve as capas com o host `localhost` (o `APP_URL` do Laravel ainda
- * não está corrigido — ver `.claude/README.md`), e esse URL não carrega em
- * navegador nenhum fora da máquina da API. Em vez de deixar a imagem partida no
- * cartão, descarta-se o URL e o cartão cai no espaço reservado cinzento.
- *
- * Assim que o `APP_URL` for corrigido, o URL deixa de apontar para `localhost` e
- * passa a ser usado sem ser preciso mexer aqui.
- */
-function capaUtilizavel(url: string | null): string | undefined {
-  if (!url) return undefined;
-  return /^https?:\/\/(localhost|127\.0\.0\.1)\b/i.test(url) ? undefined : url;
 }

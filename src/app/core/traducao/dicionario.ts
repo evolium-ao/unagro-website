@@ -54,6 +54,10 @@ export interface Dicionario {
     aCarregar: string;
     publicado: string;
     verTodasNoticias: string;
+    entrar: string;
+    compartilhar: string;
+    copiarLink: string;
+    linkCopiado: string;
   };
   rodape: {
     lema: string;

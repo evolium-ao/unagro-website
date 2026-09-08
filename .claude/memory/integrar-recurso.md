@@ -57,6 +57,160 @@ o Angular ter dado a aplicação por estável. Contradiz o que o `.claude/README
 aparece no HTML servido** (afecta SEO e primeiro paint das secções ligadas à API).
 
 
+## laboratorios + agendamento-visitas
+
+**Integrado em:** 2026-09-07, para a sessão "Centros e Laboratórios" de `desenvolvimento`
+(listagem) e para o `app-modal-agendar-visita` que ela abre (escrita).
+
+**Camadas:**
+
+- `src/app/core/servicos/laboratorios.service.ts` — `listar(signal)`; a interface crua
+  `LaboratorioApi` (mais a `FaculdadeApi` reduzida ao `nome`) e a função `paraUnidade`
+  ficam neste ficheiro.
+- `src/app/core/consultas/laboratorios.queries.ts` — `laboratoriosQueries.raiz` e
+  `.lista(servico)`. **Sem `porId`**: não há página de detalhe de laboratório, e uma
+  fábrica que ninguém chama é código morto.
+- `src/app/core/servicos/agendamento-visitas.service.ts` — `criar(dados, signal)` para o
+  `POST /agendamento-visitas`; a interface crua `AgendamentoVisitaRequest` e a função
+  `paraPedido` ficam neste ficheiro.
+- `src/app/core/modelos/agendamento-visita.model.ts` — `NovoAgendamentoVisita`, a forma
+  do formulário do modal (é o serviço que a traduz para os nomes da API).
+- `src/app/pages/desenvolvimento/desenvolvimento.component.ts` —
+  `injectQuery(() => laboratoriosQueries.lista(...))`; o `unidades()` passou de `signal`
+  com mock a `computed` sobre `consultaUnidades.data()`.
+- `src/app/shared/componentes/modal-agendar-visita/modal-agendar-visita.component.ts` —
+  `injectMutation<void, ErroApi, NovoAgendamentoVisita>` no `submeter()`.
+
+**Mapeamento** (`LaboratorioResource` → `UnidadeInvestigacao`): `id` → `String(id)`,
+`nome` → `nome`, **`faculdade.nome` → `area`** (o selo sobre a fotografia; é o que a API
+tem mais perto de uma área), `capa_url` → `imagem_url` (pelo `capaUtilizavel`),
+`icone` fixo em `flask-conical` e `link` fixo na própria secção. `descricao`,
+`faculdade_id`, `created_at` e `updated_at` não são usados pelo cartão.
+
+**Mapeamento** (`NovoAgendamentoVisita` → `AgendamentoVisitaRequest`):
+`unidade_id` → `laboratorio_id` (`Number`), `instituicao` → `organizacao`,
+`data` → `data_preferencial`, `hora` → `hora_preferencial`, `motivo` → `motivo_visita`,
+`participantes` → `numero_participantes`. Os campos opcionais vazios vão como
+`undefined`, para não gravar cadeias vazias.
+
+**O `capaUtilizavel` saiu do `noticias.service.ts`** para `core/api/capa-utilizavel.ts`:
+o host `localhost` nas capas é um problema da API, não de um recurso, e os laboratórios
+sofrem dele da mesma maneira. O `NoticiasService` passou a importá-lo — comportamento
+igual ao que tinha.
+
+**O `UnidadeInvestigacao` mudou de forma.** Era bilingue (`TextoBilingue` em `area` e
+`nome`), como convém a um mock; passou a texto simples, que é a regra dos modelos vindos
+da API. Arrastou o `app-cartao-unidade` (deixou de chamar `getTraducao` nos dois campos),
+o `app-modal-agendar-visita` (`rotulo: unidade.nome`) e o `.spec` do modal. **O
+`UNIDADES_MOCK` de `desenvolvimento` desapareceu** — ao contrário das notícias, aqui não
+foi pedido conteúdo de recurso: a secção segue os três estados do
+`.claude/README.md` (esqueletos → erro → dados), com o novo
+`app-cartao-unidade-esqueleto`.
+
+**Escrita verificada contra a API antes de escrever o código** (`POST` com um
+`laboratorio_id` inexistente, que falha na regra `exists` sem criar registo): os
+obrigatórios são `laboratorio_id`, `nome`, `email`, `data_preferencial` e
+`hora_preferencial`, e a API aceita `data_preferencial` em `AAAA-MM-DD` — apesar de o
+esquema a declarar `format: date-time` — e `hora_preferencial` em `HH:MM`, que é o que os
+campos do formulário dão.
+
+**Problemas da API registados (não inventados deste lado):**
+
+1. **`AgendamentoVisitaResource` declara `id`, `laboratorio_id` e `numero_participantes`
+   como `string`**, e o `LaboratorioResource` dá-os como `integer`. Como o site descarta o
+   corpo da resposta do `POST`, não chegou a ser preciso normalizar — mas a incoerência
+   está lá.
+2. **Os 422 do Laravel vêm só em português** ("O campo nome é obrigatório."). O modal
+   mostra-os tal e qual, porque dizem exactamente o que falha; em inglês ficam em
+   português, como o resto do conteúdo editorial.
+3. **`GET /agendamento-visitas` pede autenticação** (`Não autenticado.`), pelo que não há
+   nada para invalidar depois do `POST` — o site nunca lê a lista.
+4. **A tabela de laboratórios tem duplicados**: os ids 1–5 e 6–10 são os mesmos cinco
+   nomes repetidos. Não é problema do site; a tira mostra o que a API mandar.
+5. **Não há campo de área nem de ícone no laboratório.** O selo usa o nome da faculdade e
+   o ícone é o mesmo para todos.
+
+**SSR: continua a não esperar pela query** — o prerender de `/desenvolvimento` sai com os
+três `app-cartao-unidade-esqueleto` e sem laboratório nenhum, exactamente como acontece
+com as notícias em `/`. Verificado no `dist` depois do build.
+
+
+## candidaturas (docentes)
+
+**Integrado em:** 2026-09-07, para o formulário de `/candidaturas/docentes`
+(`app-formulario-docente`). Só escrita — o site nunca lê a lista.
+
+**Camadas:**
+
+- `src/app/core/servicos/candidatura-docentes.service.ts` — `criar(dados, signal)` para o
+  `POST /candidaturas`; a função `paraPedido` (que monta o `FormData`) fica neste ficheiro.
+  **O nome do ficheiro não é `candidaturas.service.ts` de propósito**: esse já existe e é o
+  conteúdo (mock) da página `/candidaturas`, que não fala com a API.
+- `src/app/core/modelos/candidatura-docente.model.ts` — `NovaCandidaturaDocente`, a forma do
+  formulário (é o serviço que a traduz para os nomes da API).
+- `src/app/pages/candidatura-docentes/formulario/formulario-docente.component.ts` —
+  `injectMutation<void, ErroApi, NovaCandidaturaDocente>` no `submeter()`.
+- **Sem ficheiro em `core/consultas/`**: não há `GET` nenhum deste lado, e uma chave de cache
+  que ninguém usa é código morto (mesma decisão do `agendamento-visitas`).
+
+**O corpo vai em `multipart/form-data`**, não em JSON — leva o PDF do currículo. O
+`ApiService.post` já aceita um `FormData` tal e qual; o `HttpClient` põe o `Content-Type`
+com o *boundary* sozinho, e **não se lhe deve pôr o cabeçalho à mão**.
+
+**Mapeamento** (`NovaCandidaturaDocente` → `CandidaturaRequest`): `nome` → `nome_completo`,
+`email` → `email`, `telefone` → `telefone`, `perfil` → `linkedin_url`,
+`titulacao` → `maior_titulo`, `universidade` → `universidade_origem`,
+`area` → `area_estudo_principal`, `linhasPesquisa` → `desc_areas_pesquisas`,
+`carta` → `desc_motivacao`, `curriculo` → `curriculo`. Os opcionais vazios **não entram no
+`FormData`**, para não gravar cadeias vazias.
+
+**O `maior_titulo` vai em português, sempre.** O select guarda o `id` da titulação
+(`doutoramento`, `agregacao`, …) e a API guarda texto livre e é monolingue — o novo
+`DocenciaService.rotuloTitulacaoEmPortugues(id)` lê o `rotulo.pt` do mock, para o backoffice
+receber a mesma cadeia mesmo quando o candidato preenche o formulário em inglês.
+
+**Escrita verificada contra a API antes de escrever o código**, sempre com pedidos que
+falham a validação (não criam registo):
+
+1. Obrigatórios: **só `nome_completo` e `email`**. Tudo o resto é opcional.
+2. `curriculo`: **`pdf`, `doc` ou `docx`, até 5120 KB**. O formulário dizia "PDF até 10MB" e
+   validava a 10 — passou a **5MB** (`TAMANHO_MAXIMO_CV_MB`), e o texto do `app-campo-upload`
+   acompanhou. Continua a aceitar só PDF, que é o que a etiqueta promete.
+3. Os nomes dos oito campos opcionais foram confirmados um a um, mandando valores que violam
+   as regras deles (300 caracteres nos `max:255`, arrays nos `string`): o Laravel **ignora em
+   silêncio** um campo com o nome errado, por isso o 422 nomeado é a única prova de que a
+   chave chega. Todos responderam.
+4. Os campos de 255 ganharam `Validators.maxLength(255)` (`MAXIMO_TEXTO_CURTO`) — falhar no
+   formulário poupa uma ida ao servidor.
+
+**Erros e sucesso, no formulário:** a falha do `POST` aparece numa faixa vermelha por baixo do
+último passo (não num modal), com o formulário ainda preenchido; os 422 do Laravel mostram-se
+tal e qual, e chegam **só em português**. O ecrã de confirmação, que antes aparecia no clique,
+só aparece agora no `onSuccess` — o `submetido` deixou de ser uma promessa vazia. O
+`recomecar()` faz também `enviar.reset()`.
+
+**Problemas da API registados (não inventados deste lado):**
+
+1. **`linkedin_url` não valida URL** — só `max:255`. Passa qualquer texto.
+2. **`GET`/`PUT`/`DELETE /candidaturas` pedem autenticação** (herdam o `security` global);
+   público é só o `POST`. Não há nada para invalidar depois da submissão, e um registo criado
+   por engano não se apaga a partir do site.
+3. **Os 422 vêm com as mensagens misturadas**: `nome_completo` responde em português ("O campo
+   nome completo é obrigatório.") e `email`/`curriculo` em inglês ("The email field must be a
+   valid email address."), na mesma resposta.
+4. **O endpoint é genérico (`/candidaturas`)**, mas os campos são todos académicos
+   (`maior_titulo`, `universidade_origem`) — não há como distinguir candidaturas de docentes de
+   outras, nem campo de estado/fase.
+5. **Não há campo para a titulação como lista fechada**, nem equivalente aos passos do
+   formulário. O que o site chama "carta de motivação" é o `desc_motivacao`, sem limite de
+   tamanho declarado.
+
+**Por verificar: nenhuma candidatura foi criada de facto.** Toda a verificação foi feita com
+pedidos que morrem na validação, para não deixar um registo de teste numa base partilhada que
+o site não consegue apagar. O caminho de sucesso (201 + ficheiro guardado no `storage`) está
+por confirmar com uma submissão real.
+
+
 ## Notas de campo
 
 **2026-09-04, ~13h50: a tabela de notícias da API ficou vazia.** `GET /noticias` devolve

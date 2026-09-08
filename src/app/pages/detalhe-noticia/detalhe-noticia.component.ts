@@ -10,6 +10,7 @@ import { formatarDataCurta } from '../../core/traducao/formatar-data';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
+import { BotaoCompartilharComponent } from '../../shared/componentes/botao-compartilhar/botao-compartilhar.component';
 import { CartaoNoticiaResumoComponent } from '../../shared/componentes/cartao-noticia-resumo/cartao-noticia-resumo.component';
 import { CartaoNoticiaResumoEsqueletoComponent } from '../../shared/componentes/cartao-noticia-resumo-esqueleto/cartao-noticia-resumo-esqueleto.component';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
@@ -25,6 +26,7 @@ const OUTRAS_NOTICIAS = 4;
   imports: [
     RouterLink,
     BotaoComponent,
+    BotaoCompartilharComponent,
     ContainerPaginaComponent,
     CartaoNoticiaResumoComponent,
     CartaoNoticiaResumoEsqueletoComponent,

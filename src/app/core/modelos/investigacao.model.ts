@@ -2,14 +2,22 @@ import { TextoBilingue } from '../traducao/texto-bilingue';
 
 /**
  * Centro, laboratório ou unidade — os cartões de "Centros e Laboratórios".
- * Nomes em snake_case por espelharem a linha que a API devolve, como o `Projecto`.
+ *
+ * Segue a regra dos modelos vindos da API (`.claude/README.md`): campos de texto
+ * simples (`string`), porque a API devolve o texto já resolvido e não um par
+ * bilingue. Quem traduz do `LaboratorioResource` para esta forma é o
+ * `LaboratoriosService`.
  */
 export interface UnidadeInvestigacao {
   id: string;
-  /** Área que aparece no selo sobre a fotografia, ex.: "Biotecnologia". */
-  area: TextoBilingue;
-  nome: TextoBilingue;
-  imagem_url: string;
+  /**
+   * Área que aparece no selo sobre a fotografia. Vem do nome da faculdade a que
+   * o laboratório pertence — é o que a API tem mais perto de uma área.
+   */
+  area: string;
+  nome: string;
+  /** Sem capa, o cartão fica no espaço reservado do `app-espaco-imagem`. */
+  imagem_url?: string;
   link: string;
   /**
    * Nome de um ícone de `dados-icones.ts`, usado onde a unidade aparece sem

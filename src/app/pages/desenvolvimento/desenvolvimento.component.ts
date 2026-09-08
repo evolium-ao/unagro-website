@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { injectQuery } from '@tanstack/angular-query-experimental';
 import {
   FormatoLinhaInvestigacao,
   Investigador,
@@ -34,6 +42,10 @@ import { CartaoProjectoEsqueletoComponent } from '../../shared/componentes/carta
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
+import { TiraHorizontalDirective } from '../../shared/diretivas/tira-horizontal.directive';
+import { CartaoUnidadeEsqueletoComponent } from '../../shared/componentes/cartao-unidade-esqueleto/cartao-unidade-esqueleto.component';
+import { LaboratoriosService } from '../../core/servicos/laboratorios.service';
+import { laboratoriosQueries } from '../../core/consultas/laboratorios.queries';
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { ProjetosService } from '../../core/servicos/projetos.service';
 import { Projeto } from '../../core/modelos/projeto.model';
@@ -106,34 +118,15 @@ const normalizar = (texto: string) =>
     .toLowerCase()
     .trim();
 
-/** Substituir pela resposta do endpoint de centros e laboratórios. */
-const UNIDADES_MOCK: UnidadeInvestigacao[] = [
-  {
-    id: 'centro-biotecnologia-agricola',
-    area: ['Biotecnologia', 'Biotechnology'],
-    nome: ['Centro de Biotecnologia Agrícola', 'Agricultural Biotechnology Centre'],
-    imagem_url: '/imagens/desenvolvimento-card-1.png',
-    icone: 'flask-conical',
-    // TODO: apontar para a página da unidade quando existir rota própria.
-    link: '/desenvolvimento#secao-investigacao',
-  },
-  {
-    id: 'laboratorio-solos-nutricao',
-    area: ['Agronomia', 'Agronomy'],
-    nome: ['Laboratório de Solos e Nutrição', 'Soil and Nutrition Laboratory'],
-    imagem_url: '/imagens/desenvolvimento-card-2.png',
-    icone: 'sprout',
-    link: '/desenvolvimento#secao-investigacao',
-  },
-  {
-    id: 'unidade-engenharia-rural',
-    area: ['Engenharia', 'Engineering'],
-    nome: ['Unidade de Engenharia Rural', 'Rural Engineering Unit'],
-    imagem_url: '/imagens/desenvolvimento-card-3.png',
-    icone: 'wrench',
-    link: '/desenvolvimento#secao-investigacao',
-  },
-];
+/**
+ * A partir de quantos laboratórios a secção deixa a grelha e passa à tira que
+ * rola na horizontal. Três é o que a grelha mostra numa linha em `lg`: até lá o
+ * desenho é o de sempre, e só acima disso aparecem as setas.
+ */
+const UNIDADES_EM_GRELHA = 3;
+
+/** Esqueletos enquanto os laboratórios não chegam — uma linha cheia da grelha. */
+const ESQUELETOS_UNIDADES = Array.from({ length: UNIDADES_EM_GRELHA }, (_, indice) => indice);
 
 /** Substituir pela resposta do endpoint de linhas de investigação. */
 const LINHAS_INVESTIGACAO_MOCK: LinhaInvestigacao[] = [
@@ -360,10 +353,12 @@ const COLUNAS_LINHA: Record<FormatoLinhaInvestigacao, string> = {
     ContainerPaginaComponent,
     IconeComponent,
     RevelarAoScrollDirective,
+    TiraHorizontalDirective,
     BotaoComponent,
     CabecalhoSecaoComponent,
     CartaoLinhaInvestigacaoComponent,
     CartaoUnidadeComponent,
+    CartaoUnidadeEsqueletoComponent,
     ContainerBannerFaixaEstatisticaComponent,
     ItemEstatisticaComponent,
     CartaoVidroComponent,
@@ -372,6 +367,19 @@ const COLUNAS_LINHA: Record<FormatoLinhaInvestigacao, string> = {
     CartaoInvestigadorComponent,
   ],
   templateUrl: './desenvolvimento.component.html',
+  styles: `
+    /* A tira dos laboratórios rola mas sem barra à vista: quem indica que ela
+       continua são as setas do canto superior direito e o rebordo do cartão
+       seguinte. */
+    .tira-unidades {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .tira-unidades::-webkit-scrollbar {
+      display: none;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DesenvolvimentoComponent {
@@ -403,8 +411,61 @@ export class DesenvolvimentoComponent {
     ]),
   );
 
-  /** Substituir por sinais alimentados pelos endpoints respectivos. */
-  protected readonly unidades = signal<UnidadeInvestigacao[]>(UNIDADES_MOCK);
+  private readonly laboratoriosService = inject(LaboratoriosService);
+
+  /** `GET /laboratorios` — os cartões de "Centros e Laboratórios". */
+  protected readonly consultaUnidades = injectQuery(() =>
+    laboratoriosQueries.lista(this.laboratoriosService),
+  );
+
+  protected readonly unidades = computed<UnidadeInvestigacao[]>(
+    () => this.consultaUnidades.data() ?? [],
+  );
+
+  /**
+   * Acima de uma linha de grelha os cartões passam a uma tira horizontal, com as
+   * setas no canto superior direito da secção. Decidido pelo número de cartões e
+   * não por medição, para o servidor renderizar já a forma certa.
+   */
+  protected readonly temTiraUnidades = computed(
+    () => this.unidades().length > UNIDADES_EM_GRELHA,
+  );
+
+  /** Estado da tira — é o que liga e desliga as duas setas. */
+  protected readonly tiraUnidades = viewChild(TiraHorizontalDirective);
+
+  protected readonly esqueletosUnidades = ESQUELETOS_UNIDADES;
+
+  /** A cascata reinicia a cada linha, para o atraso não crescer ao longo da tira. */
+  protected readonly unidadesEmGrelha = UNIDADES_EM_GRELHA;
+
+  protected rolarUnidades(sentido: 1 | -1): void {
+    this.tiraUnidades()?.rolar(sentido);
+  }
+
+  protected readonly erroUnidades = computed(() =>
+    this.traducao.getTraducao([
+      'Não foi possível carregar os centros e laboratórios.',
+      'Could not load the centres and laboratories.',
+    ]),
+  );
+
+  protected readonly mensagemSemUnidades = computed(() =>
+    this.traducao.getTraducao([
+      'Ainda não há centros nem laboratórios publicados.',
+      'No centres or laboratories published yet.',
+    ]),
+  );
+
+  protected readonly rotuloUnidadesAnteriores = computed(() =>
+    this.traducao.getTraducao(['Ver unidades anteriores', 'See previous units']),
+  );
+
+  protected readonly rotuloUnidadesSeguintes = computed(() =>
+    this.traducao.getTraducao(['Ver unidades seguintes', 'See next units']),
+  );
+
+  /** Substituir por um sinal alimentado pelo endpoint das linhas de investigação. */
   protected readonly linhasInvestigacao = signal<LinhaInvestigacao[]>(LINHAS_INVESTIGACAO_MOCK);
 
   /**

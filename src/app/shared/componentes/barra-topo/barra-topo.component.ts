@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { ContainerPaginaComponent } from '../container-pagina/container-pagina.component';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { Idioma } from '../../../core/traducao/idioma';
@@ -6,7 +7,7 @@ import { IconeComponent } from '../icone/icone.component';
 
 @Component({
   selector: 'app-barra-topo',
-  imports: [ContainerPaginaComponent, IconeComponent],
+  imports: [ContainerPaginaComponent, IconeComponent, RouterLink],
   styleUrl: './barra-topo.component.css',
   template: `
     <div class="bg-primary text-white text-xs w-full items-center ">
@@ -66,6 +67,16 @@ import { IconeComponent } from '../icone/icone.component';
           >
             <app-icone nome="search" [tamanho]="15" [espessuraTraco]="2.5" />
           </button>
+
+          <!-- Entrada na conta. A rota canónica é \`/entrar\`; \`/login\` existe
+               como redireccionamento, para endereços partilhados de fora. -->
+          <a
+            routerLink="/entrar"
+            class="ml-1 inline-flex items-center gap-1.5 rounded-full border border-white/30 px-3 py-1 text-[11px] font-semibold text-white transition-colors duration-200 hover:border-secondary hover:bg-white/10 hover:text-secondary"
+          >
+            <app-icone nome="log-in" [tamanho]="13" [espessuraTraco]="2.5" />
+            {{ traducao.t('comum.entrar') }}
+          </a>
         </div>
       </app-container-pagina>
     </div>

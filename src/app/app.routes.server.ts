@@ -38,6 +38,13 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Server,
   },
   {
+    // `/login` redirecciona para `/entrar`. Precisa de entrada própria: sem ela
+    // caía na catch-all de baixo, e um redireccionamento com estado 404 não é
+    // uma resposta válida — o build recusava-se a terminar.
+    path: 'login',
+    renderMode: RenderMode.Server,
+  },
+  {
     path: 'cursos/:id',
     renderMode: RenderMode.Prerender,
     async getPrerenderParams() {

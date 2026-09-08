@@ -24,4 +24,14 @@ export class DocenciaService {
   readonly titulacoes = computed(() =>
     localizarProfundo(this.titulacoesBrutas(), this.traducao.idioma()),
   );
+
+  /**
+   * Rótulo **em português** da titulação escolhida, a partir do `id` que o select
+   * guarda. É o que vai no `maior_titulo` da candidatura: a API é monolingue e
+   * guarda texto livre, por isso o backoffice tem de receber sempre a mesma
+   * cadeia, mesmo quando o candidato preenche o formulário em inglês.
+   */
+  rotuloTitulacaoEmPortugues(id: string): string {
+    return this.titulacoesBrutas().find((titulacao) => titulacao.id === id)?.rotulo.pt ?? id;
+  }
 }
