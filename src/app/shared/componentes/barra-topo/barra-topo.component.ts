@@ -15,7 +15,8 @@ import { IconeComponent } from '../icone/icone.component';
         <div class="flex items-center">
           @for (item of items; track $index) {
             <a
-              href="{{ item.link }}"
+              [routerLink]="item.link"
+              [fragment]="item.fragment"
               class="text-white text-xs px-2 py-1 transition-colors duration-200 hover:text-secondary"
               >{{ item.label }}</a
             >
@@ -84,9 +85,9 @@ import { IconeComponent } from '../icone/icone.component';
 })
 export class BarraTopoComponent {
   protected readonly traducao = inject(TraducaoService);
-  items = [
-    { label: 'Faculdades e Departamentos', link: '#' },
-    { label: 'Contactos', link: '#' },
+  items: { label: string; link: string; fragment?: string }[] = [
+    { label: 'Faculdades e Departamentos', link: '/sobre', fragment: 'faculdades-departamentos' },
+    { label: 'Contactos', link: '/contactos' },
   ];
   protected mudarIdioma(idioma: Idioma): void {
     this.traducao.definirIdioma(idioma);

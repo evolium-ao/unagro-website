@@ -22,6 +22,7 @@ import { ContainerPaginaComponent } from '../../shared/componentes/container-pag
 import { EspacoImagemComponent } from '../../shared/componentes/espaco-imagem/espaco-imagem.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { SeloComponent } from '../../shared/componentes/selo/selo.component';
+import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 
 /** Um facto do curso apresentado na faixa de métricas sob o hero. */
 interface MetricaCurso {
@@ -118,7 +119,8 @@ const FAQ_CURSO_BRUTO: PerguntaCurso[] = [
     BotaoComponent,
     SeloComponent,
     IconeComponent,
-  ],
+    ContainerBannerFaixaEstatisticaComponent
+],
   templateUrl: './detalhe-curso.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { CaminhoDicionario } from '../../core/traducao/dicionario';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { AbasComponent, ItemAba } from '../../shared/componentes/abas/abas.component';
@@ -38,6 +47,9 @@ const ABAS_SOBRE: readonly { id: IdAbaSobre; label: CaminhoDicionario }[] = [
   { id: 'governanca', label: 'nav.sobreMenu.governanca' },
 ];
 
+/** Para validar o fragmento da URL (`/sobre#<id>`) antes de o usar como aba ativa. */
+const IDS_ABAS_SOBRE = new Set<IdAbaSobre>(ABAS_SOBRE.map((aba) => aba.id));
+
 /**
  * Página `/sobre` da proposta nova: banner de página (como em `/formacoes`) e, abaixo,
  * as sete abas que substituem os modais do submenu "Sobre UNAGRO". Cada aba é um
@@ -65,8 +77,25 @@ const ABAS_SOBRE: readonly { id: IdAbaSobre; label: CaminhoDicionario }[] = [
 })
 export class SobreComponent {
   protected readonly traducao = inject(TraducaoService);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly abaAtiva = signal<string>(ABAS_SOBRE[0].id);
+
+  /**
+   * `/sobre#faculdades-departamentos` (por exemplo, a partir da barra do topo) abre
+   * directamente nessa aba — sem isto o `switch` do template ignoraria o fragmento e
+   * mostrar-se-ia sempre a primeira aba.
+   */
+  private readonly fragmentoUrl = toSignal(this.route.fragment);
+
+  constructor() {
+    effect(() => {
+      const fragmento = this.fragmentoUrl();
+      if (fragmento && IDS_ABAS_SOBRE.has(fragmento as IdAbaSobre)) {
+        this.abaAtiva.set(fragmento);
+      }
+    });
+  }
 
   protected readonly abas = computed<ItemAba[]>(() =>
     ABAS_SOBRE.map((aba) => ({ id: aba.id, rotulo: this.traducao.t(aba.label) })),

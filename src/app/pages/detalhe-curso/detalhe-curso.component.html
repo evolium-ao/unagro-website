@@ -3,13 +3,17 @@
   {{ traducao.getTraducao(['A carregar o curso…', 'Loading the course…']) }}
 </div>
 } @else if (curso(); as c) {
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque [titulo]="tituloPartes().inicio" [tituloDestaque]="tituloPartes().destaque"
+    [subtitulo]="c.resumo" [ctas]="ctasHero()" [selos]="selosHero()" bg="/imagens/bg-candidatura-curso.png"
+    [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
+
 <!-- Hero — mesma estrutura do hero de candidaturas, com a última palavra do título a dourado -->
-<app-banner-destaque [titulo]="tituloPartes().inicio" [tituloDestaque]="tituloPartes().destaque" [subtitulo]="c.resumo"
-  [ctas]="ctasHero()" [selos]="selosHero()" bg="/imagens/bg-candidatura-curso.png" [temBackdrop]="true" />
 <!-- 1 sessão — apresentação do curso à esquerda e a sua imagem à direita -->
 <section class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
-    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
       <div class="max-w-md">
         <h2 class="text-2xl font-bold leading-snug text-text-primary sm:text-3xl">
           {{ traducao.t('paginas.detalheCurso.secao1Titulo') }}
@@ -28,7 +32,7 @@
 </section>
 
 <!-- Faixa de inscrições que fecha a secção 1 -->
-<section class="border-t border-gray-200 bg-bg-lighter px-4 py-6 sm:px-6 lg:px-8">
+<section class="border-t border-gray-200 bg-white px-4 py-6 sm:px-6 lg:px-8">
   <app-container-pagina>
     <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -40,7 +44,7 @@
         </p>
       </div>
 
-      <app-botao variante="primario" link="/candidaturas#secao-portal">
+      <app-botao variante="primario" link="/candidaturas/estudantes#secao-formulario">
         {{ traducao.t('paginas.detalheCurso.inscricoesBotao') }}
       </app-botao>
     </div>
@@ -97,7 +101,7 @@
     <div class="grid gap-6 lg:grid-cols-2">
       <div class="rounded-xl bg-bg-light p-8 border border-gray-300">
         <h2 class="text-xl font-bold text-text-primary">
-          {{ traducao.t('paginas.detalheCurso.metodologiaTitulo') }}--
+          {{ traducao.t('paginas.detalheCurso.metodologiaTitulo') }}
         </h2>
 
         <div class="mt-6 flex flex-col gap-5">
@@ -166,8 +170,7 @@
         {{ ctaFinalDescricao() }}
       </p>
 
-      <app-botao class="mt-8 inline-block" variante="secundario"
-        link="/candidaturas#secao-portal">
+      <app-botao class="mt-8 inline-block" variante="secundario" link="/candidaturas/estudantes#secao-formulario">
         {{ traducao.t('paginas.detalheCurso.inscricoesBotao') }}
       </app-botao>
     </div>
