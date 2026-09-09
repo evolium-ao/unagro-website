@@ -3,8 +3,8 @@ import { CartaoVidroComponent } from '../cartao-vidro/cartao-vidro.component';
 
 /**
  * Dados já localizados de uma história de antigo aluno. Interface própria para o
- * cartão não depender do modelo de domínio (`HistoriaAlumni`, que ainda traz o
- * curso e o ano de conclusão em `TextoTraduzido`).
+ * cartão não depender do modelo de recurso (`Alumni`, que ainda traz o campo
+ * `destaque` usado só para filtrar a lista antes de chegar aqui).
  */
 export interface HistoriaAlumniCartao {
   id: string;

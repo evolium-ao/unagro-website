@@ -1097,6 +1097,96 @@ reais (confirmado no `dist`, "Agronomia" aparece no HTML), e agora também o
 botão "Submeter candidatura".
 
 
+## alumni
+
+**Integrado em:** 2026-09-09, **só para a sessão 2** de
+`pages/alumni/alumni.component.html` (`#secao-historias-alumni`, "Onde estão
+os nossos Alumni?", `historiasDestaque()` em `app-cartao-historia-alumni`).
+Pedido explícito para não tocar na sessão 1 (`#secao-sobre-alumni`,
+`membrosRede()`/`pilares()`) nem na sessão 3 (`#secao-contribuir`) — as duas
+continuam alimentadas pelo mock partilhado `core/dados/estatisticas.mock.ts`.
+
+**A fachada `AlumniService` foi dividida em dois serviços**, porque misturava
+três preocupações por trás de sinais/`computed` sobre mocks (`historias`
+das histórias, `estatisticasImpacto` e `membrosRede`), e só a primeira tinha
+endpoint na API:
+
+- `src/app/core/servicos/alumni.service.ts` — **reescrito** para o serviço de
+  recurso puro do `GET /alumni` (sem sinais, sem cache): `listar(signal)` e
+  `obterPorId(id, signal)`; a interface crua `AlumniApi` e a função
+  `paraAlumni` ficam neste ficheiro.
+- `src/app/core/servicos/alumni-estatisticas.service.ts` — **novo**,
+  `AlumniEstatisticasService`, com o que sobrou do `AlumniService` antigo:
+  `estatisticasImpacto` e `membrosRede`, ainda `computed` sobre
+  `ESTATISTICAS_IMPACTO_ALUMNI_MOCK`/`ESTATISTICA_MEMBROS_ALUMNI_MOCK`
+  (`core/dados/estatisticas.mock.ts`, **não tocado**: a API de alumni não tem
+  endpoint de estatísticas agregadas).
+- `src/app/core/consultas/alumni.queries.ts` — `alumniQueries.raiz`,
+  `.lista(servico)` e `.porId(servico, id)`.
+- `src/app/core/modelos/alumni.model.ts` — `Alumni` novo (`id`, `nome`,
+  `cargoAtual`, `testemunho`, `foto?`, `destaque`), texto simples (regra dos
+  modelos vindos da API). **Substitui** o antigo `HistoriaAlumni`
+  (`TextoTraduzido`, com `curso`/`anoConclusao`) só para esta secção — ver "A
+  API não dá" abaixo.
+- `src/app/pages/alumni/alumni.component.ts` —
+  `injectQuery(() => alumniQueries.lista(...))`; `historiasDestaque` passou a
+  filtrar por `destaque === true` (a API já dá esse sinal por linha, em vez
+  da antiga heurística do mock `filter(!!foto).slice(0, 3)`); `historias`
+  (lista completa, sem consumidor no template) continua exposta, agora sobre
+  a query traduzida. `estatisticasImpacto`/`membrosRede` passaram a vir do
+  novo `AlumniEstatisticasService`, sem alteração de comportamento.
+- `src/app/shared/componentes/cartao-historia-alumni-esqueleto/` — esqueleto
+  novo, com a mesma moldura do `app-cartao-historia-alumni` (retrato
+  `aspect-[4/5]`, faixa de vidro fosco encostada ao fundo, testemunho por
+  baixo).
+
+**Mapeamento** (`AlumniResource` → `Alumni`): `id` → `String(id)`, `nome`
+mantém o nome, `cargo_atual` → `cargoAtual`, `citacao` → `testemunho`, `foto`
+→ `foto` (via `capaUtilizavel`), `destaque` mantém o nome. `curso`/`curso_id`,
+`created_at`, `updated_at` não são usados por esta secção (`curso` vem como o
+`CursoResource` inteiro embutido, mas `app-cartao-historia-alumni` só lê
+`id, nome, cargoAtual, testemunho, foto`).
+
+**O esquema OpenAPI declara `id`/`curso_id: string` e `destaque: string`**,
+mas a resposta real devolve `number`/`boolean` — os tipos aqui seguem a
+resposta real, como já se fez em `noticias`/`laboratorios`.
+
+**A API não dá:**
+
+1. **Ano de conclusão da pessoa.** Não há campo equivalente a
+   `anoConclusao`: `curso.data_fim` é a data de fim do curso em si, não do
+   percurso do aluno — não foi usado como substituto. Como o cartão desta
+   secção nunca mostrou ano de conclusão (só nome, cargo, foto e testemunho),
+   isto não tirou nada do ecrã actual, mas fica registado para uma futura
+   página de listagem completa de histórias, que provavelmente vai querer
+   mostrar o curso e o ano.
+2. **Curso do alumni**, pela mesma razão do ponto 1 — a API dá o objecto
+   `curso` completo, mas esta secção não o mostra, por isso não entrou no
+   modelo `Alumni`.
+
+**Fora do âmbito (por pedido explícito, não esquecido):** `membrosRede`,
+`pilares` (sessão 1) e os modos de contribuição da sessão 3 continuam a
+vir de mock/conteúdo estrutural fixo — nenhum dos dois tem endpoint próprio
+na API de alumni.
+
+**Mock apagado:** `core/dados/historias-alumni.mock.ts`
+(`HISTORIAS_ALUMNI_MOCK`) — só o `AlumniService` antigo o consumia. O modelo
+`core/modelos/historia-alumni.model.ts` (`HistoriaAlumni`) ficou sem
+consumidor a seguir e foi apagado também. `core/dados/estatisticas.mock.ts`
+**não foi tocado** — continua a alimentar `AlumniEstatisticasService` para as
+sessões 1 e 3.
+
+**Tradução automática:** `cargoAtual` e `testemunho` entram em
+`CAMPOS_TRADUZIVEIS_ALUMNI` (`nome` fica de fora de propósito, é nome
+próprio), mesma cadeia `traducaoQueries.lista` → `aplicarTraducao` já usada
+nos outros recursos.
+
+**SSR/prerender:** confirmado no `dist` do mesmo build — `alumni/index.html`
+traz alumni reais da API na secção ("Custódio Ngueve", "Isaltina Muhongo", a
+citação e a fotografia do `storage`), sem esqueleto nenhum. Beneficia da
+correcção geral do `notifyManager` registada na nota de campo de 2026-09-08.
+
+
 ## Tradução automática do conteúdo da API
 
 **Adicionado em:** 2026-09-08. Decisão consciente que **substitui** a regra anterior

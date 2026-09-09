@@ -50,10 +50,18 @@
       [textoAcao]="textoTodasHistorias()" [linkAcao]="linkTodasHistorias" />
 
     <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      @if (consultaAlumni.isPending()) {
+      @for (_ of [1, 2, 3]; track $index) {
+      <app-cartao-historia-alumni-esqueleto />
+      }
+      } @else if (consultaAlumni.isError()) {
+      <p class="col-span-full py-12 text-center text-sm text-white/70">{{ erroHistorias() }}</p>
+      } @else {
       @for (historia of historiasDestaque(); track historia.id) {
       <app-cartao-historia-alumni [historia]="historia" [appRevelarAoScroll]="$index" />
       } @empty {
       <p class="col-span-full py-12 text-center text-sm text-white/70">{{ semHistorias() }}</p>
+      }
       }
     </div>
   </app-container-pagina>

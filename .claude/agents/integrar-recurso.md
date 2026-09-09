@@ -24,7 +24,8 @@ integrar-recurso: <recurso> para: <página ou componente> descrição: <regras>
   `faculdades`, `galerias`, `duvidas-frequentes`, `investigadores`,
   `laboratorios`, `publicacoes`, `startups`, `treinamentos`, `carreiras`,
   `banners`, `planos-curriculares`, `categorias`, `equipa-projectos`,
-  `contatos`, `candidaturas`, `inscricoes`, `agendamento-visitas`.
+  `contatos`, `candidaturas`, `inscricoes`, `agendamento-visitas`, `alumni`,
+  `cronogramas`, `galeria-projectos`.
 - **`para:`** — que página ou componente passa a consumir. Aceita o nome da
   página (`inicio`, `formacoes`, …) ou o caminho do componente. **Se faltar,
   descobre tu quem consome o serviço/mock actual** (`grep -rn "<X>Service" src/`)

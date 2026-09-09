@@ -1,42 +1,63 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { HISTORIAS_ALUMNI_MOCK } from '../dados/historias-alumni.mock';
-import { Estatistica } from '../modelos/estatistica.model';
-import {
-  ESTATISTICAS_IMPACTO_ALUMNI_MOCK,
-  ESTATISTICA_MEMBROS_ALUMNI_MOCK,
-} from '../dados/estatisticas.mock';
-import { localizarProfundo } from '../traducao/localizar-profundo';
-import { TraducaoService } from '../traducao/traducao.service';
+import { Injectable, inject } from '@angular/core';
+import { ApiService } from '../api/api.service';
+import { capaUtilizavel } from '../api/capa-utilizavel';
+import { Alumni } from '../modelos/alumni.model';
 
-/** Quantas histórias com retrato a secção de destaque mostra. */
-const HISTORIAS_DESTAQUE = 3;
+/**
+ * Espelha o `AlumniResource` do OpenAPI — a forma crua, antes do mapeamento.
+ *
+ * `curso` vem como o `CursoResource` inteiro, mas o único consumidor desta
+ * camada por agora (`app-cartao-historia-alumni`, secção "Onde estão os
+ * nossos Alumni?") não mostra o curso nem um ano de conclusão — por isso
+ * `curso`/`curso_id` ficam por mapear. A API também não devolve nenhum
+ * equivalente a "ano de conclusão da pessoa" (`curso.data_fim` é a data de
+ * fim do curso em si, não serve de substituto) — ver "A API não dá" em
+ * `.claude/memory/integrar-recurso.md`.
+ *
+ * O esquema OpenAPI declara `id`/`curso_id` como `string` e `destaque` como
+ * `string` — a resposta real devolve number/boolean; segue-se a resposta
+ * real, como já se fez em `noticias.service.ts`.
+ */
+interface AlumniApi {
+  id: number;
+  nome: string;
+  foto: string | null;
+  cargo_atual: string;
+  citacao: string;
+  curso_id: number;
+  destaque: boolean;
+}
 
+/**
+ * Um método por endpoint de `GET /alumni`. Sem sinais e sem cache — é uma
+ * função de dados, e é ela que vai directa para o `queryFn` das consultas em
+ * `core/consultas/alumni.queries.ts`.
+ *
+ * As estatísticas institucionais da página `alumni` (sessão 1) não vivem
+ * aqui: a API de alumni não tem endpoint de estatísticas agregadas, e
+ * continuam alimentadas pelo mock em `AlumniEstatisticasService`.
+ */
 @Injectable({ providedIn: 'root' })
 export class AlumniService {
-  private readonly traducao = inject(TraducaoService);
-  private readonly historiasBrutas = signal(HISTORIAS_ALUMNI_MOCK);
-  private readonly estatisticasBrutas = signal(ESTATISTICAS_IMPACTO_ALUMNI_MOCK);
-  private readonly membrosRedeBruto = signal<Estatistica | undefined>(ESTATISTICA_MEMBROS_ALUMNI_MOCK);
+  private readonly api = inject(ApiService);
 
-  readonly historias = computed(() => localizarProfundo(this.historiasBrutas(), this.traducao.idioma()));
-  readonly estatisticasImpacto = computed(() =>
-    localizarProfundo(this.estatisticasBrutas(), this.traducao.idioma()),
-  );
+  listar(signal?: AbortSignal): Promise<Alumni[]> {
+    return this.api.get<AlumniApi[]>('alumni', { signal }).then((linhas) => linhas.map(paraAlumni));
+  }
 
-  /**
-   * Histórias em destaque da secção "Onde estão os nossos Alumni?": só as que têm
-   * retrato, no máximo três. A filtragem vive aqui — a página mostra o sinal, não
-   * faz `slice`.
-   */
-  readonly historiasDestaque = computed(() =>
-    this.historias()
-      .filter((historia) => !!historia.foto)
-      .slice(0, HISTORIAS_DESTAQUE),
-  );
+  obterPorId(id: number, signal?: AbortSignal): Promise<Alumni> {
+    return this.api.get<AlumniApi>(`alumni/${id}`, { signal }).then(paraAlumni);
+  }
+}
 
-  /** Indicador da dimensão da rede; `undefined` enquanto a API não o servir. */
-  readonly membrosRede = computed(() => {
-    const bruto = this.membrosRedeBruto();
-    return bruto ? localizarProfundo(bruto, this.traducao.idioma()) : undefined;
-  });
+/** Onde se corrigem os nomes dos campos da API para os do site. */
+function paraAlumni(linha: AlumniApi): Alumni {
+  return {
+    id: String(linha.id),
+    nome: linha.nome,
+    cargoAtual: linha.cargo_atual,
+    testemunho: linha.citacao,
+    foto: capaUtilizavel(linha.foto),
+    destaque: linha.destaque,
+  };
 }

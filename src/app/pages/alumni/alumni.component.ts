@@ -1,9 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { alumniQueries } from '../../core/consultas/alumni.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
+import { AlumniEstatisticasService } from '../../core/servicos/alumni-estatisticas.service';
 import { AlumniService } from '../../core/servicos/alumni.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
 import {
   BannerDestaqueComponent,
   CtaBannerDestaque,
@@ -11,6 +17,7 @@ import {
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { CampoTextoComponent } from '../../shared/componentes/campo-texto/campo-texto.component';
 import { CabecalhoSecaoComponent } from '../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
+import { CartaoHistoriaAlumniEsqueletoComponent } from '../../shared/componentes/cartao-historia-alumni-esqueleto/cartao-historia-alumni-esqueleto.component';
 import { CartaoHistoriaAlumniComponent } from '../../shared/componentes/cartao-historia-alumni/cartao-historia-alumni.component';
 import { CartaoRecursoComponent } from '../../shared/componentes/cartao-recurso/cartao-recurso.component';
 import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
@@ -88,6 +95,9 @@ const MODOS_CONTRIBUICAO_BRUTOS: PilarAlumniBruto[] = [
   },
 ];
 
+/** Campos de texto do alumni traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_ALUMNI = ['cargoAtual', 'testemunho'] as const;
+
 @Component({
   selector: 'app-alumni',
   imports: [
@@ -99,6 +109,7 @@ const MODOS_CONTRIBUICAO_BRUTOS: PilarAlumniBruto[] = [
     CabecalhoSecaoComponent,
     CartaoRecursoComponent,
     CartaoHistoriaAlumniComponent,
+    CartaoHistoriaAlumniEsqueletoComponent,
     ItemEstatisticaComponent,
     ItemInformacaoComponent,
     BotaoComponent,
@@ -110,12 +121,49 @@ const MODOS_CONTRIBUICAO_BRUTOS: PilarAlumniBruto[] = [
 })
 export class AlumniComponent {
   protected readonly traducao = inject(TraducaoService);
-  private readonly alumniService = inject(AlumniService);
+  private readonly servico = inject(AlumniService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
+  private readonly estatisticasService = inject(AlumniEstatisticasService);
 
-  protected readonly historias = this.alumniService.historias;
-  protected readonly historiasDestaque = this.alumniService.historiasDestaque;
-  protected readonly estatisticasImpacto = this.alumniService.estatisticasImpacto;
-  protected readonly membrosRede = this.alumniService.membrosRede;
+  protected readonly estatisticasImpacto = this.estatisticasService.estatisticasImpacto;
+  protected readonly membrosRede = this.estatisticasService.membrosRede;
+
+  /** `GET /alumni` — a lista vem inteira, sem paginação nem filtros do lado da API. */
+  protected readonly consultaAlumni = injectQuery(() => alumniQueries.lista(this.servico));
+
+  /**
+   * A API só devolve português (ver `.claude/README.md`); em inglês,
+   * `cargoAtual`/`testemunho` passam pela tradução automática antes de
+   * chegar a `historiasDestaque`. Enquanto a tradução carrega, ou se falhar,
+   * fica o texto original em português — nunca um cartão vazio.
+   */
+  private readonly consultaTraducaoAlumni = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaAlumni.data() ?? [], CAMPOS_TRADUZIVEIS_ALUMNI),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly alumniTraduzidos = computed(() =>
+    aplicarTraducao(
+      this.consultaAlumni.data() ?? [],
+      CAMPOS_TRADUZIVEIS_ALUMNI,
+      this.consultaTraducaoAlumni.data(),
+    ),
+  );
+
+  /** Lista completa traduzida; sem consumidor no template por agora, como no serviço original. */
+  protected readonly historias = this.alumniTraduzidos;
+
+  /**
+   * Histórias da secção "Onde estão os nossos Alumni?": a API já marca
+   * `destaque` por linha, por isso não se recria aqui a antiga heurística do
+   * mock (ter fotografia + `slice(0, 3)`).
+   */
+  protected readonly historiasDestaque = computed(() =>
+    this.alumniTraduzidos().filter((historia) => historia.destaque),
+  );
 
   protected readonly tituloHero = computed(() =>
     this.traducao.getTraducao(['Comunidade Alumni', 'Alumni Community']),
@@ -193,6 +241,13 @@ export class AlumniComponent {
     this.traducao.getTraducao([
       'Ainda não há histórias publicadas.',
       'There are no published stories yet.',
+    ]),
+  );
+
+  protected readonly erroHistorias = computed(() =>
+    this.traducao.getTraducao([
+      'Não foi possível carregar as histórias.',
+      'Could not load the stories.',
     ]),
   );
 
