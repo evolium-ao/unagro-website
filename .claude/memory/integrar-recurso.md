@@ -217,56 +217,54 @@ por confirmar com uma submissão real.
 `pages/eventos/eventos.component.html`. Arrastou também `pages/inicio` (secção
 "evento em destaque"), que já consumia o `EventosService` antigo.
 
+**Estendido em:** 2026-09-09, `GET /eventos/destaque` ligado à secção 3
+("evento em destaque") de `pages/inicio/inicio.component.html`, substituindo a
+antiga heurística client-side (`find` pelo primeiro evento com `dataInicio`).
+Ver "Actualização 2026-09-09" mais abaixo — **corrige o ponto 1 desta entrada**:
+a API passou a dar `data_inicio`/`data_fim`.
+
 **Camadas:**
 
-- `src/app/core/servicos/eventos.service.ts` — `listar(signal)` e
-  `obterPorId(id, signal)`; a interface crua `EventoApi` e a função `paraEvento`
-  ficam neste ficheiro. **Reescrito**: antes era um `computed` sobre
-  `EVENTOS_MOCK` com `localizarProfundo`, sem tocar na API.
-- `src/app/core/consultas/eventos.queries.ts` — `eventosQueries.raiz`, `.lista(servico)`
-  e `.porId(servico, id)`.
+- `src/app/core/servicos/eventos.service.ts` — `listar(signal)`,
+  `obterPorId(id, signal)` e `obterDestaque(signal)`; a interface crua
+  `EventoApi` e a função `paraEvento` ficam neste ficheiro. **Reescrito**: antes
+  era um `computed` sobre `EVENTOS_MOCK` com `localizarProfundo`, sem tocar na
+  API.
+- `src/app/core/consultas/eventos.queries.ts` — `eventosQueries.raiz`,
+  `.lista(servico)`, `.porId(servico, id)` e `.pegarDestaque(servico)`.
 - `src/app/core/modelos/evento.model.ts` — `Evento` passou de campos
   `TextoTraduzido` para texto simples (regra dos modelos vindos da API); ganhou
   `AMBITOS_EVENTO` e `ROTULOS_AMBITO_EVENTO` (rótulos de UI, não dados da API —
-  o mesmo padrão do `ROTULOS_CATEGORIA_PROJECTO`).
+  o mesmo padrão do `ROTULOS_CATEGORIA_PROJECTO`). `dataInicio`/`dataFim`
+  passaram de opcionais a obrigatórios em 2026-09-09 (ver abaixo).
 - `src/app/pages/eventos/eventos.component.ts` — `injectQuery(() => eventosQueries.lista(...))`;
   os `computed` de filtro por âmbito, paginação, destaque/secundários e mensagem
   de lista vazia continuam todos, só que sobre `consultaEventos.data()`.
-- `src/app/pages/inicio/inicio.component.ts` — idem, com `eventoPrincipal`
-  recalculado (ver abaixo).
+- `src/app/pages/inicio/inicio.component.ts` — secção 3 passou a usar
+  `injectQuery(() => eventosQueries.pegarDestaque(...))` (query própria, **não**
+  a lista completa) — ver "Actualização 2026-09-09".
 - `src/app/shared/componentes/cartao-evento-foto-esqueleto/` — esqueleto novo,
   com os dois formatos (`vertical`/`destaque`) do `app-cartao-evento-foto`.
+- `src/app/shared/componentes/cartao-evento-destaque-esqueleto/` — esqueleto
+  novo (2026-09-09), com a mesma moldura (`rounded-xl`, `border-l-6`) e o par de
+  colunas texto/painel-de-contagem do `app-cartao-evento-destaque`.
 
 **Mapeamento** (`EventoResource` → `Evento`): `id` → `String(id)`,
 `localizacao` → `local`, `capa_url` → `imagem_url` (via `capaUtilizavel`),
 `abrangencia` → `ambito`, com `nacional`/`internacional` inalterados e
 **`unagro_prometed` → `unagro`** (a API escreve "prometed", erro tipográfico de
-"promovido"). `titulo`/`descricao` mantêm o nome. `created_at`/`updated_at` não
-são usados pelo site.
+"promovido"). `titulo`/`descricao` mantêm o nome. `data_inicio`/`data_fim` →
+`dataInicio`/`dataFim` (desde 2026-09-09, ver abaixo). `destaque`,
+`created_at`/`updated_at` não são usados pelo site.
 
 **A API não dá:**
 
-1. **Data do evento.** O `EventoResource` só tem `id`, `capa_url`, `titulo`,
-   `descricao`, `localizacao`, `abrangencia`, `created_at`, `updated_at` — nenhum
-   campo de data/hora do acontecimento em si. `dataInicio`/`dataFim` ficaram
-   **opcionais** no `Evento`, e:
-   - no `app-cartao-evento-foto`, o selo de data (ícone de calendário) some
-     quando `dataInicio` falta — o que acontece para todos os eventos reais
-     de momento;
-   - em `pages/inicio`, a secção "evento em destaque" (`app-cartao-evento-destaque`,
-     que exige `dataInicio` para a contagem decrescente) só mostra um evento se
-     `dataInicio` existir; como nenhum evento da API a tem, a secção cai sempre
-     na mensagem "Ainda não há eventos agendados." já prevista no template —
-     não se inventou data nenhuma para preencher a contagem.
-2. **Sem `destaque`/flag de evento principal.** O antigo mock marcava um evento
-   como `destaque: true`; a API não tem equivalente. `pages/inicio` já não
-   escolhe por essa flag (o `find` procura o primeiro com `dataInicio`, que por
-   agora nunca acontece — ver ponto 1).
-3. **Sem categoria/selo textual separado do âmbito.** O mock antigo tinha um
+1. ~~Data do evento~~ **Corrigido em 2026-09-09** — ver "Actualização" abaixo.
+2. **Sem categoria/selo textual separado do âmbito.** O mock antigo tinha um
    campo `selo` bilingue independente (ex.: "Cooperativa" para um evento
    `corporacao`); a API só dá `abrangencia`. O selo do cartão passou a ser o
    rótulo traduzido do próprio `ambito` (`ROTULOS_AMBITO_EVENTO`).
-4. **Sem âmbito "corporação".** O filtro lateral de `eventos.component.ts` tinha
+3. **Sem âmbito "corporação".** O filtro lateral de `eventos.component.ts` tinha
    uma opção "Corporações" que não corresponde a nenhum valor de `abrangencia`
    da API (só `nacional`, `internacional`, `unagro_prometed`); foi removida da
    barra de filtros em vez de ficar como opção permanentemente vazia.
@@ -277,6 +275,54 @@ são usados pelo site.
 **SSR: o servidor não espera pela query**, o mesmo problema já registado para
 `noticias` e `laboratorios` acima. Confirmado no `dist`: o prerender de
 `/eventos` sai com os `app-cartao-evento-foto-esqueleto` e sem evento nenhum.
+**Nota:** este problema foi diagnosticado e corrigido durante a integração de
+`investigadores` (2026-09-08, ver secção abaixo) — o prerender de `/` já traz o
+evento em destaque desde a extensão de 2026-09-09 (confirmado no `dist`).
+
+### Actualização 2026-09-09 — `/eventos/destaque` e datas do evento
+
+**O `EventoResource` mudou desde a integração original: já dá `destaque`
+(`boolean`) e `data_inicio`/`data_fim` (`date-time`, sempre presentes,
+confirmado com `curl` em `GET /eventos` e `GET /eventos/destaque`).** Isto
+invalida os pontos 1 e 2 do "A API não dá" registados em 2026-09-08 — na altura
+a API genuinamente não tinha estes campos; passou a ter.
+
+**Endpoint novo:** `GET /eventos/destaque` — devolve um único `EventoResource`
+(mesma forma de um item de `GET /eventos/{id}`, não um envelope diferente),
+o evento com `destaque: true`. `EventosService.obterDestaque(signal)` reaproveita
+o mesmo `paraEvento` dos outros métodos. `eventosQueries.pegarDestaque(servico)`
+segue o padrão das outras fábricas (`ErroApi` no genérico, `signal` passado ao
+`queryFn`).
+
+**`Evento.dataInicio`/`Evento.dataFim` deixaram de ser opcionais** — a API
+garante-os (`required` no schema, confirmado nas respostas reais). Os
+consumidores que já os tratavam como opcionais (`app-cartao-evento-foto`,
+`EventoFotoCartao.dataInicio?`) não precisaram de mudar, só passaram a receber
+sempre um valor em vez de `undefined`.
+
+**`pages/inicio.component.ts`, secção "evento em destaque":** a heurística
+antiga (`consultaEventos` completa + `find` pelo primeiro `dataInicio` truthy)
+foi substituída por uma query dedicada:
+`consultaEventoDestaque = injectQuery(() => eventosQueries.pegarDestaque(this.eventosService))`.
+Como a query devolve um único evento e a tradução automática (`camposParaTraduzir`/
+`aplicarTraducao`) trabalha sobre listas, o componente embrulha o resultado numa
+lista de um (`eventoDestaqueLista`) antes de traduzir, e volta a desembrulhar
+(`[0]`) no `eventoPrincipal`. Os três estados no template: `isPending()` →
+`app-cartao-evento-destaque-esqueleto`, `isError()` → texto traduzido
+("Não foi possível carregar o evento em destaque."), resolvido sem evento →
+mantém-se a mensagem "Ainda não há eventos agendados." já prevista (cobre o
+caso, ainda que raro agora, de nenhum evento ter `destaque: true`).
+
+**Valores reais dos dados de seed (2026-09-09):** todos os eventos observados
+têm `data_inicio`/`data_fim` iguais entre si (`2027-01-01` a `2027-01-02`) —
+parecem dados de preenchimento (*placeholder*) e não datas reais por evento.
+Funcionalmente a contagem decrescente do `app-cartao-evento-destaque` já
+trabalha com esse valor; fica registado para quem tratar dos dados de seed do
+lado do Laravel não estranhar todos os eventos apontarem para a mesma data.
+
+**Tradução automática:** `CAMPOS_TRADUZIVEIS_EVENTO` (`titulo`, `descricao`,
+`local`) já existia (ligado à listagem de `eventos.component.ts` e à antiga
+secção de `inicio`); reaproveitado tal e qual para o evento único da secção 3.
 
 
 ## treinamentos
@@ -475,6 +521,53 @@ morreram na validação, com e-mail/curso inválidos de propósito).
 
 **SSR:** não aplicável — não há `GET` nem query, o `injectMutation` só corre a
 pedido do utilizador.
+
+**Extensão — inscrição em evento (2026-09-09):** `POST /inscricoes/evento`
+(`InscricaoEventoRequest`, endpoint próprio e distinto do `/inscricoes` de
+curso, sem o problema de `curso_id` documentado acima — `evento_id` valida
+contra a própria tabela `eventos`), para o novo
+`shared/componentes/modal-inscricao-evento` aberto por
+`pages/eventos/eventos.component.ts` (botão "Inscrever-se" dos cartões
+`app-cartao-evento-foto`, destaque e secundários).
+
+- `src/app/core/servicos/inscricoes.service.ts` — ganhou `criarEvento(dados,
+  signal)`, a interface crua `InscricaoEventoRequest` e a função
+  `paraPedidoEvento`, ao lado do `criar`/`InscricaoRequest` de curso já
+  existentes no mesmo ficheiro.
+- `src/app/core/modelos/inscricao-evento.model.ts` — `NovaInscricaoEvento`
+  (`eventoId`, `nome`, `email`, `telefone`), espelha `NovaInscricaoCurso`.
+- `src/app/shared/componentes/modal-inscricao-evento/` —
+  `modal-inscricao-evento.component.ts` (`injectMutation<void, ErroApi,
+  NovaInscricaoEvento>`) e `campos-inscricao-evento.component.ts`, cópia
+  estrutural do par `modal-inscricao-curso`/`campos-inscricao-curso`, com
+  "Curso desejado" trocado por "Evento desejado".
+- `src/app/shared/componentes/cartao-evento-foto/cartao-evento-foto.component.ts` —
+  ganhou `acaoComoBotao`/`inscricaoSolicitada` (mesmo padrão do
+  `app-cartao-curso-curta-duracao`): por omissão o botão continua a ser o
+  `[link]="evento().link"` de sempre; com `acaoComoBotao` a `true` vira botão
+  que emite o evento clicado.
+- `src/app/pages/eventos/eventos.component.ts` — novo `todosEventos` (o mapeamento
+  de `eventosTraduzidos()` para `EventoFotoCartao[]`, extraído de
+  `eventosFiltrados` para servir de opções ao select do modal, sem filtro de
+  âmbito) e `abrirInscricaoEvento(evento)`, mesmo desenho do
+  `abrirInscricaoCurso` de `formacoes.component.ts`.
+
+**Mapeamento** (`NovaInscricaoEvento` → `InscricaoEventoRequest`): `eventoId` →
+`evento_id` (`Number`), `nome`/`email`/`telefone` sem mudança de nome —
+idêntico ao mapeamento de curso.
+
+**Não verificado com um `POST` real contra a API** (ao contrário da inscrição
+em curso, que foi testada com corpos inválidos de propósito): o schema
+(`InscricaoEventoRequest`, obrigatórios `evento_id`/`nome`/`email`) foi
+confirmado no `api.json`, mas não houve um pedido de teste — o endpoint é
+público e escreve, e evitou-se criar uma inscrição real sem necessidade. Se o
+formulário falhar em produção com um erro que não seja de validação de campo,
+confirmar primeiro se `evento_id` bate com o `id` que `GET /eventos` devolve
+(deveria, ao contrário do problema documentado acima para cursos de curta
+duração).
+
+**SSR:** não aplicável — mesmo caso do `/inscricoes` de curso, sem `GET` nem
+query associada.
 
 
 ## investigadores

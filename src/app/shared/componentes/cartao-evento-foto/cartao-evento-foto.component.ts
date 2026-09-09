@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { formatarDataCurta } from '../../../core/traducao/formatar-data';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { BotaoComponent } from '../botao/botao.component';
@@ -66,7 +66,12 @@ export interface EventoFotoCartao {
               <app-icone nome="map-pin" [tamanho]="13" />
               {{ evento().local }}
             </span>
-            <app-botao variante="primario" tamanho="sm" [link]="evento().link">
+            <app-botao
+              variante="primario"
+              tamanho="sm"
+              [link]="destino()"
+              (clicado)="inscricaoSolicitada.emit(evento())"
+            >
               {{ textoInscricao() }}
             </app-botao>
           </div>
@@ -110,7 +115,8 @@ export interface EventoFotoCartao {
               tamanho="sm"
               raio="medio"
               [larguraTotal]="true"
-              [link]="evento().link"
+              [link]="destino()"
+              (clicado)="inscricaoSolicitada.emit(evento())"
             >
               {{ textoInscricao() }}
             </app-botao>
@@ -126,8 +132,22 @@ export class CartaoEventoFotoComponent {
   readonly formato = input<FormatoCartaoEventoFoto>('vertical');
   /** Só no formato `vertical`; o `destaque` mantém sempre o botão cheio. */
   readonly varianteBotao = input<'primario' | 'contorno'>('primario');
+  /**
+   * Por omissão o botão "Inscrever-se" é o link para `evento().link`, como sempre foi.
+   * A `true`, passa a ser um botão que emite `inscricaoSolicitada` e deixa a acção a
+   * quem usa o cartão — é assim que a página de eventos abre o modal de inscrição.
+   */
+  readonly acaoComoBotao = input(false);
+
+  /** Pedido de inscrição no evento do cartão. Só emite com `acaoComoBotao` a `true`. */
+  readonly inscricaoSolicitada = output<EventoFotoCartao>();
 
   protected readonly traducao = inject(TraducaoService);
+
+  /** Sem destino, o `app-botao` renderiza um `<button>` em vez de um `<a>`. */
+  protected readonly destino = computed(() =>
+    this.acaoComoBotao() ? undefined : this.evento().link,
+  );
 
   protected readonly dataFormatada = computed(() => {
     const dataInicio = this.evento().dataInicio;

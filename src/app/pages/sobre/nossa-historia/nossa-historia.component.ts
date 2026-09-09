@@ -65,8 +65,7 @@ import { RevelarAoScrollDirective } from '../../../shared/diretivas/revelar-ao-s
         <img
           src="/imagens/campus-aereo.png"
           alt="Vista aérea do campus da UNAGRO"
-          width="550"
-          height="786"
+          width="350"
           class="relative aspect-[3/4] w-full rounded-2xl object-cover shadow-xl"
         />
       </div>

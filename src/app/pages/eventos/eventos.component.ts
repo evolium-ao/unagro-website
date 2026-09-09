@@ -7,6 +7,7 @@ import { EventosService } from '../../core/servicos/eventos.service';
 import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
+import { AlertModalService } from '../../shared/componentes/alert-modal/alert-modal.service';
 import {
   BannerDestaqueComponent,
   CtaBannerDestaque,
@@ -21,6 +22,11 @@ import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/component
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { IconeComponent } from '../../shared/componentes/icone/icone.component';
 import { ItemFiltroLateralComponent } from '../../shared/componentes/item-filtro-lateral/item-filtro-lateral.component';
+import {
+  DadosInscricaoEvento,
+  ID_MODAL_INSCRICAO_EVENTO,
+  ModalInscricaoEventoComponent,
+} from '../../shared/componentes/modal-inscricao-evento/modal-inscricao-evento.component';
 import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scroll.directive';
 
 const TODOS_OS_AMBITOS = '__todos__';
@@ -64,6 +70,7 @@ export class EventosComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly servico = inject(EventosService);
   private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
+  private readonly modais = inject(AlertModalService);
 
   protected readonly tituloHero = computed(() =>
     this.traducao.getTraducao(['Simpósio', 'International']),
@@ -176,6 +183,21 @@ export class EventosComponent {
     })),
   ]);
 
+  /** Todos os eventos traduzidos, já na forma do cartão — sem filtro de âmbito nem paginação. */
+  protected readonly todosEventos = computed<EventoFotoCartao[]>(() =>
+    this.eventosTraduzidos().map((evento) => ({
+      id: evento.id,
+      titulo: evento.titulo,
+      descricao: evento.descricao,
+      categoria: this.traducao.getTraducao(ROTULOS_AMBITO_EVENTO[evento.ambito]),
+      local: evento.local,
+      dataInicio: evento.dataInicio,
+      imagem: evento.imagem_url,
+      // TODO: trocar por /eventos/:id quando existir a rota de detalhe do evento.
+      link: '/contactos',
+    })),
+  );
+
   private readonly eventosFiltrados = computed<EventoFotoCartao[]>(() => {
     const ambito = this.ambitoSelecionado();
     return this.eventosTraduzidos()
@@ -223,5 +245,27 @@ export class EventosComponent {
 
   protected seguintes(): void {
     this.pagina.update((pagina) => Math.min(this.totalPaginas() - 1, pagina + 1));
+  }
+
+  /**
+   * "Inscrever-se" de um cartão: abre o formulário de inscrição com o evento clicado
+   * já escolhido. O cartão só avisa — quem conhece o modal é a página.
+   */
+  protected abrirInscricaoEvento(evento: EventoFotoCartao): void {
+    const dados: DadosInscricaoEvento = {
+      eventoSelecionado: evento,
+      eventos: this.todosEventos(),
+    };
+
+    void this.modais.modal({
+      id: ID_MODAL_INSCRICAO_EVENTO,
+      template: ModalInscricaoEventoComponent,
+      tamanho: 'xgrande',
+      temHeader: false,
+      semBotoes: true,
+      // É um formulário: um clique no fundo não o pode fazer desaparecer.
+      fecharAoClicarFundo: false,
+      data: dados,
+    });
   }
 }

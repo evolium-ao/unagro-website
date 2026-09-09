@@ -22,15 +22,10 @@ export interface Evento {
   ambito: AmbitoEvento;
   /** URL da fotografia de capa; sem ela o cartão mostra o espaço reservado. */
   imagem_url?: string;
-  /**
-   * A API ainda não guarda a data do evento — só `created_at`/`updated_at`,
-   * que são datas de registo, não do acontecimento. Fica ausente até o
-   * back-end a dar; onde a página mostra a data ou a contagem decrescente, a
-   * secção desaparece. Ver "A API não dá" em `.claude/memory/integrar-recurso.md`.
-   */
-  dataInicio?: string;
-  /** Só para eventos de vários dias; sem ela mostra-se apenas a data de início. */
-  dataFim?: string;
+  /** Data/hora de início do evento (`data_inicio` da API, sempre presente no `EventoResource`). */
+  dataInicio: string;
+  /** Só relevante para eventos de vários dias; a API devolve sempre um valor, mas nem toda a UI o usa. */
+  dataFim: string;
 }
 
 /** Ordem em que os âmbitos aparecem na barra de filtros. */

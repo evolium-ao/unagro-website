@@ -6,10 +6,11 @@ import { AmbitoEvento, Evento } from '../modelos/evento.model';
 /**
  * Espelha o `EventoResource` do OpenAPI — a forma crua, antes do mapeamento.
  *
- * A API **não tem data do evento** (só `created_at`/`updated_at`, datas de
- * registo) — ver a nota em `evento.model.ts`. Também não devolve `categoria`
- * nem `selo` separados do `abrangencia`; o rótulo do selo é derivado do
- * `ambito` no componente, com `ROTULOS_AMBITO_EVENTO`.
+ * A API não devolve `categoria` nem `selo` separados do `abrangencia`; o
+ * rótulo do selo é derivado do `ambito` no componente, com
+ * `ROTULOS_AMBITO_EVENTO`. `destaque` marca o evento devolvido por
+ * `GET /eventos/destaque`, mas o site não usa esse sinalizador na listagem —
+ * é o endpoint dedicado que decide, não um filtro deste lado.
  */
 interface EventoApi {
   id: number;
@@ -18,6 +19,9 @@ interface EventoApi {
   descricao: string | null;
   localizacao: string | null;
   abrangencia: 'nacional' | 'internacional' | 'unagro_prometed';
+  destaque: boolean;
+  data_inicio: string;
+  data_fim: string;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -45,6 +49,11 @@ export class EventosService {
   obterPorId(id: number, signal?: AbortSignal): Promise<Evento> {
     return this.api.get<EventoApi>(`eventos/${id}`, { signal }).then(paraEvento);
   }
+
+  /** `GET /eventos/destaque` — o único evento marcado como destaque; devolve o `EventoResource` directamente. */
+  obterDestaque(signal?: AbortSignal): Promise<Evento> {
+    return this.api.get<EventoApi>('eventos/destaque', { signal }).then(paraEvento);
+  }
 }
 
 /** Onde se corrigem os nomes dos campos da API para os do site. */
@@ -56,5 +65,7 @@ function paraEvento(linha: EventoApi): Evento {
     local: linha.localizacao ?? '',
     ambito: AMBITOS_API[linha.abrangencia] ?? 'nacional',
     imagem_url: capaUtilizavel(linha.capa_url),
+    dataInicio: linha.data_inicio,
+    dataFim: linha.data_fim,
   };
 }

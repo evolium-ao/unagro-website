@@ -86,10 +86,16 @@
     </app-container-pagina>
   </section>
 
-  <!-- 3 sessão — evento em destaque com contagem decrescente (GET /eventos, o marcado como destaque) -->
+  <!-- 3 sessão — evento em destaque com contagem decrescente (GET /eventos/destaque) -->
   <section id="secao-evento-destaque" class="bg-bg-lighter py-12 sm:py-14">
     <app-container-pagina>
-      @if (eventoPrincipal(); as destaque) {
+      @if (consultaEventoDestaque.isPending()) {
+      <app-cartao-evento-destaque-esqueleto />
+      } @else if (consultaEventoDestaque.isError()) {
+      <p class="py-12 text-center text-sm text-text-secondary">
+        {{ erroEventoDestaque() }}
+      </p>
+      } @else if (eventoPrincipal(); as destaque) {
       <app-cartao-evento-destaque [evento]="destaque" [imagemFundo]="destaque.imagem_url" link="/eventos"
         appRevelarAoScroll />
       } @else {

@@ -23,4 +23,11 @@ export const eventosQueries = {
       queryKey: [...eventosQueries.raiz, 'detalhe', id],
       queryFn: ({ signal }) => servico.obterPorId(id, signal),
     }),
+
+  /** `GET /eventos/destaque` — o evento marcado como destaque, para a faixa da página inicial. */
+  pegarDestaque: (servico: EventosService) =>
+    queryOptions<Evento, ErroApi>({
+      queryKey: [...eventosQueries.raiz, 'destaque'],
+      queryFn: ({ signal }) => servico.obterDestaque(signal),
+    }),
 };
