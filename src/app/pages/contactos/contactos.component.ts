@@ -14,6 +14,7 @@ import { ContatosService } from '../../core/servicos/contatos.service';
 import { localizarProfundo } from '../../core/traducao/localizar-profundo';
 import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoService } from '../../core/traducao/traducao.service';
+import { AlertModalService } from '../../shared/componentes/alert-modal/alert-modal.service';
 import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../shared/componentes/botao/botao.component';
 import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
@@ -121,6 +122,7 @@ const DETALHES_LOCALIZACAO_BRUTOS: DetalheLocalizacaoBruto[] = [
 export class ContactosComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly contatos = inject(ContatosService);
+  private readonly modais = inject(AlertModalService);
 
   /**
    * `POST /contatos` — endpoint público, sem `Authorization`. Não há nada para
@@ -245,6 +247,10 @@ export class ContactosComponent {
       : this.traducao.getTraducao(['Enviar Mensagem', 'Send Message']),
   );
 
+  protected readonly tituloSucesso = computed(() =>
+    this.traducao.getTraducao(['Mensagem enviada', 'Message sent']),
+  );
+
   protected readonly mensagemSucesso = computed(() =>
     this.traducao.getTraducao([
       'Mensagem enviada. A nossa equipa responderá dentro de instantes.',
@@ -353,8 +359,11 @@ export class ContactosComponent {
         mensagem: valores.mensagem,
       },
       {
+        // Mesmo padrão dos modais de inscrição: a confirmação é o modal de sucesso
+        // partilhado, não texto solto no formulário.
         onSuccess: () => {
           this.formulario.reset({ nome: '', email: '', assunto: '', mensagem: '' });
+          void this.modais.sucesso(this.mensagemSucesso(), this.tituloSucesso());
         },
       },
     );

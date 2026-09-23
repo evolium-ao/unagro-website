@@ -63,7 +63,8 @@ import { IconeComponent } from '../icone/icone.component';
           </div>
 
           @if (linha().cta; as cta) {
-            <app-botao variante="contorno" tamanho="sm" [link]="cta.link">
+            <!-- \`glass\`: o \`contorno\` (verde sobre verde-escuro) ficava invisível na faixa. -->
+            <app-botao variante="glass" tamanho="sm" icone="arrow-right" posicaoIcone="direita" [link]="cta.link">
               {{ traducao.getTraducao(cta.texto) }}
             </app-botao>
           }

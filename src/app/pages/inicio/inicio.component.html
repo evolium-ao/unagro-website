@@ -57,12 +57,10 @@
         </div>
         <app-cartao-noticia-resumo-esqueleto class="md:col-span-2 lg:col-span-1" />
       </div>
-      } @else if (noticiaDestaque()) {
+      } @else if (noticiaDestaque(); as destaque) {
       <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        @if (noticiaDestaque(); as destaque) {
-        <app-cartao-noticia-destaque [noticia]="destaque" [mostrarSelo]="destaque.destaque"
-          [link]="'/noticias/' + destaque.id" [appRevelarAoScroll]="0" />
-        }
+        <app-cartao-noticia-destaque [noticia]="destaque" [link]="'/noticias/' + destaque.id"
+          [appRevelarAoScroll]="0" />
 
         @if (noticiasEmpilhadas().length) {
         <div class="grid gap-6 lg:grid-rows-2">
@@ -76,6 +74,14 @@
         @if (noticiaLateral(); as lateral) {
         <app-cartao-noticia-resumo [noticia]="lateral" class="md:col-span-2 lg:col-span-1"
           [link]="'/noticias/' + lateral.id" [appRevelarAoScroll]="3" />
+        }
+      </div>
+      } @else if (noticiasSemDestaque().length) {
+      <!-- Sem notícia em destaque nesta página: cartões de resumo lado a lado. -->
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:auto-rows-[26rem] lg:grid-cols-4">
+        @for (noticia of noticiasSemDestaque(); track noticia.id) {
+        <app-cartao-noticia-resumo [noticia]="noticia" [link]="'/noticias/' + noticia.id"
+          [appRevelarAoScroll]="$index" />
         }
       </div>
       } @else {
@@ -96,8 +102,8 @@
         {{ erroEventoDestaque() }}
       </p>
       } @else if (eventoPrincipal(); as destaque) {
-      <app-cartao-evento-destaque [evento]="destaque" [imagemFundo]="destaque.imagem_url" link="/eventos"
-        appRevelarAoScroll />
+      <app-cartao-evento-destaque [evento]="destaque" [imagemFundo]="destaque.imagem_url"
+        (detalhesSolicitados)="abrirDetalheEvento(destaque)" appRevelarAoScroll />
       } @else {
       <p class="py-12 text-center text-sm text-text-secondary">
         {{ traducao.getTraducao(['Ainda não há eventos agendados.', 'No events scheduled yet.']) }}

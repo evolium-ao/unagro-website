@@ -83,8 +83,7 @@ export class CartaoNoticiaDestaqueComponent {
   readonly variante = input<'padrao' | 'simples'>('padrao');
   /**
    * Selo "Em destaque" no canto (só na variante `padrao`). Por omissão fica
-   * visível, como sempre foi; desliga-se quando o cartão ocupa o lugar grande da
-   * grelha sem que a notícia esteja marcada como destaque na API.
+   * visível; o cartão só deve receber notícias marcadas como destaque na API.
    */
   readonly mostrarSelo = input(true);
   /** Descrição da fotografia a colocar no espaço reservado enquanto não há imagem real. */

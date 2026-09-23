@@ -17,20 +17,20 @@ import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { AlertModalService } from '../alert-modal/alert-modal.service';
 import { ModalDataService } from '../alert-modal/modal-data.service';
 import { BotaoComponent } from '../botao/botao.component';
-import { OpcaoCartaoSelecao } from '../grupo-cartoes-selecao/grupo-cartoes-selecao.component';
 import { IconeComponent } from '../icone/icone.component';
 import { validarTelefoneComIndicativo } from '../../formulario/validadores';
-import { CamposAgendarVisitaComponent } from './campos-agendar-visita.component';
+import { CamposAgendarVisitaComponent, UnidadeVisita } from './campos-agendar-visita.component';
 
 /** Identificador do modal, para o abrir e fechar a partir de qualquer ponto da app. */
 export const ID_MODAL_AGENDAR_VISITA = 'modal-agendar-visita';
 
 /** O que a página passa em `data` ao abrir o modal. */
 export interface DadosAgendarVisita {
-  /** Unidade cujo "Visitar Unidade" foi clicado — chega já seleccionada. */
+  /**
+   * Unidade cujo "Visitar Unidade" foi clicado. Não há escolha dentro do modal —
+   * o modal só abre a partir do cartão da unidade, por isso é ela que se visita.
+   */
   unidadeSelecionada: UnidadeInvestigacao;
-  /** Todas as unidades, para desenhar a fila de cartões seleccionáveis. */
-  unidades: UnidadeInvestigacao[];
 }
 
 /** Ícone de recurso quando a unidade não traz `icone` nos dados. */
@@ -71,11 +71,11 @@ const ICONE_UNIDADE_PADRAO = 'flask-conical';
           Postos aqui directamente, eram construídos no passe de criação — antes do
           binding — e o criarErrosFormulario deles encontrava o form do
           FormGroupDirective a null. É por isso que os passos da candidatura de
-          docentes vivem dentro de um @switch. A condição também vale por si: sem as
-          unidades vindas do modal não há formulário que faça sentido mostrar.
+          docentes vivem dentro de um @switch. A condição também vale por si: sem a
+          unidade vinda do cartão não há formulário que faça sentido mostrar.
         -->
-        @if (opcoesUnidades().length) {
-          <app-campos-agendar-visita [unidades]="opcoesUnidades()" />
+        @if (unidade(); as unidade) {
+          <app-campos-agendar-visita [unidade]="unidade" />
         }
 
         <!-- A falha do POST fica aqui, e não num segundo modal por cima deste:
@@ -129,7 +129,7 @@ export class ModalAgendarVisitaComponent {
     }),
     data: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     hora: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    // A unidade clicada no cartão chega já escolhida; o utilizador pode trocar.
+    // A unidade clicada no cartão chega já escolhida e não se troca aqui.
     unidade: new FormControl(this.dados?.unidadeSelecionada.id ?? '', {
       nonNullable: true,
       validators: [Validators.required],
@@ -144,13 +144,12 @@ export class ModalAgendarVisitaComponent {
     }),
   });
 
-  protected readonly opcoesUnidades = computed<OpcaoCartaoSelecao[]>(() =>
-    (this.dados?.unidades ?? []).map((unidade) => ({
-      valor: unidade.id,
-      rotulo: unidade.nome,
-      icone: unidade.icone ?? ICONE_UNIDADE_PADRAO,
-    })),
-  );
+  protected readonly unidade = computed<UnidadeVisita | undefined>(() => {
+    const unidade = this.dados?.unidadeSelecionada;
+    return unidade
+      ? { rotulo: unidade.nome, icone: unidade.icone ?? ICONE_UNIDADE_PADRAO }
+      : undefined;
+  });
 
   /**
    * `POST /agendamento-visitas` — endpoint público, sem `Authorization`. Não há

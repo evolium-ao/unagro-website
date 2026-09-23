@@ -192,7 +192,6 @@ export interface Dicionario {
       portalDescricao: string;
       portalBotaoContinuar: string;
       portalBotaoEstado: string;
-      portalLinkRecuperar: string;
       recrutamentoSelo: string;
       recrutamentoTitulo: string;
       recrutamentoDescricao: string;

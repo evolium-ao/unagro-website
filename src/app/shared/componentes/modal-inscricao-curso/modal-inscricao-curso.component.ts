@@ -12,7 +12,6 @@ import { ModalDataService } from '../alert-modal/modal-data.service';
 import { BotaoComponent } from '../botao/botao.component';
 import { CursoCurtaDuracaoCartao } from '../cartao-curso-curta-duracao/cartao-curso-curta-duracao.component';
 import { IconeComponent } from '../icone/icone.component';
-import { SelectOptionV2 } from '../select-field-v2/select-field-v2';
 import { CamposInscricaoCursoComponent } from './campos-inscricao-curso.component';
 
 /** Identificador do modal, para o abrir e fechar a partir de qualquer ponto da app. */
@@ -20,10 +19,8 @@ export const ID_MODAL_INSCRICAO_CURSO = 'modal-inscricao-curso';
 
 /** O que a página passa em `data` ao abrir o modal. */
 export interface DadosInscricaoCurso {
-  /** Curso cujo "Inscrever-se" foi clicado — chega já escolhido no select. */
+  /** Curso cujo "Inscrever-se" foi clicado no cartão — o modal já abre para este curso. */
   cursoSelecionado: CursoCurtaDuracaoCartao;
-  /** Todos os cursos de curta duração da página, para as opções do select. */
-  cursos: CursoCurtaDuracaoCartao[];
 }
 
 /**
@@ -65,8 +62,8 @@ export interface DadosInscricaoCurso {
             binding — e o criarErrosFormulario deles encontrava o form do
             FormGroupDirective a null.
           -->
-          @if (opcoesCursos().length) {
-            <app-campos-inscricao-curso [cursos]="opcoesCursos()" />
+          @if (tituloCurso) {
+            <app-campos-inscricao-curso [tituloCurso]="tituloCurso" />
           }
 
           <!-- A falha do POST fica aqui, e não num segundo modal por cima deste:
@@ -112,6 +109,9 @@ export class ModalInscricaoCursoComponent {
 
   private readonly dados = this.dadosModal.obterDados<DadosInscricaoCurso>();
 
+  /** O curso já vem escolhido do cartão clicado — sem select, sem hipótese de trocar. */
+  protected readonly tituloCurso = this.dados?.cursoSelecionado.titulo ?? '';
+
   protected readonly formulario = new FormGroup({
     nome: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl('', {
@@ -122,17 +122,7 @@ export class ModalInscricaoCursoComponent {
       nonNullable: true,
       validators: [Validators.required, validarTelefoneComIndicativo],
     }),
-    // O curso clicado no cartão chega já escolhido; o utilizador pode trocar.
-    curso: new FormControl(this.dados?.cursoSelecionado.id ?? '', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
   });
-
-  /** As opções vêm da página, no `data` — o modal não conhece o `CursosService`. */
-  protected readonly opcoesCursos = computed<SelectOptionV2[]>(() =>
-    (this.dados?.cursos ?? []).map((curso) => ({ value: curso.id, label: curso.titulo })),
-  );
 
   /**
    * `POST /inscricoes` — endpoint público, sem `Authorization`. Não há nada
@@ -210,7 +200,7 @@ export class ModalInscricaoCursoComponent {
 
     this.enviar.mutate(
       {
-        cursoId: valores.curso,
+        cursoId: this.dados?.cursoSelecionado.id ?? '',
         nome: valores.nome,
         email: valores.email,
         telefone: valores.telefone,

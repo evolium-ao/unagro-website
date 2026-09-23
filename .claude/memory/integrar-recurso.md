@@ -617,7 +617,7 @@ pelo cartão.
 
 **`foto_url` vem como caminho relativo** (`investigadores/xxx.jpg`, sem host nem
 `/storage/`), como já acontece com os `capa_url` dos outros recursos — passa
-pelo `capaUtilizavel`, e `http://192.168.1.252:8000/storage/investigadores/...`
+pelo `capaUtilizavel`, e `http://192.168.1.252:8001/storage/investigadores/...`
 responde 200, logo as fotografias carregam.
 
 **A API não dá:**
@@ -1373,7 +1373,7 @@ ao conteúdo de recurso, que é o comportamento pedido. Convém confirmar do lad
 se a base foi reposta ou remigrada.
 
 **2026-09-04, ~15h45: resolvido do lado da API.** A tabela voltou a ter as 5 notícias e o
-`capa_url` passou a vir com o host correcto (`http://192.168.1.252:8000/storage/...`) em
+`capa_url` passou a vir com o host correcto (`http://192.168.1.252:8001/storage/...`) em
 vez de `localhost` — as fotografias já carregam no site. O guarda `capaUtilizavel` do
 `NoticiasService` deixou de disparar sozinho, como estava previsto; fica lá para o caso
 de o `APP_URL` voltar a apontar para `localhost`.

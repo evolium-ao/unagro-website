@@ -87,10 +87,14 @@ const DURACAO_AVISO_COPIA = 2000;
  * Botão de compartilhar de uma notícia (ou de qualquer página com título e
  * endereço próprios).
  *
- * O painel é o `app-dropdown-menu` do projecto: o gatilho entra por
- * `dropdownMenuTrigger` (para manter as três variantes de aspecto) e as opções
- * por `dropdownMenuItem` (para cada uma poder trazer o logótipo da sua rede).
- * O posicionamento, a camada de fundo e o fecho ficam a cargo do menu padrão.
+ * Onde o navegador suporta a Web Share API (`navigator.share`), o clique abre
+ * directamente o painel nativo do sistema operativo. O painel próprio — o
+ * `app-dropdown-menu` do projecto, com Facebook/X/LinkedIn/WhatsApp e "copiar
+ * link" — só entra como alternativa nos navegadores sem suporte (tipicamente
+ * desktop): o gatilho entra por `dropdownMenuTrigger` (para manter as três
+ * variantes de aspecto) e as opções por `dropdownMenuItem` (para cada uma
+ * poder trazer o logótipo da sua rede). O posicionamento, a camada de fundo e
+ * o fecho ficam a cargo do menu padrão.
  *
  * O URL absoluto só é montado no momento do clique, a partir de
  * `window.location`: durante o SSR não há origem conhecida, e pré-calculá-lo no
@@ -122,9 +126,9 @@ const DURACAO_AVISO_COPIA = 2000;
           class="inline-flex cursor-pointer items-center justify-center transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           [class]="classesGatilho()"
           [attr.aria-label]="rotulo"
-          [attr.aria-expanded]="aberto"
-          aria-haspopup="menu"
-          (click)="alternarPainel($event, alternar)"
+          [attr.aria-expanded]="partilhaNativa ? null : aberto"
+          [attr.aria-haspopup]="partilhaNativa ? null : 'menu'"
+          (click)="aoClicar($event, alternar)"
         >
           <app-icone nome="share-2" [tamanho]="variante() === 'rotulo' ? 14 : 15" />
           @if (variante() === 'rotulo') {
@@ -175,6 +179,9 @@ export class BotaoCompartilharComponent {
 
   protected readonly traducao = inject(TraducaoService);
   private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
+  /** Se o navegador suporta a Web Share API, a partilha usa o painel nativo do SO. */
+  protected readonly partilhaNativa =
+    this.ehNavegador && typeof navigator !== 'undefined' && 'share' in navigator;
 
   protected readonly redes = REDES;
   protected readonly classesItem = CLASSES_ITEM;
@@ -183,14 +190,28 @@ export class BotaoCompartilharComponent {
 
   protected readonly classesGatilho = computed(() => CLASSES_GATILHO[this.variante()]);
 
-  protected alternarPainel(evento: Event, alternar: () => void): void {
+  protected aoClicar(evento: Event, alternar: () => void): void {
     // Os cartões de notícia têm uma ligação sobreposta que cobre a área toda: sem
     // travar a propagação, o clique no botão abria também a notícia.
     evento.stopPropagation();
     evento.preventDefault();
 
+    if (this.partilhaNativa) {
+      void this.partilhar();
+      return;
+    }
+
     this.copiado.set(false);
     alternar();
+  }
+
+  /** Abre o painel nativo do sistema operativo através da Web Share API. */
+  private async partilhar(): Promise<void> {
+    try {
+      await navigator.share({ title: this.titulo(), url: this.urlAbsoluta() });
+    } catch {
+      // Utilizador cancelou a partilha, ou o navegador recusou o pedido: nada a fazer.
+    }
   }
 
   protected abrirRede(rede: RedeCompartilhar): void {

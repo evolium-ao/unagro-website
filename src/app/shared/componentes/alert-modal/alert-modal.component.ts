@@ -37,7 +37,7 @@ interface IconConfig {
       <div class="flex flex-col justify-between  h-full gap-4">
           <!-- Ícone -->
           @if (opcoes().icon) {
-            <div class="flex justify-center mb-4 mt-8 cursor-pointer">
+            <div class="flex justify-center mb-4 mt-8">
               <div
                 class="w-20 h-20 rounded-full flex items-center justify-center "
                 [class]="iconConfig().color">

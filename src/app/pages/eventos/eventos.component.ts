@@ -95,7 +95,8 @@ export class EventosComponent {
     {
       // TODO: apontar para a inscrição do evento quando existir rota de detalhe/inscrição.
       link: '/eventos#secao-proximos-eventos',
-      texto: this.traducao.getTraducao(['Inscrever-se agora', 'Register now']),
+      // texto: this.traducao.getTraducao(['Inscrever-se agora', 'Register now']),
+      texto: this.traducao.getTraducao(['Ver Eventos', 'View Events']),
       variante: 'branco',
       icone: 'arrow-right',
       posicaoIcone: 'direita',
@@ -183,21 +184,6 @@ export class EventosComponent {
     })),
   ]);
 
-  /** Todos os eventos traduzidos, já na forma do cartão — sem filtro de âmbito nem paginação. */
-  protected readonly todosEventos = computed<EventoFotoCartao[]>(() =>
-    this.eventosTraduzidos().map((evento) => ({
-      id: evento.id,
-      titulo: evento.titulo,
-      descricao: evento.descricao,
-      categoria: this.traducao.getTraducao(ROTULOS_AMBITO_EVENTO[evento.ambito]),
-      local: evento.local,
-      dataInicio: evento.dataInicio,
-      imagem: evento.imagem_url,
-      // TODO: trocar por /eventos/:id quando existir a rota de detalhe do evento.
-      link: '/contactos',
-    })),
-  );
-
   private readonly eventosFiltrados = computed<EventoFotoCartao[]>(() => {
     const ambito = this.ambitoSelecionado();
     return this.eventosTraduzidos()
@@ -254,7 +240,6 @@ export class EventosComponent {
   protected abrirInscricaoEvento(evento: EventoFotoCartao): void {
     const dados: DadosInscricaoEvento = {
       eventoSelecionado: evento,
-      eventos: this.todosEventos(),
     };
 
     void this.modais.modal({

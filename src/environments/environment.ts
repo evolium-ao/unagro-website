@@ -8,10 +8,10 @@ export const environment = {
   /**
    * Raiz da API da Unagro, **já com o `/api`** e sem barra no fim. Toda a
    * chamada HTTP do site passa por aqui, via `ApiService`.
-   * Documentação interactiva dos endpoints: `http://192.168.1.252:8000/docs/api`
+   * Documentação interactiva dos endpoints: `http://192.168.1.252:8001/docs/api`
    * (o esquema OpenAPI em bruto está em `/docs/api.json`).
    */
-  apiUrl: 'http://192.168.1.252:8000/api',
+  apiUrl: 'http://192.168.1.252:8001/api',
   /**
    * E-mail opcional enviado à MyMemory (`api.mymemory.translated.net`) para
    * traduzir conteúdo vindo da API — ver `TraducaoAutomaticaService`. Sem

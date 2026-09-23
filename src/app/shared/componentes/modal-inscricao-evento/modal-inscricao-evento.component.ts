@@ -12,7 +12,6 @@ import { ModalDataService } from '../alert-modal/modal-data.service';
 import { BotaoComponent } from '../botao/botao.component';
 import { EventoFotoCartao } from '../cartao-evento-foto/cartao-evento-foto.component';
 import { IconeComponent } from '../icone/icone.component';
-import { SelectOptionV2 } from '../select-field-v2/select-field-v2';
 import { CamposInscricaoEventoComponent } from './campos-inscricao-evento.component';
 
 /** Identificador do modal, para o abrir e fechar a partir de qualquer ponto da app. */
@@ -20,10 +19,8 @@ export const ID_MODAL_INSCRICAO_EVENTO = 'modal-inscricao-evento';
 
 /** O que a página passa em `data` ao abrir o modal. */
 export interface DadosInscricaoEvento {
-  /** Evento cujo "Inscrever-se" foi clicado — chega já escolhido no select. */
+  /** Evento cujo "Inscrever-se" foi clicado no cartão — o modal já abre para este evento. */
   eventoSelecionado: EventoFotoCartao;
-  /** Todos os eventos da página, para as opções do select. */
-  eventos: EventoFotoCartao[];
 }
 
 /**
@@ -65,8 +62,8 @@ export interface DadosInscricaoEvento {
             binding — e o criarErrosFormulario deles encontrava o form do
             FormGroupDirective a null.
           -->
-          @if (opcoesEventos().length) {
-            <app-campos-inscricao-evento [eventos]="opcoesEventos()" />
+          @if (tituloEvento) {
+            <app-campos-inscricao-evento [tituloEvento]="tituloEvento" />
           }
 
           <!-- A falha do POST fica aqui, e não num segundo modal por cima deste:
@@ -112,6 +109,9 @@ export class ModalInscricaoEventoComponent {
 
   private readonly dados = this.dadosModal.obterDados<DadosInscricaoEvento>();
 
+  /** O evento já vem escolhido do cartão clicado — sem select, sem hipótese de trocar. */
+  protected readonly tituloEvento = this.dados?.eventoSelecionado.titulo ?? '';
+
   protected readonly formulario = new FormGroup({
     nome: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl('', {
@@ -122,17 +122,7 @@ export class ModalInscricaoEventoComponent {
       nonNullable: true,
       validators: [Validators.required, validarTelefoneComIndicativo],
     }),
-    // O evento clicado no cartão chega já escolhido; o utilizador pode trocar.
-    evento: new FormControl(this.dados?.eventoSelecionado.id ?? '', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
   });
-
-  /** As opções vêm da página, no `data` — o modal não conhece o `EventosService`. */
-  protected readonly opcoesEventos = computed<SelectOptionV2[]>(() =>
-    (this.dados?.eventos ?? []).map((evento) => ({ value: evento.id, label: evento.titulo })),
-  );
 
   /**
    * `POST /inscricoes/evento` — endpoint público, sem `Authorization`. Não há
@@ -207,7 +197,7 @@ export class ModalInscricaoEventoComponent {
 
     this.enviar.mutate(
       {
-        eventoId: valores.evento,
+        eventoId: this.dados?.eventoSelecionado.id ?? '',
         nome: valores.nome,
         email: valores.email,
         telefone: valores.telefone,

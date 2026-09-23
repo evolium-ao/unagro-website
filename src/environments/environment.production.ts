@@ -6,6 +6,6 @@
  */
 export const environment = {
   producao: true,
-  apiUrl: 'http://192.168.1.252:8000/api',
+  apiUrl: 'https://api.unagro.exemplo.ao/api',
   traducaoEmail: 'admiro.andre@evolium.ao',
 };

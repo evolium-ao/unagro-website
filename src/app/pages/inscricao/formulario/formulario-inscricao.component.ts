@@ -11,8 +11,8 @@ import { ValidacaoService } from '../../../core/servicos/Validacao.service';
 import { TraducaoAutomaticaService } from '../../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { aplicarTraducaoTextos } from '../../../core/traducao/traduzir-campos';
+import { AlertModalService } from '../../../shared/componentes/alert-modal/alert-modal.service';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
-import { IconeComponent } from '../../../shared/componentes/icone/icone.component';
 import { PassosFormularioComponent } from '../../../shared/componentes/passos-formulario/passos-formulario.component';
 import { SelectOptionV2 } from '../../../shared/componentes/select-field-v2/select-field-v2';
 import { validarTelefoneComIndicativo } from '../../../shared/formulario/validadores';
@@ -48,7 +48,6 @@ const CAMPOS_PASSO_UM = [
     BlocoFormacaoAcademicaComponent,
     BlocoMotivacaoDocumentosComponent,
     BotaoComponent,
-    IconeComponent,
   ],
   templateUrl: './formulario-inscricao.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,9 +58,9 @@ export class FormularioInscricaoComponent {
   private readonly cursosService = inject(CursosService);
   private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly candidaturas = inject(CandidaturaAlunosService);
+  private readonly modais = inject(AlertModalService);
 
   protected readonly passoAtual = signal(0);
-  protected readonly submetido = signal(false);
 
   protected readonly formulario = new FormGroup({
     nome: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -141,10 +140,6 @@ export class FormularioInscricaoComponent {
       'Recebemos a sua candidatura. A equipa de admissões entra em contacto por e-mail assim que concluir a avaliação.',
       'We have received your application. The admissions team will e-mail you as soon as the review is complete.',
     ]),
-    sucessoBotao: this.traducao.getTraducao([
-      'Submeter outra candidatura',
-      'Submit another application',
-    ]),
   }));
 
   /**
@@ -222,14 +217,14 @@ export class FormularioInscricaoComponent {
         motivacao: valores.motivacao,
         certificado: valores.certificado,
       },
-      // Só depois de a API confirmar é que o formulário dá lugar à confirmação.
-      { onSuccess: () => this.submetido.set(true) },
+      // Mesmo padrão dos modais de inscrição: a confirmação é o modal de sucesso
+      // partilhado, e o formulário fica limpo e pronto para outra candidatura.
+      {
+        onSuccess: () => {
+          this.formulario.reset();
+          void this.modais.sucesso(this.textos().sucessoDescricao, this.textos().sucessoTitulo);
+        },
+      },
     );
-  }
-
-  protected recomecar(): void {
-    this.formulario.reset();
-    this.submetido.set(false);
-    this.enviar.reset();
   }
 }

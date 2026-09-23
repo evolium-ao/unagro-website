@@ -7,8 +7,8 @@ import { CandidaturaDocentesService } from '../../../core/servicos/candidatura-d
 import { DocenciaService } from '../../../core/servicos/docencia.service';
 import { ValidacaoService } from '../../../core/servicos/Validacao.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
+import { AlertModalService } from '../../../shared/componentes/alert-modal/alert-modal.service';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
-import { IconeComponent } from '../../../shared/componentes/icone/icone.component';
 import { PassosFormularioComponent } from '../../../shared/componentes/passos-formulario/passos-formulario.component';
 import { PassoAcademicoComponent } from './passo-academico.component';
 import { PassoDadosPessoaisComponent } from './passo-dados-pessoais.component';
@@ -37,7 +37,6 @@ const CAMPOS_POR_PASSO: readonly (readonly string[])[] = [
     PassoAcademicoComponent,
     PassoSubmissaoComponent,
     BotaoComponent,
-    IconeComponent,
   ],
   templateUrl: './formulario-docente.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,9 +46,9 @@ export class FormularioDocenteComponent {
   protected readonly validacao = inject(ValidacaoService);
   private readonly docencia = inject(DocenciaService);
   private readonly candidaturas = inject(CandidaturaDocentesService);
+  private readonly modais = inject(AlertModalService);
 
   protected readonly passoAtual = signal(0);
-  protected readonly submetido = signal(false);
 
   protected readonly formulario = new FormGroup({
     nome: new FormControl('', {
@@ -120,10 +119,6 @@ export class FormularioDocenteComponent {
     sucessoDescricao: this.traducao.getTraducao([
       'Recebemos o seu perfil. A equipa de RH Académico entra em contacto por e-mail assim que concluir a avaliação inicial.',
       'We have received your profile. The Academic HR team will e-mail you as soon as the initial review is complete.',
-    ]),
-    sucessoBotao: this.traducao.getTraducao([
-      'Submeter outra candidatura',
-      'Submit another application',
     ]),
   }));
 
@@ -207,16 +202,16 @@ export class FormularioDocenteComponent {
         carta: valores.carta,
         curriculo: valores.curriculo,
       },
-      // Só depois de a API confirmar é que o formulário dá lugar à confirmação.
-      { onSuccess: () => this.submetido.set(true) },
+      // Mesmo padrão dos modais de inscrição: a confirmação é o modal de sucesso
+      // partilhado, e o formulário volta ao primeiro passo, pronto para outra candidatura.
+      {
+        onSuccess: () => {
+          this.formulario.reset();
+          this.passoAtual.set(0);
+          void this.modais.sucesso(this.textos().sucessoDescricao, this.textos().sucessoTitulo);
+        },
+      },
     );
-  }
-
-  protected recomecar(): void {
-    this.formulario.reset();
-    this.passoAtual.set(0);
-    this.submetido.set(false);
-    this.enviar.reset();
   }
 
   /** Marca só os campos do passo como tocados, para não pintar de vermelho o que ainda não foi visto. */

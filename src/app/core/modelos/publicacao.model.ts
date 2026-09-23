@@ -1,22 +1,18 @@
-import { TextoBilingue } from '../traducao/texto-bilingue';
-
 /**
- * Artigo científico da lista de publicações recentes. Nomes em snake_case por
- * espelharem a linha que a API devolve, como o `Projecto`.
+ * Espelha a linha que a API de publicações devolve — já no idioma do pedido,
+ * por isso só texto simples (ver `.claude/README.md`, "Modelos de dados
+ * vindos da API").
  */
 export interface Publicacao {
   id: string;
-  /** Revista ou categoria; sai em maiúsculas no cartão. */
-  revista: TextoBilingue;
-  /** Data já escrita para leitura, ex.: `['JAN 2024', 'JAN 2024']`. */
-  data: TextoBilingue;
-  titulo: TextoBilingue;
-  /** Lista de autores num só texto, como vem da citação. */
-  autores: TextoBilingue;
-  /** Nome de um ícone de `dados-icones.ts`; sem valor, o cartão usa `file-text`. */
-  icone?: string;
-  /** Destino do resumo do artigo. */
-  link_abstract: string;
-  /** Destino do ficheiro para descarregar. */
-  link_download: string;
+  titulo: string;
+  resumo: string;
+  /** Data ISO de publicação; o cartão formata-a para leitura (`formatarDataCurta`). */
+  data: string;
+  /** Ficheiro em português (o botão "Baixar", sempre presente quando existe). */
+  documentoUrl?: string;
+  /** Ficheiro em inglês (o botão "Baixar Abstract", só aparece quando existe). */
+  documentoUrlEn?: string;
+  /** Presente quando a publicação está associada a um projecto específico. */
+  projetoId?: string;
 }

@@ -79,12 +79,8 @@ export class BlocoDadosPessoaisComponent {
   ] as const);
 
   protected readonly opcoesGenero = computed<SelectOptionV2[]>(() => [
-    { value: 'feminino', label: this.traducao.getTraducao(['Feminino', 'Female']) },
     { value: 'masculino', label: this.traducao.getTraducao(['Masculino', 'Male']) },
-    {
-      value: 'nao-indicado',
-      label: this.traducao.getTraducao(['Prefiro não indicar', 'Prefer not to say']),
-    },
+    { value: 'feminino', label: this.traducao.getTraducao(['Feminino', 'Female']) },
   ]);
 
   protected readonly textos = computed(() => ({
@@ -96,7 +92,7 @@ export class BlocoDadosPessoaisComponent {
     telefone: this.traducao.getTraducao(['Telefone / WhatsApp', 'Phone / WhatsApp']),
     telefonePlaceholder: this.traducao.getTraducao(['+244 900 000 000', '+244 900 000 000']),
     nascimento: this.traducao.getTraducao(['Nascimento', 'Date of birth']),
-    genero: this.traducao.getTraducao(['Género', 'Gender']),
+    genero: this.traducao.getTraducao(['Sexo', 'Sex']),
     generoPlaceholder: this.traducao.getTraducao(['Selecione...', 'Select...']),
   }));
 }

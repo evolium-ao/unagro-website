@@ -194,6 +194,10 @@ export class AlertModalService {
       kind: options.kind ?? 'modal',
       fragmented: options.fragmented ?? Boolean(options.fragment),
       closeOnFragmentRemoval: options.closeOnFragmentRemoval ?? true,
+      // Sem header, o único fecho é o botão "Confirmar" do rodapé — os modais de
+      // formulário (`temHeader: false`) desenham o seu próprio X; os de atalho
+      // (sucesso/erro/aviso/info/confirmar) precisam deste, por isso o default é visível.
+      temHeader: options.temHeader ?? true,
     };
   }
 

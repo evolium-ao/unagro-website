@@ -242,7 +242,6 @@ export class FormacoesComponent {
   protected abrirInscricaoCurso(curso: CursoCurtaDuracaoCartao): void {
     const dados: DadosInscricaoCurso = {
       cursoSelecionado: curso,
-      cursos: this.cartoesCursosCurta(),
     };
 
     void this.modais.modal({

@@ -15,7 +15,13 @@ import { TextoTraduzido } from '../../core/traducao/texto-traduzido';
 import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
 import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
+import { AlertModalService } from '../../shared/componentes/alert-modal/alert-modal.service';
 import { BannerDestaqueComponent, HeroImage } from '../../shared/componentes/banner-destaque/banner-destaque.component';
+import {
+  DadosDetalheEvento,
+  ID_MODAL_DETALHE_EVENTO,
+  ModalDetalheEventoComponent,
+} from '../../shared/componentes/modal-detalhe-evento/modal-detalhe-evento.component';
 import { CartaoEventoDestaqueComponent } from '../../shared/componentes/cartao-evento-destaque/cartao-evento-destaque.component';
 import { CartaoEventoDestaqueEsqueletoComponent } from '../../shared/componentes/cartao-evento-destaque-esqueleto/cartao-evento-destaque-esqueleto.component';
 import { CartaoNoticiaDestaqueComponent } from '../../shared/componentes/cartao-noticia-destaque/cartao-noticia-destaque.component';
@@ -122,6 +128,7 @@ export class InicioComponent {
   private readonly eventosService = inject(EventosService);
   private readonly patrocinadoresService = inject(PatrocinadoresService);
   private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
+  private readonly modais = inject(AlertModalService);
 
   protected readonly estatisticas = this.estatisticasService.institucionais;
   protected readonly pilares = this.estatisticasService.pilares;
@@ -219,7 +226,18 @@ export class InicioComponent {
     return this.noticias().slice(inicio, inicio + NOTICIAS_POR_PAGINA);
   });
 
-  protected readonly noticiaDestaque = computed(() => this.noticiasDaPagina()[0]);
+  /**
+   * O cartão grande só recebe uma notícia marcada como destaque na API. Sem
+   * nenhuma na página, a grelha passa a quatro cartões de resumo iguais
+   * (`noticiasSemDestaque`) em vez de promover uma notícia comum.
+   */
+  protected readonly noticiaDestaque = computed(() => {
+    const primeira = this.noticiasDaPagina()[0];
+    return primeira?.destaque ? primeira : undefined;
+  });
+  protected readonly noticiasSemDestaque = computed(() =>
+    this.noticiaDestaque() ? [] : this.noticiasDaPagina(),
+  );
   /** As duas notícias da coluna do meio. */
   protected readonly noticiasEmpilhadas = computed(() => this.noticiasDaPagina().slice(1, 3));
   /** A notícia da coluna da direita. */
@@ -236,6 +254,20 @@ export class InicioComponent {
   protected readonly noticiasSubtitulo = computed(() =>
     this.traducao.getTraducao(['Veja aqui notícias recentes', 'See the latest news here']),
   );
+
+  /** "Saber mais" do evento em destaque: detalhes num modal, com a inscrição a um clique. */
+  protected abrirDetalheEvento(evento: Evento): void {
+    const dados: DadosDetalheEvento = { evento };
+
+    void this.modais.modal({
+      id: ID_MODAL_DETALHE_EVENTO,
+      template: ModalDetalheEventoComponent,
+      tamanho: 'xgrande',
+      temHeader: false,
+      semBotoes: true,
+      data: dados,
+    });
+  }
 
   protected noticiasAnteriores(): void {
     this.paginaNoticias.update((pagina) => Math.max(0, pagina - 1));

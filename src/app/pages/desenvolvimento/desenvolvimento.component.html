@@ -185,24 +185,58 @@
             class="w-full rounded-full border border-gray-200 bg-white py-2.5 pl-9 pr-4 text-sm text-text-primary placeholder:text-text-secondary focus:border-primary-deep focus:outline-none focus:ring-2 focus:ring-primary-deep/20" />
         </label>
 
-        <!-- TODO: o painel de filtros das publicações ainda não existe; o botão fica decorativo até lá. -->
-        <button type="button" [attr.aria-label]="rotuloFiltroPublicacoes()"
-          class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white text-text-secondary hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-deep">
+        <!-- Abre o modal de filtros (ano, língua, projecto); o número conta os filtros activos. -->
+        <button type="button" [attr.aria-label]="rotuloFiltroPublicacoes()" (click)="abrirFiltrosPublicacoes()"
+          class="relative flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border bg-white text-text-secondary hover:text-primary-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-deep"
+          [class.border-gray-200]="!totalFiltrosPublicacoes()" [class.border-primary-deep]="totalFiltrosPublicacoes()"
+          [class.text-primary-deep]="totalFiltrosPublicacoes()">
           <app-icone nome="sliders-horizontal" [tamanho]="16" />
+          @if (totalFiltrosPublicacoes(); as total) {
+          <span aria-hidden="true"
+            class="absolute -right-1.5 -top-1.5 inline-flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary-deep px-1 text-[10px] font-bold text-white">
+            {{ total }}
+          </span>
+          }
         </button>
       </div>
     </div>
 
     <div class="mt-10 flex flex-col gap-4">
-      @for (publicacao of publicacoesVisiveis(); track publicacao.id) {
-      <app-cartao-publicacao [publicacao]="publicacao" [appRevelarAoScroll]="$index" />
-      } @empty {
+      @if (consultaPublicacoes.isPending()) {
+      @for (_ of [1, 2, 3]; track $index) {
+      <app-cartao-publicacao-esqueleto />
+      }
+      } @else if (consultaPublicacoes.isError()) {
       <p class="py-12 text-center text-sm text-text-secondary">
-        {{ traducao.getTraducao(['Nenhuma publicação corresponde à pesquisa.', 'No publication matches your search.'])
+        {{ traducao.getTraducao(['Não foi possível carregar as publicações.', 'Could not load the publications.']) }}
+      </p>
+      } @else {
+      @for (publicacao of publicacoesVisiveis(); track publicacao.id) {
+      <app-cartao-publicacao [publicacao]="publicacao" [appRevelarAoScroll]="$index % publicacoesPorPagina" />
+      } @empty {
+      @if (!aCarregarPublicacoes()) {
+      <p class="py-12 text-center text-sm text-text-secondary">
+        {{ traducao.getTraducao(['Nenhuma publicação corresponde à pesquisa ou aos filtros.', 'No publication matches your search or filters.'])
         }}
       </p>
       }
+      }
+      @if (aCarregarPublicacoes()) {
+      @for (esqueleto of esqueletosPublicacoes(); track esqueleto) {
+      <app-cartao-publicacao-esqueleto />
+      }
+      }
+      }
     </div>
+
+    @if (temMaisPublicacoes()) {
+    <div class="mt-8 flex justify-center">
+      <app-botao variante="contorno" icone="chevron-down" posicaoIcone="direita" [aCarregar]="aCarregarPublicacoes()"
+        (clicado)="carregarMaisPublicacoes()">
+        {{ traducao.getTraducao(['Carregar Mais Publicações', 'Load More Publications']) }}
+      </app-botao>
+    </div>
+    }
 
     <div class="mt-12 flex justify-center">
       <app-botao variante="profundo" [link]="linkArquivoPublicacoes">

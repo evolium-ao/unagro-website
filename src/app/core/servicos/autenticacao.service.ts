@@ -26,7 +26,7 @@ export class AutenticacaoService {
 /**
  * Espelha a resposta do `POST /login`.
  *
- * TODO: confirmar contra `http://192.168.1.252:8000/docs/api` — a API não estava
+ * TODO: confirmar contra `http://192.168.1.252:8001/docs/api` — a API não estava
  * alcançável quando isto foi escrito. Daí os pares de nomes alternativos: o
  * projecto Laravel pode devolver `token`/`access_token` e `user`/`utilizador`,
  * e o `paraSessao` aceita qualquer combinação em vez de rebentar em silêncio.

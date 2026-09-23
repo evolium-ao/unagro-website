@@ -212,7 +212,6 @@ export const en = {
         'Access your portal to complete the form, submit missing documents or check the status of your application.',
       portalBotaoContinuar: 'Continue Application',
       portalBotaoEstado: 'Check Status',
-      portalLinkRecuperar: 'Recover Access Code',
       recrutamentoSelo: 'Career opportunities',
       recrutamentoTitulo: 'Faculty Recruitment',
       recrutamentoDescricao:

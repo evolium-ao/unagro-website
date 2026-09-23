@@ -116,11 +116,12 @@
       <form [formGroup]="formularioSubscricao" (ngSubmit)="subscrever()"
         class="w-full lg:max-w-md lg:justify-self-end">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
+          <!-- Fundo transparente e sem rótulo: só a caixa do campo é branca, e não a
+               coluna inteira (rótulo vazio + linha de erro) sobre o painel verde. -->
           <form-input-field class="w-full sm:flex-1" formControlName="email" [label]="''"
+            [bgTransparent]="true" [ocultarRotuloVazio]="true"
             type="email" [placeholder]="placeholderEmail()" [erro]="erroEmail()" />
-          <!-- O mt-1 acompanha o gap do rótulo vazio do campo, para o botão assentar
-               à mesma altura da caixa de texto. -->
-          <app-botao variante="secundario" raio="medio" tipo="submit" class="shrink-0 sm:mt-1">
+          <app-botao variante="secundario" raio="medio" tipo="submit" class="shrink-0">
             {{ rotuloAssinar() }}
           </app-botao>
         </div>
