@@ -99,8 +99,8 @@ no adaptador `@tanstack/angular-query-experimental`.
 
 |  |  |
 | --- | --- |
-| Raiz | `http://192.168.1.252:8000/api` — em `environment.apiUrl` |
-| Documentação | `http://192.168.1.252:8000/docs/api` — esquema OpenAPI em bruto em `/docs/api.json` |
+| Raiz | `http://192.168.1.252:8001/api` — em `environment.apiUrl` |
+| Documentação | `http://192.168.1.252:8001/docs/api` — esquema OpenAPI em bruto em `/docs/api.json` |
 | Envelope | toda a resposta vem como `{ status, message, data }`; o `ApiService` devolve só o `data` |
 | Leitura | os `GET` são **públicos**, sem autenticação |
 | Escrita | `POST`/`PUT`/`DELETE` pedem `Authorization: Bearer <token>` (`POST /login`) |

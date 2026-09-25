@@ -63,12 +63,24 @@ import { CartaoVidroComponent } from '../../shared/componentes/cartao-vidro/cart
 import { ItemEstatisticaComponent } from '../../shared/componentes/item-estatistica/item-estatistica.component';
 import { Estatistica } from '../../core/modelos/estatistica.model';
 import { Publicacao } from '../../core/modelos/publicacao.model';
+import { OpcaoFiltroPilula } from '../../shared/componentes/filtro-pilula/filtro-pilula.component';
+import {
+  DadosFiltroPublicacoes,
+  EVENTO_APLICAR_FILTROS_PUBLICACOES,
+  FILTROS_PUBLICACOES_VAZIOS,
+  FiltrosPublicacoes,
+  ID_MODAL_FILTRO_PUBLICACOES,
+  ModalFiltroPublicacoesComponent,
+} from '../../shared/componentes/modal-filtro-publicacoes/modal-filtro-publicacoes.component';
 import { CartaoPublicacaoComponent } from '../../shared/componentes/cartao-publicacao/cartao-publicacao.component';
+import { CartaoPublicacaoEsqueletoComponent } from '../../shared/componentes/cartao-publicacao-esqueleto/cartao-publicacao-esqueleto.component';
 import { PassoMetodologiaComponent } from '../../shared/componentes/passo-metodologia/passo-metodologia.component';
 import { CartaoInvestigadorComponent } from '../../shared/componentes/cartao-investigador/cartao-investigador.component';
 import { CartaoInvestigadorEsqueletoComponent } from '../../shared/componentes/cartao-investigador-esqueleto/cartao-investigador-esqueleto.component';
 import { InvestigadoresService } from '../../core/servicos/investigadores.service';
 import { investigadoresQueries } from '../../core/consultas/investigadores.queries';
+import { PublicacoesService } from '../../core/servicos/publicacoes.service';
+import { publicacoesQueries } from '../../core/consultas/publicacoes.queries';
 
 interface EixoBruto {
   icone: string;
@@ -126,6 +138,9 @@ const ESQUELETOS_PROJECTOS = Array.from({ length: PROJECTOS_POR_PAGINA }, (_, in
  * seguir o estado do pedido.
  */
 const ESPERA_PAGINA_MS = 600;
+
+/** "2026-03-14" → "2026"; uma data vazia ou inválida dá `''` e não entra no filtro de ano. */
+const anoDe = (dataIso: string) => (/^\d{4}/.exec(dataIso ?? '')?.[0] ?? '');
 
 /** Compara sem acentos nem maiúsculas, para a pesquisa não depender da escrita exacta. */
 const normalizar = (texto: string) =>
@@ -190,8 +205,9 @@ const LINHAS_INVESTIGACAO_MOCK: LinhaInvestigacao[] = [
       'Monitorização contínua de ecossistemas agrários e pegada de carbono do sector primário.',
       'Continuous monitoring of farming ecosystems and the carbon footprint of the primary sector.',
     ],
-    // TODO: apontar para a Agenda 2030 quando o documento ou a página existir.
-    cta: { texto: ['Ver Agenda 2030', 'View Agenda 2030'], link: '/desenvolvimento#secao-investigacao' },
+    // A página de eventos ainda não aceita filtro por tema/ano na URL; quando aceitar,
+    // acrescentar aqui o filtro da Agenda 2030.
+    cta: { texto: ['Ver Agenda 2030', 'View Agenda 2030'], link: '/eventos' },
   },
 ];
 
@@ -219,52 +235,10 @@ const ESTATISTICAS_IMPACTO_MOCK: Estatistica[] = [
   },
 ];
 
-/**
- * Substituir pela resposta do endpoint de publicações.
- * TODO: `link_abstract` e `link_download` apontam para a própria secção enquanto
- * não houver página de resumo nem ficheiro do artigo para descarregar.
- */
-const PUBLICACOES_MOCK: Publicacao[] = [
-  {
-    id: 'resiliencia-climatica-milho-zambeze',
-    revista: ['Agronomia Natural', 'Natural Agronomy'],
-    data: ['JAN 2024', 'JAN 2024'],
-    titulo: [
-      'Resiliência Climática em Culturas de Milho no Vale do Zambeze',
-      'Climate Resilience in Maize Crops of the Zambezi Valley',
-    ],
-    autores: [
-      'Dra. Amara Okafor, Prof. João Silva et al.',
-      'Dr Amara Okafor, Prof. João Silva et al.',
-    ],
-    link_abstract: '/desenvolvimento#secao-publicacoes',
-    link_download: '/desenvolvimento#secao-publicacoes',
-  },
-  {
-    id: 'impacto-automacao-agricultura-familiar',
-    revista: ['Segurança dos Alimentos', 'Food Safety'],
-    data: ['DEZ 2023', 'DEC 2023'],
-    titulo: [
-      'Impacto da Automação na Pequena Agricultura Familiar',
-      'The Impact of Automation on Smallholder Family Farming',
-    ],
-    autores: ['Dr. Carlos Mendes, Eng. Sarah Kouamé.', 'Dr Carlos Mendes, Eng. Sarah Kouamé.'],
-    link_abstract: '/desenvolvimento#secao-publicacoes',
-    link_download: '/desenvolvimento#secao-publicacoes',
-  },
-  {
-    id: 'bio-fertilizantes-alternativa-quimica',
-    revista: ['Jornal de Bio-Ciência', 'Journal of Bio-Science'],
-    data: ['NOV 2026', 'NOV 2026'],
-    titulo: [
-      'Bio-Fertilizantes: Uma Alternativa à Dependência Química',
-      'Bio-Fertilisers: An Alternative to Chemical Dependency',
-    ],
-    autores: ['Dra. Maria Zungu, Prof. David Olawale.', 'Dr Maria Zungu, Prof. David Olawale.'],
-    link_abstract: '/desenvolvimento#secao-publicacoes',
-    link_download: '/desenvolvimento#secao-publicacoes',
-  },
-];
+/** Campos de texto da publicação que passam pela tradução automática quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_PUBLICACAO = ['titulo', 'resumo'] as const;
+
+const PUBLICACOES_POR_PAGINA = 3;
 
 /** Substituir pela resposta do endpoint da metodologia (Ciclo de Excelência UNAGRO). */
 const PASSOS_METODOLOGIA_MOCK: PassoMetodologia[] = [
@@ -353,6 +327,7 @@ const COLUNAS_LINHA: Record<FormatoLinhaInvestigacao, string> = {
     ItemEstatisticaComponent,
     CartaoVidroComponent,
     CartaoPublicacaoComponent,
+    CartaoPublicacaoEsqueletoComponent,
     PassoMetodologiaComponent,
     CartaoInvestigadorComponent,
     CartaoInvestigadorEsqueletoComponent,
@@ -478,7 +453,7 @@ export class DesenvolvimentoComponent {
    * clicada já escolhida. O cartão só avisa — quem conhece o modal é a página.
    */
   protected abrirAgendamentoVisita(unidade: UnidadeInvestigacao): void {
-    const dados: DadosAgendarVisita = { unidadeSelecionada: unidade, unidades: this.unidades() };
+    const dados: DadosAgendarVisita = { unidadeSelecionada: unidade };
 
     void this.modais.modal({
       id: ID_MODAL_AGENDAR_VISITA,
@@ -644,26 +619,134 @@ export class DesenvolvimentoComponent {
     ]),
   );
 
-  /** Substituir por um sinal alimentado pelo endpoint de publicações. */
-  private readonly publicacoesBrutas = signal<Publicacao[]>(PUBLICACOES_MOCK);
+  private readonly publicacoesService = inject(PublicacoesService);
+
+  /** `GET /publicacoes` — a lista de "Publicações Recentes" e a fonte dos documentos de cada projecto. */
+  protected readonly consultaPublicacoes = injectQuery(() =>
+    publicacoesQueries.lista(this.publicacoesService),
+  );
+
+  /** A API só devolve português (ver `.claude/README.md`). */
+  private readonly consultaTraducaoPublicacoes = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaPublicacoes.data() ?? [], CAMPOS_TRADUZIVEIS_PUBLICACAO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly publicacoesBrutas = computed<Publicacao[]>(() =>
+    aplicarTraducao(
+      this.consultaPublicacoes.data() ?? [],
+      CAMPOS_TRADUZIVEIS_PUBLICACAO,
+      this.consultaTraducaoPublicacoes.data(),
+    ),
+  );
 
   protected readonly pesquisaPublicacoes = signal('');
+  /** Os filtros do modal de filtros (ano, língua, projecto) — somam-se à pesquisa. */
+  protected readonly filtrosPublicacoes = signal<FiltrosPublicacoes>(FILTROS_PUBLICACOES_VAZIOS);
+  private readonly limitePublicacoes = signal(PUBLICACOES_POR_PAGINA);
 
-  protected readonly publicacoesVisiveis = computed(() => {
+  private readonly publicacoesFiltradas = computed(() => {
     const termo = normalizar(this.pesquisaPublicacoes());
-    if (!termo) {
-      return this.publicacoesBrutas();
-    }
+    const { ano, lingua, projetoId } = this.filtrosPublicacoes();
 
-    return this.publicacoesBrutas().filter((publicacao) =>
-      [publicacao.titulo, publicacao.revista, publicacao.autores].some((texto) =>
-        normalizar(this.traducao.getTraducao(texto)).includes(termo),
-      ),
-    );
+    return this.publicacoesBrutas().filter((publicacao) => {
+      if (ano && anoDe(publicacao.data) !== ano) return false;
+      if (lingua === 'com-en' && !publicacao.documentoUrlEn) return false;
+      if (lingua === 'so-pt' && publicacao.documentoUrlEn) return false;
+      if (projetoId && publicacao.projetoId !== projetoId) return false;
+      return !termo || normalizar(`${publicacao.titulo} ${publicacao.resumo}`).includes(termo);
+    });
   });
 
+  /** Quantos filtros do modal estão activos — o número no botão de filtros. */
+  protected readonly totalFiltrosPublicacoes = computed(
+    () => Object.values(this.filtrosPublicacoes()).filter(Boolean).length,
+  );
+
+  /** Os anos que existem nas publicações, do mais recente para o mais antigo. */
+  private readonly anosPublicacoes = computed(() =>
+    [...new Set(this.publicacoesBrutas().map((publicacao) => anoDe(publicacao.data)))]
+      .filter(Boolean)
+      .sort((a, b) => b.localeCompare(a)),
+  );
+
+  /** Só os projectos que têm publicações — um projecto sem nenhuma dava sempre lista vazia. */
+  private readonly projectosComPublicacoes = computed<OpcaoFiltroPilula[]>(() => {
+    const ids = new Set(this.publicacoesBrutas().map((publicacao) => publicacao.projetoId));
+    return this.projectosBrutos()
+      .filter((projecto) => ids.has(projecto.id))
+      .map((projecto) => ({ valor: projecto.id, rotulo: projecto.titulo }));
+  });
+
+  protected abrirFiltrosPublicacoes(): void {
+    const dados: DadosFiltroPublicacoes = {
+      filtros: this.filtrosPublicacoes(),
+      anos: this.anosPublicacoes(),
+      projectos: this.projectosComPublicacoes(),
+    };
+
+    void this.modais.modal({
+      id: ID_MODAL_FILTRO_PUBLICACOES,
+      template: ModalFiltroPublicacoesComponent,
+      tamanho: 'medio',
+      temHeader: false,
+      semBotoes: true,
+      data: dados,
+      on: {
+        [EVENTO_APLICAR_FILTROS_PUBLICACOES]: (filtros: FiltrosPublicacoes) => {
+          this.filtrosPublicacoes.set(filtros);
+          this.limitePublicacoes.set(PUBLICACOES_POR_PAGINA);
+        },
+      },
+    });
+  }
+
+  protected readonly publicacoesVisiveis = computed(() =>
+    this.publicacoesFiltradas().slice(0, this.limitePublicacoes()),
+  );
+
+  protected readonly temMaisPublicacoes = computed(
+    () => this.publicacoesFiltradas().length > this.limitePublicacoes(),
+  );
+
+  /** Verdadeiro enquanto há publicações a caminho; a lista mostra esqueletos no lugar. */
+  protected readonly aCarregarPublicacoes = signal(false);
+
+  /** Um esqueleto por publicação que está a caminho, nunca mais do que as que faltam. */
+  protected readonly esqueletosPublicacoes = computed(() =>
+    Array.from(
+      {
+        length: Math.min(
+          PUBLICACOES_POR_PAGINA,
+          this.publicacoesFiltradas().length - this.publicacoesVisiveis().length,
+        ),
+      },
+      (_, indice) => indice,
+    ),
+  );
+
+  /** A cascata reinicia em cada lote, para o atraso não crescer sem fim. */
+  protected readonly publicacoesPorPagina = PUBLICACOES_POR_PAGINA;
+
+  /** Pesquisar recomeça a paginação; senão herdava o limite anterior. */
   protected definirPesquisaPublicacoes(termo: string): void {
     this.pesquisaPublicacoes.set(termo);
+    this.limitePublicacoes.set(PUBLICACOES_POR_PAGINA);
+  }
+
+  protected carregarMaisPublicacoes(): void {
+    if (this.aCarregarPublicacoes()) {
+      return;
+    }
+    this.aCarregarPublicacoes.set(true);
+
+    setTimeout(() => {
+      this.limitePublicacoes.update((actual) => actual + PUBLICACOES_POR_PAGINA);
+      this.aCarregarPublicacoes.set(false);
+    }, ESPERA_PAGINA_MS);
   }
 
   protected readonly tituloPublicacoes = computed(() =>

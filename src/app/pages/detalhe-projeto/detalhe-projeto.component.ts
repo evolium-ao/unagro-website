@@ -1,9 +1,23 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Injector,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { projetosQueries } from '../../core/consultas/projetos.queries';
 import { traducaoQueries } from '../../core/consultas/traducao.queries';
 import { MembroEquipa } from '../../core/modelos/membro-equipa.model';
+import { DocumentoProjeto, TestemunhoProjeto } from '../../core/modelos/projeto.model';
 import { PatrocinadoresService } from '../../core/servicos/patrocinadores.service';
 import { ProjetosService } from '../../core/servicos/projetos.service';
 import { ValidacaoService } from '../../core/servicos/Validacao.service';
@@ -40,6 +54,15 @@ import { RevelarAoScrollDirective } from '../../shared/diretivas/revelar-ao-scro
  * do serviço resolvidos no idioma certo, a partir do mock bilingue.
  */
 const CAMPOS_TRADUZIVEIS_PROJETO = ['titulo', 'resumo', 'estado', 'areaTematica'] as const;
+
+/** Título de cada documento (`GET /publicacoes`) — só quando vem da API; o do mock já sai resolvido. */
+const CAMPOS_TRADUZIVEIS_DOCUMENTO = ['titulo'] as const;
+
+/** Citação e papel de cada testemunho (`GET /testemunhos`) — mesma ressalva acima. */
+const CAMPOS_TRADUZIVEIS_TESTEMUNHO = ['citacao', 'papel'] as const;
+
+/** Documentos a mostrar de início; o botão "Carregar Mais" só aparece com mais do que isto. */
+const DOCUMENTOS_POR_PAGINA = 4;
 
 /**
  * Opções do campo "Tipo de Interessado". É conteúdo estrutural do formulário, não
@@ -91,6 +114,9 @@ export class DetalheProjetoComponent {
   private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
   private readonly seo = inject(SeoService);
   protected readonly validacao = inject(ValidacaoService);
+  private readonly injector = inject(Injector);
+  private readonly viewportScroller = inject(ViewportScroller);
+  private readonly fragmentoUrl = toSignal(inject(ActivatedRoute).fragment);
 
   /**
    * Os ids da API são inteiros. Um id que não seja número não pode existir em
@@ -155,6 +181,49 @@ export class DetalheProjetoComponent {
     return equipa.map((membro, indice) => ({ ...membro, cargo: cargos[indice] ?? membro.cargo }));
   });
 
+  /**
+   * Os documentos vêm, ou todos da API (`GET /publicacoes`, título em
+   * português) ou todos do mock (já resolvidos no idioma certo) — mesma
+   * lógica da equipa acima, incluindo a mesma ressalva sobre traduzir de novo
+   * um título que já veio do mock.
+   */
+  private readonly consultaTraducaoDocumentos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaProjeto.data()?.documentos ?? [], CAMPOS_TRADUZIVEIS_DOCUMENTO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly documentosTraduzidos = computed<DocumentoProjeto[] | undefined>(() => {
+    const documentos = this.consultaProjeto.data()?.documentos;
+    if (!documentos) return undefined;
+    return aplicarTraducao(
+      documentos,
+      CAMPOS_TRADUZIVEIS_DOCUMENTO,
+      this.consultaTraducaoDocumentos.data(),
+    );
+  });
+
+  /** Os testemunhos seguem a mesma lógica dos documentos acima, com `citacao` e `papel`. */
+  private readonly consultaTraducaoTestemunhos = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.consultaProjeto.data()?.testemunhos ?? [], CAMPOS_TRADUZIVEIS_TESTEMUNHO),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly testemunhosTraduzidos = computed<TestemunhoProjeto[] | undefined>(() => {
+    const testemunhos = this.consultaProjeto.data()?.testemunhos;
+    if (!testemunhos) return undefined;
+    return aplicarTraducao(
+      testemunhos,
+      CAMPOS_TRADUZIVEIS_TESTEMUNHO,
+      this.consultaTraducaoTestemunhos.data(),
+    );
+  });
+
   protected readonly projeto = computed(() => {
     const dados = this.consultaProjeto.data();
     if (!dados) return undefined;
@@ -163,8 +232,35 @@ export class DetalheProjetoComponent {
       CAMPOS_TRADUZIVEIS_PROJETO,
       this.consultaTraducaoProjeto.data(),
     );
-    return { ...traduzido, equipa: this.equipaTraduzida() ?? traduzido.equipa };
+    return {
+      ...traduzido,
+      equipa: this.equipaTraduzida() ?? traduzido.equipa,
+      documentos: this.documentosTraduzidos() ?? traduzido.documentos,
+      testemunhos: this.testemunhosTraduzidos() ?? traduzido.testemunhos,
+    };
   });
+
+  /**
+   * "Carregar Mais" nos documentos — só aparece com mais do que
+   * `DOCUMENTOS_POR_PAGINA`; com poucos documentos a lista mostra-os todos
+   * de uma vez, sem controlo nenhum.
+   */
+  protected readonly limiteDocumentos = signal(DOCUMENTOS_POR_PAGINA);
+
+  protected readonly documentosVisiveis = computed(
+    () => this.projeto()?.documentos?.slice(0, this.limiteDocumentos()) ?? [],
+  );
+
+  protected readonly temMaisDocumentos = computed(
+    () => (this.projeto()?.documentos?.length ?? 0) > this.limiteDocumentos(),
+  );
+
+  /** A cascata reinicia em cada lote, para o atraso não crescer sem fim. */
+  protected readonly documentosPorPagina = DOCUMENTOS_POR_PAGINA;
+
+  protected carregarMaisDocumentos(): void {
+    this.limiteDocumentos.update((actual) => actual + DOCUMENTOS_POR_PAGINA);
+  }
 
   /** Enquanto o pedido corre ainda não se pode dizer que o projecto não existe. */
   protected readonly aCarregarProjeto = computed(
@@ -346,6 +442,26 @@ export class DetalheProjetoComponent {
     effect(() => {
       const projeto = this.projeto();
       this.seo.definirTituloDinamico(projeto ? projeto.titulo : null);
+    });
+
+    /**
+     * O `anchorScrolling` do router corre no fim da navegação, quando o projecto
+     * ainda não chegou e a âncora (`#formulario-interesse`, vinda do "Apoiar
+     * Projeto" do Hub) ainda não existe. Repete-se aqui, depois do render que
+     * segue a chegada do projecto — uma vez só por projecto e âncora, para a
+     * chegada tardia da tradução não puxar o utilizador de volta.
+     */
+    let ancoraJaRolada: string | null = null;
+    effect(() => {
+      const fragmento = this.fragmentoUrl();
+      const projeto = this.projeto();
+      if (!projeto || !fragmento) return;
+      const chave = `${projeto.id}#${fragmento}`;
+      if (chave === ancoraJaRolada) return;
+      ancoraJaRolada = chave;
+      afterNextRender(() => this.viewportScroller.scrollToAnchor(fragmento), {
+        injector: this.injector,
+      });
     });
   }
 

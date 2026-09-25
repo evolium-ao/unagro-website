@@ -28,7 +28,7 @@ const UNIDADES: UnidadeInvestigacao[] = [
 
 function montar(unidadeSelecionada: UnidadeInvestigacao) {
   const dadosModal = new ModalDataService();
-  const dados: DadosAgendarVisita = { unidadeSelecionada, unidades: UNIDADES };
+  const dados: DadosAgendarVisita = { unidadeSelecionada };
   dadosModal.definirDados(dados);
 
   TestBed.configureTestingModule({
@@ -59,15 +59,12 @@ describe('ModalAgendarVisitaComponent', () => {
     expect(() => montar(UNIDADES[0])).not.toThrow();
   });
 
-  it('desenha um cartão por unidade e pré-selecciona a que foi clicada', () => {
+  it('mostra só a unidade clicada, sem hipótese de trocar', () => {
     const fixture = montar(UNIDADES[1]);
     const html: HTMLElement = fixture.nativeElement;
 
-    expect(html.textContent).toContain('Centro de Biotecnologia Agrícola');
     expect(html.textContent).toContain('Unidade de Engenharia Rural');
-
-    const seleccionados = html.querySelectorAll('[aria-pressed="true"], [aria-checked="true"]');
-    expect(seleccionados.length).toBe(1);
-    expect(seleccionados[0].textContent).toContain('Unidade de Engenharia Rural');
+    expect(html.textContent).not.toContain('Centro de Biotecnologia Agrícola');
+    expect(html.querySelectorAll('[aria-pressed], [aria-checked]').length).toBe(0);
   });
 });

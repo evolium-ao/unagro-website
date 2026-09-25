@@ -56,19 +56,43 @@
       </a>
     </div>
 
+    @if (consultaNoticias.isPending()) {
     <div class="mt-8 grid gap-6 lg:h-150 lg:grid-cols-5">
-      @if (noticiaDestaque(); as destaque) {
-      <app-cartao-noticia-destaque class="lg:col-span-3" variante="simples" [noticia]="destaque" />
-      }
+      <app-cartao-noticia-destaque-esqueleto class="lg:col-span-3" />
+      <div class="grid gap-6 lg:col-span-2 lg:grid-rows-2">
+        <app-cartao-noticia-resumo-esqueleto />
+        <app-cartao-noticia-resumo-esqueleto />
+      </div>
+    </div>
+    } @else if (consultaNoticias.isError()) {
+    <p class="mt-8 py-12 text-center text-sm text-text-secondary">
+      {{ traducao.getTraducao(['Não foi possível carregar as notícias.', 'Could not load the news.']) }}
+    </p>
+    } @else if (noticiaDestaque(); as destaque) {
+    <div class="mt-8 grid gap-6 lg:h-150 lg:grid-cols-5">
+      <app-cartao-noticia-destaque class="lg:col-span-3" variante="simples" [noticia]="destaque"
+        [link]="'/noticias/' + destaque.id" />
 
       @if (noticiasSecundarias().length) {
       <div class="grid gap-6 lg:col-span-2 lg:grid-rows-2">
         @for (noticia of noticiasSecundarias(); track noticia.id) {
-        <app-cartao-noticia-resumo modo="horizontal" [noticia]="noticia" />
+        <app-cartao-noticia-resumo modo="horizontal" [noticia]="noticia" [link]="'/noticias/' + noticia.id" />
         }
       </div>
       }
     </div>
+    } @else if (noticiasSecundarias().length) {
+    <!-- Sem notícia em destaque: só a lista de resumos, em duas colunas. -->
+    <div class="mt-8 grid auto-rows-[12rem] gap-6 lg:grid-cols-2">
+      @for (noticia of noticiasSecundarias(); track noticia.id) {
+      <app-cartao-noticia-resumo modo="horizontal" [noticia]="noticia" [link]="'/noticias/' + noticia.id" />
+      }
+    </div>
+    } @else {
+    <p class="mt-8 py-12 text-center text-sm text-text-secondary">
+      {{ traducao.getTraducao(['Ainda não há notícias estudantis publicadas.', 'No student news published yet.']) }}
+    </p>
+    }
   </app-container-pagina>
 </section>
 <section id="secao-avisos" class="bg-primary-dark px-4 py-6 sm:px-6 lg:px-8 mt-18 mb-40">

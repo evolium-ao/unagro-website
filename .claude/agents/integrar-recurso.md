@@ -42,7 +42,7 @@ Se `<recurso>` faltar, pergunta. Não adivinhes o endpoint pelo nome da página.
 Nunca inventes a forma do recurso. Vai buscá-la ao esquema:
 
 ```bash
-curl -s -m 15 http://192.168.1.252:8000/docs/api.json -o /tmp/api.json
+curl -s -m 15 http://192.168.1.252:8001/docs/api.json -o /tmp/api.json
 node -e "
 const s=require('/tmp/api.json');
 const r='<Recurso>Resource';
@@ -55,7 +55,7 @@ E confirma com uma resposta real, porque o esquema mente às vezes (declara
 `id: string` quando a API devolve `id: 5`):
 
 ```bash
-curl -s -m 15 -H "Accept: application/json" http://192.168.1.252:8000/api/<recurso> | head -c 1500
+curl -s -m 15 -H "Accept: application/json" http://192.168.1.252:8001/api/<recurso> | head -c 1500
 ```
 
 Se a API não responder, **pára e diz**. Não continues a escrever mapeamentos

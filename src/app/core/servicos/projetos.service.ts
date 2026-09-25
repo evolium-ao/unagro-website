@@ -14,9 +14,12 @@ import {
   Projeto,
   TestemunhoProjeto,
 } from '../modelos/projeto.model';
+import { Publicacao } from '../modelos/publicacao.model';
 import { Idioma, IDIOMAS_DISPONIVEIS } from '../traducao/idioma';
 import { TextoBilingue } from '../traducao/texto-bilingue';
 import { InvestigadoresService } from './investigadores.service';
+import { PublicacoesService } from './publicacoes.service';
+import { TestemunhoComProjeto, TestemunhosService } from './testemunhos.service';
 
 /** Espelha o `CategoriaResource`, reduzido ao nome usado na área temática. */
 interface CategoriaApi {
@@ -70,10 +73,13 @@ interface ProjetoApi {
  * `Projeto` do site (identificação, resumo curto, estado, área temática,
  * imagem e, por vezes, equipa); tudo o que a secção de detalhe mostra e a API
  * não dá (contexto, objectivos, solução, cronograma quando vazio, galeria,
- * documentos, testemunhos, contacto) continua a vir do `PROJETOS_MOCK`, por
- * pedido explícito (ver `.claude/memory/integrar-recurso.md`, secção
- * `projectos`) — em vez de esconder essas secções como as outras integrações
- * fazem quando um campo falta.
+ * contacto) continua a vir do `PROJETOS_MOCK`, por pedido explícito (ver
+ * `.claude/memory/integrar-recurso.md`, secção `projectos`) — em vez de
+ * esconder essas secções como as outras integrações fazem quando um campo
+ * falta. **Excepções: `documentos`** vem de `GET /publicacoes`
+ * (`PublicacoesService`) e **`testemunhos`** de `GET /testemunhos`
+ * (`TestemunhosService`), ambos filtrados por `projecto_id` — só caem no
+ * mock se o projecto não tiver nenhum registo associado.
  *
  * O emparelhamento de cada projecto da API com a entrada do mock que lhe
  * empresta o resto do conteúdo é pelo **id da API módulo o tamanho do mock**
@@ -86,30 +92,72 @@ interface ProjetoApi {
 export class ProjetosService {
   private readonly api = inject(ApiService);
   private readonly investigadoresService = inject(InvestigadoresService);
+  private readonly publicacoesService = inject(PublicacoesService);
+  private readonly testemunhosService = inject(TestemunhosService);
 
   async listar(idioma: Idioma, signal?: AbortSignal): Promise<Projeto[]> {
-    const [linhas, investigadores] = await Promise.all([
+    const [linhas, investigadores, publicacoes, testemunhos] = await Promise.all([
       this.api.get<ProjetoApi[]>('projectos', { signal }),
       this.investigadoresService.listar(signal),
+      this.publicacoesService.listar(signal),
+      this.testemunhosService.listar(signal),
     ]);
     const investigadoresPorId = paraMapaDeInvestigadores(investigadores);
+    const publicacoesPorProjeto = paraMapaDePublicacoes(publicacoes);
+    const testemunhosPorProjeto = paraMapaDeTestemunhos(testemunhos);
 
     return semProjectosDuplicados(linhas)
       .sort((a, b) => a.id - b.id)
-      .map((linha) => paraProjeto(linha, investigadoresPorId, idioma));
+      .map((linha) =>
+        paraProjeto(linha, investigadoresPorId, publicacoesPorProjeto, testemunhosPorProjeto, idioma),
+      );
   }
 
   async obterPorId(id: number, idioma: Idioma, signal?: AbortSignal): Promise<Projeto> {
-    const [linha, investigadores] = await Promise.all([
+    const [linha, investigadores, publicacoes, testemunhos] = await Promise.all([
       this.api.get<ProjetoApi>(`projectos/${id}`, { signal }),
       this.investigadoresService.listar(signal),
+      this.publicacoesService.listar(signal),
+      this.testemunhosService.listar(signal),
     ]);
-    return paraProjeto(linha, paraMapaDeInvestigadores(investigadores), idioma);
+    return paraProjeto(
+      linha,
+      paraMapaDeInvestigadores(investigadores),
+      paraMapaDePublicacoes(publicacoes),
+      paraMapaDeTestemunhos(testemunhos),
+      idioma,
+    );
   }
 }
 
 function paraMapaDeInvestigadores(investigadores: Investigador[]): Map<string, Investigador> {
   return new Map(investigadores.map((investigador) => [investigador.id, investigador]));
+}
+
+/** Agrupa as publicações por `projetoId` — a API não tem `GET /publicacoes?projecto_id=`. */
+function paraMapaDePublicacoes(publicacoes: Publicacao[]): Map<string, Publicacao[]> {
+  const mapa = new Map<string, Publicacao[]>();
+  for (const publicacao of publicacoes) {
+    if (!publicacao.projetoId) continue;
+    const lista = mapa.get(publicacao.projetoId) ?? [];
+    lista.push(publicacao);
+    mapa.set(publicacao.projetoId, lista);
+  }
+  return mapa;
+}
+
+/** Agrupa os testemunhos por `projetoId` — a API não tem `GET /testemunhos?projecto_id=`. */
+function paraMapaDeTestemunhos(
+  testemunhos: TestemunhoComProjeto[],
+): Map<string, TestemunhoComProjeto[]> {
+  const mapa = new Map<string, TestemunhoComProjeto[]>();
+  for (const testemunho of testemunhos) {
+    if (!testemunho.projetoId) continue;
+    const lista = mapa.get(testemunho.projetoId) ?? [];
+    lista.push(testemunho);
+    mapa.set(testemunho.projetoId, lista);
+  }
+  return mapa;
 }
 
 /**
@@ -154,11 +202,15 @@ function resolver(par: TextoBilingue, idioma: Idioma): string {
 function paraProjeto(
   linha: ProjetoApi,
   investigadoresPorId: Map<string, Investigador>,
+  publicacoesPorProjeto: Map<string, Publicacao[]>,
+  testemunhosPorProjeto: Map<string, TestemunhoComProjeto[]>,
   idioma: Idioma,
 ): Projeto {
   const mock = PROJETOS_MOCK[(linha.id - 1) % PROJETOS_MOCK.length] ?? PROJETOS_MOCK[0];
   const equipaApi = paraEquipaApi(linha.equipaProjectos, investigadoresPorId);
   const cronogramaApi = paraCronogramaApi(linha.cronogramas);
+  const documentosApi = paraDocumentosApi(publicacoesPorProjeto.get(String(linha.id)) ?? []);
+  const testemunhosApi = paraTestemunhosApi(testemunhosPorProjeto.get(String(linha.id)) ?? []);
 
   return {
     id: String(linha.id),
@@ -208,8 +260,18 @@ function paraProjeto(
     // dados actuais); o resto (incluindo os duplicados de "Recuperação de Solos
     // Degradados") cai na equipa do mock.
     equipa: equipaApi.length ? equipaApi : mock.equipa?.map((membro) => paraMembroMock(membro, idioma)),
-    documentos: mock.documentos?.map((documento) => paraDocumento(documento, idioma)),
-    testemunhos: mock.testemunhos?.map((testemunho) => paraTestemunho(testemunho, idioma)),
+    // Os documentos reais entram quando o projecto tem publicações associadas
+    // (`GET /publicacoes`, filtrado por `projecto_id`); o resto cai no mock,
+    // tal como a equipa e o cronograma acima.
+    documentos: documentosApi.length
+      ? documentosApi
+      : mock.documentos?.map((documento) => paraDocumento(documento, idioma)),
+    // Os testemunhos reais entram quando o projecto tem registos associados
+    // (`GET /testemunhos`, filtrado por `projecto_id`); o resto cai no mock,
+    // tal como a equipa, o cronograma e os documentos acima.
+    testemunhos: testemunhosApi.length
+      ? testemunhosApi
+      : mock.testemunhos?.map((testemunho) => paraTestemunho(testemunho, idioma)),
     contacto: mock.contacto ? paraContacto(mock.contacto, idioma) : undefined,
   };
 }
@@ -249,6 +311,32 @@ function paraCronogramaApi(cronogramas: CronogramaApi[]): EtapaCronograma[] {
       descricao: etapa.descricao ?? '',
       estado: paraEstadoEtapa(etapa.estado),
     }));
+}
+
+/**
+ * Uma publicação só vira um documento descarregável se tiver `documentoUrl`
+ * (já resolvido para o idioma do pedido pelo `PublicacoesService`); sem
+ * ficheiro não há nada para o botão de download apontar, e a linha fica de
+ * fora.
+ */
+function paraDocumentosApi(publicacoes: Publicacao[]): DocumentoProjeto[] {
+  return publicacoes
+    .filter((publicacao) => publicacao.documentoUrl)
+    .map((publicacao) => ({
+      id: publicacao.id,
+      titulo: publicacao.titulo,
+      url: publicacao.documentoUrl,
+    }));
+}
+
+function paraTestemunhosApi(testemunhos: TestemunhoComProjeto[]): TestemunhoProjeto[] {
+  return testemunhos.map((testemunho) => ({
+    id: testemunho.id,
+    citacao: testemunho.citacao,
+    autor: testemunho.autor,
+    papel: testemunho.papel,
+    foto: testemunho.foto,
+  }));
 }
 
 /** A API não declara os valores possíveis; um valor desconhecido cai em "futura". */

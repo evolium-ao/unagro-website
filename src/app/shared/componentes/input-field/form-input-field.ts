@@ -138,8 +138,7 @@ export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
   readonly variante = input<VarianteCampo>('caixa');
   /**
    * Deixa cair o `<label>` quando não há texto nenhum para mostrar. Por omissão
-   * `false`, porque o rótulo vazio é usado como espaçador — ver o campo de
-   * subscrição em `hub-unagro`, onde é ele que alinha o botão com a caixa.
+   * `false`, porque há formulários que usam o rótulo vazio como espaçador.
    */
   readonly ocultarRotuloVazio = input(false);
   id = crypto.randomUUID();

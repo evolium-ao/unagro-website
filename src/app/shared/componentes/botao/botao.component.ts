@@ -57,9 +57,22 @@ const CLASSES_BASE =
   host: { '[class.block]': 'larguraTotal()', '[class.w-full]': 'larguraTotal()' },
   template: `
     @if (link(); as destino) {
-      <a [routerLink]="rotaBase()" [fragment]="fragmento()" [class]="classes()">
-        <ng-container [ngTemplateOutlet]="conteudo" />
-      </a>
+      @if (ehExterno()) {
+        <!-- URL absoluto (ficheiro da API, link externo): o routerLink navegaria dentro da SPA, não descarrega nem abre fora dela. -->
+        <a
+          [href]="destino"
+          target="_blank"
+          rel="noopener noreferrer"
+          [attr.download]="download() ? '' : null"
+          [class]="classes()"
+        >
+          <ng-container [ngTemplateOutlet]="conteudo" />
+        </a>
+      } @else {
+        <a [routerLink]="rotaBase()" [fragment]="fragmento()" [class]="classes()">
+          <ng-container [ngTemplateOutlet]="conteudo" />
+        </a>
+      }
     } @else {
       <button
         [type]="tipo()"
@@ -93,6 +106,8 @@ export class BotaoComponent {
   readonly desativado = input(false);
   readonly tipo = input<'button' | 'submit'>('button');
   readonly link = input<string>();
+  /** Força o atributo `download` quando `link` é um URL absoluto (ficheiro a descarregar, não a abrir). */
+  readonly download = input(false);
   readonly raio = input<RaioBotao>('completo');
   /** Faz o botão ocupar toda a largura disponível (o host passa a bloco). */
   readonly larguraTotal = input(false);
@@ -108,6 +123,8 @@ export class BotaoComponent {
   readonly clicado = output<void>();
 
   protected readonly tamanhoIcone = computed(() => (this.tamanho() === 'lg' ? 20 : 16));
+  /** Um URL absoluto (ficheiro da API, link externo) navega fora da SPA em vez de por routerLink. */
+  protected readonly ehExterno = computed(() => /^https?:\/\//i.test(this.link() ?? ''));
   protected readonly rotaBase = computed(() => this.link()?.split('#')[0] ?? '');
   protected readonly fragmento = computed(() => {
     const destino = this.link();

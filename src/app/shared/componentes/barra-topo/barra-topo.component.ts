@@ -61,23 +61,23 @@ import { IconeComponent } from '../icone/icone.component';
             </button>
           </div>
 
-          <button
+          <!-- <button
             type="button"
             class="ml-1 inline-flex cursor-pointer items-center justify-center text-white transition-colors duration-200 hover:text-secondary"
             [attr.aria-label]="traducao.t('comum.pesquisar')"
           >
             <app-icone nome="search" [tamanho]="15" [espessuraTraco]="2.5" />
-          </button>
+          </button> -->
 
           <!-- Entrada na conta. A rota canónica é \`/entrar\`; \`/login\` existe
                como redireccionamento, para endereços partilhados de fora. -->
-          <a
+          <!-- <a
             routerLink="/entrar"
             class="ml-1 inline-flex items-center gap-1.5 rounded-full border border-white/30 px-3 py-1 text-[11px] font-semibold text-white transition-colors duration-200 hover:border-secondary hover:bg-white/10 hover:text-secondary"
           >
             <app-icone nome="log-in" [tamanho]="13" [espessuraTraco]="2.5" />
             {{ traducao.t('comum.entrar') }}
-          </a>
+          </a> -->
         </div>
       </app-container-pagina>
     </div>

@@ -28,6 +28,9 @@ export interface ProjectoInovador {
   moeda?: string;
   /** Parte da meta já atingida, de 0 a 100. */
   percentagemMeta?: number;
-  /** Destino do "Apoiar Projeto". */
-  link?: string;
+  /**
+   * Id do `Projeto` (`GET /projectos/{id}`) cujo formulário de interesse recebe o
+   * "Apoiar Projeto". O destino (`link`) é montado pelo `ProjectosInovadoresService`.
+   */
+  projetoId?: string;
 }

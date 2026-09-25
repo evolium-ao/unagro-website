@@ -1,16 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { ControlContainer, FormGroupDirective, ReactiveFormsModule } from '@angular/forms';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
-import {
-  GrupoCartoesSelecaoComponent,
-  OpcaoCartaoSelecao,
-} from '../grupo-cartoes-selecao/grupo-cartoes-selecao.component';
+import { IconeComponent } from '../icone/icone.component';
 import { FormFieldInputComponentV2 } from '../input-field/form-input-field';
 import { FormFieldSelectComponentV2, SelectOptionV2 } from '../select-field-v2/select-field-v2';
 import { criarErrosFormulario } from '../../formulario/erros-formulario';
 
 /** Horários de visita disponíveis, de hora a hora. Sai quando a agenda vier da API. */
 const HORARIOS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00'];
+
+/** A unidade a visitar, já traduzida, como o bloco de confirmação a mostra. */
+export interface UnidadeVisita {
+  rotulo: string;
+  icone: string;
+}
 
 /**
  * Campos do pedido de visita. Vive debaixo do `[formGroup]` do
@@ -23,7 +26,7 @@ const HORARIOS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00']
     ReactiveFormsModule,
     FormFieldInputComponentV2,
     FormFieldSelectComponentV2,
-    GrupoCartoesSelecaoComponent,
+    IconeComponent,
   ],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -75,13 +78,16 @@ const HORARIOS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00']
         [erro]="erros.hora()" />
     </div>
 
-    <app-grupo-cartoes-selecao
-      formControlName="unidade"
-      class="mt-8"
-      [label]="textos().unidade"
-      [opcoes]="unidades()"
-      [colunas]="3"
-      [erro]="erros.unidade()" />
+    <!-- Sem fila de cartões: a unidade já vem escolhida do cartão clicado, só se confirma aqui. -->
+    <div class="mt-8">
+      <span class="block text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary">
+        {{ textos().unidade }}
+      </span>
+      <div class="mt-2 inline-flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
+        <app-icone [nome]="unidade().icone" [tamanho]="18" class="text-primary" />
+        <span class="text-base font-semibold text-primary-deep">{{ unidade().rotulo }}</span>
+      </div>
+    </div>
 
     <div class="mt-8 grid gap-x-8 gap-y-6 sm:grid-cols-3">
       <div class="sm:col-span-2">
@@ -105,8 +111,8 @@ const HORARIOS = ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00']
   `,
 })
 export class CamposAgendarVisitaComponent {
-  /** Cartões seleccionáveis da fila "Unidade a visitar", já traduzidos pela página. */
-  readonly unidades = input.required<OpcaoCartaoSelecao[]>();
+  /** Unidade escolhida no cartão — mostrada como confirmação, não editável. */
+  readonly unidade = input.required<UnidadeVisita>();
 
   private readonly traducao = inject(TraducaoService);
 
@@ -117,7 +123,6 @@ export class CamposAgendarVisitaComponent {
     'telefone',
     'data',
     'hora',
-    'unidade',
     'motivo',
     'participantes',
   ] as const);

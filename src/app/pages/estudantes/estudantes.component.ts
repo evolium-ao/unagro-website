@@ -4,7 +4,15 @@ import { AvisoIntranet, TipoAvisoIntranet } from '../../core/modelos/aviso-intra
 import { EstatisticasService } from '../../core/servicos/estatisticas.service';
 import { IntranetService } from '../../core/servicos/intranet.service';
 import { TraducaoService } from '../../core/traducao/traducao.service';
-import { NoticiaCartao } from '../../shared/modelos/noticia-cartao.model';
+import { injectQuery } from '@tanstack/angular-query-experimental';
+import { noticiasQueries } from '../../core/consultas/noticias.queries';
+import { traducaoQueries } from '../../core/consultas/traducao.queries';
+import { Noticia } from '../../core/modelos/noticia.model';
+import { NoticiasService } from '../../core/servicos/noticias.service';
+import { TraducaoAutomaticaService } from '../../core/traducao/traducao-automatica.service';
+import { aplicarTraducao, camposParaTraduzir } from '../../core/traducao/traduzir-campos';
+import { CartaoNoticiaDestaqueEsqueletoComponent } from '../../shared/componentes/cartao-noticia-destaque-esqueleto/cartao-noticia-destaque-esqueleto.component';
+import { CartaoNoticiaResumoEsqueletoComponent } from '../../shared/componentes/cartao-noticia-resumo-esqueleto/cartao-noticia-resumo-esqueleto.component';
 import {
   BannerDestaqueComponent,
   CtaBannerDestaque,
@@ -21,67 +29,23 @@ import { BotaoComponent } from "../../shared/componentes/botao/botao.component";
 import { ContainerBannerFaixaEstatisticaComponent } from "../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component";
 
 /**
- * Forma como uma notícia académica chega do backend: cada texto é o par
- * `[pt, en]` que o `TraducaoService.getTraducao` resolve para o idioma activo.
- * Para trocar o mock pela API basta alimentar `noticiasBrutas` com a resposta
- * HTTP — o resto da secção não muda.
+ * Valores de `tipo_noticia` (texto livre na API, sem lista fechada) que contam
+ * como notícia estudantil, já normalizados por `normalizarTipo`. `estudantil`
+ * é o tipo pedido para o back office; `academica` é o que a API já usa hoje
+ * para as notícias da vida académica.
  */
-interface NoticiaAcademicaApi {
-  id: string;
-  categoria: [string, string];
-  titulo: [string, string];
-  resumo: [string, string];
-  /** Data de publicação em ISO; o cartão mostra a antiguidade ("há 2 dias"). */
-  data: string;
-  imagem?: string;
-  destaque?: boolean;
-}
+const TIPOS_NOTICIA_ESTUDANTIL = new Set(['estudantil', 'academica']);
 
-const NOTICIAS_ACADEMICAS_MOCK: NoticiaAcademicaApi[] = [
-  {
-    id: 'sementes-resilientes-clima',
-    categoria: ['Investigação', 'Research'],
-    titulo: [
-      'Novo avanço em sementes resilientes ao clima',
-      'New breakthrough in climate-resilient seeds',
-    ],
-    resumo: [
-      'Equipa de investigadores da UNAGRO desenvolve variedade de milho capaz de resistir a períodos prolongados de seca severa.',
-      'A UNAGRO research team has developed a maize variety able to withstand prolonged periods of severe drought.',
-    ],
-    data: '2026-08-31',
-    imagem: '/imagens/estudante-noticia-pesquisa.png',
-    destaque: true,
-  },
-  {
-    id: 'workshop-horticultura-urbana',
-    categoria: ['Campus Life', 'Campus Life'],
-    titulo: [
-      'Workshop de Horticultura Urbana atrai centenas de alunos',
-      'Urban Horticulture workshop draws hundreds of students',
-    ],
-    resumo: [
-      'Duas tardes de prática em canteiros verticais e compostagem doméstica esgotaram as inscrições.',
-      'Two afternoons of hands-on vertical beds and home composting sold out within days.',
-    ],
-    data: '2026-08-30',
-    imagem: '/imagens/image-curso-1.png',
-  },
-  {
-    id: 'protocolo-lider-tecnologico',
-    categoria: ['Parcerias', 'Partnerships'],
-    titulo: [
-      'UNAGRO assina protocolo com líder tecnológico do setor',
-      'UNAGRO signs agreement with a leading sector technology firm',
-    ],
-    resumo: [
-      'O acordo abre estágios e acesso a equipamento de agricultura de precisão aos estudantes dos últimos anos.',
-      'The agreement opens internships and access to precision-farming equipment for final-year students.',
-    ],
-    data: '2026-08-27',
-    imagem: '/imagens/image-curso-2.png',
-  },
-];
+/** Uma em destaque e duas na lista — é o que a grelha da secção comporta. */
+const NOTICIAS_ESTUDANTIS_POR_SECCAO = 3;
+
+/** Campos de texto traduzidos automaticamente quando o idioma não é português. */
+const CAMPOS_TRADUZIVEIS_NOTICIA = ['titulo', 'resumo', 'categoria'] as const;
+
+/** "Académica" → "academica": sem acentos, maiúsculas nem espaços à volta. */
+function normalizarTipo(tipo: string): string {
+  return tipo.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toLowerCase();
+}
 
 /** Cada tipo de aviso da intranet tem o seu ícone na faixa de notas informativas. */
 const ICONES_AVISO: Record<TipoAvisoIntranet, string> = {
@@ -97,6 +61,8 @@ const ICONES_AVISO: Record<TipoAvisoIntranet, string> = {
     CabecalhoSecaoComponent,
     CartaoNoticiaDestaqueComponent,
     CartaoNoticiaResumoComponent,
+    CartaoNoticiaDestaqueEsqueletoComponent,
+    CartaoNoticiaResumoEsqueletoComponent,
     ContainerPaginaComponent,
     IconeComponent,
     RouterLink,
@@ -111,6 +77,8 @@ viewProviders: [provideIcons({ saxLockOutline })],
 export class EstudantesComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly intranetService = inject(IntranetService);
+  private readonly noticiasService = inject(NoticiasService);
+  private readonly servicoTraducaoAutomatica = inject(TraducaoAutomaticaService);
 
   protected readonly avisos = this.intranetService.avisos;
 
@@ -149,24 +117,43 @@ export class EstudantesComponent {
     },
   ]);
 
-  /** Substituir por um sinal alimentado pelo endpoint de notícias académicas. */
-  private readonly noticiasBrutas = signal<NoticiaAcademicaApi[]>(NOTICIAS_ACADEMICAS_MOCK);
-
-  private readonly noticias = computed<NoticiaCartao[]>(() =>
-    this.noticiasBrutas().map((noticia) => ({
-      id: noticia.id,
-      categoria: this.traducao.getTraducao(noticia.categoria),
-      titulo: this.traducao.getTraducao(noticia.titulo),
-      resumo: this.traducao.getTraducao(noticia.resumo),
-      data: noticia.data,
-      imagem: noticia.imagem,
-    })),
+  /**
+   * `GET /noticias` — a mesma consulta (e cache) da página inicial. A API não
+   * tem filtro por tipo, por isso a secção fica só com as estudantis aqui.
+   */
+  protected readonly consultaNoticias = injectQuery(() =>
+    noticiasQueries.lista(this.noticiasService),
   );
 
-  protected readonly noticiaDestaque = computed(() => {
-    const indice = this.noticiasBrutas().findIndex((noticia) => noticia.destaque);
-    return this.noticias()[indice >= 0 ? indice : 0];
-  });
+  /** As mais recentes primeiro, só as de tipo estudantil, até encher a grelha. */
+  private readonly noticiasEstudantis = computed<Noticia[]>(() =>
+    (this.consultaNoticias.data() ?? [])
+      .filter((noticia) => TIPOS_NOTICIA_ESTUDANTIL.has(normalizarTipo(noticia.categoria)))
+      .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+      .slice(0, NOTICIAS_ESTUDANTIS_POR_SECCAO),
+  );
+
+  /** A API só devolve português (ver `.claude/README.md`); traduzido antes de chegar aos cartões. */
+  private readonly consultaTraducaoNoticias = injectQuery(() =>
+    traducaoQueries.lista(
+      this.servicoTraducaoAutomatica,
+      camposParaTraduzir(this.noticiasEstudantis(), CAMPOS_TRADUZIVEIS_NOTICIA),
+      this.traducao.idioma(),
+    ),
+  );
+
+  private readonly noticias = computed<Noticia[]>(() =>
+    aplicarTraducao(
+      this.noticiasEstudantis(),
+      CAMPOS_TRADUZIVEIS_NOTICIA,
+      this.consultaTraducaoNoticias.data(),
+    ),
+  );
+
+  /** Só uma notícia marcada como destaque ocupa o cartão grande; sem ela, todas vão para a lista. */
+  protected readonly noticiaDestaque = computed(() =>
+    this.noticias().find((noticia) => noticia.destaque),
+  );
 
   protected readonly noticiasSecundarias = computed(() =>
     this.noticias().filter((noticia) => noticia.id !== this.noticiaDestaque()?.id),

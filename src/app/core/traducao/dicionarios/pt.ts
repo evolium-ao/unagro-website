@@ -213,7 +213,6 @@ export const pt = {
         'Aceda ao seu portal para completar o formulário, submeter documentos em falta ou consultar o estado do seu processo.',
       portalBotaoContinuar: 'Continuar Candidatura',
       portalBotaoEstado: 'Consultar Estado',
-      portalLinkRecuperar: 'Recuperar Código de Acesso',
       recrutamentoSelo: 'Oportunidades de carreira',
       recrutamentoTitulo: 'Recrutamento de Professores',
       recrutamentoDescricao:

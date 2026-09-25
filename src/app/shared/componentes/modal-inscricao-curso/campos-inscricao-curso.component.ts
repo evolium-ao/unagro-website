@@ -4,7 +4,6 @@ import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { criarErrosFormulario } from '../../formulario/erros-formulario';
 import { IconeComponent } from '../icone/icone.component';
 import { FormFieldInputComponentV2, LeftIconDirective } from '../input-field/form-input-field';
-import { FormFieldSelectComponentV2, SelectOptionV2 } from '../select-field-v2/select-field-v2';
 
 /**
  * Campos da inscrição em curso de curta duração. Vive debaixo do `[formGroup]` do
@@ -13,13 +12,7 @@ import { FormFieldSelectComponentV2, SelectOptionV2 } from '../select-field-v2/s
  */
 @Component({
   selector: 'app-campos-inscricao-curso',
-  imports: [
-    ReactiveFormsModule,
-    FormFieldInputComponentV2,
-    FormFieldSelectComponentV2,
-    IconeComponent,
-    LeftIconDirective,
-  ],
+  imports: [ReactiveFormsModule, FormFieldInputComponentV2, IconeComponent, LeftIconDirective],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -57,24 +50,20 @@ import { FormFieldSelectComponentV2, SelectOptionV2 } from '../select-field-v2/s
       </form-input-field>
     </div>
 
-    <!-- O field-select-v2 não tem slot de ícone: fica sem ícone à esquerda. -->
-    <field-select-v2
-      class="mt-4 block"
-      formControlName="curso"
-      [options]="cursos()"
-      [label]="textos().curso"
-      [placeholder]="textos().cursoPlaceholder"
-      [erro]="erros.curso()"
-    />
+    <!-- Sem select: o curso já vem escolhido do cartão clicado, só se confirma aqui. -->
+    <div class="mt-4">
+      <span class="block text-sm font-medium text-text-secondary">{{ textos().curso }}</span>
+      <p class="mt-1 text-base font-semibold text-primary-deep">{{ tituloCurso() }}</p>
+    </div>
   `,
 })
 export class CamposInscricaoCursoComponent {
-  /** Opções do "Curso desejado", já traduzidas pela página que abre o modal. */
-  readonly cursos = input.required<SelectOptionV2[]>();
+  /** Título do curso escolhido no cartão — mostrado como confirmação, não editável. */
+  readonly tituloCurso = input.required<string>();
 
   private readonly traducao = inject(TraducaoService);
 
-  protected readonly erros = criarErrosFormulario(['nome', 'email', 'telefone', 'curso'] as const);
+  protected readonly erros = criarErrosFormulario(['nome', 'email', 'telefone'] as const);
 
   protected readonly textos = computed(() => ({
     nome: this.traducao.getTraducao(['Nome completo', 'Full name']),
@@ -86,7 +75,6 @@ export class CamposInscricaoCursoComponent {
     ]),
     telefone: this.traducao.getTraducao(['Telefone', 'Phone']),
     telefonePlaceholder: this.traducao.getTraducao(['+244 9XX XXX XXX', '+244 9XX XXX XXX']),
-    curso: this.traducao.getTraducao(['Curso desejado', 'Desired course']),
-    cursoPlaceholder: this.traducao.getTraducao(['Selecione um módulo...', 'Select a module...']),
+    curso: this.traducao.getTraducao(['Curso selecionado', 'Selected course']),
   }));
 }

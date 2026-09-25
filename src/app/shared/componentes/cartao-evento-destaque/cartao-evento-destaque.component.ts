@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatarIntervaloDatas } from '../../../core/traducao/formatar-data';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
@@ -71,6 +71,15 @@ export interface EventoDestaqueCartao {
               {{ traducao.t('comum.saberMais') }}
               <app-icone nome="arrow-right" [tamanho]="16" />
             </a>
+          } @else {
+            <button
+              type="button"
+              class="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-8 py-3 text-xs font-bold uppercase tracking-wider text-primary-dark transition-colors duration-200 hover:bg-white/90"
+              (click)="detalhesSolicitados.emit()"
+            >
+              {{ traducao.t('comum.saberMais') }}
+              <app-icone nome="arrow-right" [tamanho]="16" />
+            </button>
           }
         </div>
 
@@ -89,8 +98,15 @@ export interface EventoDestaqueCartao {
 })
 export class CartaoEventoDestaqueComponent {
   readonly evento = input.required<EventoDestaqueCartao>();
-  /** Destino do botão "Saber mais"; sem destino, o botão não é apresentado. */
+  /**
+   * Destino do botão "Saber mais". Sem destino, o botão emite
+   * `detalhesSolicitados` e deixa a acção a quem usa o cartão — é assim que a
+   * página inicial abre o modal de detalhes do evento.
+   */
   readonly link = input<string>();
+
+  /** Pedido dos detalhes do evento. Só emite quando não há `link`. */
+  readonly detalhesSolicitados = output<void>();
   /**
    * Fotografia de fundo, escurecida pelo verde. Sem ela o cartão fica com o
    * `bg-primary-deep` sólido de sempre.

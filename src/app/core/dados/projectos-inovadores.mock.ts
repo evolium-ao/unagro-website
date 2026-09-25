@@ -1,8 +1,9 @@
 import { ProjectoInovador } from '../modelos/projecto-inovador.model';
 
-// TODO: `app.routes.ts` não tem detalhe nem listagem de projectos inovadores — o
-// "Apoiar Projeto" aponta para a âncora da própria sessão até essa rota existir.
-const LINK_PROVISORIO = '/hub-unagro#secao-projectos-inovadores';
+// TODO (ponto 26): quando a secção consumir os projectos da API com `inovador: true`,
+// o `projetoId` passa a ser o próprio `id` do projecto. Até lá, cada entrada aponta
+// para um projecto real de `GET /projectos` — é o formulário de interesse desse
+// projecto que recebe o "Apoiar Projeto".
 
 export const PROJECTOS_INOVADORES_MOCK: ProjectoInovador[] = [
   {
@@ -17,7 +18,7 @@ export const PROJECTOS_INOVADORES_MOCK: ProjectoInovador[] = [
     metaFinanciamento: 120000,
     moeda: 'USD',
     percentagemMeta: 85,
-    link: LINK_PROVISORIO,
+    projetoId: '1',
   },
   {
     id: 'irrismart-iot',
@@ -28,7 +29,7 @@ export const PROJECTOS_INOVADORES_MOCK: ProjectoInovador[] = [
     },
     icone: 'droplet',
     estagio: { pt: 'Protótipo', en: 'Prototype' },
-    link: LINK_PROVISORIO,
+    projetoId: '2',
   },
   {
     id: 'genoma-cafe',
@@ -39,6 +40,6 @@ export const PROJECTOS_INOVADORES_MOCK: ProjectoInovador[] = [
     },
     icone: 'flask-conical',
     estagio: { pt: 'Pesquisa', en: 'Research' },
-    link: LINK_PROVISORIO,
+    projetoId: '3',
   },
 ];

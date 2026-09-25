@@ -13,23 +13,6 @@
   </div>
 
   <div class="mt-8 rounded-2xl bg-white p-6 shadow-sm sm:p-10 lg:p-12">
-    @if (submetido()) {
-    <!-- Confirmação: só aparece depois de o POST /candidaturas passar. -->
-    <div class="flex flex-col items-center py-8 text-center">
-      <span class="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
-        <app-icone nome="circle-check" [tamanho]="28" />
-      </span>
-      <h3 class="mt-5 text-xl font-bold text-primary-dark">
-        {{ textos().sucessoTitulo }}
-      </h3>
-      <p class="mt-3 max-w-md text-sm leading-relaxed text-text-secondary">
-        {{ textos().sucessoDescricao }}
-      </p>
-      <app-botao class="mt-7" variante="contorno" (clicado)="recomecar()">
-        {{ textos().sucessoBotao }}
-      </app-botao>
-    </div>
-    } @else {
     <form [formGroup]="formulario" (ngSubmit)="submeter()">
       @switch (passoAtual()) {
       @case (0) {
@@ -73,6 +56,5 @@
         }
       </div>
     </form>
-    }
   </div>
 </div>

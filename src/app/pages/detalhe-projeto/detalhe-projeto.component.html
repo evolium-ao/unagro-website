@@ -183,14 +183,23 @@
           [titulo]="tituloDocumentos()" appRevelarAoScroll />
 
         <div class="mt-6 space-y-3">
-          @for (documento of p.documentos ?? []; track documento.id) {
-          <app-item-documento [documento]="documento" [appRevelarAoScroll]="$index + 1" />
+          @for (documento of documentosVisiveis(); track documento.id) {
+          <app-item-documento [documento]="documento" [appRevelarAoScroll]="$index % documentosPorPagina + 1" />
           } @empty {
           <p class="py-8 text-sm text-text-secondary">
             {{ traducao.getTraducao(['Os documentos deste projecto ainda não foram publicados.', 'The documents for this project have not been published yet.']) }}
           </p>
           }
         </div>
+
+        @if (temMaisDocumentos()) {
+        <div class="mt-4">
+          <app-botao variante="contorno" tamanho="sm" icone="chevron-down" posicaoIcone="direita"
+            (clicado)="carregarMaisDocumentos()">
+            {{ traducao.getTraducao(['Carregar Mais Documentos', 'Load More Documents']) }}
+          </app-botao>
+        </div>
+        }
       </div>
 
       <div>
@@ -228,7 +237,8 @@
         </div>
       </div>
 
-      <div class="bg-white px-6 py-10 sm:px-10 sm:py-12">
+      <!-- Âncora do "Apoiar Projeto" dos projectos inovadores (Hub UNAGRO). -->
+      <div id="formulario-interesse" class="scroll-mt-24 bg-white px-6 py-10 sm:px-10 sm:py-12">
         <form [formGroup]="formulario" (ngSubmit)="enviarMensagem()">
           <div class="grid gap-x-6 sm:grid-cols-2">
             <form-input-field variante="minimalista" formControlName="nome" [label]="rotuloNome()"
