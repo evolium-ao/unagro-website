@@ -1,18 +1,18 @@
-<!-- Hero — banner partilhado; o campo de e-mail e a linha de metadados entram pelo
-     slot de conteúdo, porque no mockup ficam abaixo do campo e não acima dos CTAs. -->
+<!-- Hero — banner partilhado com o CTA "Candidatar-se" (abre a etapa 1). A linha de
+     metadados entra pelo slot de conteúdo porque no mockup fica abaixo do botão. -->
 <app-banner-destaque
   [titulo]="textos().heroTitulo"
   [tituloDestaque]="textos().heroDestaque"
   [tituloFim]="textos().heroFim"
   [subtitulo]="textos().heroSubtitulo"
   [selos]="selosHero()"
+  [ctas]="ctasHero()"
   bg="/imagens/banner-candidatura.jpg"
   [temBackdrop]="true"
   classeBackdrop="bg-primary-deep/70"
 >
-  <app-email-hero-candidatura (enviado)="abrirFormularioComEmail($event)" />
   @for (metadado of metadadosHero(); track metadado.texto) {
-    <p class="mt-2 inline-flex items-center gap-2 text-sm text-white/85" data-animar="ctas">
+    <p class="mt-4 inline-flex items-center gap-2 text-sm text-white/85" data-animar="ctas">
       <app-icone [nome]="metadado.icone" [tamanho]="16" class="text-secondary" />
       {{ metadado.texto }}
     </p>

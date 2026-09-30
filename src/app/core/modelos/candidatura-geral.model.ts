@@ -47,6 +47,20 @@ export interface EtapaNumeradaCandidaturaGeral {
   fase?: TextoTraduzido;
 }
 
+/** Grau académico da etapa 2 — cartão com ícone, nome e sigla. */
+export interface GrauAcademicoCandidaturaGeral {
+  id: string;
+  icone: string;
+  rotulo: TextoTraduzido;
+  sigla: TextoTraduzido;
+}
+
+/** Opção de um select do formulário (intervalos de anos de experiência). */
+export interface OpcaoCandidaturaGeral {
+  id: string;
+  rotulo: TextoTraduzido;
+}
+
 /** Documento obrigatório do dossier de candidatura. */
 export interface DocumentoCandidaturaGeral {
   id: string;

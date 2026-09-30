@@ -3,6 +3,8 @@ import {
   DestaqueCandidaturaGeral,
   DocumentoCandidaturaGeral,
   EtapaNumeradaCandidaturaGeral,
+  GrauAcademicoCandidaturaGeral,
+  OpcaoCandidaturaGeral,
   ParceiroCandidaturaGeral,
   TermoReferenciaCandidaturaGeral,
 } from '../modelos/candidatura-geral.model';
@@ -271,4 +273,25 @@ export const DOCUMENTOS_CANDIDATURA_GERAL_MOCK: DocumentoCandidaturaGeral[] = [
       en: 'Max. 2 pages presenting your vision for «Real-Soil Teaching».',
     },
   },
+];
+
+export const GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK: GrauAcademicoCandidaturaGeral[] = [
+  { id: 'licenciatura', icone: 'award', rotulo: { pt: 'Licenciatura', en: "Bachelor's" }, sigla: { pt: 'BSc', en: 'BSc' } },
+  { id: 'mestrado', icone: 'graduation-cap', rotulo: { pt: 'Mestrado', en: "Master's" }, sigla: { pt: 'MSc', en: 'MSc' } },
+  { id: 'doutoramento', icone: 'badge-check', rotulo: { pt: 'Doutoramento', en: 'Doctorate' }, sigla: { pt: 'PhD', en: 'PhD' } },
+  {
+    id: 'pos-doutoramento',
+    icone: 'flask-conical',
+    rotulo: { pt: 'Pós-Doutoramento', en: 'Postdoctorate' },
+    sigla: { pt: 'Post-Doc', en: 'Post-Doc' },
+  },
+];
+
+/** Intervalos de anos para o tempo de docência e para a experiência prática. */
+export const INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK: OpcaoCandidaturaGeral[] = [
+  { id: 'menos-1', rotulo: { pt: 'Menos de 1 ano', en: 'Less than 1 year' } },
+  { id: '1-3', rotulo: { pt: 'De 1 a 3 anos', en: '1 to 3 years' } },
+  { id: '4-7', rotulo: { pt: 'De 4 a 7 anos', en: '4 to 7 years' } },
+  { id: '8-12', rotulo: { pt: 'De 8 a 12 anos', en: '8 to 12 years' } },
+  { id: 'mais-12', rotulo: { pt: 'Mais de 12 anos', en: 'More than 12 years' } },
 ];

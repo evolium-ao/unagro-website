@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutAutenticacaoComponent } from './layout/layout-autenticacao/layout-autenticacao.component';
 import { LayoutPrincipalComponent } from './layout/layout-principal/layout-principal.component';
+import { LayoutCandidaturaComponent } from './layout/layout-candidatura/layout-candidatura.component';
 
 export const routes: Routes = [
   // As páginas de autenticação vêm antes do layout principal de propósito: o
@@ -148,17 +149,21 @@ export const routes: Routes = [
   //     },
   //   ],
   // },
-  // Moldura principal activa só com o módulo da candidatura docente (e a 404),
-  // enquanto as restantes páginas acima estão comentadas.
+  // O módulo da candidatura docente tem moldura própria (sem cabeçalho e com o
+  // rodapé do edital). Vem antes do `path: ''` de baixo pela mesma razão das
+  // páginas de autenticação: a catch-all `**` apanhá-lo-ia como 404.
+  {
+    path: 'candidatura-geral',
+    component: LayoutCandidaturaComponent,
+    loadChildren: () =>
+      import('./pages/candidatura-geral/candidatura-geral.routes').then((m) => m.CANDIDATURA_GERAL_ROUTES),
+  },
+  // Moldura principal activa só com a 404, enquanto as restantes páginas acima
+  // estão comentadas.
   {
     path: '',
     component: LayoutPrincipalComponent,
     children: [
-      {
-        path: 'candidatura-geral',
-        loadChildren: () =>
-          import('./pages/candidatura-geral/candidatura-geral.routes').then((m) => m.CANDIDATURA_GERAL_ROUTES),
-      },
       {
         path: '**',
         loadComponent: () =>

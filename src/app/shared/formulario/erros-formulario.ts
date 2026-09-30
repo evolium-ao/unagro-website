@@ -1,6 +1,6 @@
 import { DestroyRef, Signal, computed, inject, signal } from '@angular/core';
 import { FormGroup, FormGroupDirective } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, merge } from 'rxjs';
 import { ValidacaoService } from '../../core/servicos/Validacao.service';
 
 /**
@@ -25,6 +25,11 @@ export function criarErrosFormulario<C extends string>(
    * criado dentro de um `@if` já apanha a diretiva preenchida, mas um filho directo do
    * `<form>` vê `form` a nulo. Por isso o grupo é lido a cada leitura, e a subscrição
    * dos eventos é feita na primeira vez que ele existe.
+   *
+   * Subscreve também os `events` de cada campo, e não só os do grupo: o
+   * `markAllAsTouched()` marca os filhos com `onlySelf`, e o grupo só emite se ele
+   * próprio passar a tocado. Com o grupo já tocado (um campo mexido antes de
+   * carregar em "Avançar"), só os filhos avisam.
    */
   const versao = signal(0);
   let inscricao: Subscription | null = null;
@@ -32,7 +37,8 @@ export function criarErrosFormulario<C extends string>(
   const grupoLigado = (): FormGroup | null => {
     const grupo: FormGroup | null = diretiva.form ?? null;
     if (grupo && !inscricao) {
-      inscricao = grupo.events.subscribe(() => versao.update((numero) => numero + 1));
+      const campos = Object.values(grupo.controls).map((controlo) => controlo.events);
+      inscricao = merge(grupo.events, ...campos).subscribe(() => versao.update((numero) => numero + 1));
       destroyRef.onDestroy(() => inscricao?.unsubscribe());
     }
     return grupo;

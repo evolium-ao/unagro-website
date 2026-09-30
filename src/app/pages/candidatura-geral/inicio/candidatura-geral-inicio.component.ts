@@ -6,6 +6,7 @@ import { AcordeaoComponent } from '../../../shared/componentes/acordeao/acordeao
 import { ItemAcordeaoComponent } from '../../../shared/componentes/acordeao/item-acordeao.component';
 import {
   BannerDestaqueComponent,
+  CtaBannerDestaque,
   MetadadoBanner,
 } from '../../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
@@ -18,7 +19,6 @@ import { EspacoImagemComponent } from '../../../shared/componentes/espaco-imagem
 import { IconeComponent } from '../../../shared/componentes/icone/icone.component';
 import { SeloComponent } from '../../../shared/componentes/selo/selo.component';
 import { RevelarAoScrollDirective } from '../../../shared/diretivas/revelar-ao-scroll.directive';
-import { EmailHeroComponent } from './email-hero/email-hero.component';
 
 /** Primeira etapa do formulário — destino do hero e dos cartões de área. */
 export const ROTA_ETAPA_1 = '/candidatura-geral/etapa-1';
@@ -39,7 +39,6 @@ export const ROTA_ETAPA_1 = '/candidatura-geral/etapa-1';
     SeloComponent,
     BotaoComponent,
     RevelarAoScrollDirective,
-    EmailHeroComponent,
   ],
   templateUrl: './candidatura-geral-inicio.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -147,13 +146,15 @@ export class CandidaturaGeralInicioComponent {
     },
   ]);
 
-  /**
-   * O e-mail segue no `state` da navegação e não na URL: é um dado pessoal e não
-   * deve ficar no histórico nem nos registos do servidor.
-   */
-  protected abrirFormularioComEmail(email: string): void {
-    void this.router.navigateByUrl(this.rotaEtapa1, { state: { email } });
-  }
+  protected readonly ctasHero = computed<CtaBannerDestaque[]>(() => [
+    {
+      texto: this.traducao.getTraducao(['Candidatar-se', 'Apply now']),
+      variante: 'secundario',
+      link: this.rotaEtapa1,
+      icone: 'arrow-right',
+      posicaoIcone: 'direita',
+    },
+  ]);
 
   protected selecionarArea(area: string): void {
     this.areaSelecionada.set(area);

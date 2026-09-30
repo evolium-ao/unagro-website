@@ -314,6 +314,7 @@ export interface Dicionario {
     candidaturas: { titulo: string; descricao: string };
     candidaturaDocentes: { titulo: string; descricao: string };
     candidaturaGeral: { titulo: string; descricao: string };
+    candidaturaGeralFormulario: { titulo: string; descricao: string };
     inscricao: { titulo: string; descricao: string };
     detalheCurso: { titulo: string; descricao: string };
     estudantes: { titulo: string; descricao: string };

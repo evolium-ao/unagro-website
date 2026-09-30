@@ -4,6 +4,8 @@ import {
   CRITERIOS_CANDIDATURA_GERAL_MOCK,
   DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK,
   DOCUMENTOS_CANDIDATURA_GERAL_MOCK,
+  GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK,
+  INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK,
   PARCEIROS_CANDIDATURA_GERAL_MOCK,
   PASSOS_CANDIDATURA_GERAL_MOCK,
   PRAZO_CANDIDATURA_GERAL,
@@ -43,5 +45,16 @@ export class CandidaturaGeralService {
   readonly passos = computed(() => localizarProfundo(this.passosBrutos(), this.traducao.idioma()));
   readonly documentos = computed(() =>
     localizarProfundo(this.documentosBrutos(), this.traducao.idioma()),
+  );
+
+  private readonly grausBrutos = signal(GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK);
+  private readonly intervalosBrutos = signal(INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK);
+
+  /** Etapa 2 — graus académicos (cartões) e intervalos de anos (selects). */
+  readonly grausAcademicos = computed(() =>
+    localizarProfundo(this.grausBrutos(), this.traducao.idioma()),
+  );
+  readonly intervalosExperiencia = computed(() =>
+    localizarProfundo(this.intervalosBrutos(), this.traducao.idioma()),
   );
 }

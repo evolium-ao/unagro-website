@@ -373,6 +373,11 @@ export const pt = {
       descricao:
         'Convocatória oficial para mestres, doutores e investigadores: áreas, critérios, documentos e prazo de candidatura.',
     },
+    candidaturaGeralFormulario: {
+      titulo: 'Candidatura ao Corpo Docente',
+      descricao:
+        'Formulário de manifestação de interesse: dados pessoais, percurso académico e dossier documental.',
+    },
     inscricao: {
       titulo: 'Inscrição',
       descricao: 'Formulário de inscrição no processo seletivo da UNAGRO.',

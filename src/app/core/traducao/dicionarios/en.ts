@@ -366,6 +366,10 @@ export const en = {
       descricao:
         'Official call for masters, doctors and researchers: areas, criteria, documents and application deadline.',
     },
+    candidaturaGeralFormulario: {
+      titulo: 'Faculty Application',
+      descricao: 'Expression of interest form: personal details, academic background and document dossier.',
+    },
     inscricao: {
       titulo: 'Enrolment',
       descricao: 'UNAGRO admissions enrolment form.',
