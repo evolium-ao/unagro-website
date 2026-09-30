@@ -1874,7 +1874,22 @@ destaque" de `inicio` (2026-09-07), dentro do `app-cartao-evento-destaque`.
 `'caixas'`) · `mostrarSegundos: boolean` (por omissão `true`) · `titulo?: string` (só na
 variante `painel`)
 
-**Usado em:** `inicio` (dentro do `app-cartao-evento-destaque`)
+**Variante `caixasGrandes` (2026-09-30, aditiva):** caixas quadradas `h-24 w-20 sm:h-28 sm:w-28`
+`rounded-xl border-white/10 bg-white/5`, número `text-3xl sm:text-4xl` a dourado
+(`text-secondary`) e rótulo `text-[10px]` em `text-white/60`, centradas e com `flex-wrap`. É o
+prazo da convocatória docente. As variantes antigas não mudaram.
+
+**Usado em:** `inicio` (dentro do `app-cartao-evento-destaque`) · `candidatura-geral/inicio`
+(`#secao-prazo`, variante `caixasGrandes`)
+
+### app-banner-destaque — slot de conteúdo (2026-09-30, aditivo)
+
+**Onde:** `src/app/shared/componentes/banner-destaque/banner-destaque.component.ts`
+**Mudança:** `<ng-content />` depois do bloco dos CTAs, dentro da coluna de conteúdo. Sem nada
+projectado não gera DOM, por isso os banners existentes ficam iguais. O elemento projectado pode
+trazer `data-animar="ctas"` para entrar na cascata do Motion (o `querySelectorAll` apanha-o).
+**Usado em:** `candidatura-geral/inicio` — projecta o `app-email-hero-candidatura` (campo de
+e-mail + botão "Candidatar", com `form-input-field`) e a linha de metadados abaixo dele.
 
 ### Sessão "Evento em destaque" (`inicio`, 2026-09-07)
 

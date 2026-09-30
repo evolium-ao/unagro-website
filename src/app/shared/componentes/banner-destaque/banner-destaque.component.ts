@@ -166,6 +166,11 @@ const TEMPO_LIMITE_MS = 2000;
               }
             </div>
           }
+          <!-- Conteúdo extra abaixo dos CTAs (ex.: campo de e-mail do hero da
+               candidatura docente). Sem nada projectado não gera DOM nenhum, por
+               isso os banners que já existem ficam iguais. Para entrar na cascata,
+               o elemento projectado pode trazer data-animar="ctas". -->
+          <ng-content />
         </div>
       </app-container-pagina>
     </section>
