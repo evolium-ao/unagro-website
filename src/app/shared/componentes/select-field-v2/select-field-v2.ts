@@ -69,6 +69,9 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
       [class.bg-white]="fundoBranco()" animate.enter="animete-titulo-1">
       <label [class]="classesRotulo()">
         {{ label() }}
+        @if (obrigatorio()) {
+          <span class="text-red-600" aria-hidden="true">*</span>
+        }
         @if (optional()) {
           <span class="text-[#9A9A9A] font-normal normal-case">{{ textoOpcional() }}</span>
         }
@@ -174,6 +177,8 @@ export class FormFieldSelectComponentV2<D> implements ControlValueAccessor, OnIn
   readonly optional = input<boolean>(false);
   /** Sufixo do rótulo quando `optional` — recebe o texto já traduzido. */
   readonly textoOpcional = input<string>('(opcional)');
+  /** Asterisco vermelho a seguir ao rótulo. Por omissão `false` — nada muda. */
+  readonly obrigatorio = input<boolean>(false);
   readonly searchable = input<boolean>(false);
   readonly multiple = input<boolean>(false);
   readonly bgTransparent = input<boolean>(false);

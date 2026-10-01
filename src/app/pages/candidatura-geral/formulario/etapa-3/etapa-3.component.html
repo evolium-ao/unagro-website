@@ -1,0 +1,13 @@
+<form [formGroup]="estado.dossier" class="flex flex-col gap-8" novalidate>
+  <!-- Os blocos ficam dentro de @if para já apanharem o [formGroup] ligado —
+       ver criarErrosFormulario. -->
+  @if (estado.dossier) {
+    <section id="secao-dossier" class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-10">
+      <app-etapa-3-dossier />
+    </section>
+
+    <section id="secao-declaracoes" class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-10">
+      <app-etapa-3-declaracoes />
+    </section>
+  }
+</form>

@@ -7,7 +7,7 @@ import { IconeComponent } from '../icone/icone.component';
 
 @Component({
   selector: 'app-barra-topo',
-  imports: [ContainerPaginaComponent, IconeComponent, RouterLink],
+  imports: [ContainerPaginaComponent, RouterLink],
   styleUrl: './barra-topo.component.css',
   template: `
     <div class="bg-primary text-white text-xs w-full items-center ">

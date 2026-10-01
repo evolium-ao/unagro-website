@@ -9,9 +9,9 @@ import { IconeComponent } from '../icone/icone.component';
   selector: 'app-cartao-requisito',
   imports: [IconeComponent],
   template: `
-    <div class="flex items-center gap-4 rounded-lg bg-bg-light p-4">
+    <div class="flex items-center gap-4 rounded-lg bg-white p-4 border border-gray-200">
       <div
-        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-primary"
+        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-bg-light text-primary"
       >
         <app-icone [nome]="icone()" [tamanho]="18" />
       </div>

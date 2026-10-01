@@ -1,0 +1,109 @@
+<div class="px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+  <app-container-pagina>
+    <!-- Cabeçalho do formulário -->
+    <header class="border-b border-gray-200 pb-8">
+      <div class="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <nav [attr.aria-label]="textos().migalha">
+          <ol class="flex items-center gap-2 text-xs tracking-wide">
+            <li>
+              <a [routerLink]="rotaInicio" class="text-text-secondary hover:text-primary">{{ textos().inicio }}</a>
+            </li>
+            <li class="text-gray-300" aria-hidden="true">/</li>
+            <li class="font-semibold text-primary-deep" aria-current="page">{{ textos().migalha }}</li>
+          </ol>
+        </nav>
+        <app-botao variante="contorno" tamanho="sm" icone="chevron-left" [link]="rotaInicio" class="self-start sm:self-auto">
+          {{ textos().voltarPrincipal }}
+        </app-botao>
+      </div>
+
+      <div class="mt-5 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div class="min-w-0 lg:flex-1">
+          <span
+            class="inline-flex items-center gap-2 rounded-full border border-accent/60 px-3 py-1 text-xs text-primary-deep"
+          >
+            <span class="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"></span>
+            {{ textos().selo }}
+          </span>
+          <h1 class="mt-4 text-3xl inter-900 text-primary-deep sm:text-4xl lg:text-5xl">{{ textos().titulo }}</h1>
+          <p class="mt-4 max-w-2xl text-base leading-relaxed text-text-secondary sm:text-lg">{{ textos().subtitulo }}</p>
+        </div>
+
+        <!-- Área escolhida na etapa 1 -->
+        <aside class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-bg-light p-5 lg:w-96 lg:shrink-0">
+          <app-icone nome="clipboard-check" [tamanho]="20" class="mt-0.5 shrink-0 text-primary" />
+          <div class="min-w-0 flex-1">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary">
+              {{ textos().areaSelecionada }}
+            </p>
+            @if (estado.areaSelecionada(); as area) {
+              <p class="mt-1 text-sm font-semibold text-primary-deep">{{ area.numero }}. {{ area.titulo }}</p>
+              <p class="mt-1 text-xs text-primary">{{ area.vagas }} {{ textos().vagas }}</p>
+            } @else {
+              <p class="mt-1 text-sm text-text-secondary">{{ textos().semArea }}</p>
+            }
+          </div>
+          <a
+            [routerLink]="[rotaInicio, 'etapa-1']"
+            fragment="secao-area"
+            class="shrink-0 self-center text-xs font-semibold text-primary underline underline-offset-4 hover:text-primary-dark"
+          >
+            {{ textos().alterar }}
+          </a>
+        </aside>
+      </div>
+    </header>
+
+    <!-- Progresso -->
+    <div class="mt-8">
+      <app-passos-formulario
+        disposicao="linha"
+        [passos]="passos()"
+        [ativo]="etapa() - 1"
+        [mostrarConcluidos]="true"
+        [prefixoPasso]="textos().etapa"
+        [sufixoAtivo]="textos().ativa"
+        [rotuloLista]="textos().progresso"
+      />
+    </div>
+
+    <!-- Campos da etapa activa -->
+    <div class="mt-10">
+      <router-outlet />
+    </div>
+
+    <!-- Navegação entre etapas -->
+    <div class="mt-10 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex flex-wrap items-center gap-3">
+        @if (etapa() > 1) {
+          <app-botao variante="contorno" icone="chevron-left" (clicado)="voltar()">
+            {{ textos().voltarEtapa }}
+          </app-botao>
+        }
+        <app-botao variante="contorno" class="[&_button]:border-gray-300" (clicado)="guardarRascunho()">
+          {{ textos().guardar }}
+        </app-botao>
+        @if (etapa() === 1) {
+          <button
+            type="button"
+            class="px-4 py-2 text-sm font-medium text-text-secondary hover:text-primary-deep"
+            (click)="cancelar()"
+          >
+            {{ textos().cancelar }}
+          </button>
+        }
+      </div>
+
+      <app-botao
+        variante="secundario"
+        tamanho="lg"
+        icone="arrow-right"
+        posicaoIcone="direita"
+        [aCarregar]="enviar.isPending()"
+        (clicado)="avancar()"
+      >
+        {{ etapa() < totalEtapas ? textos().avancar : enviar.isPending() ? textos().submetendo : textos().submeter }}
+      </app-botao>
+    </div>
+  </app-container-pagina>
+</div>

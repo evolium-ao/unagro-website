@@ -166,6 +166,11 @@ const TEMPO_LIMITE_MS = 2000;
               }
             </div>
           }
+          <!-- Conteúdo extra abaixo dos CTAs (ex.: campo de e-mail do hero da
+               candidatura docente). Sem nada projectado não gera DOM nenhum, por
+               isso os banners que já existem ficam iguais. Para entrar na cascata,
+               o elemento projectado pode trazer data-animar="ctas". -->
+          <ng-content />
         </div>
       </app-container-pagina>
     </section>
@@ -228,10 +233,10 @@ export class BannerDestaqueComponent {
   protected readonly estiloTexto = computed(() =>
     this.oculto()
       ? {
-          opacity: '0',
-          transform: `translateY(${DESLOCAMENTO_TEXTO_PX}px)`,
-          filter: DESFOQUE_TEXTO,
-        }
+        opacity: '0',
+        transform: `translateY(${DESLOCAMENTO_TEXTO_PX}px)`,
+        filter: DESFOQUE_TEXTO,
+      }
       : null,
   );
 
@@ -264,8 +269,8 @@ export class BannerDestaqueComponent {
 
   protected readonly classesTitulo = computed(() =>
     this.cartao()
-      ? 'text-2xl inter-900 text-balance break-words text-white sm:text-3xl lg:text-4xl'
-      : 'text-3xl inter-900 text-balance break-words text-white sm:text-4xl lg:text-5xl',
+      ? 'text-2xl inter-700 text-balance break-words text-white sm:text-3xl lg:text-4xl'
+      : 'text-3xl inter-700 text-balance break-words text-white sm:text-4xl lg:text-5xl',
   );
 
   protected readonly classesSubtitulo = computed(() =>

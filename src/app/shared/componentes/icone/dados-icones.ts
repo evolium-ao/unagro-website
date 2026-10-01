@@ -254,6 +254,58 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
     p('M14 2v5h5'),
     p('m9 15 2 2 4-4'),
   ],
+  /** Ficheiro com seta a subir — carregar um documento. */
+  'file-up': [
+    p('M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'),
+    p('M14 2v4a2 2 0 0 0 2 2h4'),
+    p('M12 12v6'),
+    p('m15 15-3-3-3 3'),
+  ],
+  /** Pasta com seta a subir — carregar vários documentos ou um ZIP. */
+  'folder-up': [
+    p('M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'),
+    p('M12 10v6'),
+    p('m9 13 3-3 3 3'),
+  ],
+  /** Pasta com seta a entrar — dossier documental. */
+  'folder-input': [
+    p('M2 9V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1'),
+    p('M2 13h10'),
+    p('m9 16 3-3-3-3'),
+  ],
+  /** Martelo de juiz — declarações e compromissos jurídicos. */
+  gavel: [
+    p('m14.5 12.5-8 8a2.119 2.119 0 1 1-3-3l8-8'),
+    p('m16 16 6-6'),
+    p('m8 8 6-6'),
+    p('m9 7 8 8'),
+    p('m21 11-8-8'),
+  ],
+  /** Seta circular — substituir um anexo. */
+  'rotate-cw': [p('M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8'), p('M21 3v5h-5')],
+  /** Caixote do lixo — remover um anexo. */
+  'trash-2': [
+    p('M3 6h18'),
+    p('M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6'),
+    p('M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'),
+    l('10', '11', '10', '17'),
+    l('14', '11', '14', '17'),
+  ],
+  /** Clipe — escolher ficheiro para anexar. */
+  paperclip: [
+    p('m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48'),
+  ],
+  /** Silhueta de uma pessoa — dados pessoais. */
+  user: [p('M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'), c('12', '7', '4')],
+  /** Caixa de arquivo — anexo ZIP ou conjunto de comprovativos. */
+  archive: [r('2', '3', '20', '5', '1'), p('M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8'), p('M10 12h4')],
+  /** Lápis — editar uma secção já preenchida. */
+  pencil: [
+    p(
+      'M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z',
+    ),
+    p('m15 5 4 4'),
+  ],
   /** Seta a descer para uma bandeja — descarregar ficheiro. */
   download: [
     p('M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'),
