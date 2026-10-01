@@ -1953,8 +1953,8 @@ botão "Guardar Rascunho" mantém-se (está no mockup) e grava na hora com confi
 `app-etapa-4-bloco-revisao` (local à etapa: ícone, título, descrição, "Editar" → `etapa-N`, conteúdo
 projectado) com grelhas `dl` rótulo/valor e a lista do dossier com o selo "Verificado / Válido"
 (ou "Anexado" nos comprovativos). Tamanhos com `formatarTamanho` do `campo-documento`.
-**Pendente:** "Submeter a Candidatura" ainda não envia (TODO em `FormularioCandidaturaComponent.avancar`)
-— falta o endpoint desta candidatura e o modal "Candidatura Submetida com Sucesso!"
+"Submeter a Candidatura" envia para `POST /candidaturas-docentes` (`CandidaturaGeralEnvioService`)
+e abre o `app-modal-candidatura-submetida`.
 (`imagen/mockups/candidatura-docente-finalizada.png`), que mostra um código gerado pela API.
 
 **`criarErrosFormulario` corrigido:** passou a subscrever os `events` de cada campo além dos do
@@ -2200,3 +2200,28 @@ institucional inventado. Quando o texto chegar, troca-se o componente pela secç
 **Reversão:** a página `/sobre` anterior (hero simples, Missão/Visão, quatro valores em
 cartões, parágrafo da história) está inteira e fora do routing em
 `pages/sobre/legado/sobre-legado.component.ts`.
+
+### app-modal-candidatura-submetida
+
+**Onde:** `src/app/shared/componentes/modal-candidatura-submetida/modal-candidatura-submetida.component.ts`
+**Criado para:** modal "Candidatura Submetida com Sucesso!" aberto do "Submeter a Candidatura"
+da etapa 4 de `/candidatura-geral`, quando o POST devolve sucesso (2026-10-01)
+**Descrição:** modal **só de conteúdo** (sem formulário — fica só o contentor), de confirmação
+pós-submissão: faixa `h-2 bg-secondary` no topo, X `rounded-xl bg-gray-100`, selo `badge-check`
+`text-secondary` num quadrado `bg-primary-deep` com halo `bg-primary/10`, título e texto
+centrados; cartão `bg-gray-50` com o código em `font-mono` + botão "Copiar" (clipboard com
+"Copiado" 2s, protegido para SSR e falha) à esquerda e a área em `text-primary` à direita;
+linha com `clock` e a data/hora formatada em `Africa/Luanda` (Intl, pt-PT com mês
+capitalizado / en-GB). Botões `profundo` "Descarregar Comprovativo (PDF)" (`download`) e
+`contorno` "Voltar à Página Principal" (`chevron-left` — não há `arrow-left` no catálogo), e
+rodapé legal. **Todas as saídas (X e Voltar) fecham e navegam para `/`.** O comprovativo é um
+HTML impresso num iframe escondido (`print()` → "Guardar como PDF"); o CSS desse documento
+usa os hexadecimais dos tokens porque o iframe não tem o Tailwind. O botão "Copiar" usa
+`file-text` (não há ícone de copiar) e passa a `check` quando copiado.
+
+**Abre-se com:** `modais.modal({ id: ID_MODAL_CANDIDATURA_SUBMETIDA, template: ModalCandidaturaSubmetidaComponent, tamanho: 'xgrande', temHeader: false, semBotoes: true, fecharAoClicarFundo: false, data })` — **sem `await`**: o fecho é por `modais.fechar()`, que não resolve a promessa.
+**Dados (`data`):** `DadosCandidaturaSubmetida` — `codigo`, `area` (já formatada; vazia → "—"), `submetidaEm: Date`
+
+**Imagens:** nenhuma.
+
+**Usado em:** `candidatura-geral/formulario` (`FormularioCandidaturaComponent.abrirModalSucesso`)

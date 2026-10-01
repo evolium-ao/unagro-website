@@ -94,8 +94,15 @@
         }
       </div>
 
-      <app-botao variante="secundario" tamanho="lg" icone="arrow-right" posicaoIcone="direita" (clicado)="avancar()">
-        {{ etapa() < totalEtapas ? textos().avancar : textos().submeter }}
+      <app-botao
+        variante="secundario"
+        tamanho="lg"
+        icone="arrow-right"
+        posicaoIcone="direita"
+        [aCarregar]="enviar.isPending()"
+        (clicado)="avancar()"
+      >
+        {{ etapa() < totalEtapas ? textos().avancar : enviar.isPending() ? textos().submetendo : textos().submeter }}
       </app-botao>
     </div>
   </app-container-pagina>

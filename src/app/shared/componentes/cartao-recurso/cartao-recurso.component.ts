@@ -33,7 +33,7 @@ const CLASSES_ICONE: Record<CorIconeCartaoRecurso, string> = {
 };
 
 const CLASSES_ARTIGO: Record<FormatoCartaoRecurso, string> = {
-  vertical: 'flex h-full flex-col rounded-xl bg-white p-6  sm:p-7 border border-gray-200',
+  vertical: 'flex h-full flex-col rounded-xl bg-white p-6  sm:p-7 border border-gray-200 w-full',
   iconeInline: 'flex h-full flex-col rounded-2xl bg-bg-light p-4 sm:p-7 border border-gray-200/70',
 };
 

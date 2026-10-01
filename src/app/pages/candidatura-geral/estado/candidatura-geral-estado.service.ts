@@ -37,13 +37,16 @@ function validarDocumentoIdentificacao(controlo: AbstractControl): ValidationErr
   return REGEX_BI.test(valor) || REGEX_PASSAPORTE.test(valor) ? null : { biInvalido: true };
 }
 
-/** Limites do dossier da etapa 3, em MB — os textos "Formatos: … até N MB" lêem-nos daqui. */
+/**
+ * Limites do dossier da etapa 3, em MB — os textos "Formatos: … até N MB" lêem-nos daqui.
+ * A API (`POST /candidaturas-docentes`) recusa com 422 qualquer anexo acima de 5 MB.
+ */
 export const LIMITES_DOSSIER_MB = {
-  curriculo: 10,
-  certificados: 10,
-  comprovativos: 15,
+  curriculo: 5,
+  certificados: 5,
+  comprovativos: 5,
   carta: 5,
-  total: 25,
+  total: 20,
 } as const;
 
 /** Campos de ficheiro: um `File` não se serializa, por isso nunca vão para o rascunho. */

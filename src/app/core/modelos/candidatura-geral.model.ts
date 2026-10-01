@@ -61,6 +61,53 @@ export interface OpcaoCandidaturaGeral {
   rotulo: TextoTraduzido;
 }
 
+/**
+ * Candidatura do formulário `/candidatura-geral`, na forma que o **site**
+ * preenche — os `getRawValue()` das etapas 1 a 3. Quem a traduz para o
+ * `CandidaturaDocenteRequest` da API é o `CandidaturaGeralEnvioService`.
+ */
+export interface NovaCandidaturaGeral {
+  dados: {
+    nome: string;
+    /** `AAAA-MM-DD`, do `<input type="date">`. */
+    nascimento: string;
+    documento: string;
+    telefone: string;
+    email: string;
+    /** `id` da `AreaCandidaturaGeral`. */
+    area: string;
+    areaComplementar: string;
+  };
+  formacao: {
+    /** `id` do `GrauAcademicoCandidaturaGeral`. */
+    grau: string;
+    instituicao: string;
+    especializacao: string;
+    identificadorInvestigador: string;
+    /** `id` da `OpcaoCandidaturaGeral` (intervalo de anos). */
+    tempoDocencia: string;
+    experienciaPratica: string;
+    sintese: string;
+  };
+  dossier: {
+    curriculo: File | null;
+    certificados: File | null;
+    comprovativos: File | null;
+    carta: File | null;
+    compromissoHonra: boolean;
+    consentimentoDados: boolean;
+  };
+}
+
+/** O que o modal de sucesso precisa da candidatura que a API acabou de criar. */
+export interface CandidaturaGeralSubmetida {
+  id: number;
+  /** Código para o candidato guardar, derivado do `id` — p. ex. `AGRO-2026-DOC-000042`. */
+  codigo: string;
+  /** `created_at` da API; a hora local quando a API não o devolve. */
+  submetidaEm: Date;
+}
+
 /** Documento obrigatório do dossier de candidatura. */
 export interface DocumentoCandidaturaGeral {
   id: string;

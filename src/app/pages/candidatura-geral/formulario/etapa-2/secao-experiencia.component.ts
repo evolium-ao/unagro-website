@@ -18,7 +18,6 @@ import { MAXIMO_SINTESE } from '../../estado/candidatura-geral-estado.service';
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   template: `
     <app-titulo-bloco icone="briefcase" [titulo]="textos().titulo" [descricao]="textos().descricao" />
-
     <div class="mt-6 flex flex-col gap-4">
       <div class="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:w-2/3">
         <field-select-v2

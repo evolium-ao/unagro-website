@@ -1,11 +1,20 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { injectMutation } from '@tanstack/angular-query-experimental';
 import { filter, map } from 'rxjs';
+import { ErroApi } from '../../../core/api/erro-api';
+import { CandidaturaGeralSubmetida, NovaCandidaturaGeral } from '../../../core/modelos/candidatura-geral.model';
+import { CandidaturaGeralEnvioService } from '../../../core/servicos/candidatura-geral-envio.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { AlertModalService } from '../../../shared/componentes/alert-modal/alert-modal.service';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
 import { ContainerPaginaComponent } from '../../../shared/componentes/container-pagina/container-pagina.component';
+import {
+  DadosCandidaturaSubmetida,
+  ID_MODAL_CANDIDATURA_SUBMETIDA,
+  ModalCandidaturaSubmetidaComponent,
+} from '../../../shared/componentes/modal-candidatura-submetida/modal-candidatura-submetida.component';
 import { IconeComponent } from '../../../shared/componentes/icone/icone.component';
 import { PassosFormularioComponent } from '../../../shared/componentes/passos-formulario/passos-formulario.component';
 import { CandidaturaGeralEstadoService, NumeroEtapa } from '../estado/candidatura-geral-estado.service';
@@ -28,6 +37,7 @@ export class FormularioCandidaturaComponent {
   private readonly traducao = inject(TraducaoService);
   private readonly router = inject(Router);
   private readonly modais = inject(AlertModalService);
+  private readonly envio = inject(CandidaturaGeralEnvioService);
   protected readonly estado = inject(CandidaturaGeralEstadoService);
 
   protected readonly rotaInicio = ROTA_CANDIDATURA_GERAL;
@@ -86,8 +96,26 @@ export class FormularioCandidaturaComponent {
         'Some required fields are empty or invalid. Please review the fields marked in red.',
       ),
       corrigirTitulo: t('Reveja o formulário', 'Review the form'),
+      submetendo: t('A submeter…', 'Submitting…'),
+      erroTitulo: t('Candidatura não submetida', 'Application not submitted'),
+      erroRede: t(
+        'Não foi possível contactar o servidor. Verifique a ligação e tente novamente.',
+        'Could not reach the server. Check your connection and try again.',
+      ),
+      erroGenerico: t(
+        'Não foi possível submeter a candidatura. Tente novamente dentro de alguns instantes.',
+        'Could not submit the application. Please try again in a few moments.',
+      ),
     };
   });
+
+  /**
+   * `POST /candidaturas-docentes` — endpoint público. Nada a invalidar a seguir:
+   * a lista de candidaturas da API pede autenticação e o site nunca a lê.
+   */
+  protected readonly enviar = injectMutation<CandidaturaGeralSubmetida, ErroApi, NovaCandidaturaGeral>(() => ({
+    mutationFn: (candidatura) => this.envio.criar(candidatura),
+  }));
 
   protected readonly passos = computed(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
@@ -124,15 +152,78 @@ export class FormularioCandidaturaComponent {
 
   protected async avancar(): Promise<void> {
     const etapa = this.etapa();
+    console.log('[Candidatura] dados do formulário', {
+      dados: this.estado.dados.getRawValue(),
+      formacao: this.estado.formacao.getRawValue(),
+      dossier: this.estado.dossier.getRawValue(),
+    });
     if (!this.estado.validarEtapa(etapa)) {
       const t = this.textos();
       await this.modais.aviso(t.corrigir, t.corrigirTitulo);
       return;
     }
-    // TODO: a etapa 4 submete a candidatura e abre o modal de sucesso.
     if (etapa < TOTAL_ETAPAS) {
       void this.router.navigate([ROTA_CANDIDATURA_GERAL, `etapa-${etapa + 1}`]);
+      return;
     }
+    await this.submeter();
+  }
+
+  /**
+   * Etapa 4: envia as três etapas à API. Em caso de sucesso apaga o rascunho
+   * (os dados já estão no servidor) e abre o modal de sucesso; em caso de erro
+   * mostra o motivo e mantém tudo preenchido para nova tentativa.
+   */
+  private async submeter(): Promise<void> {
+    if (this.enviar.isPending()) {
+      return;
+    }
+    // Lida antes do `limpar()`: o modal mostra a área e o formulário fica em branco.
+    const area = this.estado.areaSelecionada();
+    try {
+      const submetida = await this.enviar.mutateAsync({
+        dados: this.estado.dados.getRawValue(),
+        formacao: this.estado.formacao.getRawValue(),
+        dossier: this.estado.dossier.getRawValue(),
+      });
+      this.estado.limpar();
+      await this.abrirModalSucesso(submetida, area ? `${area.numero}. ${area.titulo}` : '');
+    } catch (erro) {
+      await this.modais.erro(this.mensagemErro(ErroApi.aPartirDe(erro)), this.textos().erroTitulo);
+    }
+  }
+
+  private async abrirModalSucesso(submetida: CandidaturaGeralSubmetida, area: string): Promise<void> {
+    const data: DadosCandidaturaSubmetida = {
+      codigo: submetida.codigo,
+      area,
+      submetidaEm: submetida.submetidaEm,
+    };
+    // Sem `await`: o modal fecha por `modais.fechar()`, que não resolve esta promessa,
+    // e é ele que navega para `/` (pelo X e pelo "Voltar à Página Principal").
+    void this.modais.modal({
+      id: ID_MODAL_CANDIDATURA_SUBMETIDA,
+      template: ModalCandidaturaSubmetidaComponent,
+      tamanho: 'xgrande',
+      temHeader: false,
+      semBotoes: true,
+      // O formulário já foi limpo: um clique no fundo não pode deixar o candidato sem o código.
+      fecharAoClicarFundo: false,
+      data,
+    });
+  }
+
+  /**
+   * Os 422 do Laravel trazem a mensagem por campo, só em português (a API é
+   * monolingue), mas dizem exactamente o que falhou — passam à frente do genérico.
+   */
+  private mensagemErro(erro: ErroApi): string {
+    const doServidor = Object.values(erro.errosValidacao).flat();
+    if (doServidor.length) {
+      return doServidor.join(' ');
+    }
+    const t = this.textos();
+    return erro.estado === 0 ? t.erroRede : t.erroGenerico;
   }
 
   /**
