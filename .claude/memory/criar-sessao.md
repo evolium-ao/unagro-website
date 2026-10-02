@@ -1874,7 +1874,92 @@ destaque" de `inicio` (2026-09-07), dentro do `app-cartao-evento-destaque`.
 `'caixas'`) · `mostrarSegundos: boolean` (por omissão `true`) · `titulo?: string` (só na
 variante `painel`)
 
-**Usado em:** `inicio` (dentro do `app-cartao-evento-destaque`)
+**Variante `caixasGrandes` (2026-09-30, aditiva):** caixas quadradas `h-24 w-20 sm:h-28 sm:w-28`
+`rounded-xl border-white/10 bg-white/5`, número `text-3xl sm:text-4xl` a dourado
+(`text-secondary`) e rótulo `text-[10px]` em `text-white/60`, centradas e com `flex-wrap`. É o
+prazo da convocatória docente. As variantes antigas não mudaram.
+
+**Usado em:** `inicio` (dentro do `app-cartao-evento-destaque`) · `candidatura-geral/inicio`
+(`#secao-prazo`, variante `caixasGrandes`)
+
+### app-banner-destaque — slot de conteúdo (2026-09-30, aditivo)
+
+**Onde:** `src/app/shared/componentes/banner-destaque/banner-destaque.component.ts`
+**Mudança:** `<ng-content />` depois do bloco dos CTAs, dentro da coluna de conteúdo. Sem nada
+projectado não gera DOM, por isso os banners existentes ficam iguais. O elemento projectado pode
+trazer `data-animar="ctas"` para entrar na cascata do Motion (o `querySelectorAll` apanha-o).
+**Usado em:** `candidatura-geral/inicio` — o hero usa o CTA "Candidatar-se" (→ `etapa-1`) e
+projecta a linha de metadados "5 Áreas Prioritárias · Prazo" para ficar abaixo do botão. (O campo
+de e-mail que lá esteve foi retirado a pedido em 2026-09-30.)
+
+### Extensões aditivas para o formulário da candidatura docente (2026-09-30)
+
+- `form-input-field` e `field-select-v2`: input `obrigatorio` (asterisco vermelho no rótulo).
+- `app-titulo-bloco`: inputs opcionais `icone` e `descricao` (cabeçalho "Secção N: …" com ícone).
+- `app-passos-formulario`: `disposicao: 'coluna' | 'linha'` (`linha` = cartão branco com o
+  distintivo à esquerda e "ETAPA N (ACTIVA)" + nome à direita), `mostrarConcluidos` (check nas
+  etapas feitas), `prefixoPasso`, `sufixoAtivo`. Por omissão fica igual.
+- `form-input-field`: `maxCaracteres` (aplica `maxlength` e mostra "n / limite" + `textoCaracteres`
+  na linha do rótulo) — sem valor fica igual.
+- `app-grupo-cartoes-selecao`: `variante: 'minimalista' | 'caixa'` (`caixa` = rótulo normal,
+  cartões centrados, escolhido em `bg-primary/10`), `obrigatorio`, e `subrotulo` opcional em
+  `OpcaoCartaoSelecao` (ex.: "MSc").
+**Usado em:** `candidatura-geral/formulario` (moldura das etapas), `formulario/etapa-1` e
+`formulario/etapa-2` (grau académico em cartões, síntese com contador de 500).
+
+### app-campo-documento
+
+**Onde:** `src/app/shared/componentes/campo-documento/campo-documento.component.ts` (+ `README.md`
+com API completa, estados e acessibilidade)
+**Criado para:** etapa 3 da candidatura docente — "Dossier Documental Obrigatório" (2026-09-30)
+**Descrição:** anexo de um documento em dois estados: **vazio** (moldura tracejada
+`border-gray-300 bg-[#F6F3F1]`, ícone em quadrado `bg-[#E9E6E3]`, título + `*` ou rótulo
+opcional, descrição, botão branco com clipe, linha "Formatos: …") e **anexado** (cartão
+`bg-[#FBF8F6]`, ícone em quadrado verde claro, selo "Anexado", chip com nome e tamanho, botões
+Substituir e Remover). CVA com valor `File | null`. Não é o `app-campo-upload` estendido: o
+desenho é outro (título e acções dentro do cartão, e Remover). Exporta `formatarTamanho`, para a
+revisão da etapa 4 mostrar o tamanho com o mesmo formato.
+**Inputs:** `titulo` (obrigatório) · `descricao` · `obrigatorio` · `rotuloOpcional` · `icone`
+· `iconeAnexado` · `aceita` · `textoSelecionar` · `textoFormatos` · `textoAnexado` ·
+`textoSubstituir` · `textoRemover` · `erro` · `disabled`
+**Usado em:** `candidatura-geral/formulario/etapa-3`
+
+### app-caixa-confirmacao
+
+**Onde:** `src/app/shared/componentes/caixa-confirmacao/caixa-confirmacao.component.ts` (+ `README.md`)
+**Criado para:** etapa 3 da candidatura docente — "Compromisso de Honra & Protecção de Dados" (2026-09-30)
+**Descrição:** checkbox nativa (`appearance-none`, 20px, marcada a `bg-primary` com visto branco)
+dentro de um `<label>`, com o texto por `ng-content` e o `*` no fim. CVA `boolean`; a
+obrigatoriedade é `Validators.requiredTrue`. Era a primeira checkbox partilhada do projecto (só
+havia uma solta em `entrar`).
+**Inputs:** `obrigatorio` · `erro` · `disabled`
+**Usado em:** `candidatura-geral/formulario/etapa-3`
+
+**Ícones novos (Lucide):** `file-up`, `folder-up`, `folder-input`, `gavel`, `rotate-cw`,
+`trash-2`, `paperclip`.
+
+**Etapa 3 — estado:** grupo `dossier` no `CandidaturaGeralEstadoService` (4 ficheiros + 2
+declarações, validador de grupo para o total de 25MB, limites em `LIMITES_DOSSIER_MB`). Os
+campos de ficheiro ficam **fora do rascunho** (`CAMPOS_FICHEIRO`): um `File` passa a `{}` em
+JSON e, restaurado, faria o `required` passar sem anexo. Consequência: depois de recarregar a
+página, a guarda da etapa 4 manda de volta à 3 para anexar outra vez.
+
+**Rascunho automático (2026-09-30):** o `CandidaturaGeralEstadoService` grava o rascunho sozinho
+800ms depois da última alteração em qualquer etapa (`valueChanges` com `debounceTime`), só se algum
+grupo estiver `dirty` — assim o `reset()` do "Cancelar" não volta a escrever um rascunho vazio. O
+botão "Guardar Rascunho" mantém-se (está no mockup) e grava na hora com confirmação.
+
+**Etapa 4 — Revisão & Submissão (2026-09-30):** `formulario/etapa-4/` só de leitura: três
+`app-etapa-4-bloco-revisao` (local à etapa: ícone, título, descrição, "Editar" → `etapa-N`, conteúdo
+projectado) com grelhas `dl` rótulo/valor e a lista do dossier com o selo "Verificado / Válido"
+(ou "Anexado" nos comprovativos). Tamanhos com `formatarTamanho` do `campo-documento`.
+"Submeter a Candidatura" envia para `POST /candidaturas-docentes` (`CandidaturaGeralEnvioService`)
+e abre o `app-modal-candidatura-submetida`.
+(`imagen/mockups/candidatura-docente-finalizada.png`), que mostra um código gerado pela API.
+
+**`criarErrosFormulario` corrigido:** passou a subscrever os `events` de cada campo além dos do
+grupo. O `markAllAsTouched()` não emite no grupo se ele já estiver tocado, e as mensagens ficavam
+presas a `null` (afectava também as etapas 1 e 2).
 
 ### Sessão "Evento em destaque" (`inicio`, 2026-09-07)
 
@@ -2115,3 +2200,28 @@ institucional inventado. Quando o texto chegar, troca-se o componente pela secç
 **Reversão:** a página `/sobre` anterior (hero simples, Missão/Visão, quatro valores em
 cartões, parágrafo da história) está inteira e fora do routing em
 `pages/sobre/legado/sobre-legado.component.ts`.
+
+### app-modal-candidatura-submetida
+
+**Onde:** `src/app/shared/componentes/modal-candidatura-submetida/modal-candidatura-submetida.component.ts`
+**Criado para:** modal "Candidatura Submetida com Sucesso!" aberto do "Submeter a Candidatura"
+da etapa 4 de `/candidatura-geral`, quando o POST devolve sucesso (2026-10-01)
+**Descrição:** modal **só de conteúdo** (sem formulário — fica só o contentor), de confirmação
+pós-submissão: faixa `h-2 bg-secondary` no topo, X `rounded-xl bg-gray-100`, selo `badge-check`
+`text-secondary` num quadrado `bg-primary-deep` com halo `bg-primary/10`, título e texto
+centrados; cartão `bg-gray-50` com o código em `font-mono` + botão "Copiar" (clipboard com
+"Copiado" 2s, protegido para SSR e falha) à esquerda e a área em `text-primary` à direita;
+linha com `clock` e a data/hora formatada em `Africa/Luanda` (Intl, pt-PT com mês
+capitalizado / en-GB). Botões `profundo` "Descarregar Comprovativo (PDF)" (`download`) e
+`contorno` "Voltar à Página Principal" (`chevron-left` — não há `arrow-left` no catálogo), e
+rodapé legal. **Todas as saídas (X e Voltar) fecham e navegam para `/`.** O comprovativo é um
+HTML impresso num iframe escondido (`print()` → "Guardar como PDF"); o CSS desse documento
+usa os hexadecimais dos tokens porque o iframe não tem o Tailwind. O botão "Copiar" usa
+`file-text` (não há ícone de copiar) e passa a `check` quando copiado.
+
+**Abre-se com:** `modais.modal({ id: ID_MODAL_CANDIDATURA_SUBMETIDA, template: ModalCandidaturaSubmetidaComponent, tamanho: 'xgrande', temHeader: false, semBotoes: true, fecharAoClicarFundo: false, data })` — **sem `await`**: o fecho é por `modais.fechar()`, que não resolve a promessa.
+**Dados (`data`):** `DadosCandidaturaSubmetida` — `codigo`, `area` (já formatada; vazia → "—"), `submetidaEm: Date`
+
+**Imagens:** nenhuma.
+
+**Usado em:** `candidatura-geral/formulario` (`FormularioCandidaturaComponent.abrirModalSucesso`)

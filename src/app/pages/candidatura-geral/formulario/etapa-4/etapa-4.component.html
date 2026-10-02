@@ -1,0 +1,108 @@
+<div class="flex flex-col gap-8">
+  <!-- 1. Dados pessoais & área -->
+  <app-etapa-4-bloco-revisao
+    icone="user"
+    [titulo]="textos().dadosTitulo"
+    [descricao]="textos().dadosDescricao"
+    [rotaEditar]="rotasEditar[0]"
+    [textoEditar]="textos().editar"
+  >
+    <dl class="grid gap-x-10 gap-y-5 sm:grid-cols-2">
+      @for (campo of camposDados(); track campo.rotulo) {
+        <div>
+          <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">{{ campo.rotulo }}</dt>
+          <dd class="mt-1 text-base text-primary-deep">{{ campo.valor }}</dd>
+        </div>
+      }
+    </dl>
+
+    <dl class="mt-6 flex flex-col gap-5 border-t border-gray-200 pt-5">
+      <div>
+        <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
+          {{ textos().areaPrioritaria }}
+        </dt>
+        <dd class="mt-2 flex flex-wrap items-center gap-2">
+          @if (estado.areaSelecionada(); as area) {
+            <span class="rounded bg-[#E3F1E7] px-2.5 py-1 text-sm text-primary-deep">
+              {{ area.numero }}. {{ area.titulo }}
+            </span>
+            <span class="text-xs text-primary">({{ area.vagas }} {{ textos().vagas }})</span>
+          } @else {
+            <span class="text-base text-primary-deep">—</span>
+          }
+        </dd>
+      </div>
+      <div>
+        <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
+          {{ textos().areaComplementar }}
+        </dt>
+        <dd class="mt-1 text-base text-primary-deep">{{ areaComplementar() }}</dd>
+      </div>
+    </dl>
+  </app-etapa-4-bloco-revisao>
+
+  <!-- 2. Formação & experiência -->
+  <app-etapa-4-bloco-revisao
+    icone="graduation-cap"
+    [titulo]="textos().formacaoTitulo"
+    [descricao]="textos().formacaoDescricao"
+    [rotaEditar]="rotasEditar[1]"
+    [textoEditar]="textos().editar"
+  >
+    <dl class="grid gap-x-10 gap-y-5 sm:grid-cols-2">
+      @for (campo of camposFormacao(); track campo.rotulo) {
+        <div>
+          <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">{{ campo.rotulo }}</dt>
+          <dd class="mt-1 text-base">
+            @if (campo.ligacao) {
+              <a
+                [href]="campo.ligacao"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="break-all text-primary hover:underline"
+                >{{ campo.valor }}</a
+              >
+            } @else {
+              <span class="text-primary-deep">{{ campo.valor }}</span>
+            }
+          </dd>
+        </div>
+      }
+    </dl>
+  </app-etapa-4-bloco-revisao>
+
+  <!-- 3. Dossier -->
+  <app-etapa-4-bloco-revisao
+    icone="folder-input"
+    [titulo]="textos().dossierTitulo"
+    [descricao]="textos().dossierDescricao"
+    [rotaEditar]="rotasEditar[2]"
+    [textoEditar]="textos().editar"
+  >
+    <ul class="flex flex-col gap-3">
+      @for (documento of documentos(); track documento.titulo) {
+        <li
+          class="flex flex-col gap-3 rounded-lg border border-gray-200 bg-[#FBF8F6] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div class="flex min-w-0 items-center gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-text-secondary">
+              <app-icone [nome]="documento.icone" [tamanho]="16" />
+            </span>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-primary-deep">{{ documento.titulo }}</p>
+              <p class="mt-0.5 truncate text-xs text-text-secondary">{{ documento.ficheiro ?? textos().naoAnexado }}</p>
+            </div>
+          </div>
+          @if (documento.ficheiro) {
+            <span
+              class="inline-flex shrink-0 items-center gap-1.5 self-start rounded bg-[#E3F1E7] px-2.5 py-1 text-xs text-primary-deep sm:self-auto"
+            >
+              <app-icone nome="badge-check" [tamanho]="13" class="text-primary" />
+              {{ documento.selo }}
+            </span>
+          }
+        </li>
+      }
+    </ul>
+  </app-etapa-4-bloco-revisao>
+</div>

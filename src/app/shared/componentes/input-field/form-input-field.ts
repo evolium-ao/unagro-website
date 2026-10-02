@@ -1,4 +1,5 @@
 import { Component, input, forwardRef, Optional, Host, OnInit, computed } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ControlContainer,
   ControlValueAccessor,
@@ -49,7 +50,7 @@ const CLASSES_TEXTO: Record<VarianteCampo, string> = {
 @Component({
   selector: 'form-input-field',
   // Lembre-se de importar as diretivas aqui para o Angular aceitá-las no ng-content selector
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, NgTemplateOutlet],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -59,14 +60,29 @@ const CLASSES_TEXTO: Record<VarianteCampo, string> = {
   ],
   template: `
     <div class="flex flex-col gap-y-1" [class.bg-white]="fundoBranco()">
-      @if (mostrarRotulo()) {
+      @if (maxCaracteres(); as limite) {
+        <!-- Com limite, o rótulo partilha a linha com o contador "n / limite". -->
+        <div class="flex items-end justify-between gap-3">
+          <ng-container [ngTemplateOutlet]="rotulo" />
+          <span class="shrink-0 text-xs tracking-wide text-text-secondary" aria-live="polite">
+            {{ value.length }} / {{ limite }} {{ textoCaracteres() }}
+          </span>
+        </div>
+      } @else if (mostrarRotulo()) {
+        <ng-container [ngTemplateOutlet]="rotulo" />
+      }
+
+      <ng-template #rotulo>
         <label [for]="id" [class]="classesRotulo()" animate.enter="animete-titulo-1">
           {{ label() }}
+          @if (obrigatorio()) {
+            <span class="text-red-600" aria-hidden="true">*</span>
+          }
           @if (optional()) {
             <span class="text-[#9A9A9A] font-normal normal-case">{{ textoOpcional() }}</span>
           }
         </label>
-      }
+      </ng-template>
 
       <div class="group flex w-full items-center transition" [class]="classesMoldura()">
         <div class="mr-2 flex shrink-0 select-none items-center justify-center text-gray-400">
@@ -82,6 +98,7 @@ const CLASSES_TEXTO: Record<VarianteCampo, string> = {
               [placeholder]="placeholder()"
               [value]="value"
               [rows]="rows()"
+              [attr.maxlength]="maxCaracteres() ?? null"
               (input)="updateValue($event)"
               animate.enter="animete-titulo-2"
               class="w-full resize-none border-0 bg-transparent outline-none focus:ring-0 {{ classesTexto() }}"
@@ -94,6 +111,7 @@ const CLASSES_TEXTO: Record<VarianteCampo, string> = {
               [type]="type()"
               [placeholder]="placeholder()"
               [value]="value"
+              [attr.maxlength]="maxCaracteres() ?? null"
               (input)="updateValue($event)"
               animate.enter="animete-titulo-2"
               class="w-full border-0 bg-transparent outline-none focus:ring-0 {{ classesTexto() }}"
@@ -131,6 +149,15 @@ export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
   readonly optional = input<boolean>(false);
   /** Sufixo do rótulo quando `optional` — recebe o texto já traduzido. */
   readonly textoOpcional = input<string>('(opcional)');
+  /** Asterisco vermelho a seguir ao rótulo. Por omissão `false` — nada muda. */
+  readonly obrigatorio = input<boolean>(false);
+  /**
+   * Limite de caracteres: aplica `maxlength` e mostra o contador "n / limite" na
+   * linha do rótulo. Sem valor (por omissão) o campo fica como sempre foi.
+   */
+  readonly maxCaracteres = input<number>();
+  /** Palavra depois do contador — recebe o texto já traduzido. */
+  readonly textoCaracteres = input<string>('caracteres');
   readonly inline = input<boolean>(false);
   readonly rows = input<number>(4);
   readonly disabled = input<boolean>(false);

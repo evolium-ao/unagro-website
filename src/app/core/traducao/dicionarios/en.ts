@@ -361,6 +361,15 @@ export const en = {
       titulo: 'Faculty Applications',
       descricao: 'UNAGRO faculty recruitment: benefits, requirements and how to apply.',
     },
+    candidaturaGeral: {
+      titulo: 'Faculty Application Process',
+      descricao:
+        'Official call for masters, doctors and researchers: areas, criteria, documents and application deadline.',
+    },
+    candidaturaGeralFormulario: {
+      titulo: 'Faculty Application',
+      descricao: 'Expression of interest form: personal details, academic background and document dossier.',
+    },
     inscricao: {
       titulo: 'Enrolment',
       descricao: 'UNAGRO admissions enrolment form.',
