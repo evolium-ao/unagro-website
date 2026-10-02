@@ -163,9 +163,11 @@ export class AlertModalComponent {
 
   estilosBotao(variant: 'primary' | 'secondary' | 'danger'): string {
     const base = 'px-6 py-2 rounded-full transition-all hover:scale-105 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed min-w-28 flex items-center justify-center text-sm font-medium';
+    // Só tokens definidos no @theme de styles.css: uma classe inexistente deixa o botão
+    // transparente e o texto branco desaparece no fundo branco do modal.
     const variants: Record<string, string> = {
-      primary: 'bg-brand-orange-500 text-white hover:bg-[#D96100]',
-      secondary: 'button',
+      primary: 'bg-primary-deep text-white hover:bg-primary-hover',
+      secondary: 'border border-primary text-primary hover:bg-primary/5',
       danger: 'bg-red-600 text-white hover:bg-red-700',
     };
     return `${base} ${variants[variant]}`;
