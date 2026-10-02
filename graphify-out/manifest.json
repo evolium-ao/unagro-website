@@ -26,8 +26,8 @@
   ".vscode/mcp.json": {
     "mtime": 1787575162.0103056,
     "seen": 1790849448.641967,
-    "ast_hash": "a73020575e74990ecd722ccc5122bb0c",
-    "semantic_hash": "a73020575e74990ecd722ccc5122bb0c"
+    "ast_hash": "",
+    "semantic_hash": ""
   },
   ".vscode/tasks.json": {
     "mtime": 1787575162.0113003,
@@ -1158,10 +1158,10 @@
     "semantic_hash": "eecb83194d98d6fbfd7d56d1e13479f6"
   },
   "src/app/shared/componentes/alert-modal/alert-modal.component.ts": {
-    "mtime": 1790763850.8706,
-    "seen": 1790849448.642141,
-    "ast_hash": "c3b0b5216c350f2b03c0666b9a4e7bfa",
-    "semantic_hash": "c3b0b5216c350f2b03c0666b9a4e7bfa"
+    "mtime": 1790928697.95338,
+    "seen": 1790928719.92353,
+    "ast_hash": "72e465410347097216cbc007f7113294",
+    "semantic_hash": ""
   },
   "src/app/shared/componentes/alert-modal/alert-modal.service.ts": {
     "mtime": 1790763850.8706,
@@ -1434,16 +1434,16 @@
     "semantic_hash": "c2beddc21230639dea5d0afb96a6df29"
   },
   "src/app/shared/componentes/cartao-recurso/cartao-recurso.component.ts": {
-    "mtime": 1788768032.6387465,
-    "seen": 1790849448.6421862,
-    "ast_hash": "c696a79e20bf65abce6512573174af9d",
-    "semantic_hash": "c696a79e20bf65abce6512573174af9d"
+    "mtime": 1790850933.9486513,
+    "seen": 1790928719.9396188,
+    "ast_hash": "dd56ac6287c4094387ee3d4d87e020a9",
+    "semantic_hash": ""
   },
   "src/app/shared/componentes/cartao-requisito/cartao-requisito.component.ts": {
-    "mtime": 1788171307.971558,
-    "seen": 1790849448.6421874,
-    "ast_hash": "30b5ef2c435743da89ae5bb516d968e9",
-    "semantic_hash": "30b5ef2c435743da89ae5bb516d968e9"
+    "mtime": 1790851222.7460985,
+    "seen": 1790928719.939622,
+    "ast_hash": "171106d6154bdee879d0d67ee669d741",
+    "semantic_hash": ""
   },
   "src/app/shared/componentes/cartao-startup-esqueleto/cartao-startup-esqueleto.component.ts": {
     "mtime": 1788866256.2099893,
@@ -1674,10 +1674,10 @@
     "semantic_hash": "5727b9378c6af83e9177551068df6ef1"
   },
   "src/app/shared/componentes/modal-candidatura-submetida/modal-candidatura-submetida.component.ts": {
-    "mtime": 1790847343.5053344,
-    "seen": 1790849448.64223,
-    "ast_hash": "9b9c0f0bc456643caaca17e51a10c2a6",
-    "semantic_hash": "9b9c0f0bc456643caaca17e51a10c2a6"
+    "mtime": 1790849988.324553,
+    "seen": 1790928719.9529414,
+    "ast_hash": "2688dad3bc7fb102f5bdfec874163767",
+    "semantic_hash": ""
   },
   "src/app/shared/componentes/modal-detalhe-evento/modal-detalhe-evento.component.ts": {
     "mtime": 1790763850.8881445,
@@ -1860,16 +1860,16 @@
     "semantic_hash": "466a234c7595f96a11386864941ed4ef"
   },
   "src/environments/environment.production.ts": {
-    "mtime": 1790763850.892774,
-    "seen": 1790849448.6422615,
-    "ast_hash": "3f521e53d6eec241509a1d94f8cc7de5",
-    "semantic_hash": "3f521e53d6eec241509a1d94f8cc7de5"
+    "mtime": 1790849600.9028013,
+    "seen": 1790928719.9612968,
+    "ast_hash": "9d4f092fbd9a248ed893709c82cbf69a",
+    "semantic_hash": ""
   },
   "src/environments/environment.ts": {
-    "mtime": 1790765601.3975961,
-    "seen": 1790849448.6422625,
-    "ast_hash": "26e2086c992f104e2d712ff72d678b4b",
-    "semantic_hash": "26e2086c992f104e2d712ff72d678b4b"
+    "mtime": 1790849606.6147723,
+    "seen": 1790928719.9613004,
+    "ast_hash": "8b36b7435dea1b96e4bd0d3d63ea004d",
+    "semantic_hash": ""
   },
   "src/main.server.ts": {
     "mtime": 1787575162.014303,
@@ -2100,10 +2100,10 @@
     "semantic_hash": "2b167c989671d93db3217c6f3c471bcf"
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.html": {
-    "mtime": 1790781346.2881143,
-    "seen": 1790849448.6423166,
-    "ast_hash": "80bcb5d1dcd569393c6dfdf2539753bc",
-    "semantic_hash": "80bcb5d1dcd569393c6dfdf2539753bc"
+    "mtime": 1790851135.3912349,
+    "seen": 1790928719.9719694,
+    "ast_hash": "55df1c9a746e9fd24d7ca66197e7dd51",
+    "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.html": {
     "mtime": 1790763850.8519175,
@@ -2752,5 +2752,29 @@
     "seen": 1790849448.642554,
     "ast_hash": "9fedafda183d6121295a5212dd4d1985",
     "semantic_hash": "9fedafda183d6121295a5212dd4d1985"
+  },
+  ".claude/memory/criar-sessao.md": {
+    "mtime": 1790844866.0786867,
+    "seen": 1790928719.9652698,
+    "ast_hash": "2b91b70e4ed318881df554c497d11b05",
+    "semantic_hash": ""
+  },
+  ".claude/memory/integrar-recurso.md": {
+    "mtime": 1790763850.8097816,
+    "seen": 1790928719.9652731,
+    "ast_hash": "ce54d6bf54141b714a6573e77ea71216",
+    "semantic_hash": ""
+  },
+  "src/app/shared/componentes/barra-topo/barra-topo.component.html": {
+    "mtime": 1787819103.1727173,
+    "seen": 1790928719.9763212,
+    "ast_hash": "b5d1c150097d9a11598122a7c8c6b664",
+    "semantic_hash": ""
+  },
+  "src/app/shared/componentes/container-pagina/container-pagina.component.html": {
+    "mtime": 1787818939.1150243,
+    "seen": 1790928719.9770548,
+    "ast_hash": "68b329da9893e34099c7d8ad5cb9c940",
+    "semantic_hash": ""
   }
 }
