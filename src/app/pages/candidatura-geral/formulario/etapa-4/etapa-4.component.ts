@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
+import { descreverTempoTotal } from '../../../../core/servicos/tempo-experiencia';
 import { TraducaoService } from '../../../../core/traducao/traducao.service';
 import { formatarTamanho } from '../../../../shared/componentes/campo-documento/campo-documento.component';
 import { IconeComponent } from '../../../../shared/componentes/icone/icone.component';
-import { CandidaturaGeralEstadoService } from '../../estado/candidatura-geral-estado.service';
+import { CandidaturaGeralEstadoService, LIMITES_DOSSIER_MB } from '../../estado/candidatura-geral-estado.service';
 import { ROTA_CANDIDATURA_GERAL } from '../formulario-candidatura.component';
 import { BlocoRevisaoComponent } from './bloco-revisao.component';
 
@@ -14,12 +17,18 @@ interface CampoRevisao {
   ligacao?: string;
 }
 
+/** Campo de ficheiro do dossier (etapa 3). */
+type CampoDossier = 'curriculo' | 'certificados' | 'comprovativos' | 'carta';
+
 /** Uma linha do dossier na revisão. Sem `ficheiro`, o documento (opcional) não foi anexado. */
 interface DocumentoRevisao {
+  campo: CampoDossier;
   titulo: string;
   icone: string;
   ficheiro: string | null;
   selo: string;
+  /** `accept` do seletor de ficheiros do «Alterar», o mesmo da etapa 3. */
+  aceita: string;
 }
 
 const VAZIO = '—';
@@ -47,15 +56,13 @@ export class Etapa4Component {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
       editar: t('Editar', 'Edit'),
-      dadosTitulo: t('1. Dados Pessoais & Área de Candidatura', '1. Personal Details & Application Area'),
+      dadosTitulo: t('1. Dados Pessoais & Disciplinas', '1. Personal Details & Courses'),
       dadosDescricao: t(
         'Identificação oficial e departamento académico de enquadramento.',
         'Official identification and academic department.',
       ),
-      areaPrioritaria: t('Área Prioritária Selecionada', 'Selected Priority Area'),
-      vagas: t('Vagas Disponíveis', 'Available Positions'),
-      areaComplementar: t('Área Interdisciplinar / Linha de Investigação', 'Interdisciplinary Area / Research Line'),
-      formacaoTitulo: t('2. Formação Académica & Experiência Docente', '2. Academic Background & Teaching Experience'),
+      disciplinas: t('Disciplinas a Lecionar', 'Courses to Teach'),
+      formacaoTitulo: t('2. Formação Académica & Experiência', '2. Academic Background & Experience'),
       formacaoDescricao: t(
         'Qualificações académicas, titulação e trajectória profissional consolidada.',
         'Academic qualifications, degrees and established professional career.',
@@ -66,6 +73,13 @@ export class Etapa4Component {
         'Files submitted for validation by the Installation Office.',
       ),
       naoAnexado: t('Não anexado (opcional)', 'Not attached (optional)'),
+      semExperiencias: t('Nenhuma adicionada', 'None added'),
+      alterar: t('Alterar', 'Change'),
+      anexar: t('Anexar', 'Attach'),
+      alterarDica: t(
+        'Pode substituir qualquer documento aqui, sem voltar à etapa 3.',
+        'You can replace any document here without going back to step 3.',
+      ),
     };
   });
 
@@ -81,76 +95,175 @@ export class Etapa4Component {
     ];
   });
 
-  protected readonly areaComplementar = computed(() => this.estado.dados.getRawValue().areaComplementar || VAZIO);
-
   protected readonly camposFormacao = computed<CampoRevisao[]>(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     const formacao = this.estado.formacao.getRawValue();
     const grau = this.conteudo.grausAcademicos().find((opcao) => opcao.id === formacao.grau);
-    const intervalo = (id: string) =>
-      this.conteudo.intervalosExperiencia().find((opcao) => opcao.id === id)?.rotulo ?? '';
-    const docencia = intervalo(formacao.tempoDocencia);
-    const pratica = intervalo(formacao.experienciaPratica);
+    const pais = this.conteudo.paises().find((opcao) => opcao.id === formacao.pais)?.rotulo;
     const identificador = formacao.identificadorInvestigador.trim();
+    const idioma = this.traducao.idioma();
+    const docencia = descreverTempoTotal(
+      formacao.experienciasDocentes.map((experiencia) => experiencia.tempo),
+      this.conteudo.temposDocencia(),
+      idioma,
+    );
+    const pratica = descreverTempoTotal(
+      formacao.experienciasProfissionais.map((experiencia) => experiencia.tempo),
+      this.conteudo.intervalosExperiencia(),
+      idioma,
+    );
 
     return [
       {
         rotulo: t('Grau Académico Mais Elevado', 'Highest Academic Degree'),
-        valor: grau
-          ? `${grau.rotulo} (${grau.sigla}) ${t('em', 'in')} ${formacao.especializacao}`
-          : formacao.especializacao || VAZIO,
+        valor: grau ? `${grau.rotulo} (${grau.sigla}) ${t('em', 'in')} ${formacao.curso}` : formacao.curso || VAZIO,
       },
-      { rotulo: t('Instituição Concedente', 'Awarding Institution'), valor: formacao.instituicao || VAZIO },
+      {
+        rotulo: t('Universidade / Faculdade', 'University / Faculty'),
+        valor: [formacao.universidade, formacao.faculdade].filter(Boolean).join(' · ') || VAZIO,
+      },
+      { rotulo: t('País', 'Country'), valor: pais || VAZIO },
       {
         rotulo: t('Identificador de Investigador', 'Researcher Identifier'),
         valor: identificador ? identificador.replace(/^https?:\/\//i, '') : VAZIO,
         ligacao: identificador || undefined,
       },
+      { rotulo: t('Tempo Total de Docência', 'Total Teaching Experience'), valor: docencia || VAZIO },
+      { rotulo: t('Tempo Total de Experiência Profissional', 'Total Professional Experience'), valor: pratica || VAZIO },
+    ];
+  });
+
+  /** Listas da etapa 2, uma linha por experiência adicionada. */
+  protected readonly experiencias = computed(() => {
+    const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
+    const formacao = this.estado.formacao.getRawValue();
+    const rotulo = (opcoes: { id: string; rotulo: string }[], id: string) =>
+      opcoes.find((opcao) => opcao.id === id)?.rotulo ?? '';
+    const tempos = this.conteudo.temposDocencia();
+    const intervalos = this.conteudo.intervalosExperiencia();
+    const areas = this.conteudo.areasTrabalho();
+    return [
       {
-        rotulo: t('Experiência no Ensino Superior', 'Higher Education Experience'),
-        valor: docencia ? `${docencia} ${t('de docência efetiva', 'of effective teaching')}` : VAZIO,
+        titulo: t('Experiência Docente', 'Teaching Experience'),
+        itens: formacao.experienciasDocentes.map((experiencia) => ({
+          titulo: experiencia.disciplina,
+          detalhe: `${experiencia.universidade} · ${experiencia.faculdade}`,
+          tempo: rotulo(tempos, experiencia.tempo),
+        })),
       },
       {
-        rotulo: t('Experiência Prática no Agronegócio / I&D', 'Practical Experience in Agribusiness / R&D'),
-        valor: pratica ? `${pratica} ${t('em projetos de campo', 'in field projects')}` : VAZIO,
+        titulo: t('Experiência Profissional', 'Professional Experience'),
+        itens: formacao.experienciasProfissionais.map((experiencia) => ({
+          titulo: experiencia.empresa,
+          detalhe: rotulo(areas, experiencia.area),
+          tempo: rotulo(intervalos, experiencia.tempo),
+        })),
       },
     ];
   });
 
+  /** Valor do dossier como signal: o «Alterar» troca ficheiros sem sair desta etapa. */
+  private readonly dossier = toSignal(this.estado.dossier.valueChanges.pipe(map(() => this.estado.dossier.getRawValue())), {
+    initialValue: this.estado.dossier.getRawValue(),
+  });
+
+  /** Erro do último «Alterar» recusado, por documento; o ficheiro anterior mantém-se. */
+  protected readonly errosDocumento = signal<Partial<Record<CampoDossier, string>>>({});
+
   protected readonly documentos = computed<DocumentoRevisao[]>(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
-    const dossier = this.estado.dossier.getRawValue();
+    const dossier = this.dossier();
     const descrever = (ficheiro: File | null) =>
       ficheiro ? `${ficheiro.name} (${formatarTamanho(ficheiro.size)})` : null;
     const valido = t('Verificado / Válido', 'Verified / Valid');
+    const pdf = '.pdf,application/pdf';
 
     return [
       {
+        campo: 'curriculo',
         titulo: t('Curriculum Vitae Circunstanciado', 'Detailed Curriculum Vitae'),
         icone: 'file-text',
         ficheiro: descrever(dossier.curriculo),
         selo: valido,
+        aceita: pdf,
       },
       {
+        campo: 'certificados',
         titulo: t('Certificados de Habilitações & Equivalência', 'Qualification Certificates & Equivalence'),
         icone: 'graduation-cap',
         ficheiro: descrever(dossier.certificados),
         selo: valido,
+        aceita: pdf,
       },
       {
+        campo: 'comprovativos',
         titulo: t('Comprovativos de Docência / I&D', 'Proof of Teaching / R&D'),
         icone: 'archive',
         ficheiro: descrever(dossier.comprovativos),
         selo: t('Anexado', 'Attached'),
+        aceita: '.pdf,.zip,application/pdf,application/zip',
       },
       {
+        campo: 'carta',
         titulo: t('Carta de Motivação & Enquadramento', 'Motivation Letter & Institutional Fit'),
         icone: 'mail',
         ficheiro: descrever(dossier.carta),
         selo: valido,
+        aceita: pdf,
       },
     ];
   });
+
+  /**
+   * «Alterar»/«Anexar» de uma linha do dossier: troca o ficheiro no formulário
+   * com as mesmas regras da etapa 3 (tipo, tamanho por documento e total). Se o
+   * novo ficheiro for recusado, volta o anterior e a linha mostra o motivo.
+   */
+  protected alterarDocumento(campo: CampoDossier, evento: Event): void {
+    const entrada = evento.target as HTMLInputElement;
+    const novo = entrada.files?.[0];
+    // Limpo já, para escolher de novo o mesmo ficheiro voltar a disparar `change`.
+    entrada.value = '';
+    if (!novo) {
+      return;
+    }
+    const grupo = this.estado.dossier;
+    const controlo = grupo.controls[campo];
+    const anterior = controlo.value;
+    controlo.setValue(novo);
+
+    const erro = this.motivoRecusa(campo);
+    if (erro) {
+      controlo.setValue(anterior);
+      this.errosDocumento.update((erros) => ({ ...erros, [campo]: erro }));
+      return;
+    }
+    controlo.markAsDirty();
+    this.errosDocumento.update((erros) => ({ ...erros, [campo]: undefined }));
+  }
+
+  /** Porque é que o ficheiro agora no `campo` não serve, ou `null` se servir. */
+  private motivoRecusa(campo: CampoDossier): string | null {
+    const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
+    const controlo = this.estado.dossier.controls[campo];
+    if (controlo.hasError('ficheiroTipoInvalido')) {
+      return campo === 'comprovativos'
+        ? t('Formato não aceite: use PDF ou ZIP.', 'Format not accepted: use PDF or ZIP.')
+        : t('Formato não aceite: use PDF.', 'Format not accepted: use PDF.');
+    }
+    if (controlo.hasError('ficheiroMuitoGrande')) {
+      const limite = LIMITES_DOSSIER_MB[campo];
+      return t(`O ficheiro não pode exceder ${limite}MB.`, `The file cannot exceed ${limite}MB.`);
+    }
+    if (this.estado.dossier.hasError('dossierMuitoGrande')) {
+      const total = LIMITES_DOSSIER_MB.total;
+      return t(
+        `Com este ficheiro o dossier ultrapassa o máximo de ${total}MB.`,
+        `With this file the dossier exceeds the ${total}MB maximum.`,
+      );
+    }
+    return null;
+  }
 
   /** `1982-05-14` → `14/05/1982 (44 anos)`. */
   private dataComIdade(iso: string): string {

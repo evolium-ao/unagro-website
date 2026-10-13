@@ -11,7 +11,9 @@ import { RodapeCandidaturaComponent } from '../rodape-candidatura/rodape-candida
   selector: 'app-layout-candidatura',
   imports: [RouterOutlet, RodapeCandidaturaComponent],
   template: `
-    <main class="min-h-screen bg-bg-lighter">
+    <!-- Espaço antes do rodapé nas etapas; na página inicial a secção do prazo
+         (verde-escuro) encosta ao rodapé, como no mockup. -->
+    <main class="min-h-screen bg-bg-lighter pb-20 has-[#secao-prazo]:pb-0">
       <router-outlet />
     </main>
     <app-rodape-candidatura />

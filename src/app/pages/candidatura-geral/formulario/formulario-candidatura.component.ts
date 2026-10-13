@@ -65,9 +65,10 @@ export class FormularioCandidaturaComponent {
         'Preencha os seus dados pessoais, percurso académico e anexe o dossier documental obrigatório para formalizar a sua manifestação de interesse.',
         'Fill in your personal details and academic background and attach the mandatory document dossier to formalise your expression of interest.',
       ),
-      areaSelecionada: t('Área seleccionada', 'Selected area'),
-      semArea: t('Nenhuma área seleccionada', 'No area selected'),
-      vagas: t('Vagas Disponíveis', 'Available Positions'),
+      disciplinasSelecionadas: t('Disciplinas seleccionadas', 'Selected courses'),
+      semDisciplinas: t('Nenhuma disciplina seleccionada', 'No course selected'),
+      outra: t('outra', 'other'),
+      outras: t('outras', 'others'),
       alterar: t('Alterar', 'Change'),
       etapa: t('Etapa', 'Step'),
       ativa: t('(activa)', '(active)'),
@@ -101,6 +102,11 @@ export class FormularioCandidaturaComponent {
       erroRede: t(
         'Não foi possível contactar o servidor. Verifique a ligação e tente novamente.',
         'Could not reach the server. Check your connection and try again.',
+      ),
+      // 413: o servidor cortou o pedido pelo tamanho, antes de validar os campos.
+      erroTamanho: t(
+        'Os documentos anexados excedem o tamanho total aceite. Substitua ou comprima algum ficheiro na etapa 3.',
+        'The attached documents exceed the accepted total size. Replace or compress a file in step 3.',
       ),
       erroGenerico: t(
         'Não foi possível submeter a candidatura. Tente novamente dentro de alguns instantes.',
@@ -178,8 +184,11 @@ export class FormularioCandidaturaComponent {
     if (this.enviar.isPending()) {
       return;
     }
-    // Lida antes do `limpar()`: o modal mostra a área e o formulário fica em branco.
-    const area = this.estado.areaSelecionada();
+    // Lida antes do `limpar()`: o modal mostra as disciplinas e o formulário fica em branco.
+    const disciplinas = this.estado
+      .disciplinasSelecionadas()
+      .map((escolhida) => escolhida.disciplina.nome)
+      .join(', ');
     try {
       const submetida = await this.enviar.mutateAsync({
         dados: this.estado.dados.getRawValue(),
@@ -187,7 +196,7 @@ export class FormularioCandidaturaComponent {
         dossier: this.estado.dossier.getRawValue(),
       });
       this.estado.limpar();
-      await this.abrirModalSucesso(submetida, area ? `${area.numero}. ${area.titulo}` : '');
+      await this.abrirModalSucesso(submetida, disciplinas);
     } catch (erro) {
       await this.modais.erro(this.mensagemErro(ErroApi.aPartirDe(erro)), this.textos().erroTitulo);
     }
@@ -223,6 +232,9 @@ export class FormularioCandidaturaComponent {
       return doServidor.join(' ');
     }
     const t = this.textos();
+    if (erro.estado === 413) {
+      return t.erroTamanho;
+    }
     return erro.estado === 0 ? t.erroRede : t.erroGenerico;
   }
 

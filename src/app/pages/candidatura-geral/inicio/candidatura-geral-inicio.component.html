@@ -1,45 +1,59 @@
-<!-- Hero — banner partilhado com o CTA "Candidatar-se" (abre a etapa 1). A linha de
-     metadados entra pelo slot de conteúdo porque no mockup fica abaixo do botão. -->
-<app-banner-destaque
-  [titulo]="textos().heroTitulo"
-  [tituloDestaque]="textos().heroDestaque"
-  [tituloFim]="textos().heroFim"
-  [subtitulo]="textos().heroSubtitulo"
-  [selos]="selosHero()"
-  [ctas]="ctasHero()"
-  bg="/imagens/banner-candidatura.jpg"
-  [temBackdrop]="true"
-  classeBackdrop="bg-primary-deep/70"
->
-  @for (metadado of metadadosHero(); track metadado.texto) {
-    <p class="mt-4 inline-flex items-center gap-2 text-sm text-white/85" data-animar="ctas">
-      <app-icone [nome]="metadado.icone" [tamanho]="16" class="text-secondary" />
-      {{ metadado.texto }}
-    </p>
-  }
-</app-banner-destaque>
+<!-- Hero — o campo de contacto com o "Candidatar" (abre a etapa 1), a linha do
+     prazo e o logótipo entram pelo slot de conteúdo do banner. -->
+<app-banner-destaque [titulo]="textos().heroTitulo" [tituloDestaque]="textos().heroDestaque"
+  [tituloFim]="textos().heroFim" [subtitulo]="textos().heroSubtitulo" [selos]="selosHero()"
+  bg="/imagens/banner-candidatura.jpg" [temBackdrop]="true" classeBackdrop="bg-primary-deep/70" classeDesvio="md:mt-20!"
+  classeAltura="md:h-150!"
+  classeSubtitulo="mx-auto mt-10! max-w-2xl text-sm font-normal leading-relaxed text-white/85 md:mx-0">
+  <div class="mt-8 flex w-full max-w-md items-center gap-2 rounded-xl bg-white p-1.5 pl-4 shadow-lg" data-animar="ctas">
+    <app-icone nome="mail" [tamanho]="16" class="shrink-0 text-text-secondary" />
+    <a [href]="'mailto:' + emailContacto"
+      class="min-w-0 flex-1 truncate text-left text-sm text-text-secondary hover:text-primary-deep">
+      {{ emailContacto }}
+    </a>
+    <app-botao variante="profundo" tamanho="sm" [link]="rotaEtapa1" icone="arrow-right" posicaoIcone="direita">
+      {{ textos().heroCandidatar }}
+    </app-botao>
+  </div>
 
-<!-- 1 sessão — enquadramento institucional -->
+  <div class="mt-10 flex items-center justify-center gap-3 md:justify-start" data-animar="ctas">
+    <div class="flex -space-x-1.5" aria-hidden="true">
+      <span
+        class="flex h-7 w-7 items-center justify-center rounded-md border-2 border-primary-deep bg-primary text-white">
+        <app-icone nome="sprout" [tamanho]="13" />
+      </span>
+      <span
+        class="flex h-7 w-7 items-center justify-center rounded-md border-2 border-primary-deep bg-white text-primary-deep">
+        <app-icone nome="graduation-cap" [tamanho]="13" />
+      </span>
+      <span
+        class="flex h-7 w-7 items-center justify-center rounded-md border-2 border-primary-deep bg-accent text-primary-deep">
+        <app-icone nome="flask-conical" [tamanho]="13" />
+      </span>
+    </div>
+    <!-- Pedido do cliente: prazo em destaque e a piscar; sem animação para quem
+         pede menos movimento no sistema. -->
+    <span
+      class="rounded-full bg-accent px-4 py-1.5 text-sm font-bold text-primary-deep shadow-md motion-safe:animate-pulse sm:text-base">
+      {{ textos().heroPrazo }}
+    </span>
+  </div>
+
+  <img src="/imagens/agrosofia.svg" [alt]="textos().heroLogoAlt"
+    class="pointer-events-none absolute bottom-8 right-6 hidden h-16 w-auto brightness-0 invert md:block lg:h-20" />
+</app-banner-destaque>
 <section id="secao-parceiros" class="bg-primary-deep px-4 py-10 sm:px-6 lg:px-8">
   <app-container-pagina>
     <p class="text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60" appRevelarAoScroll>
       {{ textos().parceirosTitulo }}
     </p>
-    <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 md:justify-between">
-      @for (parceiro of parceiros(); track parceiro.id) {
-        <li class="inline-flex items-center gap-2 text-sm font-semibold text-white" [appRevelarAoScroll]="$index">
-          <app-icone [nome]="parceiro.icone" [tamanho]="18" class="text-secondary" />
-          {{ parceiro.nome }}
-        </li>
-      } @empty {
-        <li class="sr-only">—</li>
-      }
-    </ul>
   </app-container-pagina>
 </section>
+<!-- 1 sessão — enquadramento institucional -->
+
 
 <!-- 2 sessão — visão institucional -->
-<section id="secao-visao" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+<!-- <section id="secao-visao" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
     <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
       <app-espaco-imagem
@@ -71,122 +85,51 @@
       </div>
     </div>
   </app-container-pagina>
-</section>
+</section> -->
 
-<!-- 3 sessão — áreas de especialização e termos de referência -->
-<section id="secao-areas" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+<!-- 3 sessão — escolha da disciplina a lecionar (substitui as áreas e os termos de
+     referência, pontos 8 e 9 do pedido do cliente). O docente escolhe o curso, a
+     disciplina desse curso e clica em «Adicionar»; pode juntar disciplinas de vários
+     cursos. «Confirmar Seleção» abre a etapa 1 com `?disciplinas=`. -->
+
+<section id="secao-disciplina" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
-    <div appRevelarAoScroll>
-      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-secondary">
-        {{ textos().areasRotulo }}
+    <div class="text-center" appRevelarAoScroll>
+      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-deep">
+        {{ textos().disciplinaRotulo }}
       </p>
-      <app-cabecalho-secao
-        [titulo]="textos().areasTitulo"
-        [descricao]="textos().areasDescricao"
-        alinhamento="esquerda"
-        tema="verde"
-        tamanhoDescricao="pequeno"
-        [mostrarTracos]="false"
-      />
+      <app-cabecalho-secao [titulo]="textos().disciplinaTitulo" [descricao]="textos().disciplinaDescricao" tema="verde"
+        tamanhoDescricao="pequeno" [mostrarTracos]="false" />
     </div>
 
-    <!-- Cartões seleccionáveis: o seleccionado fica escuro, ganha o selo "Vagas
-         abertas" e o botão "Submeter perfil". A selecção é feita por um botão
-         transparente que cobre o cartão (aria-pressed); o "Submeter perfil" fica
-         por cima dele (z-10) para não haver botões dentro de botões. -->
-    <div class="mt-10 grid gap-6 md:grid-cols-3">
-      @for (area of areas(); track area.id) {
-        @let selecionada = area.id === areaSelecionada();
-        <article
-          class="relative flex h-full flex-col rounded-2xl border p-6 transition-colors duration-300 sm:p-7"
-          [class]="
-            selecionada
-              ? 'border-primary-deep bg-primary-deep text-white shadow-lg'
-              : 'border-gray-200 bg-white hover:border-primary/40'
-          "
-          [appRevelarAoScroll]="$index"
-        >
-          <button
-            type="button"
-            class="absolute inset-0 z-0 cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2"
-            [attr.aria-pressed]="selecionada"
-            [attr.aria-label]="textos().selecionarArea + ': ' + area.titulo"
-            (click)="selecionarArea(area.id)"
-          ></button>
-
-          @if (selecionada) {
-            <app-selo variante="segondary" tamanho="pequeno" class="absolute right-5 top-0 -translate-y-1/2 uppercase">
-              {{ textos().vagasAbertas }}
-            </app-selo>
-          }
-          <div
-            class="pointer-events-none flex h-10 w-10 items-center justify-center rounded-lg"
-            [class]="selecionada ? 'bg-white/10 text-secondary' : 'bg-primary/10 text-primary-deep'"
-          >
-            <app-icone [nome]="area.icone" [tamanho]="20" />
-          </div>
-          <h3 class="pointer-events-none mt-5 text-lg font-bold" [class]="selecionada ? 'text-white' : 'text-primary-deep'">
-            {{ area.numero }}. {{ area.titulo }}
-          </h3>
-          <p
-            class="pointer-events-none mt-2 text-sm leading-relaxed"
-            [class]="selecionada ? 'text-white/70' : 'text-text-secondary'"
-          >
-            {{ area.descricao }}
-          </p>
-          <ul class="pointer-events-none mt-5 flex flex-col gap-2">
-            @for (especialidade of area.especialidades; track especialidade) {
-              <li class="flex items-start gap-2 text-xs" [class]="selecionada ? 'text-white/85' : 'text-text-secondary'">
-                <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" aria-hidden="true"></span>
-                {{ especialidade }}
-              </li>
-            }
-          </ul>
-
-          <div class="mt-auto pt-8">
-            @if (selecionada) {
-              <app-botao
-                variante="secundario"
-                tamanho="sm"
-                icone="arrow-right"
-                posicaoIcone="direita"
-                [larguraTotal]="true"
-                class="relative z-10"
-                (clicado)="abrirFormularioComArea(area.id)"
-              >
-                {{ textos().submeterPerfil }}
-              </app-botao>
-            } @else {
-              <div class="pointer-events-none flex items-center justify-between border-t border-gray-100 pt-4 text-xs">
-                <span class="font-semibold text-primary-deep">{{ textos().graus }}: {{ area.graus }}</span>
-                <span class="inline-flex items-center gap-1 font-bold text-accent">
-                  {{ textos().selecionar }}
-                  <app-icone nome="arrow-right" [tamanho]="14" />
-                </span>
-              </div>
-            }
-          </div>
-        </article>
-      } @empty {
-        <p class="text-sm text-text-secondary">—</p>
-      }
-    </div>
-
-    <div class="mt-14 rounded-2xl border border-gray-100 bg-bg-lighter p-6 sm:p-8" appRevelarAoScroll>
-      <h3 class="text-lg font-bold text-primary-deep">{{ textos().termosTitulo }}</h3>
-      <p class="mt-1 text-sm text-text-secondary">{{ textos().termosDescricao }}</p>
-      <div class="mt-6">
-        <app-acordeao variante="cartoes">
-          @for (termo of termosReferencia(); track termo.id) {
-            <app-item-acordeao [titulo]="termo.codigo + ' — ' + termo.titulo">
-              {{ termo.descricao }}
-            </app-item-acordeao>
-          } @empty {
-            <p class="text-sm text-text-secondary">—</p>
-          }
-        </app-acordeao>
+    <div class="mt-10 flex items-start gap-4 rounded-2xl border-2 border-gray-300 bg-white p-5 sm:p-6"
+      appRevelarAoScroll>
+      <span
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-gray-100 text-primary-deep"
+        aria-hidden="true">
+        <app-icone nome="graduation-cap" [tamanho]="20" />
+      </span>
+      <div>
+        <span
+          class="inline-block rounded-full bg-gray-200 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-text-primary">
+          {{ textos().disciplinaAvisoSelo }}
+        </span>
+        <p class="mt-1.5 font-bold text-text-primary">{{ textos().disciplinaAvisoTitulo }}</p>
+        <p class="mt-1 text-sm text-text-secondary">{{ textos().disciplinaAvisoTexto }}</p>
       </div>
     </div>
+
+    <app-seletor-disciplinas class="mt-12 block" appRevelarAoScroll [ngModel]="disciplinasAdicionadas()"
+      (ngModelChange)="disciplinasAdicionadas.set($event)">
+      <!-- Rodapé -->
+      <div class="flex flex-col gap-4 border-t border-gray-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs text-text-secondary">{{ textos().disciplinaRodape }}</p>
+        <app-botao variante="primario" icone="check" raio="medio" [desativado]="!disciplinasAdicionadas().length"
+          (clicado)="confirmarSelecao()">
+          {{ textos().disciplinaConfirmar }}
+        </app-botao>
+      </div>
+    </app-seletor-disciplinas>
   </app-container-pagina>
 </section>
 
@@ -194,28 +137,25 @@
 <section id="secao-criterios" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
     <div class="text-center" appRevelarAoScroll>
-      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-secondary">
+      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-deep">
         {{ textos().criteriosRotulo }}
       </p>
-      <app-cabecalho-secao
-        [titulo]="textos().criteriosTitulo"
-        [descricao]="textos().criteriosDescricao"
-        tema="verde"
-        tamanhoDescricao="pequeno"
-        [mostrarTracos]="false"
-      />
+      <app-cabecalho-secao [titulo]="textos().criteriosTitulo" [descricao]="textos().criteriosDescricao" tema="verde"
+        tamanhoDescricao="pequeno" [mostrarTracos]="false" />
     </div>
-    <div class="mt-10 grid gap-6 md:grid-cols-3">
+    <div class="mt-12 grid gap-6 md:grid-cols-3 lg:gap-8">
       @for (criterio of criterios(); track criterio.id) {
-        <article class="flex h-full flex-col rounded-2xl bg-white p-6 shadow-sm sm:p-7" [appRevelarAoScroll]="$index">
-          <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-xs font-bold text-primary-deep">
-            {{ criterio.numero < 10 ? '0' + criterio.numero : criterio.numero }}
-          </span>
-          <h3 class="mt-5 text-base font-bold text-primary-deep">{{ criterio.titulo }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-text-secondary">{{ criterio.descricao }}</p>
-        </article>
+      <article class="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-6 sm:p-7"
+        [appRevelarAoScroll]="$index">
+        <span
+          class="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary-deep">
+          {{ criterio.numero < 10 ? '0' + criterio.numero : criterio.numero }}
+        </span>
+        <h3 class="mt-7 text-lg font-bold text-primary-deep">{{ criterio.titulo }}</h3>
+        <p class="mt-3 text-sm leading-relaxed text-text-secondary">{{ criterio.descricao }}</p>
+      </article>
       } @empty {
-        <p class="text-sm text-text-secondary">—</p>
+      <p class="text-sm text-text-secondary">—</p>
       }
     </div>
   </app-container-pagina>
@@ -228,28 +168,25 @@
       <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-secondary">
         {{ textos().passosRotulo }}
       </p>
-      <app-cabecalho-secao
-        [titulo]="textos().passosTitulo"
-        [descricao]="textos().passosDescricao"
-        tema="verde"
-        tamanhoDescricao="pequeno"
-        [mostrarTracos]="false"
-      />
+      <app-cabecalho-secao [titulo]="textos().passosTitulo" [descricao]="textos().passosDescricao" tema="verde"
+        tamanhoDescricao="pequeno" [mostrarTracos]="false" />
     </div>
     <div class="mt-10 grid gap-6 md:grid-cols-3">
       @for (passo of passos(); track passo.id) {
-        <article class="flex h-full flex-col rounded-2xl border border-gray-100 bg-bg-lighter p-6 sm:p-7" [appRevelarAoScroll]="$index">
-          <span class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-deep text-xs font-bold text-white">
-            {{ passo.numero }}
-          </span>
-          <h3 class="mt-5 text-base font-bold text-primary-deep">{{ passo.titulo }}</h3>
-          <p class="mt-2 text-sm leading-relaxed text-text-secondary">{{ passo.descricao }}</p>
-          @if (passo.fase) {
-            <p class="mt-auto pt-6 text-[11px] font-bold uppercase tracking-[0.12em] text-primary">{{ passo.fase }}</p>
-          }
-        </article>
+      <article class="flex h-full flex-col rounded-2xl border border-gray-100 bg-bg-lighter p-6 sm:p-7"
+        [appRevelarAoScroll]="$index">
+        <span
+          class="flex h-8 w-8 items-center justify-center rounded-full bg-primary-deep text-xs font-bold text-white">
+          {{ passo.numero }}
+        </span>
+        <h3 class="mt-5 text-base font-bold text-primary-deep">{{ passo.titulo }}</h3>
+        <p class="mt-2 text-sm leading-relaxed text-text-secondary">{{ passo.descricao }}</p>
+        @if (passo.fase) {
+        <p class="mt-auto pt-6 text-[11px] font-bold uppercase tracking-[0.12em] text-primary">{{ passo.fase }}</p>
+        }
+      </article>
       } @empty {
-        <p class="text-sm text-text-secondary">—</p>
+      <p class="text-sm text-text-secondary">—</p>
       }
     </div>
   </app-container-pagina>
@@ -259,29 +196,19 @@
 <section id="secao-documentos" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
     <div appRevelarAoScroll>
-      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-secondary">
+      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-deep">
         {{ textos().documentosRotulo }}
       </p>
-      <app-cabecalho-secao
-        [titulo]="textos().documentosTitulo"
-        [descricao]="textos().documentosDescricao"
-        alinhamento="esquerda"
-        tema="verde"
-        tamanhoDescricao="pequeno"
-        [mostrarTracos]="false"
-      />
+      <app-cabecalho-secao [titulo]="textos().documentosTitulo" [descricao]="textos().documentosDescricao"
+        alinhamento="esquerda" tema="verde" tamanhoDescricao="pequeno" [mostrarTracos]="false" />
     </div>
     <div class="mt-10 grid gap-4 md:grid-cols-2">
-      @for (documento of documentos(); track documento.id) {
-        <app-cartao-requisito
-          icone="check"
-          [titulo]="documento.titulo"
-          [descricao]="documento.descricao"
-          class="rounded-lg border border-gray-100 bg-white!"
-          [appRevelarAoScroll]="$index"
-        />
+      @for (documento of documentos(); track documento.id; let ultimo = $last; let par = $even) {
+      <!-- O último cartão, quando sobra sozinho na linha, ocupa as duas colunas (como no mockup). -->
+      <app-cartao-requisito icone="check" [titulo]="documento.titulo" [descricao]="documento.descricao"
+        class="block" [class.md:col-span-2]="ultimo && par" [appRevelarAoScroll]="$index" />
       } @empty {
-        <p class="text-sm text-text-secondary">—</p>
+      <p class="text-sm text-text-secondary">—</p>
       }
     </div>
   </app-container-pagina>
@@ -291,16 +218,20 @@
 <section id="secao-prazo" class="bg-primary-deep px-4 py-16 text-center sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
     <div class="flex flex-col items-center" appRevelarAoScroll>
-      <app-selo variante="sobreEscuro" tamanho="pequeno" class="uppercase">
-        <app-icone nome="clock" [tamanho]="12" class="mr-1.5 text-secondary" />
+      <span
+        class="inline-flex items-center gap-1.5 rounded-full border border-secondary/40 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-secondary">
+        <app-icone nome="clock" [tamanho]="12" />
         {{ textos().prazoSelo }}
-      </app-selo>
+      </span>
       <h2 class="mt-5 text-2xl font-bold text-white sm:text-4xl">{{ textos().prazoTitulo }}</h2>
       <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/70">{{ textos().prazoTexto }}</p>
       <div class="mt-10">
         <app-contador-regressivo [dataAlvo]="prazo()" variante="caixasGrandes" [rotulos]="textos().contador" />
       </div>
-      <p class="mt-8 text-xs italic text-white/50">{{ textos().prazoNota }}</p>
+      <app-botao variante="secundario" icone="arrow-right" posicaoIcone="direita" raio="medio" [link]="rotaEtapa1"
+        class="mt-12">
+        {{ textos().prazoCandidatar }}
+      </app-botao>
     </div>
   </app-container-pagina>
 </section>

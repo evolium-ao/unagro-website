@@ -17,7 +17,7 @@ export interface RotulosContadorRegressivo {
 
 /**
  * `caixas`: cada unidade numa caixa própria. `painel`: um único painel com as
- * unidades separadas por dois pontos. `caixasGrandes`: caixas quadradas com o
+ * unidades separadas por dois pontos. `caixasGrandes`: caixas largas com o
  * número a dourado, para o prazo da candidatura docente. Todas assumem um fundo escuro.
  */
 export type VarianteContador = 'caixas' | 'painel' | 'caixasGrandes';
@@ -58,7 +58,7 @@ function comZero(valor: number): string {
       <div class="flex flex-wrap justify-center gap-3 sm:gap-5">
         @for (unidade of unidades(); track unidade.rotulo) {
           <div
-            class="flex h-24 w-20 flex-col items-center justify-center rounded-xl border border-white/10 bg-white/5 sm:h-28 sm:w-28"
+            class="flex h-24 w-20 flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 sm:w-32"
           >
             <span class="text-3xl font-bold tabular-nums text-secondary sm:text-4xl">{{
               unidade.valor

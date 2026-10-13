@@ -29,18 +29,25 @@
           <p class="mt-4 max-w-2xl text-base leading-relaxed text-text-secondary sm:text-lg">{{ textos().subtitulo }}</p>
         </div>
 
-        <!-- Área escolhida na etapa 1 -->
+        <!-- Disciplinas escolhidas na etapa 1 (ou na página inicial) -->
         <aside class="flex items-start gap-3 rounded-2xl border border-gray-200 bg-bg-light p-5 lg:w-96 lg:shrink-0">
           <app-icone nome="clipboard-check" [tamanho]="20" class="mt-0.5 shrink-0 text-primary" />
           <div class="min-w-0 flex-1">
             <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary">
-              {{ textos().areaSelecionada }}
+              {{ textos().disciplinasSelecionadas }}
             </p>
-            @if (estado.areaSelecionada(); as area) {
-              <p class="mt-1 text-sm font-semibold text-primary-deep">{{ area.numero }}. {{ area.titulo }}</p>
-              <p class="mt-1 text-xs text-primary">{{ area.vagas }} {{ textos().vagas }}</p>
-            } @else {
-              <p class="mt-1 text-sm text-text-secondary">{{ textos().semArea }}</p>
+            @if (estado.disciplinasSelecionadas(); as selecionadas) {
+              @if (selecionadas.length) {
+                <p class="mt-1 text-sm font-semibold text-primary-deep">{{ selecionadas[0].disciplina.nome }}</p>
+                <p class="mt-1 text-xs text-primary">
+                  {{ selecionadas[0].curso.nome }}
+                  @if (selecionadas.length > 1) {
+                    · +{{ selecionadas.length - 1 }} {{ selecionadas.length === 2 ? textos().outra : textos().outras }}
+                  }
+                </p>
+              } @else {
+                <p class="mt-1 text-sm text-text-secondary">{{ textos().semDisciplinas }}</p>
+              }
             }
           </div>
           <a

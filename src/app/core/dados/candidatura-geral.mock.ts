@@ -5,28 +5,11 @@ import {
   EtapaNumeradaCandidaturaGeral,
   GrauAcademicoCandidaturaGeral,
   OpcaoCandidaturaGeral,
-  ParceiroCandidaturaGeral,
-  TermoReferenciaCandidaturaGeral,
+  OpcaoTempoCandidaturaGeral,
 } from '../modelos/candidatura-geral.model';
 
 /** Fim do prazo de submissão, na hora de Luanda (GMT+1). */
-export const PRAZO_CANDIDATURA_GERAL = '2026-10-10T23:59:00+01:00';
-
-export const PARCEIROS_CANDIDATURA_GERAL_MOCK: ParceiroCandidaturaGeral[] = [
-  { id: 'mescti', icone: 'landmark', nome: { pt: 'MESCTI Angola', en: 'MESCTI Angola' } },
-  { id: 'cplp', icone: 'share-2', nome: { pt: 'Rede CPLP', en: 'CPLP Network' } },
-  {
-    id: 'academia',
-    icone: 'graduation-cap',
-    nome: { pt: 'Academia Angolana', en: 'Angolan Academy' },
-  },
-  {
-    id: 'investigacao',
-    icone: 'sprout',
-    nome: { pt: 'Investigação Agrária', en: 'Agricultural Research' },
-  },
-  { id: 'diaspora', icone: 'earth', nome: { pt: 'Diáspora Global', en: 'Global Diaspora' } },
-];
+export const PRAZO_CANDIDATURA_GERAL = '2026-10-31T23:59:00+01:00';
 
 export const DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK: DestaqueCandidaturaGeral[] = [
   {
@@ -118,53 +101,14 @@ export const AREAS_CANDIDATURA_GERAL_MOCK: AreaCandidaturaGeral[] = [
   },
 ];
 
-export const TERMOS_REFERENCIA_CANDIDATURA_GERAL_MOCK: TermoReferenciaCandidaturaGeral[] = [
-  {
-    id: 'agronomia-fitossanidade',
-    codigo: 'A.1',
-    titulo: {
-      pt: 'Departamento de Agronomia e Fitossanidade',
-      en: 'Department of Agronomy and Plant Health',
-    },
-    descricao: {
-      pt: 'Disciplinas de fitotecnia, ciência do solo, protecção integrada de culturas e melhoramento vegetal. Perfil com experiência em ensaios de campo e acompanhamento de explorações irrigadas.',
-      en: 'Courses in crop science, soil science, integrated crop protection and plant breeding. Profile with experience in field trials and support to irrigated farms.',
-    },
-  },
-  {
-    id: 'engenharia-rural',
-    codigo: 'A.2',
-    titulo: {
-      pt: 'Departamento de Engenharia Rural & Mecanização',
-      en: 'Department of Rural Engineering & Mechanisation',
-    },
-    descricao: {
-      pt: 'Disciplinas de máquinas agrícolas, hidráulica e sistemas de rega, topografia e construções rurais. Perfil com prática em projectos de mecanização e gestão de água.',
-      en: 'Courses in farm machinery, hydraulics and irrigation systems, surveying and rural buildings. Profile with hands-on experience in mechanisation and water management projects.',
-    },
-  },
-  {
-    id: 'transformacao-biotecnologia',
-    codigo: 'A.3',
-    titulo: {
-      pt: 'Departamento de Transformação Agroindustrial & Biotecnologia',
-      en: 'Department of Agro-industrial Processing & Biotechnology',
-    },
-    descricao: {
-      pt: 'Disciplinas de tecnologia alimentar, microbiologia, controlo de qualidade e biotecnologia aplicada. Perfil com experiência em unidades agroindustriais e laboratórios certificados.',
-      en: 'Courses in food technology, microbiology, quality control and applied biotechnology. Profile with experience in agro-industrial plants and certified laboratories.',
-    },
-  },
-];
-
 export const CRITERIOS_CANDIDATURA_GERAL_MOCK: EtapaNumeradaCandidaturaGeral[] = [
   {
-    id: 'perfil-hibrido',
+    id: 'perfil-academico',
     numero: 1,
-    titulo: { pt: 'Perfil Híbrido (Académico & Prático)', en: 'Hybrid Profile (Academic & Practical)' },
+    titulo: { pt: 'Perfil Académico', en: 'Academic Profile' },
     descricao: {
-      pt: 'Doutoramento/Mestrado aliado à experiência executiva no sector.',
-      en: 'PhD/Master’s degree combined with executive experience in the sector.',
+      pt: 'Licenciados/Mestres/Doutorados',
+      en: 'Bachelor’s/Master’s/Doctoral graduates',
     },
   },
   {
@@ -235,19 +179,19 @@ export const DOCUMENTOS_CANDIDATURA_GERAL_MOCK: DocumentoCandidaturaGeral[] = [
   {
     id: 'certificados',
     titulo: {
-      pt: 'Certificados de Habilitações Literárias',
-      en: 'Academic Qualification Certificates',
+      pt: 'Habilitações Literárias',
+      en: 'Academic Qualifications',
     },
     descricao: {
-      pt: 'Diplomas e notas (homologação INAAREES para estrangeiros).',
-      en: 'Diplomas and transcripts (INAAREES recognition for foreign degrees).',
+      pt: 'Diplomas e certificados homologados pelo INAAREES',
+      en: 'Diplomas and certificates recognised by INAAREES',
     },
   },
   {
     id: 'experiencia',
     titulo: {
-      pt: 'Comprovativo de Experiência no Setor Agrário',
-      en: 'Proof of Experience in the Agricultural Sector',
+      pt: 'Comprovativo de Experiência no Setor Agrário (Se aplicável)',
+      en: 'Proof of Experience in the Agricultural Sector (If applicable)',
     },
     descricao: {
       pt: 'Declarações de serviço e projetos técnicos no setor.',
@@ -258,26 +202,36 @@ export const DOCUMENTOS_CANDIDATURA_GERAL_MOCK: DocumentoCandidaturaGeral[] = [
     id: 'identificacao',
     titulo: { pt: 'Documento de Identificação Oficial', en: 'Official Identity Document' },
     descricao: {
-      pt: 'Cópia válida do BI ou Passaporte.',
-      en: 'Valid copy of ID card or passport.',
+      pt: 'Cópia válida do BI ou passaporte (para estrangeiros)',
+      en: 'Valid copy of ID card or passport (for foreign nationals)',
     },
   },
   {
     id: 'carta',
     titulo: {
-      pt: 'Carta de Motivação Académica (Máx. 2 páginas)',
-      en: 'Academic Motivation Letter (Max. 2 pages)',
+      pt: 'Carta de motivação Académica (Máx. 1 página com 420 palavras, Fonte: Times New Roman 12)',
+      en: 'Academic Motivation Letter (Max. 1 page with 420 words, Font: Times New Roman 12)',
     },
     descricao: {
-      pt: 'Máx. 2 páginas com visão para «Ensino em Solo Real».',
-      en: 'Max. 2 pages presenting your vision for «Real-Soil Teaching».',
+      pt: 'Máx. 1 página com visão para «Ensino em Solo Real».',
+      en: 'Max. 1 page presenting your vision for «Real-Soil Teaching».',
     },
   },
 ];
 
 export const GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK: GrauAcademicoCandidaturaGeral[] = [
-  { id: 'licenciatura', icone: 'award', rotulo: { pt: 'Licenciatura', en: "Bachelor's" }, sigla: { pt: 'BSc', en: 'BSc' } },
-  { id: 'mestrado', icone: 'graduation-cap', rotulo: { pt: 'Mestrado', en: "Master's" }, sigla: { pt: 'MSc', en: 'MSc' } },
+  {
+    id: 'licenciatura',
+    icone: 'award',
+    rotulo: { pt: 'Licenciatura', en: "Bachelor's" },
+    sigla: { pt: 'BSc/BA', en: 'BSc/BA' },
+  },
+  {
+    id: 'mestrado',
+    icone: 'graduation-cap',
+    rotulo: { pt: 'Mestrado', en: "Master's" },
+    sigla: { pt: 'MSc/MA', en: 'MSc/MA' },
+  },
   { id: 'doutoramento', icone: 'badge-check', rotulo: { pt: 'Doutoramento', en: 'Doctorate' }, sigla: { pt: 'PhD', en: 'PhD' } },
   {
     id: 'pos-doutoramento',
@@ -287,11 +241,68 @@ export const GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK: GrauAcademicoCandidaturaGe
   },
 ];
 
-/** Intervalos de anos para o tempo de docência e para a experiência prática. */
-export const INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK: OpcaoCandidaturaGeral[] = [
-  { id: 'menos-1', rotulo: { pt: 'Menos de 1 ano', en: 'Less than 1 year' } },
-  { id: '1-3', rotulo: { pt: 'De 1 a 3 anos', en: '1 to 3 years' } },
-  { id: '4-7', rotulo: { pt: 'De 4 a 7 anos', en: '4 to 7 years' } },
-  { id: '8-12', rotulo: { pt: 'De 8 a 12 anos', en: '8 to 12 years' } },
-  { id: 'mais-12', rotulo: { pt: 'Mais de 12 anos', en: 'More than 12 years' } },
+/** Intervalos de anos de cada experiência profissional (etapa 2, secção 3). */
+export const INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidaturaGeral[] = [
+  { id: 'menos-1', min: 0, max: 1, rotulo: { pt: 'Menos de 1 ano', en: 'Less than 1 year' } },
+  { id: '1-3', min: 1, max: 3, rotulo: { pt: 'De 1 a 3 anos', en: '1 to 3 years' } },
+  { id: '4-7', min: 4, max: 7, rotulo: { pt: 'De 4 a 7 anos', en: '4 to 7 years' } },
+  { id: '8-12', min: 8, max: 12, rotulo: { pt: 'De 8 a 12 anos', en: '8 to 12 years' } },
+  { id: 'mais-12', min: 12, max: null, rotulo: { pt: 'Mais de 12 anos', en: 'More than 12 years' } },
 ];
+
+const MAXIMO_ANOS_DOCENCIA = 40;
+
+/** Anos exactos de cada experiência docente (etapa 2, secção 2): "Menos de 1 ano", "1 ano" … "Mais de 40 anos". */
+export const TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidaturaGeral[] = [
+  { id: 'menos-1', min: 0, max: 1, rotulo: { pt: 'Menos de 1 ano', en: 'Less than 1 year' } },
+  ...Array.from({ length: MAXIMO_ANOS_DOCENCIA }, (_, i) => {
+    const anos = i + 1;
+    return {
+      id: String(anos),
+      min: anos,
+      max: anos,
+      rotulo: anos === 1 ? { pt: '1 ano', en: '1 year' } : { pt: `${anos} anos`, en: `${anos} years` },
+    };
+  }),
+  {
+    id: `mais-${MAXIMO_ANOS_DOCENCIA}`,
+    min: MAXIMO_ANOS_DOCENCIA,
+    max: null,
+    rotulo: { pt: `Mais de ${MAXIMO_ANOS_DOCENCIA} anos`, en: `More than ${MAXIMO_ANOS_DOCENCIA} years` },
+  },
+];
+
+/** Áreas de trabalho da experiência profissional — seguem os departamentos da oferta curricular. */
+export const AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK: OpcaoCandidaturaGeral[] = [
+  { id: 'producao-vegetal', rotulo: { pt: 'Agronomia e Produção Vegetal', en: 'Agronomy and Crop Production' } },
+  { id: 'producao-animal', rotulo: { pt: 'Zootecnia e Produção Animal', en: 'Animal Science and Livestock Production' } },
+  { id: 'mecanizacao', rotulo: { pt: 'Mecanização e Agricultura de Precisão', en: 'Mechanisation and Precision Agriculture' } },
+  { id: 'aquacultura', rotulo: { pt: 'Piscicultura e Produção Aquática', en: 'Fish Farming and Aquaculture' } },
+  { id: 'agro-industria', rotulo: { pt: 'Processamento Agro-Industrial', en: 'Agro-Industrial Processing' } },
+  { id: 'logistica', rotulo: { pt: 'Logística e Cadeia de Abastecimento', en: 'Logistics and Supply Chain' } },
+  { id: 'qualidade', rotulo: { pt: 'Qualidade e Segurança Alimentar', en: 'Food Quality and Safety' } },
+  { id: 'gestao', rotulo: { pt: 'Gestão e Administração de Empresas', en: 'Business Management and Administration' } },
+  { id: 'economia-agraria', rotulo: { pt: 'Economia Agrária e Desenvolvimento Rural', en: 'Agricultural Economics and Rural Development' } },
+  { id: 'comercio', rotulo: { pt: 'Comércio Internacional', en: 'International Trade' } },
+  { id: 'financas', rotulo: { pt: 'Contabilidade e Finanças', en: 'Accounting and Finance' } },
+  { id: 'florestas', rotulo: { pt: 'Ciências Florestais e Ambiente', en: 'Forestry and Environment' } },
+  { id: 'investigacao', rotulo: { pt: 'Investigação Agrária (I&D)', en: 'Agricultural Research (R&D)' } },
+  { id: 'extensao', rotulo: { pt: 'Extensão Rural e Consultoria', en: 'Rural Extension and Consultancy' } },
+  { id: 'outra', rotulo: { pt: 'Outra', en: 'Other' } },
+];
+
+/**
+ * Países da formação académica (ISO 3166-1 alfa-2). Os nomes saem do
+ * `Intl.DisplayNames` no idioma do site, por isso aqui só vão os códigos.
+ */
+export const PAISES_CANDIDATURA_GERAL = (
+  'AD AE AF AG AL AM AO AR AT AU AZ BA BB BD BE BF BG BH BI BJ BN BO BR BS BT BW BY BZ CA CD CF CG CH CI CL CM ' +
+  'CN CO CR CU CV CY CZ DE DJ DK DM DO DZ EC EE EG ER ES ET FI FJ FM FR GA GB GD GE GH GM GN GQ GR GT GW GY HN ' +
+  'HR HT HU ID IE IL IN IQ IR IS IT JM JO JP KE KG KH KI KM KN KP KR KW KZ LA LB LC LI LK LR LS LT LU LV LY MA ' +
+  'MC MD ME MG MH MK ML MM MN MR MT MU MV MW MX MY MZ NA NE NG NI NL NO NP NR NZ OM PA PE PG PH PK PL PS PT PW ' +
+  'PY QA RO RS RU RW SA SB SC SD SE SG SI SK SL SM SN SO SR SS ST SV SY SZ TD TG TH TJ TL TM TN TO TR TT TV TW ' +
+  'TZ UA UG US UY UZ VA VC VE VN VU WS YE ZA ZM ZW'
+).split(' ');
+
+/** País pré-seleccionado na formação académica. */
+export const PAIS_PADRAO_CANDIDATURA_GERAL = 'AO';

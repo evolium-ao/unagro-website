@@ -11,15 +11,20 @@ import {
   FormFieldInputComponentV2,
   LeftIconDirective,
 } from '../../../../shared/componentes/input-field/form-input-field';
+import {
+  FormFieldSelectComponentV2,
+  SelectOptionV2,
+} from '../../../../shared/componentes/select-field-v2/select-field-v2';
 import { TituloBlocoComponent } from '../../../../shared/componentes/titulo-bloco/titulo-bloco.component';
 import { criarErrosFormulario } from '../../../../shared/formulario/erros-formulario';
 
-/** Etapa 2, secção 1 — grau mais elevado, instituição, especialização e perfil de investigador. */
+/** Etapa 2, secção 1 — grau mais elevado, universidade/faculdade/curso/país e perfil de investigador. */
 @Component({
   selector: 'app-etapa-2-formacao-academica',
   imports: [
     ReactiveFormsModule,
     FormFieldInputComponentV2,
+    FormFieldSelectComponentV2,
     LeftIconDirective,
     GrupoCartoesSelecaoComponent,
     IconeComponent,
@@ -42,18 +47,32 @@ import { criarErrosFormulario } from '../../../../shared/formulario/erros-formul
 
       <div class="mt-2 grid gap-x-6 gap-y-4 sm:grid-cols-2">
         <form-input-field
-          formControlName="instituicao"
+          formControlName="universidade"
           [obrigatorio]="true"
-          [label]="textos().instituicao"
-          [placeholder]="textos().instituicaoPlaceholder"
-          [erro]="erros.instituicao()"
+          [label]="textos().universidade"
+          [placeholder]="textos().universidadePlaceholder"
+          [erro]="erros.universidade()"
         />
         <form-input-field
-          formControlName="especializacao"
+          formControlName="faculdade"
           [obrigatorio]="true"
-          [label]="textos().especializacao"
-          [placeholder]="textos().especializacaoPlaceholder"
-          [erro]="erros.especializacao()"
+          [label]="textos().faculdade"
+          [placeholder]="textos().faculdadePlaceholder"
+          [erro]="erros.faculdade()"
+        />
+        <form-input-field
+          formControlName="curso"
+          [obrigatorio]="true"
+          [label]="textos().curso"
+          [placeholder]="textos().cursoPlaceholder"
+          [erro]="erros.curso()"
+        />
+        <field-select-v2
+          formControlName="pais"
+          [label]="textos().pais"
+          [placeholder]="textos().selecione"
+          [searchable]="true"
+          [options]="opcoesPais()"
         />
       </div>
 
@@ -81,10 +100,15 @@ export class SecaoFormacaoAcademicaComponent {
 
   protected readonly erros = criarErrosFormulario([
     'grau',
-    'instituicao',
-    'especializacao',
+    'universidade',
+    'faculdade',
+    'curso',
     'identificadorInvestigador',
   ] as const);
+
+  protected readonly opcoesPais = computed<SelectOptionV2[]>(() =>
+    this.conteudo.paises().map((pais) => ({ value: pais.id, label: pais.rotulo })),
+  );
 
   protected readonly opcoesGrau = computed<OpcaoCartaoSelecao[]>(() =>
     this.conteudo.grausAcademicos().map((grau) => ({
@@ -104,10 +128,14 @@ export class SecaoFormacaoAcademicaComponent {
         'Formal academic qualifications obtained or recognised by INAAREES / MESCTI.',
       ),
       grau: t('Grau Académico Mais Elevado Concluído', 'Highest Academic Degree Completed'),
-      instituicao: t('Instituição de Ensino Superior Concedente', 'Awarding Higher Education Institution'),
-      instituicaoPlaceholder: t('Ex.: Universidade Agostinho Neto', 'E.g. Agostinho Neto University'),
-      especializacao: t('Área Específica de Formação / Especialização', 'Specific Field of Study / Specialisation'),
-      especializacaoPlaceholder: t('Ex.: Fisiologia e Fitotecnia Tropical', 'E.g. Tropical Plant Physiology and Crop Science'),
+      universidade: t('Universidade', 'University'),
+      universidadePlaceholder: t('Ex.: Universidade Agostinho Neto', 'E.g. Agostinho Neto University'),
+      faculdade: t('Faculdade', 'Faculty'),
+      faculdadePlaceholder: t('Ex.: Agronómica e Produção Vegetal', 'E.g. Agronomy and Crop Production'),
+      curso: t('Curso', 'Degree programme'),
+      cursoPlaceholder: t('Ex.: Fitotecnia e Proteção de Culturas', 'E.g. Crop Science and Protection'),
+      pais: t('País', 'Country'),
+      selecione: t('Selecione...', 'Select...'),
       identificador: t(
         'Identificador de Investigador (ORCID / CiênciaVitae / Lattes / Google Scholar)',
         'Researcher Identifier (ORCID / CiênciaVitae / Lattes / Google Scholar)',

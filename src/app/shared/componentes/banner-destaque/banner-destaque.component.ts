@@ -205,6 +205,15 @@ export class BannerDestaqueComponent {
   readonly cartao = input(false)
   /** Camada que escurece a fotografia — preta nos heros, verde nos cartões de secção. */
   readonly classeBackdrop = input('bg-black/50')
+  /**
+   * Distância do conteúdo ao topo no hero (a partir de `md`). Heros com mais
+   * conteúdo, como o da candidatura geral, sobem-no para não o cortar.
+   */
+  readonly classeDesvio = input(DESVIO_HERO)
+  /** Altura do hero a partir de `md` (500px por omissão). Não se aplica ao molde de cartão. */
+  readonly classeAltura = input('md:h-125')
+  /** Substitui as classes do subtítulo — ex.: texto mais pequeno em heros com descrição longa. */
+  readonly classeSubtitulo = input<string>()
 
   private readonly hospedeiro = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
@@ -251,7 +260,7 @@ export class BannerDestaqueComponent {
   protected readonly classesSecao = computed(() =>
     this.cartao()
       ? 'relative min-h-100 w-full overflow-hidden rounded-2xl bg-bg-light md:h-112'
-      : 'relative min-h-100 w-full overflow-hidden bg-bg-light md:h-125',
+      : `relative min-h-100 w-full overflow-hidden bg-bg-light ${this.classeAltura()}`,
   );
 
   protected readonly classesContainer = computed(() =>
@@ -262,7 +271,7 @@ export class BannerDestaqueComponent {
 
   /** O desvio de 400px só entra em `lg`, onde o recorte do estudante é visível. */
   protected readonly classesConteudo = computed(() => {
-    const molde = this.cartao() ? RECUO_CARTAO : DESVIO_HERO;
+    const molde = this.cartao() ? RECUO_CARTAO : this.classeDesvio();
     const desvioHeroImage = this.heroImage() ? DESVIO_HERO_IMAGEM : '';
     return `${CLASSES_CONTEUDO_BASE} ${molde}${desvioHeroImage}`;
   });
@@ -274,9 +283,9 @@ export class BannerDestaqueComponent {
   );
 
   protected readonly classesSubtitulo = computed(() =>
-    this.cartao()
+    this.classeSubtitulo() ?? (this.cartao()
       ? 'mx-auto mt-4 max-w-xl text-base text-white/85 md:mx-0'
-      : 'mx-auto mt-4 max-w-xl text-lg text-white/90 md:mx-0',
+      : 'mx-auto mt-4 max-w-xl text-lg text-white/90 md:mx-0'),
   );
 
   protected readonly tamanhoCtas = computed<TamanhoBotao>(() => (this.cartao() ? 'md' : 'lg'));

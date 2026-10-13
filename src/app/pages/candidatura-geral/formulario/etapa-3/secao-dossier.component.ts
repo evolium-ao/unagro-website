@@ -132,8 +132,8 @@ export class SecaoDossierComponent {
       ),
       carta: t('4. Carta de Motivação & Enquadramento Institucional', '4. Motivation Letter & Institutional Fit'),
       cartaDescricao: t(
-        'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 2 páginas) explanando a visão para o desenvolvimento do setor agrário nacional.',
-        'Letter addressed to the AgroSophia Installation Committee (maximum 2 pages) setting out your vision for the development of the national agricultural sector.',
+        'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 1 página com 420 palavras, fonte Times New Roman 12) explanando a visão para o desenvolvimento do setor agrário nacional.',
+        'Letter addressed to the AgroSophia Installation Committee (maximum 1 page with 420 words, font Times New Roman 12) setting out your vision for the development of the national agricultural sector.',
       ),
       opcional: t('(Opcional / Valorativo)', '(Optional / Adds value)'),
       selecionarPdf: t('Selecionar Ficheiro (PDF)', 'Select File (PDF)'),

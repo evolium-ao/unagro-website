@@ -6,7 +6,8 @@ import { IconeComponent } from '../icone/icone.component';
  *
  * Com `icone` e/ou `descricao` (ambos opcionais) passa ao cabeçalho de secção do
  * formulário da candidatura docente: ícone à esquerda, título e descrição curta.
- * Sem eles o bloco fica exactamente como sempre foi.
+ * Sem eles o bloco fica exactamente como sempre foi. Nesse cabeçalho, o que vier
+ * em `<ng-content>` fica à direita do título (no telemóvel, por baixo).
  */
 @Component({
   selector: 'app-titulo-bloco',
@@ -18,11 +19,15 @@ import { IconeComponent } from '../icone/icone.component';
         @if (icone(); as nomeIcone) {
           <app-icone [nome]="nomeIcone" [tamanho]="22" class="mt-1.5 shrink-0 text-primary" />
         }
-        <div>
-          <h3 class="text-xl font-bold text-primary-dark sm:text-2xl">{{ titulo() }}</h3>
-          @if (descricao(); as textoDescricao) {
-            <p class="mt-1 text-sm text-text-secondary">{{ textoDescricao }}</p>
-          }
+        <div class="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 class="text-xl font-bold text-primary-dark sm:text-2xl">{{ titulo() }}</h3>
+            @if (descricao(); as textoDescricao) {
+              <p class="mt-1 text-sm text-text-secondary">{{ textoDescricao }}</p>
+            }
+          </div>
+          <!-- Acções opcionais à direita (p. ex. «Adicionar»). -->
+          <ng-content />
         </div>
       </div>
     } @else {
