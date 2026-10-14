@@ -18,6 +18,10 @@ import { descreverTempoTotal } from './tempo-experiencia';
 /** Só o que o site lê do `CandidaturaDocenteResource` devolvido no 201. */
 interface CandidaturaDocenteCriada {
   id: number;
+  /** Gerado pelo servidor, `AGRO-{ano}-DOC-{6 dígitos}`. */
+  codigo: string | null;
+  /** Link assinado do comprovativo em PDF — só funciona com a `signature` que traz. */
+  pdf_url: string | null;
   created_at: string | null;
 }
 
@@ -44,11 +48,16 @@ export class CandidaturaGeralEnvioService {
       { signal },
     );
     const submetidaEm = criada.created_at ? new Date(criada.created_at) : new Date();
-    return { id: criada.id, codigo: codigoCandidatura(criada.id, submetidaEm), submetidaEm };
+    return {
+      id: criada.id,
+      codigo: criada.codigo?.trim() || codigoCandidatura(criada.id, submetidaEm),
+      submetidaEm,
+      pdfUrl: criada.pdf_url?.trim() || null,
+    };
   }
 }
 
-/** `42` em 2026 → `AGRO-2026-DOC-000042`. A API não gera código próprio. */
+/** `42` em 2026 → `AGRO-2026-DOC-000042` — só quando a API não devolve `codigo`. */
 function codigoCandidatura(id: number, data: Date): string {
   return `AGRO-${data.getFullYear()}-DOC-${String(id).padStart(6, '0')}`;
 }

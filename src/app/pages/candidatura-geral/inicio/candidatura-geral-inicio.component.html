@@ -5,16 +5,30 @@
   bg="/imagens/banner-candidatura.jpg" [temBackdrop]="true" classeBackdrop="bg-primary-deep/70" classeDesvio="md:mt-20!"
   classeAltura="md:h-150!"
   classeSubtitulo="mx-auto mt-10! max-w-2xl text-sm font-normal leading-relaxed text-white/85 md:mx-0">
-  <div class="mt-8 flex w-full max-w-md items-center gap-2 rounded-xl bg-white p-1.5 pl-4 shadow-lg" data-animar="ctas">
-    <app-icone nome="mail" [tamanho]="16" class="shrink-0 text-text-secondary" />
-    <a [href]="'mailto:' + emailContacto"
-      class="min-w-0 flex-1 truncate text-left text-sm text-text-secondary hover:text-primary-deep">
-      {{ emailContacto }}
-    </a>
-    <app-botao variante="profundo" tamanho="sm" [link]="rotaEtapa1" icone="arrow-right" posicaoIcone="direita">
-      {{ textos().heroCandidatar }}
+  <!-- Telemóvel e tablet: o campo com «Candidatar» e o «Consultar candidatura»
+       empilhados, à mesma largura; a partir de `md` ficam lado a lado. O `data-animar`
+       fica só no contentor — o banner anima todos os `[data-animar]`, e aninhados
+       animavam duas vezes. -->
+  <div class="mx-auto mt-8 flex w-full max-w-md flex-col items-stretch gap-3 md:mx-0 md:max-w-none md:flex-row md:items-center"
+    data-animar="ctas">
+    <div class="flex w-full min-w-0 items-center gap-2 rounded-xl bg-white p-1.5 pl-4 shadow-lg md:max-w-md md:flex-1">
+      <app-icone nome="mail" [tamanho]="16" class="shrink-0 text-text-secondary" />
+      <a [href]="'mailto:' + emailContacto"
+        class="min-w-0 flex-1 truncate text-left text-sm text-text-secondary hover:text-primary-deep">
+        {{ emailContacto }}
+      </a>
+      <app-botao class="shrink-0" variante="profundo" tamanho="sm" [link]="rotaEtapa1" icone="arrow-right"
+        posicaoIcone="direita">
+        {{ textos().heroCandidatar }}
+      </app-botao>
+    </div>
+    <!-- Quem já se candidatou: consulta pelo código ou pelo BI / passaporte. -->
+    <app-botao class="block w-full whitespace-nowrap md:w-auto md:shrink-0" variante="glass"
+      tamanho="md" icone="search" raio="medio" [larguraTotal]="true" (clicado)="abrirConsulta()">
+      {{ textos().heroConsultar }}
     </app-botao>
   </div>
+
 
   <div class="mt-10 flex items-center justify-center gap-3 md:justify-start" data-animar="ctas">
     <div class="flex -space-x-1.5" aria-hidden="true">
@@ -42,14 +56,7 @@
   <img src="/imagens/agrosofia.svg" [alt]="textos().heroLogoAlt"
     class="pointer-events-none absolute bottom-8 right-6 hidden h-16 w-auto brightness-0 invert md:block lg:h-20" />
 </app-banner-destaque>
-<section id="secao-parceiros" class="bg-primary-deep px-4 py-10 sm:px-6 lg:px-8">
-  <app-container-pagina>
-    <p class="text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-white/60" appRevelarAoScroll>
-      {{ textos().parceirosTitulo }}
-    </p>
-  </app-container-pagina>
-</section>
-<!-- 1 sessão — enquadramento institucional -->
+<!-- 1 sessão — enquadramento institucional [Removido] -->
 
 
 <!-- 2 sessão — visão institucional -->
@@ -215,7 +222,7 @@
 </section>
 
 <!-- 7 sessão — prazo e contagem decrescente -->
-<section id="secao-prazo" class="bg-primary-deep px-4 py-16 text-center sm:px-6 sm:py-20 lg:px-8">
+<section id="secao-prazo" class="bg-primary-deep px-4 py-16 text-center sm:px-6 sm:py-20 lg:px-8 mb-26">
   <app-container-pagina>
     <div class="flex flex-col items-center" appRevelarAoScroll>
       <span

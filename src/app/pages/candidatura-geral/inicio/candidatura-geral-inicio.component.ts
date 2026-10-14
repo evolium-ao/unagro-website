@@ -3,6 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
+import { AlertModalService } from '../../../shared/componentes/alert-modal/alert-modal.service';
+import {
+  ID_MODAL_CONSULTAR_CANDIDATURA,
+  ModalConsultarCandidaturaComponent,
+} from '../componentes/modal-consultar-candidatura.component';
 import { SeletorDisciplinasComponent } from '../componentes/seletor-disciplinas.component';
 import { LIMITES_DOSSIER_MB } from '../estado/candidatura-geral-estado.service';
 import { BannerDestaqueComponent } from '../../../shared/componentes/banner-destaque/banner-destaque.component';
@@ -40,6 +45,7 @@ export class CandidaturaGeralInicioComponent {
   protected readonly traducao = inject(TraducaoService);
   private readonly conteudo = inject(CandidaturaGeralService);
   private readonly router = inject(Router);
+  private readonly modais = inject(AlertModalService);
 
   protected readonly rotaEtapa1 = ROTA_ETAPA_1;
 
@@ -62,6 +68,7 @@ export class CandidaturaGeralInicioComponent {
         'AGROSOPHIA, Lda. is looking for lecturers, researchers and specialists in the agribusiness sector to develop an institutional project based in Icolo e Bengo (50km from Luanda) focused on higher education and agribusiness practice. Masters and Doctors will be given preference.',
       ),
       heroCandidatar: t('Candidatar', 'Apply'),
+      heroConsultar: t('Consultar candidatura', 'Check application'),
       heroPrazo: t('Prazo até 31 de Outubro de 2026', 'Deadline 31 October 2026'),
       heroLogoAlt: t('Logótipo AgroSophia', 'AgroSophia logo'),
       parceirosTitulo: t(
@@ -135,6 +142,17 @@ export class CandidaturaGeralInicioComponent {
    * «Confirmar Seleção» leva-os à etapa 1, que os pré-preenche no formulário.
    */
   protected readonly disciplinasAdicionadas = signal<string[]>([]);
+
+  /** "Consultar candidatura" do hero — modal com a pesquisa por código ou BI / passaporte. */
+  protected abrirConsulta(): void {
+    void this.modais.modal({
+      id: ID_MODAL_CONSULTAR_CANDIDATURA,
+      template: ModalConsultarCandidaturaComponent,
+      tamanho: 'xgrande',
+      temHeader: false,
+      semBotoes: true,
+    });
+  }
 
   /** Abre a etapa 1 com as disciplinas escolhidas em `?disciplinas=id1,id2`. */
   protected confirmarSelecao(): void {

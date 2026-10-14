@@ -60,8 +60,8 @@
     "semantic_hash": "f1c098e7346a48a860dca27564aa7756"
   },
   "src/app/app.routes.server.ts": {
-    "mtime": 1791964369.5593,
-    "seen": 1791964383.7380333,
+    "mtime": 1791964532.0662403,
+    "seen": 1791968748.4059248,
     "ast_hash": "798225abe832f20623f5d54a8812f9b9",
     "semantic_hash": ""
   },
@@ -348,9 +348,9 @@
     "semantic_hash": "6cfbf3d72609c620757e57be1905bd35"
   },
   "src/app/core/modelos/candidatura-geral.model.ts": {
-    "mtime": 1791901729.3526862,
-    "seen": 1791901853.7249048,
-    "ast_hash": "4a5a603b8b7dd56451c1621c3661bd52",
+    "mtime": 1791970569.495845,
+    "seen": 1791970723.9860723,
+    "ast_hash": "72c851d83b80de0a475ab7e428dfb4f5",
     "semantic_hash": ""
   },
   "src/app/core/modelos/contacto.model.ts": {
@@ -564,9 +564,9 @@
     "semantic_hash": "d2f80e75baafe45bf4344374510992ac"
   },
   "src/app/core/servicos/candidatura-geral-envio.service.ts": {
-    "mtime": 1791901729.350384,
-    "seen": 1791901853.7319663,
-    "ast_hash": "9292be7ed034d1e93a6861b1a0b5d738",
+    "mtime": 1791968683.2513,
+    "seen": 1791968748.4206302,
+    "ast_hash": "3f9fcdf9da2464daa0127db85c37160a",
     "semantic_hash": ""
   },
   "src/app/core/servicos/candidatura-geral.service.ts": {
@@ -948,15 +948,15 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/formulario-candidatura.component.ts": {
-    "mtime": 1791903192.3939433,
-    "seen": 1791903252.138939,
-    "ast_hash": "c33a69712240ad9ec2aee7f36eac8a5b",
+    "mtime": 1791972772.2927334,
+    "seen": 1791973190.5051596,
+    "ast_hash": "a6c020b71eea4e245a3a77bc0bbeac8e",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.ts": {
-    "mtime": 1791963908.5399313,
-    "seen": 1791964383.7639496,
-    "ast_hash": "e166325819ff04b1a749a9aff20b5426",
+    "mtime": 1791970663.9529035,
+    "seen": 1791970724.0111144,
+    "ast_hash": "e3f0bce8ac3e1907f8845c6aee583252",
     "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.ts": {
@@ -1674,9 +1674,9 @@
     "semantic_hash": "5727b9378c6af83e9177551068df6ef1"
   },
   "src/app/shared/componentes/modal-candidatura-submetida/modal-candidatura-submetida.component.ts": {
-    "mtime": 1791900621.0328116,
-    "seen": 1791900708.434319,
-    "ast_hash": "d387c44830232db70feb8e5f6256cfb9",
+    "mtime": 1791970547.5506165,
+    "seen": 1791970724.040498,
+    "ast_hash": "be0bd0903bb3944f3945efed51c3734f",
     "semantic_hash": ""
   },
   "src/app/shared/componentes/modal-detalhe-evento/modal-detalhe-evento.component.ts": {
@@ -2094,15 +2094,15 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/formulario-candidatura.component.html": {
-    "mtime": 1791891368.333918,
-    "seen": 1791891530.4328496,
-    "ast_hash": "313fa137507467de327dda7832d8e872",
+    "mtime": 1791972574.944273,
+    "seen": 1791973190.5491087,
+    "ast_hash": "bdf34405a68e5de17f2c9fc3dd730837",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.html": {
-    "mtime": 1791891368.3364756,
-    "seen": 1791891530.4328527,
-    "ast_hash": "8470a1a53a2dff39329856d5ac90921a",
+    "mtime": 1791973135.1235912,
+    "seen": 1791973190.5491133,
+    "ast_hash": "b26d676fd428819267c6d8b94af98652",
     "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.html": {
@@ -2883,6 +2883,30 @@
     "mtime": 1791901729.3493848,
     "seen": 1791901853.734466,
     "ast_hash": "b7317f57d8d3342e886a14c57ee60055",
+    "semantic_hash": ""
+  },
+  "src/app/pages/candidatura-geral/candidatura-geral.component.ts": {
+    "mtime": 1791968253.510484,
+    "seen": 1791968748.4277003,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "src/app/core/api/descarregar-ficheiro.ts": {
+    "mtime": 1791970547.2511628,
+    "seen": 1791970723.976287,
+    "ast_hash": "cbcec03155ad4b78ff6c073d883f776c",
+    "semantic_hash": ""
+  },
+  "src/app/core/servicos/candidatura-geral-consulta.service.ts": {
+    "mtime": 1791970569.5576236,
+    "seen": 1791970723.9935288,
+    "ast_hash": "c5a88b56206877e14c262fd5708d77a4",
+    "semantic_hash": ""
+  },
+  "src/app/pages/candidatura-geral/componentes/modal-consultar-candidatura.component.ts": {
+    "mtime": 1791970650.3220592,
+    "seen": 1791970724.0073533,
+    "ast_hash": "4761af4234b857d391d214d23df1d2a7",
     "semantic_hash": ""
   }
 }

@@ -29,7 +29,7 @@ const TOTAL_ETAPAS = 4;
  */
 @Component({
   selector: 'app-formulario-candidatura',
-  imports: [RouterOutlet, RouterLink, BotaoComponent, ContainerPaginaComponent, IconeComponent, PassosFormularioComponent],
+  imports: [RouterOutlet, RouterLink, BotaoComponent, ContainerPaginaComponent, PassosFormularioComponent],
   templateUrl: './formulario-candidatura.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -207,6 +207,7 @@ export class FormularioCandidaturaComponent {
       codigo: submetida.codigo,
       area,
       submetidaEm: submetida.submetidaEm,
+      pdfUrl: submetida.pdfUrl,
     };
     // Sem `await`: o modal fecha por `modais.fechar()`, que não resolve esta promessa,
     // e é ele que navega para `/` (pelo X e pelo "Voltar à Página Principal").

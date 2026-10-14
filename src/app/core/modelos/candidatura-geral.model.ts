@@ -156,10 +156,66 @@ export interface NovaCandidaturaGeral {
 /** O que o modal de sucesso precisa da candidatura que a API acabou de criar. */
 export interface CandidaturaGeralSubmetida {
   id: number;
-  /** Código para o candidato guardar, derivado do `id` — p. ex. `AGRO-2026-DOC-000042`. */
+  /**
+   * `codigo` da API (`AGRO-2026-DOC-849204`), gerado pelo servidor. Se vier vazio,
+   * é derivado do `id` no mesmo formato.
+   */
   codigo: string;
   /** `created_at` da API; a hora local quando a API não o devolve. */
   submetidaEm: Date;
+  /** `pdf_url` da API: link assinado da ficha de candidatura em PDF (abre tal como vem). */
+  pdfUrl: string | null;
+}
+
+/** `estado` da candidatura na API. Outro valor que surja é mostrado pelo `estadoRotulo`. */
+export type EstadoCandidaturaGeral = 'pendente' | 'em_analise' | 'aprovada' | 'rejeitada';
+
+/**
+ * Candidatura devolvida por `GET /candidaturas-docentes/consultar`, já com os
+ * nomes do site. Os textos vêm como o candidato os submeteu (e a API os guarda:
+ * em português); campos vazios chegam como `''`.
+ */
+export interface CandidaturaGeralConsultada {
+  codigo: string;
+  estado: EstadoCandidaturaGeral | string;
+  /** `estado_label` da API ("Em análise"). */
+  estadoRotulo: string;
+  pdfUrl: string | null;
+  submetidaEm: Date | null;
+  dados: {
+    nome: string;
+    /** `AAAA-MM-DD`, ou `''`. */
+    nascimento: string;
+    documento: string;
+    telefone: string;
+    email: string;
+  };
+  disciplinas: { disciplina: string; curso: string }[];
+  formacao: {
+    grau: string;
+    universidade: string;
+    faculdade: string;
+    curso: string;
+    pais: string;
+    identificadorInvestigador: string;
+  };
+  experienciasDocentes: {
+    universidade: string;
+    faculdade: string;
+    disciplina: string;
+    tempo: string;
+    tempoArea: string;
+  }[];
+  experienciasProfissionais: {
+    empresa: string;
+    area: string;
+    tempo: string;
+    tempoArea: string;
+  }[];
+  /** Os quatro anexos: `true` se a API tem o ficheiro. */
+  documentos: { curriculo: boolean; certificados: boolean; comprovativos: boolean; carta: boolean };
+  declaracaoHonra: boolean;
+  consentimentoDados: boolean;
 }
 
 /** Documento obrigatório do dossier de candidatura. */

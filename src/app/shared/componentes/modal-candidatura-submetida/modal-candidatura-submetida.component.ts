@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { descarregarFicheiro } from '../../../core/api/descarregar-ficheiro';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { AlertModalService } from '../alert-modal/alert-modal.service';
 import { ModalDataService } from '../alert-modal/modal-data.service';
@@ -12,11 +13,13 @@ export const ID_MODAL_CANDIDATURA_SUBMETIDA = 'modal-candidatura-submetida';
 
 /** O que quem abre passa em `data`: a candidatura que a API acabou de criar. */
 export interface DadosCandidaturaSubmetida {
-  /** Código para o candidato guardar, p. ex. `AGRO-2026-DOC-000042`. */
+  /** `codigo` devolvido pela API, p. ex. `AGRO-2026-DOC-849204`. */
   codigo: string;
   /** Disciplinas a lecionar, já em texto (`Drones Agrícolas, Avicultura`); vazio mostra "—". */
   area: string;
   submetidaEm: Date;
+  /** `pdf_url` da API — a ficha de candidatura. Sem ele, o comprovativo é impresso pelo browser. */
+  pdfUrl?: string | null;
 }
 
 /** Página pública da convocatória — o que o bloco "Partilhar vaga" divulga. */
@@ -169,6 +172,7 @@ const DURACAO_COPIADO_MS = 2000;
             paddingY="py-2.5"
             tamanho="sm"
             [larguraTotal]="true"
+            [aCarregar]="aDescarregar()"
             (clicado)="descarregarComprovativo()"
           >
             {{ textos().descarregar }}
@@ -200,6 +204,10 @@ export class ModalCandidaturaSubmetidaComponent {
   protected readonly codigo = this.dados?.codigo ?? '—';
   protected readonly area = this.dados?.area?.trim() || '—';
   private readonly submetidaEm = this.dados?.submetidaEm ? new Date(this.dados.submetidaEm) : new Date();
+  private readonly pdfUrl = this.dados?.pdfUrl?.trim() || null;
+
+  /** A ficha em PDF está a ser descarregada (o botão mostra o indicador). */
+  protected readonly aDescarregar = signal(false);
 
   protected readonly copiado = signal(false);
   private temporizadorCopiado: ReturnType<typeof setTimeout> | undefined;
@@ -358,14 +366,31 @@ export class ModalCandidaturaSubmetidaComponent {
   }
 
   /**
-   * Sem endpoint de comprovativo na API nem biblioteca de PDF no projecto: imprime
-   * um HTML simples num iframe escondido e o "Guardar como PDF" do browser faz o resto.
-   * O iframe evita o bloqueador de janelas que um `window.open` pode apanhar.
+   * Descarrega a ficha de candidatura do `pdf_url` da API, como `<codigo>.pdf`.
+   * Sem `pdf_url`, imprime o comprovativo local.
    */
-  protected descarregarComprovativo(): void {
-    if (!this.ehBrowser) {
+  protected async descarregarComprovativo(): Promise<void> {
+    if (!this.ehBrowser || this.aDescarregar()) {
       return;
     }
+    if (!this.pdfUrl) {
+      this.imprimirComprovativo();
+      return;
+    }
+    this.aDescarregar.set(true);
+    try {
+      await descarregarFicheiro(this.pdfUrl, `${this.codigo}.pdf`);
+    } finally {
+      this.aDescarregar.set(false);
+    }
+  }
+
+  /**
+   * Alternativa quando a API não devolve `pdf_url`: imprime um HTML simples num
+   * iframe escondido e o "Guardar como PDF" do browser faz o resto. O iframe
+   * evita o bloqueador de janelas que um `window.open` pode apanhar.
+   */
+  private imprimirComprovativo(): void {
     this.removerMolduraImpressao();
 
     const moldura = document.createElement('iframe');
