@@ -38,6 +38,20 @@ function validarLigacao(controlo: AbstractControl): ValidationErrors | null {
   return REGEX_LIGACAO.test(valor) ? null : { ligacaoInvalida: 'Ligação inválida (use https://…)' };
 }
 
+/**
+ * Nome completo: pelo menos dois nomes (nome e apelido), cada um com duas letras
+ * ou mais — "Ana", "A. Silva" ou "Ana S" não chegam. Hífens e apóstrofos
+ * contam como parte do nome ("Jean-Pierre", "D'Almeida").
+ */
+function validarNomeCompleto(controlo: AbstractControl): ValidationErrors | null {
+  const valor = (controlo.value ?? '').toString().trim();
+  if (!valor) {
+    return null;
+  }
+  const nomes = valor.split(/\s+/).filter((parte: string) => (parte.match(/\p{L}/gu) ?? []).length >= 2);
+  return nomes.length >= 2 ? null : { nomeIncompleto: 'Indique pelo menos dois nomes (nome e apelido)' };
+}
+
 /** BI angolano (9 dígitos, 2 letras, 3 dígitos) ou passaporte (6 a 12 caracteres alfanuméricos). */
 const REGEX_BI = /^\d{9}[A-Za-z]{2}\d{3}$/;
 const REGEX_PASSAPORTE = /^[A-Za-z0-9]{6,12}$/;
@@ -132,7 +146,7 @@ export class CandidaturaGeralEstadoService {
   readonly dados = new FormGroup({
     nome: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
+      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO), validarNomeCompleto],
     }),
     nascimento: new FormControl('', {
       nonNullable: true,

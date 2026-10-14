@@ -870,9 +870,9 @@
     "semantic_hash": "e87ad63b91b918e71551a613c95a21f5"
   },
   "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts": {
-    "mtime": 1791985788.4418807,
-    "seen": 1791985859.2405298,
-    "ast_hash": "2be1597beb67ae017ba8c1d594f45aa7",
+    "mtime": 1791986468.355561,
+    "seen": 1791986537.6466186,
+    "ast_hash": "7fda74504c8f5e322bfb4ac67d6c24c0",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/estado/etapa.guard.ts": {

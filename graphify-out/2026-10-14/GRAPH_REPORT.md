@@ -1,12 +1,12 @@
 # Graph Report - web-site-unagro  (2026-10-14)
 
 ## Corpus Check
-- 359 files · ~1,893,936 words
+- 361 files · ~1,895,089 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 12 file(s) not represented in the graph (top: .css 5, (none) 4, .ico 2)
 
 ## Summary
-- 2127 nodes · 5150 edges · 209 communities (111 shown, 98 thin omitted)
+- 2143 nodes · 5200 edges · 200 communities (100 shown, 100 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 110 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
@@ -18,7 +18,7 @@
 ## Community Hubs (Navigation)
 - selo.component.ts
 - entrar.component.ts
-- @angular/core
+- @angular/forms
 - desenvolvimento.component.ts
 - hub-unagro.component.ts
 - startups.service.ts
@@ -26,26 +26,26 @@
 - candidatura-geral.service.ts
 - ModalGenericoComponent
 - candidaturas.component.ts
-- alert-modal.service.ts
+- BotaoComponent
 - SeletorDisciplinasComponent
 - docencia.service.ts
 - Mockup: Candidatura Docentes Landing Page
-- inicio.component.ts
-- alumni.component.ts
+- InicioComponent
+- faculdades-departamentos.component.ts
 - candidaturas.service.ts
-- BotaoComponent
+- ContainerPaginaComponent
 - alert-modal.component.ts
 - seo.service.ts
-- FormularioCandidaturaComponent
-- TraducaoService
-- noticias.service.ts
-- CandidaturaGeralEstadoService
-- idioma.ts
+- alumni.component.ts
+- @angular/core
+- inicio.component.ts
+- candidatura-geral-estado.service.ts
+- traducao-automatica.service.ts
 - FormFieldInputComponentV2 (form-input-field)
 - projetos.service.ts
-- dropdown-menu.component.ts
+- botao-compartilhar.component.ts
 - package.json
-- modal-agendar-visita.component.ts
+- agendamento-visitas.service.ts
 - AlertModalService
 - Registo de recursos da API integrados
 - Agente criar-modal
@@ -53,17 +53,17 @@
 - FormFieldSelectComponentV2
 - dependencies
 - rodape.component.ts
-- formulario-candidatura.component.ts
+- eventos.service.ts
 - api.service.ts
-- Etapa1Component
-- cursos.service.ts
-- modal-inscricao-curso.component.ts
+- etapa-3.component.ts
+- autenticacao.service.ts
+- inscricoes.service.ts
 - FormFieldInputComponentV2
 - projetos.mock.ts
-- app.config.ts
+- app.config.server.ts
 - alumni-estatisticas.service.ts
 - CampoUploadComponent
-- secao-formacao-academica.component.ts
+- CabecalhoComponent
 - intranet.service.ts
 - detalhe-curso.component.ts
 - DesenvolvimentoComponent
@@ -72,20 +72,20 @@
 - CampoDocumentoComponent
 - Agente integrar-recurso
 - devDependencies
-- candidatura-geral-estado.service.ts
-- modal-filtro-publicacoes.component.ts
+- app.ts
+- dicionario.ts
 - formulario-docente.component.ts
 - Fábricas queryOptions (core/consultas/*.queries.ts)
 - estudantes.component.ts
-- @angular/common
+- @tanstack/angular-query-experimental
 - cabecalho.component.ts
 - treinamentos.service.ts
 - app.routes.ts
 - formulario-inscricao.component.ts
 - AlertModalService
-- oferta-curricular.service.ts
+- ContactosComponent
 - CampoTextoComponent
-- projectos-inovadores.service.ts
+- cartao-evento-foto-esqueleto.component.ts
 - modal-consultar-candidatura.component.ts
 - graphify skill (/graphify pipeline)
 - options
@@ -93,31 +93,31 @@
 - faculdades.service.ts
 - Auditoria do projeto unagro-frontend
 - GaleriaMosaicoComponent
-- candidatura-geral-inicio.component.ts
+- ModalDetalheEventoComponent
 - production
 - publicacoes.service.ts
 - ApiService
 - CaixaConfirmacaoComponent
 - cartao-vidro.component.ts
-- GrupoCartoesSelecaoComponent
-- investigacao.model.ts
+- grupo-cartoes-selecao.component.ts
+- ModalInscricaoEventoComponent
 - schematics
 - eventos.component.ts
 - cartao-proxima-data.component.ts
 - ModalEventsService
-- traducao-automatica.service.ts
+- AlumniComponent
 - alumni.service.ts
 - detalhe-projeto.component.ts
 - item-estatistica.component.ts
-- formulario-inscricao.component.html template
+- PaginaNaoEncontradaComponent
 - Agente criar-banner
 - angular.json
 - serve
 - scripts
 - secao-experiencia.component.ts
 - Etapa4Component
-- ValidacaoService
-- detalhe-noticia.component.ts
+- RegistoComponent
+- cartao-noticia-resumo.component.ts
 - botao.component.ts
 - projeto.model.ts
 - EventosComponent
@@ -129,18 +129,17 @@
 - item-contacto.component.ts
 - cartao-recurso.component.ts
 - TextoTraduzido
-- modal-estrutura-organizacional.component.ts
+- ModalEstruturaOrganizacionalComponent
 - item-informacao.component.ts
 - TiraHorizontalDirective
 - development
 - web-site-unagro
-- contador-regressivo.component.ts
+- cartao-evento-destaque.component.ts
 - localizar-profundo.ts
 - WrapperAuthBackGroundComponent
 - cartao-apoio.component.ts
 - Course Application BG (researchers in greenhouse)
 - UNAGRO logo (png) - crest with UNAGRO wordmark
-- form-input-field.ts
 - ErroApi
 - Animações sempre com Motion
 - formacoes.component.ts
@@ -209,30 +208,22 @@
 - Staff projecto Dr. Luis - portrait with data dashboards
 - Staff projecto Dr. Paulo - portrait in hi-vis vest
 - AlertModalComponent
-- .animar
+- BannerDestaqueComponent
 - BotaoCompartilharComponent
 - item-detalhe-barra.component.ts
-- etapa-cronograma.component.ts
 - sobre.component.ts
 - example-modal-generico.ts
-- DetalheProjetoComponent
-- modal-agendar-visita.component.spec.ts
+- ModalAgendarVisitaComponent
 - ModalFiltroPublicacoesComponent
-- formulario-docente.component.html template
-- passos-formulario.component.ts
-- campo-texto.component.ts
-- CartaoProjectoComponent
-- modal-orgaos-gestao.component.ts
-- DocenciaService
 
 ## God Nodes (most connected - your core abstractions)
-1. `@angular/core` - 224 edges
-2. `TraducaoService` - 115 edges
-3. `IconeComponent` - 107 edges
-4. `TextoTraduzido` - 64 edges
-5. `BotaoComponent` - 56 edges
+1. `@angular/core` - 225 edges
+2. `TraducaoService` - 116 edges
+3. `IconeComponent` - 108 edges
+4. `TextoTraduzido` - 65 edges
+5. `BotaoComponent` - 57 edges
 6. `@angular/forms` - 47 edges
-7. `AlertModalService` - 46 edges
+7. `AlertModalService` - 47 edges
 8. `@angular/router` - 43 edges
 9. `@tanstack/angular-query-experimental` - 40 edges
 10. `ContainerPaginaComponent` - 40 edges
@@ -240,14 +231,14 @@
 ## Surprising Connections (you probably didn't know these)
 - `Banner Candidatura (greenhouse researchers photo)` --semantically_similar_to--> `Banner Candidatura (public asset, greenhouse researchers)`  [INFERRED] [semantically similar]
   imagen/banner-candidatura.jpg → public/imagens/banner-candidatura.jpg
+- `cabecalho.component.html template` --shares_data_with--> `TraducaoService`  [INFERRED]
+  src/app/layout/cabecalho/cabecalho.component.html → src/app/core/traducao/traducao.service.ts
 - `candidatura-docentes.component.html template` --shares_data_with--> `TraducaoService`  [INFERRED]
   src/app/pages/candidatura-docentes/candidatura-docentes.component.html → src/app/core/traducao/traducao.service.ts
 - `candidaturas.component.html template` --shares_data_with--> `TraducaoService`  [INFERRED]
   src/app/pages/candidaturas/candidaturas.component.html → src/app/core/traducao/traducao.service.ts
 - `desenvolvimento.component.html template` --shares_data_with--> `TraducaoService`  [INFERRED]
   src/app/pages/desenvolvimento/desenvolvimento.component.html → src/app/core/traducao/traducao.service.ts
-- `detalhe-curso.component.html template` --shares_data_with--> `TraducaoService`  [INFERRED]
-  src/app/pages/detalhe-curso/detalhe-curso.component.html → src/app/core/traducao/traducao.service.ts
 
 ## Import Cycles
 - None detected.
@@ -271,99 +262,95 @@
 - **Course card images** — public_imagens_image_curso_1_image, public_imagens_image_curso_2_image, public_imagens_image_curso_3_image [INFERRED 0.95]
 - **Project staff portraits** — public_imagens_staff_projecto_dr_paulo_image, public_imagens_staff_projecto_dr_joao_image, public_imagens_staff_projecto_dr_luis_image, public_imagens_staff_projecto_dr_maria_image [INFERRED 0.95]
 
-## Communities (209 total, 98 thin omitted)
+## Communities (200 total, 100 thin omitted)
 
 ### Community 0 - "selo.component.ts"
-Cohesion: 0.10
-Nodes (15): CartaoEventoComponent, EventoExibidoCard, PrazoExibido, VARIANTE_POR_ESTADO, CartaoInvestigadorComponent, CartaoNoticiaComponent, ModoCartaoNoticia, NoticiaExibidaCard (+7 more)
+Cohesion: 0.13
+Nodes (12): CartaoEventoComponent, EventoExibidoCard, PrazoExibido, VARIANTE_POR_ESTADO, CartaoNoticiaComponent, ModoCartaoNoticia, NoticiaExibidaCard, CLASSES_TAMANHO (+4 more)
 
 ### Community 1 - "entrar.component.ts"
-Cohesion: 0.16
-Nodes (6): CAMPOS_DA_API, EntrarComponent, entrar.component.html template, BotaoSocialComponent, PainelMarcaAutenticacaoComponent, SeparadorTextoComponent
+Cohesion: 0.08
+Nodes (7): ValidacaoService, CAMPOS_DA_API, EntrarComponent, entrar.component.html template, BotaoSocialComponent, PainelMarcaAutenticacaoComponent, SeparadorTextoComponent
 
-### Community 2 - "@angular/core"
-Cohesion: 0.25
-Nodes (7): @angular/core, @angular/forms, ErroFnOuTexto, TemaCampoUpload, OpcaoSeletor, TituloBlocoComponent, criarErrosFormulario()
+### Community 2 - "@angular/forms"
+Cohesion: 0.12
+Nodes (20): @angular/forms, SecaoAreaCandidaturaComponent, SecaoDadosPessoaisComponent, CLASSES_ROTULO, CLASSES_TEXTO, ErroFnOuTexto, LeftIconDirective, RightIconDirective (+12 more)
 
 ### Community 3 - "desenvolvimento.component.ts"
-Cohesion: 0.07
-Nodes (18): laboratoriosQueries, CAMPOS_TRADUZIVEIS_INVESTIGADOR, CAMPOS_TRADUZIVEIS_PROJETO, CAMPOS_TRADUZIVEIS_PUBLICACAO, CAMPOS_TRADUZIVEIS_UNIDADE, COLUNAS_LINHA, EixoBruto, EIXOS_BRUTOS (+10 more)
+Cohesion: 0.05
+Nodes (33): laboratoriosQueries, FormatoLinhaInvestigacao, Investigador, LinhaInvestigacao, PassoMetodologia, ROTULOS_CATEGORIA_PROJECTO, FaculdadeApi, LaboratorioApi (+25 more)
 
 ### Community 4 - "hub-unagro.component.ts"
-Cohesion: 0.10
-Nodes (10): CAMPOS_TRADUZIVEIS_STARTUP, EstadoSubscricao, FormaApoioBruta, FORMAS_APOIO_BRUTAS, HubUnagroComponent, ServicoBruto, SERVICOS_BRUTOS, CartaoProjectoInovadorComponent (+2 more)
+Cohesion: 0.08
+Nodes (12): traducaoQueries, ProjectosInovadoresService, CAMPOS_TRADUZIVEIS_STARTUP, EstadoSubscricao, FormaApoioBruta, FORMAS_APOIO_BRUTAS, HubUnagroComponent, ServicoBruto (+4 more)
 
 ### Community 5 - "startups.service.ts"
 Cohesion: 0.33
 Nodes (5): startupsQueries, Startup, paraStartup(), StartupApi, StartupsService
 
 ### Community 7 - "candidatura-geral.service.ts"
-Cohesion: 0.12
-Nodes (28): AREAS_CANDIDATURA_GERAL_MOCK, AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK, CRITERIOS_CANDIDATURA_GERAL_MOCK, DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK, DOCUMENTOS_CANDIDATURA_GERAL_MOCK, GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK, INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK, PAISES_CANDIDATURA_GERAL (+20 more)
+Cohesion: 0.06
+Nodes (39): ofertaCurricularQueries, ANOS_DOCENCIA_EM_ABERTO, AREAS_CANDIDATURA_GERAL_MOCK, AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK, CRITERIOS_CANDIDATURA_GERAL_MOCK, DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK, DOCUMENTOS_CANDIDATURA_GERAL_MOCK, GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK (+31 more)
 
 ### Community 8 - "ModalGenericoComponent"
 Cohesion: 0.18
 Nodes (3): ModalAlertaComponent, ModalConfirmacaoComponent, ModalGenericoComponent
 
 ### Community 9 - "candidaturas.component.ts"
-Cohesion: 0.08
-Nodes (16): CandidaturasService, BENEFICIOS_RECRUTAMENTO_BRUTOS, CAMPOS_TRADUZIVEIS_CURSO_OFERTA, REQUISITOS_BRUTOS, candidaturas.component.html template, ContactosComponent, CartaoBolsaComponent, CartaoChamadaAcaoComponent (+8 more)
+Cohesion: 0.05
+Nodes (29): CandidaturasService, EstatisticasService, CandidaturaDocentesComponent, candidatura-docentes.component.html template, BENEFICIOS_RECRUTAMENTO_BRUTOS, CAMPOS_TRADUZIVEIS_CURSO_OFERTA, CandidaturasComponent, REQUISITOS_BRUTOS (+21 more)
 
-### Community 10 - "alert-modal.service.ts"
-Cohesion: 0.12
-Nodes (11): NovaInscricaoEvento, ModalEntry, ModalDataService, EventoFotoCartao, montar(), DadosDetalheEvento, ID_MODAL_DETALHE_EVENTO, CamposInscricaoEventoComponent (+3 more)
+### Community 10 - "BotaoComponent"
+Cohesion: 0.10
+Nodes (21): UnidadeInvestigacao, InscricoesService, ModalEntry, ModalDataService, BotaoComponent, EventoFotoCartao, OpcaoFiltroPilula, DadosAgendarVisita (+13 more)
 
 ### Community 12 - "docencia.service.ts"
-Cohesion: 0.39
-Nodes (6): REQUISITOS_DOCENCIA_MOCK, TITULACOES_DOCENCIA_MOCK, VANTAGENS_DOCENCIA_MOCK, RequisitoDocencia, TitulacaoDocencia, VantagemDocencia
+Cohesion: 0.26
+Nodes (7): REQUISITOS_DOCENCIA_MOCK, TITULACOES_DOCENCIA_MOCK, VANTAGENS_DOCENCIA_MOCK, RequisitoDocencia, TitulacaoDocencia, VantagemDocencia, DocenciaService
 
 ### Community 13 - "Mockup: Candidatura Docentes Landing Page"
 Cohesion: 0.08
 Nodes (29): Banner Candidatura (greenhouse researchers photo), Candidatura Docentes Image 1 (researchers in greenhouse, variant), Form Navigation Actions (Guardar Rascunho, Cancelar/Voltar, Avancar), Seccao Area de Candidatura & Vagas (area select, interdisciplinary field), Area Selecionada Summary Card (with Alterar link, vagas), Seccao Dados Pessoais & Contacto (nome, nascimento, BI/passaporte, telefone +244, email), Mockup: Candidatura Docente Etapa 1 (Dados & Area), 4-Step Progress Stepper (Dados & Area, Formacao & Experiencia, Dossier & Declaracao, Revisao & Submissao) (+21 more)
 
-### Community 14 - "inicio.component.ts"
-Cohesion: 0.10
-Nodes (11): EstatisticasService, CAMPOS_TRADUZIVEIS_EVENTO, CAMPOS_TRADUZIVEIS_NOTICIA, InicioComponent, PILARES_MODELO, HeroImage, CartaoEventoDestaqueEsqueletoComponent, app-faixa-estatisticas (+3 more)
-
-### Community 15 - "alumni.component.ts"
-Cohesion: 0.09
-Nodes (15): traducaoQueries, aplicarTraducao(), aplicarTraducaoTextos(), camposParaTraduzir(), AlumniComponent, CAMPOS_TRADUZIVEIS_ALUMNI, MODOS_CONTRIBUICAO_BRUTOS, PilarAlumniBruto (+7 more)
+### Community 15 - "faculdades-departamentos.component.ts"
+Cohesion: 0.17
+Nodes (10): faculdadesQueries, aplicarTraducao(), aplicarTraducaoTextos(), camposParaTraduzir(), CAMPOS_TRADUZIVEIS_FACULDADE, EstiloCartaoFaculdade, ESTILOS_CARTAO_FACULDADE, ICONES_FACULDADE (+2 more)
 
 ### Community 16 - "candidaturas.service.ts"
-Cohesion: 0.16
-Nodes (11): CALENDARIO_ACADEMICO_MOCK, CANAIS_CONTACTO_ADMISSOES_MOCK, PASSOS_CANDIDATURA_MOCK, DOCUMENTOS_CANDIDATURA_MOCK, REQUISITOS_GERAIS_INSCRICAO_MOCK, REQUISITOS_POR_NIVEL_MOCK, CanalContacto, EntradaCalendario (+3 more)
+Cohesion: 0.15
+Nodes (11): BOLSAS_MOCK, CALENDARIO_ACADEMICO_MOCK, CANAIS_CONTACTO_ADMISSOES_MOCK, PASSOS_CANDIDATURA_MOCK, DOCUMENTOS_CANDIDATURA_MOCK, REQUISITOS_GERAIS_INSCRICAO_MOCK, REQUISITOS_POR_NIVEL_MOCK, Bolsa (+3 more)
 
-### Community 17 - "BotaoComponent"
-Cohesion: 0.08
-Nodes (41): alumni.component.html template, CandidaturaDocentesComponent, candidatura-docentes.component.html template, formulario-candidatura.component.html template, candidatura-geral-inicio.component.html template, DETALHES_LOCALIZACAO_BRUTOS, INFORMACOES_BRUTAS, contactos.component.html template (+33 more)
+### Community 17 - "ContainerPaginaComponent"
+Cohesion: 0.14
+Nodes (18): alumni.component.html template, contactos.component.html template, detalhe-curso.component.html template, detalhe-projeto.component.html template, eventos.component.html template, formacoes.component.html template, hub-unagro.component.html template, inscricao.component.html template (+10 more)
 
 ### Community 18 - "alert-modal.component.ts"
 Cohesion: 0.23
 Nodes (8): @ng-icons/core, @ng-icons/iconsax, IconConfig, AlertButton, AlertIcon, ModalReference, slot='footer' content projection, AlertModelTamanho
 
 ### Community 19 - "seo.service.ts"
-Cohesion: 0.16
-Nodes (6): @angular/platform-browser, App, router-outlet (root route host), app.html template, SeoService, PaginaTeste
-
-### Community 20 - "FormularioCandidaturaComponent"
-Cohesion: 0.16
-Nodes (5): CandidaturaGeralSubmetida, NovaCandidaturaGeral, CandidaturaGeralEnvioService, codigoCandidatura(), FormularioCandidaturaComponent
-
-### Community 21 - "TraducaoService"
-Cohesion: 0.07
-Nodes (22): @angular/router, TraducaoService, cabecalho.component.html template, rodape.component.html template, PaginaNaoEncontradaComponent, RegistoComponent, SobreConteudoEmPreparacaoComponent, SobreLegadoComponent (+14 more)
-
-### Community 22 - "noticias.service.ts"
-Cohesion: 0.38
-Nodes (4): Noticia, NoticiaApi, NoticiasService, paraNoticia()
-
-### Community 23 - "CandidaturaGeralEstadoService"
-Cohesion: 0.19
-Nodes (5): CandidaturaGeralEstadoService, entradasValidas(), idsUnicos(), semFicheiros(), tempoDocenciaAtual()
-
-### Community 24 - "idioma.ts"
 Cohesion: 0.24
-Nodes (7): Projeto, paraMapaDeInvestigadores(), paraMapaDePublicacoes(), paraMapaDeTestemunhos(), ProjetosService, IDIOMA_PADRAO, IDIOMAS_DISPONIVEIS
+Nodes (3): @angular/platform-browser, SeoService, PaginaTeste
+
+### Community 20 - "alumni.component.ts"
+Cohesion: 0.15
+Nodes (6): AlumniEstatisticasService, CAMPOS_TRADUZIVEIS_ALUMNI, MODOS_CONTRIBUICAO_BRUTOS, PilarAlumniBruto, PILARES_ALUMNI_BRUTOS, CartaoHistoriaAlumniEsqueletoComponent
+
+### Community 21 - "@angular/core"
+Cohesion: 0.10
+Nodes (22): @angular/core, @angular/router, TraducaoService, rodape.component.html template, ROTA_ETAPA_1, SobreLegadoComponent, VALORES_BRUTOS, ErroFnOuTexto (+14 more)
+
+### Community 22 - "inicio.component.ts"
+Cohesion: 0.13
+Nodes (14): noticiasQueries, NOTICIAS_FALLBACK, Noticia, NoticiaApi, NoticiasService, paraNoticia(), CAMPOS_TRADUZIVEIS_NOTICIA, CAMPOS_TRADUZIVEIS_EVENTO (+6 more)
+
+### Community 23 - "candidatura-geral-estado.service.ts"
+Cohesion: 0.06
+Nodes (28): rxjs, CandidaturaGeralService, CANDIDATURA_GERAL_ROUTES, DadosCamposEmFalta, ID_MODAL_CAMPOS_EM_FALTA, ModalCamposEmFaltaComponent, CampoEmFalta, CHAVE_DOSSIER_TOTAL (+20 more)
+
+### Community 24 - "traducao-automatica.service.ts"
+Cohesion: 0.15
+Nodes (11): promessaCancelavel(), Projeto, paraMapaDeInvestigadores(), paraMapaDePublicacoes(), paraMapaDeTestemunhos(), ProjetosService, Idioma, IDIOMA_PADRAO (+3 more)
 
 ### Community 25 - "FormFieldInputComponentV2 (form-input-field)"
 Cohesion: 0.09
@@ -373,17 +360,17 @@ Nodes (22): Caixa de Confirmação README, CaixaConfirmacaoComponent (app-caixa-
 Cohesion: 0.17
 Nodes (22): CategoriaApi, CronogramaApi, EquipaProjectoApi, paraContacto(), paraCronogramaApi(), paraDocumento(), paraDocumentosApi(), paraEquipaApi() (+14 more)
 
-### Community 27 - "dropdown-menu.component.ts"
-Cohesion: 0.14
-Nodes (8): CLASSES_ICONE, CLASSES_ITEM, CLASSES_PAINEL, DropdownMenuIconName, DropdownMenuItemConfig, DropdownMenuVariante, DropdownMenuItemDirective, DropdownMenuTriggerDirective
+### Community 27 - "botao-compartilhar.component.ts"
+Cohesion: 0.12
+Nodes (12): CLASSES_GATILHO, RedeCompartilhar, REDES, VarianteBotaoCompartilhar, CLASSES_ICONE, CLASSES_ITEM, CLASSES_PAINEL, DropdownMenuIconName (+4 more)
 
 ### Community 28 - "package.json"
 Cohesion: 0.10
-Nodes (19): name, packageManager, private, version, @angular/build, @angular/cli, @angular/compiler, @angular/compiler-cli (+11 more)
+Nodes (20): name, packageManager, private, version, @angular/build, @angular/cli, @angular/compiler, @angular/compiler-cli (+12 more)
 
-### Community 29 - "modal-agendar-visita.component.ts"
-Cohesion: 0.20
-Nodes (8): NovoAgendamentoVisita, AgendamentoVisitaRequest, AgendamentoVisitasService, paraPedido(), CamposAgendarVisitaComponent, UnidadeVisita, ID_MODAL_AGENDAR_VISITA, validarTelefoneComIndicativo()
+### Community 29 - "agendamento-visitas.service.ts"
+Cohesion: 0.36
+Nodes (4): NovoAgendamentoVisita, AgendamentoVisitaRequest, AgendamentoVisitasService, paraPedido()
 
 ### Community 31 - "Registo de recursos da API integrados"
 Cohesion: 0.14
@@ -402,52 +389,52 @@ Cohesion: 0.12
 Nodes (17): dependencies, @angular/common, @angular/compiler, @angular/core, @angular/forms, @angular/platform-browser, @angular/platform-server, @angular/router (+9 more)
 
 ### Community 36 - "rodape.component.ts"
-Cohesion: 0.12
-Nodes (19): CaminhoDicionario, Dicionario, UniaoChaves, en, pt, CHAVE_SUBMENU_CURSOS, ItemMenu, ItemMenuFilho (+11 more)
+Cohesion: 0.23
+Nodes (11): CaminhoDicionario, ItemMenu, ItemMenuFilho, ColunaRodape, COLUNAS_RODAPE, ContactoRodape, CONTACTOS_RODAPE, ItemRodape (+3 more)
 
-### Community 37 - "formulario-candidatura.component.ts"
-Cohesion: 0.17
-Nodes (10): rxjs, CANDIDATURA_GERAL_ROUTES, LIMITES_DOSSIER_MB, NumeroEtapa, etapaGuard(), CampoDossier, CampoRevisao, DocumentoRevisao (+2 more)
+### Community 37 - "eventos.service.ts"
+Cohesion: 0.26
+Nodes (7): eventosQueries, Evento, AMBITOS_API, EventoApi, EventosService, paraEvento(), DadosDetalheEvento
 
 ### Community 38 - "api.service.ts"
 Cohesion: 0.13
-Nodes (12): OpcoesPedido, ParametrosPedido, capaUtilizavel(), RespostaApi, FaculdadeApi, LaboratorioApi, LaboratoriosService, paraUnidade() (+4 more)
+Nodes (13): OpcoesPedido, ParametrosPedido, capaUtilizavel(), RespostaApi, investigadoresQueries, InvestigadorApi, InvestigadoresService, paraEspecialidades() (+5 more)
 
-### Community 39 - "Etapa1Component"
-Cohesion: 0.12
-Nodes (8): Etapa1Component, etapa-1.component.html template, SecaoAreaCandidaturaComponent, SecaoDadosPessoaisComponent, Etapa3Component, etapa-3.component.html template, SecaoDeclaracoesComponent, SecaoDossierComponent
+### Community 39 - "etapa-3.component.ts"
+Cohesion: 0.18
+Nodes (6): Etapa1Component, etapa-1.component.html template, Etapa3Component, etapa-3.component.html template, SecaoDeclaracoesComponent, SecaoDossierComponent
 
-### Community 40 - "cursos.service.ts"
-Cohesion: 0.22
-Nodes (10): AnoCurricular, Curso, ObjetivoCurso, CursoApi, CursosService, FaculdadeCursoApi, paraAnoCurricular(), paraCurso() (+2 more)
+### Community 40 - "autenticacao.service.ts"
+Cohesion: 0.24
+Nodes (7): Credenciais, Utilizador, AutenticacaoService, paraSessao(), paraUtilizador(), RespostaLoginApi, UtilizadorApi
 
-### Community 41 - "modal-inscricao-curso.component.ts"
-Cohesion: 0.16
-Nodes (8): NovaInscricaoCurso, InscricaoEventoRequest, InscricaoRequest, InscricoesService, paraPedido(), paraPedidoEvento(), CamposInscricaoCursoComponent, ModalInscricaoCursoComponent
+### Community 41 - "inscricoes.service.ts"
+Cohesion: 0.25
+Nodes (6): NovaInscricaoCurso, NovaInscricaoEvento, InscricaoEventoRequest, InscricaoRequest, paraPedido(), paraPedidoEvento()
 
 ### Community 43 - "projetos.mock.ts"
 Cohesion: 0.19
 Nodes (14): ContactoProjetoBruto, DocumentoProjetoBruto, EstatisticaProjetoBruta, EtapaCronogramaBruta, ItemGaleriaBruto, MembroEquipaBruto, ObjetivoProjetoBruto, ProjetoBruto (+6 more)
 
-### Community 44 - "app.config.ts"
-Cohesion: 0.18
-Nodes (9): @angular/ssr, appConfig, config, serverConfig, routes, ROTAS_ESTATICAS, serverRoutes, CLIENTE_CONSULTAS (+1 more)
+### Community 44 - "app.config.server.ts"
+Cohesion: 0.27
+Nodes (6): @angular/ssr, appConfig, config, serverConfig, ROTAS_ESTATICAS, serverRoutes
 
 ### Community 45 - "alumni-estatisticas.service.ts"
-Cohesion: 0.36
-Nodes (5): ESTATISTICA_MEMBROS_ALUMNI_MOCK, ESTATISTICAS_IMPACTO_ALUMNI_MOCK, ESTATISTICAS_INSTITUCIONAIS_MOCK, Estatistica, AlumniEstatisticasService
+Cohesion: 0.52
+Nodes (4): ESTATISTICA_MEMBROS_ALUMNI_MOCK, ESTATISTICAS_IMPACTO_ALUMNI_MOCK, ESTATISTICAS_INSTITUCIONAIS_MOCK, Estatistica
 
-### Community 47 - "secao-formacao-academica.component.ts"
-Cohesion: 0.16
-Nodes (11): CLASSES_BOTAO, CLASSES_COLUNAS, CLASSES_LEGENDA, OpcaoCartaoSelecao, VarianteGrupoCartoes, HORARIOS, CLASSES_ROTULO, ErroFnOuTexto (+3 more)
+### Community 47 - "CabecalhoComponent"
+Cohesion: 0.20
+Nodes (3): CabecalhoComponent, LayoutPrincipalComponent, RodapeComponent
 
 ### Community 48 - "intranet.service.ts"
-Cohesion: 0.20
-Nodes (5): AVISOS_INTRANET_MOCK, AvisoIntranet, TipoAvisoIntranet, IntranetService, EstudantesComponent
+Cohesion: 0.38
+Nodes (3): AVISOS_INTRANET_MOCK, AvisoIntranet, IntranetService
 
 ### Community 49 - "detalhe-curso.component.ts"
-Cohesion: 0.11
-Nodes (15): cursosQueries, CAMPOS_TRADUZIVEIS_CURSO, DetalheCursoComponent, FAQ_CURSO_BRUTO, ItemMetodologia, METODOLOGIA_BRUTA, MetricaCurso, PerguntaCurso (+7 more)
+Cohesion: 0.05
+Nodes (35): AnoCurricular, Curso, ObjetivoCurso, CursoApi, CursosService, FaculdadeCursoApi, paraAnoCurricular(), paraCurso() (+27 more)
 
 ### Community 51 - "server.ts"
 Cohesion: 0.29
@@ -461,61 +448,57 @@ Nodes (7): Agente integrar-recurso, Contrato OpenAPI (/docs/api.json), injectQue
 Cohesion: 0.15
 Nodes (13): devDependencies, @angular/build, @angular/cli, @angular/compiler-cli, jsdom, postcss, prettier, tailwindcss (+5 more)
 
-### Community 56 - "candidatura-geral-estado.service.ts"
-Cohesion: 0.20
-Nodes (5): ANOS_DOCENCIA_EM_ABERTO, PAIS_PADRAO_CANDIDATURA_GERAL, CandidaturaGeralService, CAMPOS_FICHEIRO, MAXIMO_DISCIPLINAS
+### Community 56 - "app.ts"
+Cohesion: 0.38
+Nodes (3): App, router-outlet (root route host), app.html template
 
-### Community 57 - "modal-filtro-publicacoes.component.ts"
-Cohesion: 0.18
-Nodes (9): CandidaturasComponent, FiltroPilulaComponent, OpcaoFiltroPilula, DadosFiltroPublicacoes, EVENTO_APLICAR_FILTROS_PUBLICACOES, FILTROS_PUBLICACOES_VAZIOS, FiltrosPublicacoes, ID_MODAL_FILTRO_PUBLICACOES (+1 more)
+### Community 57 - "dicionario.ts"
+Cohesion: 0.38
+Nodes (4): Dicionario, UniaoChaves, en, pt
 
 ### Community 58 - "formulario-docente.component.ts"
-Cohesion: 0.33
-Nodes (5): NovaCandidaturaDocente, CandidaturaDocentesService, paraPedido(), CAMPOS_POR_PASSO, EXTENSOES_CV
+Cohesion: 0.17
+Nodes (8): NovaCandidaturaDocente, CandidaturaDocentesService, paraPedido(), CAMPOS_POR_PASSO, EXTENSOES_CV, PassoAcademicoComponent, PassoDadosPessoaisComponent, PassoSubmissaoComponent
 
 ### Community 59 - "Fábricas queryOptions (core/consultas/*.queries.ts)"
 Cohesion: 0.20
 Nodes (11): Integração candidaturas (docentes), API da Unagro (Laravel), ApiService (core/api/api.service.ts), ErroApi (estado, naoEncontrado, errosValidacao), injectMutation para escrita (POST), Fábricas queryOptions (core/consultas/*.queries.ts), Serviço de recurso (core/servicos/<recurso>.service.ts), Tradução automática do conteúdo da API (MyMemory) (+3 more)
 
 ### Community 60 - "estudantes.component.ts"
-Cohesion: 0.09
-Nodes (17): noticiasQueries, CAMPOS_TRADUZIVEIS_NOTICIA, ICONES_AVISO, TIPOS_NOTICIA_ESTUDANTIL, AlinhamentoCabecalhoSecao, CLASSES_ALINHAMENTO, CLASSES_COR_ACAO, CLASSES_DESCRICAO (+9 more)
+Cohesion: 0.12
+Nodes (12): TipoAvisoIntranet, CAMPOS_TRADUZIVEIS_NOTICIA, EstudantesComponent, ICONES_AVISO, estudantes.component.html template, TIPOS_NOTICIA_ESTUDANTIL, inicio.component.html template, CartaoEventoDestaqueComponent (+4 more)
 
-### Community 61 - "@angular/common"
-Cohesion: 0.13
-Nodes (10): @angular/common, Credenciais, Sessao, Utilizador, AutenticacaoService, paraSessao(), paraUtilizador(), RespostaLoginApi (+2 more)
+### Community 61 - "@tanstack/angular-query-experimental"
+Cohesion: 0.19
+Nodes (6): @angular/common, @tanstack/angular-query-experimental, CLIENTE_CONSULTAS, tokenInterceptor(), Sessao, SessaoService
 
 ### Community 62 - "cabecalho.component.ts"
-Cohesion: 0.16
-Nodes (6): CabecalhoComponent, ItemSubmenu, ModalMenu, ID_MODAL_NOSSA_HISTORIA, ModalNossaHistoriaComponent, ModalPilaresInstitucionaisComponent
+Cohesion: 0.13
+Nodes (11): ItemSubmenu, CHAVE_SUBMENU_CURSOS, MENU_PRINCIPAL, ModalMenu, SOBRE_COM_SUBMENU_MODAIS, SUBMENU_SOBRE_MODAIS, ID_MODAL_NOSSA_HISTORIA, ModalNossaHistoriaComponent (+3 more)
 
 ### Community 63 - "treinamentos.service.ts"
 Cohesion: 0.29
 Nodes (7): treinamentosQueries, Treinamento, paraCargaHoraria(), paraPreco(), paraTreinamento(), TreinamentoApi, TreinamentosService
 
 ### Community 64 - "app.routes.ts"
-Cohesion: 0.14
-Nodes (6): LayoutAutenticacaoComponent, LayoutCandidaturaComponent, LayoutPrincipalComponent, RodapeCandidaturaComponent, RodapeComponent, BarraTopoComponent
+Cohesion: 0.16
+Nodes (6): routes, cabecalho.component.html template, LayoutAutenticacaoComponent, LayoutCandidaturaComponent, RodapeCandidaturaComponent, BarraTopoComponent
 
 ### Community 65 - "formulario-inscricao.component.ts"
-Cohesion: 0.29
-Nodes (5): NovaCandidaturaAluno, CandidaturaAlunosService, paraPedido(), CAMPOS_PASSO_UM, EXTENSOES_CERTIFICADO
+Cohesion: 0.10
+Nodes (17): NovaCandidaturaAluno, CandidaturaAlunosService, paraPedido(), formulario-docente.component.html template, formulario-candidatura.component.html template, BlocoDadosPessoaisComponent, BlocoFormacaoAcademicaComponent, BlocoMotivacaoDocumentosComponent (+9 more)
 
 ### Community 66 - "AlertModalService"
 Cohesion: 0.15
 Nodes (15): Exemplo Prático: Modal com Eventos, Evento 'finalisou', ModalPagamentoExpressCounterComponent (exemplo), Alert Modal com Templates Dinâmicos, AgendarSolicitacaoFormComponent (exemplo), AlertModalService, AlertOptions interface, ModalDataService (+7 more)
 
-### Community 67 - "oferta-curricular.service.ts"
-Cohesion: 0.25
-Nodes (7): ofertaCurricularQueries, FaculdadeCandidaturaGeral, AreaCandidaturaApi, CursoApi, DisciplinaApi, OfertaCurricularService, paraFaculdade()
-
-### Community 69 - "projectos-inovadores.service.ts"
-Cohesion: 0.32
-Nodes (4): PROJECTOS_INOVADORES_MOCK, ProjectoInovador, ANCORA_FORMULARIO_INTERESSE, ProjectosInovadoresService
+### Community 68 - "CampoTextoComponent"
+Cohesion: 0.14
+Nodes (3): CampoTextoComponent, HospedeiraTeste, TipoCampoTexto
 
 ### Community 70 - "modal-consultar-candidatura.component.ts"
-Cohesion: 0.07
-Nodes (16): descarregarFicheiro(), CandidaturaGeralConsultada, AreaConsultadaApi, CandidaturaConsultadaApi, CandidaturaGeralConsultaService, ExperienciaApi, paraCandidatura(), texto() (+8 more)
+Cohesion: 0.08
+Nodes (13): descarregarFicheiro(), CandidaturaGeralConsultada, AreaConsultadaApi, CandidaturaConsultadaApi, CandidaturaGeralConsultaService, ExperienciaApi, paraCandidatura(), texto() (+5 more)
 
 ### Community 71 - "graphify skill (/graphify pipeline)"
 Cohesion: 0.20
@@ -526,16 +509,12 @@ Cohesion: 0.18
 Nodes (11): options, assets, browser, outputMode, security, server, ssr, styles (+3 more)
 
 ### Community 74 - "faculdades.service.ts"
-Cohesion: 0.23
-Nodes (9): faculdadesQueries, CursoFaculdade, Faculdade, CursoApi, FaculdadeApi, FaculdadesService, paraFaculdade(), semCursosDuplicados() (+1 more)
+Cohesion: 0.26
+Nodes (8): CursoFaculdade, Faculdade, CursoApi, FaculdadeApi, FaculdadesService, paraFaculdade(), semCursosDuplicados(), semFaculdadesDuplicadas()
 
 ### Community 75 - "Auditoria do projeto unagro-frontend"
 Cohesion: 0.31
 Nodes (10): app-cartao-publicacao, BackOffice para gestão de informações (inexistente), UNAGRO - Pontos de Reajustes, Auditoria do projeto unagro-frontend, autenticadoGuard (desfeito em /estudantes), Projetos — o que falta (galeriaProjectos, financiamento, ativo/destaque), token.interceptor.ts (Authorization Bearer), app-botao com suporte a URL externo e download (+2 more)
-
-### Community 77 - "candidatura-geral-inicio.component.ts"
-Cohesion: 0.17
-Nodes (5): CandidaturaGeralInicioComponent, ROTA_ETAPA_1, CartaoRequisitoComponent, CURVA, DirecaoRevelacao
 
 ### Community 78 - "production"
 Cohesion: 0.22
@@ -549,41 +528,33 @@ Nodes (5): publicacoesQueries, Publicacao, paraPublicacao(), PublicacaoApi, Publ
 Cohesion: 0.20
 Nodes (7): CartaoHistoriaAlumniComponent, HistoriaAlumniCartao, CartaoVidroComponent, CLASSES_CAIXA, CLASSES_TEXTO, CLASSES_TITULO, TamanhoCartaoVidro
 
-### Community 84 - "investigacao.model.ts"
-Cohesion: 0.24
-Nodes (8): investigadoresQueries, Investigador, LinhaInvestigacao, PassoMetodologia, InvestigadorApi, InvestigadoresService, paraEspecialidades(), paraInvestigador()
+### Community 83 - "grupo-cartoes-selecao.component.ts"
+Cohesion: 0.15
+Nodes (6): CLASSES_BOTAO, CLASSES_COLUNAS, CLASSES_LEGENDA, GrupoCartoesSelecaoComponent, OpcaoCartaoSelecao, VarianteGrupoCartoes
 
 ### Community 85 - "schematics"
 Cohesion: 0.25
 Nodes (8): style, type, type, type, @schematics/angular:component, @schematics/angular:directive, @schematics/angular:service, schematics
 
 ### Community 86 - "eventos.component.ts"
-Cohesion: 0.11
-Nodes (16): @tanstack/angular-query-experimental, eventosQueries, AmbitoEvento, AMBITOS_EVENTO, Evento, ROTULOS_AMBITO_EVENTO, AMBITOS_API, EventoApi (+8 more)
+Cohesion: 0.17
+Nodes (8): AmbitoEvento, AMBITOS_EVENTO, ROTULOS_AMBITO_EVENTO, CAMPOS_TRADUZIVEIS_EVENTO, FiltroAmbito, ICONES_AMBITO, CartaoEventoFotoComponent, ItemFiltroLateralComponent
 
 ### Community 87 - "cartao-proxima-data.component.ts"
 Cohesion: 0.19
 Nodes (7): PROXIMAS_DATAS_MOCK, EstadoProximaData, ProximaData, ProximasDatasService, CartaoProximaDataComponent, CLASSES_BLOCO_DATA, ProximaDataCartao
-
-### Community 89 - "traducao-automatica.service.ts"
-Cohesion: 0.31
-Nodes (4): promessaCancelavel(), Idioma, RespostaMyMemory, TraducaoAutomaticaService
 
 ### Community 90 - "alumni.service.ts"
 Cohesion: 0.33
 Nodes (5): alumniQueries, Alumni, AlumniApi, AlumniService, paraAlumni()
 
 ### Community 91 - "detalhe-projeto.component.ts"
-Cohesion: 0.13
-Nodes (11): projetosQueries, MembroEquipa, PatrocinadoresService, CAMPOS_TRADUZIVEIS_DOCUMENTO, CAMPOS_TRADUZIVEIS_PROJETO, CAMPOS_TRADUZIVEIS_TESTEMUNHO, TIPOS_INTERESSADO, MetadadoBanner (+3 more)
+Cohesion: 0.12
+Nodes (10): projetosQueries, MembroEquipa, CAMPOS_TRADUZIVEIS_DOCUMENTO, CAMPOS_TRADUZIVEIS_PROJETO, CAMPOS_TRADUZIVEIS_TESTEMUNHO, DetalheProjetoComponent, TIPOS_INTERESSADO, MetadadoBanner (+2 more)
 
 ### Community 92 - "item-estatistica.component.ts"
 Cohesion: 0.25
 Nodes (7): CLASSES_RAIZ, CLASSES_ROTULO, CLASSES_TAMANHO_ROTULO, CLASSES_TAMANHO_VALOR, CLASSES_VALOR, FormatoItemEstatistica, TemaItemEstatistica
-
-### Community 93 - "formulario-inscricao.component.html template"
-Cohesion: 0.20
-Nodes (5): BlocoDadosPessoaisComponent, BlocoFormacaoAcademicaComponent, BlocoMotivacaoDocumentosComponent, FormularioInscricaoComponent, formulario-inscricao.component.html template
 
 ### Community 94 - "Agente criar-banner"
 Cohesion: 0.29
@@ -602,24 +573,24 @@ Cohesion: 0.29
 Nodes (7): scripts, build, ng, serve:ssr:web-site-unagro, start, test, watch
 
 ### Community 98 - "secao-experiencia.component.ts"
-Cohesion: 0.12
-Nodes (9): MAXIMO_EXPERIENCIAS, MAXIMO_TEXTO_CURTO, Etapa2Component, etapa-2.component.html template, ItemExperiencia, ListaExperienciasComponent, SecaoExperienciaComponent, SecaoExperienciaDocenteComponent (+1 more)
+Cohesion: 0.11
+Nodes (12): ExperienciaDocenteCandidaturaGeral, ExperienciaProfissionalCandidaturaGeral, descreverTempoTotal(), MAXIMO_EXPERIENCIAS, MAXIMO_TEXTO_CURTO, Etapa2Component, etapa-2.component.html template, ItemExperiencia (+4 more)
 
 ### Community 99 - "Etapa4Component"
 Cohesion: 0.25
 Nodes (3): BlocoRevisaoComponent, Etapa4Component, etapa-4.component.html template
 
-### Community 101 - "detalhe-noticia.component.ts"
-Cohesion: 0.09
-Nodes (20): formatarDataCurta(), formatarIntervaloDatas(), formatarTempoRelativo(), LOCAIS, CAMPOS_TRADUZIVEIS_NOTICIA, DetalheNoticiaComponent, detalhe-noticia.component.html template, CLASSES_GATILHO (+12 more)
+### Community 101 - "cartao-noticia-resumo.component.ts"
+Cohesion: 0.33
+Nodes (5): formatarDataCurta(), formatarTempoRelativo(), LOCAIS, ModoCartaoNoticiaResumo, NoticiaCartao
 
 ### Community 102 - "botao.component.ts"
-Cohesion: 0.25
-Nodes (7): CLASSES_PADDING, CLASSES_RAIO, CLASSES_TEXTO, CLASSES_VARIANTE, RaioBotao, TamanhoBotao, VarianteBotao
+Cohesion: 0.12
+Nodes (17): DETALHES_LOCALIZACAO_BRUTOS, INFORMACOES_BRUTAS, ATRASOS_S, BlocoAnimado, CtaBannerDestaque, CURVA_FUNDO, MOLA, CLASSES_PADDING (+9 more)
 
 ### Community 103 - "projeto.model.ts"
-Cohesion: 0.16
-Nodes (10): ItemGaleria, CATEGORIAS_PROJECTO, ContactoProjeto, DocumentoProjeto, EstatisticaProjeto, ObjetivoProjeto, ROTULOS_CATEGORIA_PROJECTO, SolucaoProjeto (+2 more)
+Cohesion: 0.12
+Nodes (14): ItemGaleria, CATEGORIAS_PROJECTO, ContactoProjeto, DocumentoProjeto, EstatisticaProjeto, EtapaCronograma, ObjetivoProjeto, SolucaoProjeto (+6 more)
 
 ### Community 108 - "perguntas-frequentes.service.ts"
 Cohesion: 0.38
@@ -630,8 +601,8 @@ Cohesion: 0.33
 Nodes (6): AlertModalService, app-modal-generico (moldura), ModalDataService, app-grupo-cartoes-selecao, app-modal-agendar-visita, Selecionar laboratório no agendamento de visita (resolvido)
 
 ### Community 110 - "item-contacto.component.ts"
-Cohesion: 0.29
-Nodes (6): CLASSES_DETALHE, CLASSES_EMBLEMA, CLASSES_ROTULO, CLASSES_VALOR, FormatoItemContacto, TemaItemContacto
+Cohesion: 0.22
+Nodes (7): CLASSES_DETALHE, CLASSES_EMBLEMA, CLASSES_ROTULO, CLASSES_VALOR, FormatoItemContacto, ItemContactoComponent, TemaItemContacto
 
 ### Community 111 - "cartao-recurso.component.ts"
 Cohesion: 0.25
@@ -639,11 +610,7 @@ Nodes (7): CLASSES_ARTIGO, CLASSES_ICONE, CLASSES_SUPERFICIE, CorIconeCartaoRecu
 
 ### Community 112 - "TextoTraduzido"
 Cohesion: 0.13
-Nodes (15): BOLSAS_MOCK, FASES_CANDIDATURA_MOCK, NoticiaBruta, NOTICIAS_FALLBACK, PILARES_FACULDADE_MOCK, Bolsa, EstadoFase, FaseCandidatura (+7 more)
-
-### Community 113 - "modal-estrutura-organizacional.component.ts"
-Cohesion: 0.21
-Nodes (6): SobreEstruturaOrganizacionalComponent, ESTRUTURA, EstruturaOrganizacional, ID_MODAL_ESTRUTURA_ORGANIZACIONAL, ModalEstruturaOrganizacionalComponent, NoOrganograma
+Nodes (16): FASES_CANDIDATURA_MOCK, NoticiaBruta, PILARES_FACULDADE_MOCK, EstadoFase, FaseCandidatura, PrazoFase, Patrocinador, PilarFaculdade (+8 more)
 
 ### Community 114 - "item-informacao.component.ts"
 Cohesion: 0.29
@@ -657,13 +624,13 @@ Nodes (5): development, buildTarget, extractLicenses, optimization, sourceMap
 Cohesion: 0.40
 Nodes (5): web-site-unagro, prefix, projectType, root, sourceRoot
 
-### Community 118 - "contador-regressivo.component.ts"
-Cohesion: 0.29
-Nodes (3): ContadorRegressivoComponent, RotulosContadorRegressivo, VarianteContador
+### Community 118 - "cartao-evento-destaque.component.ts"
+Cohesion: 0.15
+Nodes (7): formatarIntervaloDatas(), CandidaturaGeralInicioComponent, candidatura-geral-inicio.component.html template, EventoDestaqueCartao, ContadorRegressivoComponent, RotulosContadorRegressivo, VarianteContador
 
 ### Community 119 - "localizar-profundo.ts"
-Cohesion: 0.33
-Nodes (5): PATROCINADORES_MOCK, Patrocinador, ehTextoTraduzido(), Localizado, localizarProfundo()
+Cohesion: 0.19
+Nodes (8): PATROCINADORES_MOCK, PROJECTOS_INOVADORES_MOCK, ProjectoInovador, PatrocinadoresService, ANCORA_FORMULARIO_INTERESSE, ehTextoTraduzido(), Localizado, localizarProfundo()
 
 ### Community 121 - "cartao-apoio.component.ts"
 Cohesion: 0.40
@@ -677,45 +644,25 @@ Nodes (4): Course Application BG (researchers in greenhouse), Faculty Applicatio
 Cohesion: 0.50
 Nodes (4): Staff projecto Dra. Maria - portrait in UNAGRO polo in field, UNAGRO favicon - university crest, UNAGRO logo (png) - crest with UNAGRO wordmark, UNAGRO logo (jpg) - crest Universidade de Agronegocio de Kiberi, 'Ciencia, Inovacao, Sustentabilidade'
 
-### Community 124 - "form-input-field.ts"
-Cohesion: 0.29
-Nodes (6): CLASSES_ROTULO, CLASSES_TEXTO, ErroFnOuTexto, LeftIconDirective, RightIconDirective, VarianteCampo
-
 ### Community 128 - "formacoes.component.ts"
-Cohesion: 0.08
-Nodes (17): CAMPOS_TRADUZIVEIS_TREINAMENTO, EstadoValidacao, FormacoesComponent, PilarBruto, PILARES_CERTIFICACAO, VantagemBruta, VANTAGENS_BRUTAS, CartaoCursoCurtaDuracaoComponent (+9 more)
+Cohesion: 0.07
+Nodes (18): CAMPOS_TRADUZIVEIS_TREINAMENTO, EstadoValidacao, FormacoesComponent, PilarBruto, PILARES_CERTIFICACAO, VantagemBruta, VANTAGENS_BRUTAS, CartaoCursoCurtaDuracaoComponent (+10 more)
 
 ### Community 130 - "index.html (WebSiteUnagro shell)"
 Cohesion: 0.67
 Nodes (3): index.html (WebSiteUnagro shell), app-root, Google Fonts (Quicksand, Raleway, Inter)
 
-### Community 196 - "item-detalhe-barra.component.ts"
-Cohesion: 0.40
-Nodes (4): CLASSES_BARRA, CLASSES_ROTULO, CLASSES_VALOR, TemaItemDetalheBarra
+### Community 195 - "BotaoCompartilharComponent"
+Cohesion: 0.25
+Nodes (3): DetalheNoticiaComponent, detalhe-noticia.component.html template, BotaoCompartilharComponent
 
-### Community 197 - "etapa-cronograma.component.ts"
+### Community 196 - "item-detalhe-barra.component.ts"
 Cohesion: 0.29
-Nodes (5): EtapaCronograma, CLASSES_BOLA, CLASSES_DESCRICAO, CLASSES_SEGMENTO, EtapaCronogramaComponent
+Nodes (5): CLASSES_BARRA, CLASSES_ROTULO, CLASSES_VALOR, ItemDetalheBarraComponent, TemaItemDetalheBarra
 
 ### Community 198 - "sobre.component.ts"
-Cohesion: 0.12
-Nodes (12): SobreAbaUnagroComponent, SobreFaculdadesDepartamentosComponent, SobreGovernancaComponent, SobreNossaHistoriaComponent, SobrePilaresInstitucionaisComponent, ABAS_SOBRE, IdAbaSobre, IDS_ABAS_SOBRE (+4 more)
-
-### Community 201 - "modal-agendar-visita.component.spec.ts"
-Cohesion: 0.22
-Nodes (5): vitest, UnidadeInvestigacao, DadosAgendarVisita, ModalAgendarVisitaComponent, UNIDADES
-
-### Community 203 - "formulario-docente.component.html template"
-Cohesion: 0.29
-Nodes (4): formulario-docente.component.html template, PassoAcademicoComponent, PassoDadosPessoaisComponent, PassoSubmissaoComponent
-
-### Community 204 - "passos-formulario.component.ts"
-Cohesion: 0.29
-Nodes (5): CLASSES_FORMA, CLASSES_LINHA, DisposicaoPassos, FormaDistintivoPassos, PassosFormularioComponent
-
-### Community 207 - "modal-orgaos-gestao.component.ts"
-Cohesion: 0.24
-Nodes (5): SobreOrgaosGestaoComponent, ID_MODAL_ORGAOS_GESTAO, MembroGestao, MEMBROS_GESTAO, ModalOrgaosGestaoComponent
+Cohesion: 0.06
+Nodes (21): SobreAbaUnagroComponent, SobreConteudoEmPreparacaoComponent, SobreEstruturaOrganizacionalComponent, SobreGovernancaComponent, SobreNossaHistoriaComponent, SobreOrgaosGestaoComponent, SobrePilaresInstitucionaisComponent, ABAS_SOBRE (+13 more)
 
 ## Ambiguous Edges - Review These
 - `barra-topo.component.ts` → `DropdownMenuComponent (app-dropdown-menu)`  [AMBIGUOUS]
@@ -727,8 +674,8 @@ Nodes (5): SobreOrgaosGestaoComponent, ID_MODAL_ORGAOS_GESTAO, MembroGestao, MEM
 
 ## Knowledge Gaps
 - **472 isolated node(s):** `$schema`, `version`, `packageManager`, `newProjectRoot`, `projectType` (+467 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 896 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **98 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 897 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **100 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -739,11 +686,11 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `Dados prontos para a API (modelo, mock, serviço, página)` and `Modelos vindos da API só com texto simples`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `@angular/core` connect `@angular/core` to `selo.component.ts`, `entrar.component.ts`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `startups.service.ts`, `candidatura-geral.service.ts`, `ModalGenericoComponent`, `candidaturas.component.ts`, `alert-modal.service.ts`, `docencia.service.ts`, `inicio.component.ts`, `alumni.component.ts`, `candidaturas.service.ts`, `BotaoComponent`, `alert-modal.component.ts`, `seo.service.ts`, `TraducaoService`, `noticias.service.ts`, `projetos.service.ts`, `dropdown-menu.component.ts`, `package.json`, `modal-agendar-visita.component.ts`, `contatos.service.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `api.service.ts`, `cursos.service.ts`, `modal-inscricao-curso.component.ts`, `app.config.ts`, `alumni-estatisticas.service.ts`, `secao-formacao-academica.component.ts`, `intranet.service.ts`, `detalhe-curso.component.ts`, `candidatura-geral-estado.service.ts`, `modal-filtro-publicacoes.component.ts`, `formulario-docente.component.ts`, `estudantes.component.ts`, `@angular/common`, `cabecalho.component.ts`, `treinamentos.service.ts`, `app.routes.ts`, `formulario-inscricao.component.ts`, `oferta-curricular.service.ts`, `projectos-inovadores.service.ts`, `modal-consultar-candidatura.component.ts`, `faculdades.service.ts`, `candidatura-geral-inicio.component.ts`, `publicacoes.service.ts`, `cartao-vidro.component.ts`, `investigacao.model.ts`, `eventos.component.ts`, `cartao-proxima-data.component.ts`, `ModalEventsService`, `traducao-automatica.service.ts`, `alumni.service.ts`, `detalhe-projeto.component.ts`, `item-estatistica.component.ts`, `secao-experiencia.component.ts`, `detalhe-noticia.component.ts`, `botao.component.ts`, `projeto.model.ts`, `perguntas-frequentes.service.ts`, `item-contacto.component.ts`, `cartao-recurso.component.ts`, `modal-estrutura-organizacional.component.ts`, `item-informacao.component.ts`, `TiraHorizontalDirective`, `contador-regressivo.component.ts`, `localizar-profundo.ts`, `WrapperAuthBackGroundComponent`, `cartao-apoio.component.ts`, `form-input-field.ts`, `formacoes.component.ts`, `item-detalhe-barra.component.ts`, `etapa-cronograma.component.ts`, `sobre.component.ts`, `example-modal-generico.ts`, `modal-agendar-visita.component.spec.ts`, `passos-formulario.component.ts`, `campo-texto.component.ts`, `modal-orgaos-gestao.component.ts`?**
-  _High betweenness centrality (0.295) - this node is a cross-community bridge._
-- **Why does `TraducaoService` connect `TraducaoService` to `formacoes.component.ts`, `entrar.component.ts`, `@angular/core`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `candidatura-geral.service.ts`, `candidaturas.component.ts`, `alert-modal.service.ts`, `docencia.service.ts`, `inicio.component.ts`, `alumni.component.ts`, `candidaturas.service.ts`, `BotaoComponent`, `seo.service.ts`, `modal-agendar-visita.component.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `modal-inscricao-curso.component.ts`, `alumni-estatisticas.service.ts`, `secao-formacao-academica.component.ts`, `intranet.service.ts`, `detalhe-curso.component.ts`, `candidatura-geral-estado.service.ts`, `modal-filtro-publicacoes.component.ts`, `formulario-docente.component.ts`, `estudantes.component.ts`, `cabecalho.component.ts`, `formulario-inscricao.component.ts`, `projectos-inovadores.service.ts`, `modal-consultar-candidatura.component.ts`, `sobre.component.ts`, `etapa-cronograma.component.ts`, `candidatura-geral-inicio.component.ts`, `modal-orgaos-gestao.component.ts`, `eventos.component.ts`, `cartao-proxima-data.component.ts`, `traducao-automatica.service.ts`, `detalhe-projeto.component.ts`, `secao-experiencia.component.ts`, `Etapa4Component`, `detalhe-noticia.component.ts`, `perguntas-frequentes.service.ts`, `modal-estrutura-organizacional.component.ts`, `localizar-profundo.ts`?**
-  _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Why does `IconeComponent` connect `TraducaoService` to `formacoes.component.ts`, `entrar.component.ts`, `@angular/core`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `candidaturas.component.ts`, `alert-modal.service.ts`, `inicio.component.ts`, `alumni.component.ts`, `BotaoComponent`, `modal-agendar-visita.component.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `modal-inscricao-curso.component.ts`, `secao-formacao-academica.component.ts`, `detalhe-curso.component.ts`, `candidatura-geral-estado.service.ts`, `modal-filtro-publicacoes.component.ts`, `estudantes.component.ts`, `cabecalho.component.ts`, `modal-consultar-candidatura.component.ts`, `passos-formulario.component.ts`, `candidatura-geral-inicio.component.ts`, `modal-orgaos-gestao.component.ts`, `eventos.component.ts`, `cartao-proxima-data.component.ts`, `secao-experiencia.component.ts`, `Etapa4Component`, `detalhe-noticia.component.ts`, `botao.component.ts`, `item-contacto.component.ts`, `cartao-recurso.component.ts`, `modal-estrutura-organizacional.component.ts`, `item-informacao.component.ts`, `cartao-apoio.component.ts`?**
-  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `@angular/core` connect `@angular/core` to `formacoes.component.ts`, `entrar.component.ts`, `@angular/forms`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `startups.service.ts`, `selo.component.ts`, `candidatura-geral.service.ts`, `ModalGenericoComponent`, `candidaturas.component.ts`, `BotaoComponent`, `docencia.service.ts`, `faculdades-departamentos.component.ts`, `candidaturas.service.ts`, `alert-modal.component.ts`, `seo.service.ts`, `alumni.component.ts`, `inicio.component.ts`, `candidatura-geral-estado.service.ts`, `traducao-automatica.service.ts`, `projetos.service.ts`, `botao-compartilhar.component.ts`, `package.json`, `agendamento-visitas.service.ts`, `contatos.service.ts`, `rodape.component.ts`, `eventos.service.ts`, `api.service.ts`, `etapa-3.component.ts`, `autenticacao.service.ts`, `inscricoes.service.ts`, `app.config.server.ts`, `alumni-estatisticas.service.ts`, `CabecalhoComponent`, `intranet.service.ts`, `detalhe-curso.component.ts`, `app.ts`, `formulario-docente.component.ts`, `estudantes.component.ts`, `@tanstack/angular-query-experimental`, `cabecalho.component.ts`, `treinamentos.service.ts`, `app.routes.ts`, `formulario-inscricao.component.ts`, `CampoTextoComponent`, `cartao-evento-foto-esqueleto.component.ts`, `modal-consultar-candidatura.component.ts`, `sobre.component.ts`, `item-detalhe-barra.component.ts`, `example-modal-generico.ts`, `faculdades.service.ts`, `publicacoes.service.ts`, `cartao-vidro.component.ts`, `grupo-cartoes-selecao.component.ts`, `eventos.component.ts`, `cartao-proxima-data.component.ts`, `alumni.service.ts`, `detalhe-projeto.component.ts`, `item-estatistica.component.ts`, `secao-experiencia.component.ts`, `cartao-noticia-resumo.component.ts`, `botao.component.ts`, `projeto.model.ts`, `perguntas-frequentes.service.ts`, `item-contacto.component.ts`, `cartao-recurso.component.ts`, `item-informacao.component.ts`, `TiraHorizontalDirective`, `cartao-evento-destaque.component.ts`, `localizar-profundo.ts`, `WrapperAuthBackGroundComponent`, `cartao-apoio.component.ts`?**
+  _High betweenness centrality (0.265) - this node is a cross-community bridge._
+- **Why does `TraducaoService` connect `@angular/core` to `formacoes.component.ts`, `entrar.component.ts`, `@angular/forms`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `candidatura-geral.service.ts`, `candidaturas.component.ts`, `BotaoComponent`, `docencia.service.ts`, `faculdades-departamentos.component.ts`, `candidaturas.service.ts`, `ContainerPaginaComponent`, `seo.service.ts`, `alumni.component.ts`, `inicio.component.ts`, `candidatura-geral-estado.service.ts`, `traducao-automatica.service.ts`, `botao-compartilhar.component.ts`, `rodape.component.ts`, `alumni-estatisticas.service.ts`, `intranet.service.ts`, `detalhe-curso.component.ts`, `formulario-docente.component.ts`, `estudantes.component.ts`, `cabecalho.component.ts`, `app.routes.ts`, `formulario-inscricao.component.ts`, `modal-consultar-candidatura.component.ts`, `sobre.component.ts`, `eventos.component.ts`, `cartao-proxima-data.component.ts`, `detalhe-projeto.component.ts`, `secao-experiencia.component.ts`, `Etapa4Component`, `cartao-noticia-resumo.component.ts`, `botao.component.ts`, `projeto.model.ts`, `perguntas-frequentes.service.ts`, `cartao-evento-destaque.component.ts`, `localizar-profundo.ts`?**
+  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `IconeComponent` connect `@angular/core` to `formacoes.component.ts`, `entrar.component.ts`, `@angular/forms`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `candidaturas.component.ts`, `BotaoComponent`, `faculdades-departamentos.component.ts`, `ContainerPaginaComponent`, `alumni.component.ts`, `inicio.component.ts`, `candidatura-geral-estado.service.ts`, `botao-compartilhar.component.ts`, `rodape.component.ts`, `detalhe-curso.component.ts`, `estudantes.component.ts`, `cabecalho.component.ts`, `app.routes.ts`, `formulario-inscricao.component.ts`, `BotaoCompartilharComponent`, `modal-consultar-candidatura.component.ts`, `sobre.component.ts`, `grupo-cartoes-selecao.component.ts`, `eventos.component.ts`, `cartao-proxima-data.component.ts`, `secao-experiencia.component.ts`, `Etapa4Component`, `botao.component.ts`, `item-contacto.component.ts`, `cartao-recurso.component.ts`, `item-informacao.component.ts`, `cartao-evento-destaque.component.ts`, `cartao-apoio.component.ts`?**
+  _High betweenness centrality (0.034) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `TraducaoService` (e.g. with `cabecalho.component.html template` and `rodape.component.html template`) actually correct?**
   _`TraducaoService` has 9 INFERRED edges - model-reasoned connections that need verification._

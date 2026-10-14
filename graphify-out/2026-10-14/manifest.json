@@ -870,9 +870,9 @@
     "semantic_hash": "e87ad63b91b918e71551a613c95a21f5"
   },
   "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts": {
-    "mtime": 1791984129.053622,
-    "seen": 1791984171.6692736,
-    "ast_hash": "607479e05d78152d76c2b0993fe8840a",
+    "mtime": 1791985788.4418807,
+    "seen": 1791985859.2405298,
+    "ast_hash": "2be1597beb67ae017ba8c1d594f45aa7",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/estado/etapa.guard.ts": {
@@ -948,9 +948,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/formulario-candidatura.component.ts": {
-    "mtime": 1791972772.2927334,
-    "seen": 1791973190.5051596,
-    "ast_hash": "a6c020b71eea4e245a3a77bc0bbeac8e",
+    "mtime": 1791985817.5434759,
+    "seen": 1791985859.2442508,
+    "ast_hash": "a47c4e3506e11ce852ed50f219b50e37",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.ts": {
@@ -2907,6 +2907,18 @@
     "mtime": 1791983179.3172286,
     "seen": 1791984171.6689513,
     "ast_hash": "4a5e1ed1a49c3562f56bbcf7ce6cfec0",
+    "semantic_hash": ""
+  },
+  "src/app/pages/candidatura-geral/componentes/modal-campos-em-falta.component.ts": {
+    "mtime": 1791985799.8098097,
+    "seen": 1791985859.23984,
+    "ast_hash": "5054766644b27fa1e26a08e56e7f170d",
+    "semantic_hash": ""
+  },
+  "src/app/pages/candidatura-geral/estado/campos-formulario.ts": {
+    "mtime": 1791985766.1428547,
+    "seen": 1791985859.2405257,
+    "ast_hash": "9e7cbe24a4a626f9bd1cf2ee2e2885ad",
     "semantic_hash": ""
   }
 }
