@@ -3,12 +3,13 @@ import { Injectable, PLATFORM_ID, computed, effect, inject, untracked } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { debounceTime, filter, merge } from 'rxjs';
-import { PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
+import { ANOS_DOCENCIA_EM_ABERTO, PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
 import {
   ExperienciaDocenteCandidaturaGeral,
   ExperienciaProfissionalCandidaturaGeral,
 } from '../../../core/modelos/candidatura-geral.model';
 import { ValidacaoService } from '../../../core/servicos/Validacao.service';
+import { CHAVE_DOSSIER_TOTAL, CampoEmFalta } from './campos-formulario';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
 
 /** Chave do rascunho no `localStorage` do navegador. */
@@ -76,6 +77,23 @@ function validarTamanhoTotalDossier(grupo: AbstractControl): ValidationErrors | 
   const valores = Object.values((grupo as FormGroup).getRawValue() as Record<string, unknown>);
   const bytes = valores.reduce<number>((soma, valor) => soma + (valor instanceof File ? valor.size : 0), 0);
   return bytes > LIMITES_DOSSIER_MB.total * 1024 * 1024 ? { dossierMuitoGrande: true } : null;
+}
+
+/**
+ * Os tempos de docência eram "Menos de 1 ano", "1 ano" … "40 anos" e "Mais de 40
+ * anos"; agora vão de 1 a 4 anos e "5 anos ou mais". Um rascunho antigo passa
+ * para a opção mais próxima, em vez de ficar com um tempo que já não existe.
+ */
+function tempoDocenciaAtual(id: string): string {
+  const emAberto = `${ANOS_DOCENCIA_EM_ABERTO}-ou-mais`;
+  if (id === 'menos-1') {
+    return '1';
+  }
+  if (id.startsWith('mais-')) {
+    return emAberto;
+  }
+  const anos = Number(id);
+  return Number.isInteger(anos) && anos >= ANOS_DOCENCIA_EM_ABERTO ? emAberto : id;
 }
 
 /** Entradas de uma lista do rascunho que têm todos os `campos` preenchidos com texto. */
@@ -261,6 +279,28 @@ export class CandidaturaGeralEstadoService {
   }
 
   /**
+   * Campos da etapa por corrigir, pela ordem em que aparecem na página (a ordem
+   * dos controlos no grupo). Inclui o erro do total do dossier na etapa 3.
+   */
+  camposEmFalta(etapa: NumeroEtapa): CampoEmFalta[] {
+    const grupo = this.grupos[etapa];
+    if (!grupo) {
+      return [];
+    }
+    const campos: CampoEmFalta[] = Object.entries(grupo.controls)
+      .filter(([, controlo]) => controlo.invalid)
+      .map(([chave, controlo]) => ({
+        chave,
+        // O `requiredTrue` das declarações também marca `required`.
+        motivo: controlo.hasError('required') ? 'vazio' : 'invalido',
+      }));
+    if (grupo.hasError(CHAVE_DOSSIER_TOTAL)) {
+      campos.push({ chave: CHAVE_DOSSIER_TOTAL, motivo: 'invalido' });
+    }
+    return campos;
+  }
+
+  /**
    * Primeira etapa anterior a `etapa` ainda por completar, ou `null` se todas
    * estiverem válidas. Não marca campos — é o que a guarda das rotas consulta.
    */
@@ -345,7 +385,12 @@ export class CandidaturaGeralEstadoService {
       // entradas com todos os campos em texto (um rascunho antigo não as tem).
       const { experienciasDocentes, experienciasProfissionais } = this.formacao.controls;
       experienciasDocentes.setValue(
-        entradasValidas(experienciasDocentes.value, ['universidade', 'faculdade', 'disciplina', 'tempo']),
+        entradasValidas<ExperienciaDocenteCandidaturaGeral>(experienciasDocentes.value, [
+          'universidade',
+          'faculdade',
+          'disciplina',
+          'tempo',
+        ]).map((experiencia) => ({ ...experiencia, tempo: tempoDocenciaAtual(experiencia.tempo) })),
       );
       experienciasProfissionais.setValue(
         entradasValidas(experienciasProfissionais.value, ['empresa', 'area', 'tempo']),

@@ -4,7 +4,7 @@ import { Idioma } from '../traducao/idioma';
 /**
  * "Tempo estimado de experiência na área" da etapa 2: soma os tempos de cada
  * experiência adicionada. Cada opção é um intervalo (`min`–`max` anos), por isso
- * o total também o é — "De 9 a 15 anos" — e fica aberto ("Mais de N anos") se
+ * o total também o é — "De 9 a 15 anos" — e fica aberto ("N anos ou mais") se
  * alguma experiência o for. Sem experiências devolve cadeia vazia.
  */
 export function descreverTempoTotal(
@@ -23,7 +23,8 @@ export function descreverTempoTotal(
   const anos = (n: number) => (n === 1 ? (en ? '1 year' : '1 ano') : en ? `${n} years` : `${n} anos`);
 
   if (aberto) {
-    return en ? `More than ${anos(min)}` : `Mais de ${anos(min)}`;
+    // `min` conta (inclusivo): "5 anos ou mais" + "2 anos" → "7 anos ou mais".
+    return en ? `${anos(min)} or more` : `${anos(min)} ou mais`;
   }
   if (max <= 1) {
     // Só experiências de "Menos de 1 ano".

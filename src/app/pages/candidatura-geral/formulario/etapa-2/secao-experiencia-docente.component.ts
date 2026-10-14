@@ -51,6 +51,7 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
       <!-- permitirNovo: a disciplina pode ter sido lecionada noutro plano curricular e não estar na lista. -->
       <field-select-v2 [obrigatorio]="true" [label]="textos().disciplina" [placeholder]="textos().selecione"
         [searchable]="true" [permitirNovo]="true" [textoNovo]="textos().adicionarDisciplina"
+        [dicaNovo]="textos().dicaDisciplina"
         [options]="opcoesDisciplina()" [ngModel]="disciplina()"
         (ngModelChange)="disciplina.set($event ?? '')" [erro]="erroCampo(disciplina())" />
       <field-select-v2 [obrigatorio]="true" [label]="textos().tempo" [placeholder]="textos().selecione"
@@ -118,7 +119,11 @@ export class SecaoExperienciaDocenteComponent {
       faculdade: t('Faculdade', 'Faculty'),
       faculdadePlaceholder: t('Ex.: Agronómica e Produção Vegetal', 'E.g. Agronomy and Crop Production'),
       disciplina: t('Disciplina lecionada', 'Course taught'),
-      adicionarDisciplina: t('Usar', 'Use'),
+      adicionarDisciplina: t('Adicionar disciplina', 'Add course'),
+      dicaDisciplina: t(
+        'Não encontra a disciplina? Escreva-a na pesquisa para a adicionar.',
+        'Can’t find the course? Type it in the search box to add it.',
+      ),
       tempo: t('Tempo de docência', 'Teaching time'),
       selecione: t('Selecione...', 'Select...'),
       obrigatorio: t('Campo obrigatório', 'Required field'),

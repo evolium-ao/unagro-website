@@ -16,7 +16,8 @@ import { CandidaturaGeralEstadoService, LIMITES_DOSSIER_MB } from '../../estado/
   template: `
     <app-titulo-bloco icone="folder-input" [titulo]="textos().titulo" [descricao]="textos().descricao" />
 
-    <div class="mt-6 flex flex-col gap-4">
+    <!-- Dois cartões por linha no desktop; um por linha em telemóvel e tablet. -->
+    <div class="mt-6 grid gap-4 lg:grid-cols-2">
       <app-campo-documento
         formControlName="curriculo"
         aceita=".pdf,application/pdf"
@@ -82,7 +83,7 @@ import { CandidaturaGeralEstadoService, LIMITES_DOSSIER_MB } from '../../estado/
       />
 
       @if (dossierMuitoGrande()) {
-        <p class="text-sm text-red-600" role="alert">{{ textos().totalExcedido }}</p>
+        <p class="text-sm text-red-600 lg:col-span-2" role="alert">{{ textos().totalExcedido }}</p>
       }
     </div>
   `,

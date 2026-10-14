@@ -17,6 +17,12 @@ import {
 } from '../../../shared/componentes/modal-candidatura-submetida/modal-candidatura-submetida.component';
 import { IconeComponent } from '../../../shared/componentes/icone/icone.component';
 import { PassosFormularioComponent } from '../../../shared/componentes/passos-formulario/passos-formulario.component';
+import {
+  DadosCamposEmFalta,
+  ID_MODAL_CAMPOS_EM_FALTA,
+  ModalCamposEmFaltaComponent,
+} from '../componentes/modal-campos-em-falta.component';
+import { irParaCampo } from '../estado/campos-formulario';
 import { CandidaturaGeralEstadoService, NumeroEtapa } from '../estado/candidatura-geral-estado.service';
 
 export const ROTA_CANDIDATURA_GERAL = '/candidatura-geral';
@@ -92,11 +98,6 @@ export class FormularioCandidaturaComponent {
         'Os dados preenchidos e o rascunho guardado serão apagados.',
         'Your answers and the saved draft will be deleted.',
       ),
-      corrigir: t(
-        'Há campos obrigatórios por preencher ou com erros. Reveja os campos assinalados a vermelho.',
-        'Some required fields are empty or invalid. Please review the fields marked in red.',
-      ),
-      corrigirTitulo: t('Reveja o formulário', 'Review the form'),
       submetendo: t('A submeter…', 'Submitting…'),
       erroTitulo: t('Candidatura não submetida', 'Application not submitted'),
       erroRede: t(
@@ -164,8 +165,7 @@ export class FormularioCandidaturaComponent {
       dossier: this.estado.dossier.getRawValue(),
     });
     if (!this.estado.validarEtapa(etapa)) {
-      const t = this.textos();
-      await this.modais.aviso(t.corrigir, t.corrigirTitulo);
+      this.mostrarCamposEmFalta(etapa);
       return;
     }
     if (etapa < TOTAL_ETAPAS) {
@@ -173,6 +173,27 @@ export class FormularioCandidaturaComponent {
       return;
     }
     await this.submeter();
+  }
+
+  /**
+   * Regra geral do formulário: ao avançar com campos por preencher ou com erros,
+   * o modal lista-os pelo nome e cada um leva ao campo. A página já desce até ao
+   * primeiro, para ficar à vista quando o modal fechar.
+   */
+  private mostrarCamposEmFalta(etapa: NumeroEtapa): void {
+    const campos = this.estado.camposEmFalta(etapa);
+    const data: DadosCamposEmFalta = { campos };
+    if (campos[0]) {
+      irParaCampo(campos[0].chave);
+    }
+    void this.modais.modal({
+      id: ID_MODAL_CAMPOS_EM_FALTA,
+      template: ModalCamposEmFaltaComponent,
+      tamanho: 'medio',
+      temHeader: false,
+      semBotoes: true,
+      data,
+    });
   }
 
   /**

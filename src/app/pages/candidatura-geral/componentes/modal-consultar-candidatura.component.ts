@@ -128,7 +128,7 @@ const CLASSES_ESTADO: Record<string, string> = {
           </section>
 
           <!-- 1. Dados pessoais & disciplinas -->
-          <section class="mt-4 rounded-xl border border-gray-200 p-5 sm:p-6">
+          <!-- <section class="mt-4 rounded-xl border border-gray-200 p-5 sm:p-6">
             <h3 class="flex items-center gap-2 border-b border-gray-200 pb-3 text-base font-bold text-primary-deep">
               <app-icone nome="user" [tamanho]="18" class="text-primary" />
               {{ textos().secaoDados }}
@@ -156,10 +156,10 @@ const CLASSES_ESTADO: Record<string, string> = {
                 <p class="mt-1 text-sm text-primary-deep">{{ vazio }}</p>
               }
             </div>
-          </section>
+          </section> -->
 
           <!-- 2. Formação & experiência -->
-          <section class="mt-4 rounded-xl border border-gray-200 p-5 sm:p-6">
+          <!-- <section class="mt-4 rounded-xl border border-gray-200 p-5 sm:p-6">
             <h3 class="flex items-center gap-2 border-b border-gray-200 pb-3 text-base font-bold text-primary-deep">
               <app-icone nome="graduation-cap" [tamanho]="18" class="text-primary" />
               {{ textos().secaoFormacao }}
@@ -228,7 +228,7 @@ const CLASSES_ESTADO: Record<string, string> = {
                 }
               </div>
             </div>
-          </section>
+          </section> -->
 
           <!-- 3. Dossier & declarações -->
           <section class="mt-4 rounded-xl border border-gray-200 p-5 sm:p-6">

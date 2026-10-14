@@ -111,27 +111,34 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
         @if (open()) {
           <div class="absolute z-100 mt-2 w-full rounded-md border border-gray-300 bg-white shadow-lg max-h-72 overflow-auto">
             @if (searchable()) {
-              <div class="px-3 py-2 border-b border-gray-200">
-                <input
-                  type="text"
-                  class="w-full px-3 py-2 rounded-md border border-gray-200 text-sm text-[#585959] focus:border-primary focus:outline-3 focus:outline-primary/20"
-                  placeholder="Pesquisar..."
-                  [(ngModel)]="searchTerm"
-                  (keydown.enter)="aoEnterPesquisa($event)"
-                />
-              </div>
-            }
+              <!-- Fixa no topo da lista: ao fazer scroll pelas opções, a pesquisa (e o
+                   «Adicionar» do permitirNovo) ficam sempre à vista. -->
+              <div class="sticky top-0 z-10 border-b border-gray-200 bg-white">
+                <div class="px-3 py-2">
+                  <input
+                    type="text"
+                    class="w-full px-3 py-2 rounded-md border border-gray-200 text-sm text-[#585959] focus:border-primary focus:outline-3 focus:outline-primary/20"
+                    placeholder="Pesquisar..."
+                    [(ngModel)]="searchTerm"
+                    (keydown.enter)="aoEnterPesquisa($event)"
+                  />
+                  @if (permitirNovo() && !multiple() && dicaNovo() && !valorNovo()) {
+                    <p class="mt-1.5 text-[11px] leading-snug text-text-secondary">{{ dicaNovo() }}</p>
+                  }
+                </div>
 
-            @if (valorNovo(); as novo) {
-              <!-- permitirNovo: o texto pesquisado não existe na lista e pode ser usado tal como está. -->
-              <button
-                type="button"
-                class="flex w-full items-center gap-2 border-b border-gray-200 px-3 py-3 text-left text-sm font-medium text-primary hover:bg-gray-50 focus:bg-gray-100"
-                (click)="selecionarNovo()"
-              >
-                <app-icone nome="plus" [tamanho]="16" class="shrink-0" />
-                <span class="truncate">{{ textoNovo() }} «{{ novo }}»</span>
-              </button>
+                @if (valorNovo(); as novo) {
+                  <!-- permitirNovo: o texto pesquisado não existe na lista e pode ser usado tal como está. -->
+                  <button
+                    type="button"
+                    class="flex w-full items-center gap-2 border-t border-gray-200 bg-primary/5 px-3 py-3 text-left text-sm font-medium text-primary hover:bg-primary/10 focus:bg-primary/10"
+                    (click)="selecionarNovo()"
+                  >
+                    <app-icone nome="plus" [tamanho]="16" class="shrink-0" />
+                    <span class="truncate">{{ textoNovo() }} «{{ novo }}»</span>
+                  </button>
+                }
+              </div>
             }
 
             @if (filteredOptions().length > 0) {
@@ -207,6 +214,8 @@ export class FormFieldSelectComponentV2<D> implements ControlValueAccessor, OnIn
   readonly permitirNovo = input<boolean>(false);
   /** Texto antes do valor novo ("Adicionar «…»") — recebe o texto já traduzido. */
   readonly textoNovo = input<string>('Adicionar');
+  /** Dica por baixo da pesquisa, enquanto não há texto, a dizer que se pode escrever um valor novo. */
+  readonly dicaNovo = input<string>('');
 
   /**
    * Template opcional para renderização totalmente personalizada de cada item.

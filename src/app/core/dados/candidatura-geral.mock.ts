@@ -247,15 +247,16 @@ export const INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidatur
   { id: '1-3', min: 1, max: 3, rotulo: { pt: 'De 1 a 3 anos', en: '1 to 3 years' } },
   { id: '4-7', min: 4, max: 7, rotulo: { pt: 'De 4 a 7 anos', en: '4 to 7 years' } },
   { id: '8-12', min: 8, max: 12, rotulo: { pt: 'De 8 a 12 anos', en: '8 to 12 years' } },
-  { id: 'mais-12', min: 12, max: null, rotulo: { pt: 'Mais de 12 anos', en: 'More than 12 years' } },
+  // `min` é inclusivo: "mais de 12" começa nos 13.
+  { id: 'mais-12', min: 13, max: null, rotulo: { pt: 'Mais de 12 anos', en: 'More than 12 years' } },
 ];
 
-const MAXIMO_ANOS_DOCENCIA = 40;
+/** A partir daqui a docência entra como "N anos ou mais" (pedido do cliente). */
+export const ANOS_DOCENCIA_EM_ABERTO = 5;
 
-/** Anos exactos de cada experiência docente (etapa 2, secção 2): "Menos de 1 ano", "1 ano" … "Mais de 40 anos". */
+/** Anos de cada experiência docente (etapa 2, secção 2): "1 ano" … "4 anos" e "5 anos ou mais". */
 export const TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidaturaGeral[] = [
-  { id: 'menos-1', min: 0, max: 1, rotulo: { pt: 'Menos de 1 ano', en: 'Less than 1 year' } },
-  ...Array.from({ length: MAXIMO_ANOS_DOCENCIA }, (_, i) => {
+  ...Array.from({ length: ANOS_DOCENCIA_EM_ABERTO - 1 }, (_, i) => {
     const anos = i + 1;
     return {
       id: String(anos),
@@ -265,10 +266,13 @@ export const TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidaturaGeral[
     };
   }),
   {
-    id: `mais-${MAXIMO_ANOS_DOCENCIA}`,
-    min: MAXIMO_ANOS_DOCENCIA,
+    id: `${ANOS_DOCENCIA_EM_ABERTO}-ou-mais`,
+    min: ANOS_DOCENCIA_EM_ABERTO,
     max: null,
-    rotulo: { pt: `Mais de ${MAXIMO_ANOS_DOCENCIA} anos`, en: `More than ${MAXIMO_ANOS_DOCENCIA} years` },
+    rotulo: {
+      pt: `${ANOS_DOCENCIA_EM_ABERTO} anos ou mais`,
+      en: `${ANOS_DOCENCIA_EM_ABERTO} years or more`,
+    },
   },
 ];
 
