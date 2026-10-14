@@ -60,15 +60,15 @@
     "semantic_hash": "f1c098e7346a48a860dca27564aa7756"
   },
   "src/app/app.routes.server.ts": {
-    "mtime": 1791819476.7142038,
-    "seen": 1791819521.0746582,
-    "ast_hash": "98e2ed73994b9d0ecdc4dcd09531707f",
+    "mtime": 1791964369.5593,
+    "seen": 1791964383.7380333,
+    "ast_hash": "798225abe832f20623f5d54a8812f9b9",
     "semantic_hash": ""
   },
   "src/app/app.routes.ts": {
-    "mtime": 1791819348.6539872,
-    "seen": 1791819521.0746634,
-    "ast_hash": "262ec2036a683b118367537600a37222",
+    "mtime": 1791963745.6100676,
+    "seen": 1791964383.738036,
+    "ast_hash": "51dd8b0158b403c5adfb6168323244ac",
     "semantic_hash": ""
   },
   "src/app/app.spec.ts": {
@@ -954,9 +954,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.ts": {
-    "mtime": 1791903202.6345408,
-    "seen": 1791903252.1389408,
-    "ast_hash": "693501e9fd9b1082117f058f5e613ae6",
+    "mtime": 1791963908.5399313,
+    "seen": 1791964383.7639496,
+    "ast_hash": "e166325819ff04b1a749a9aff20b5426",
     "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.ts": {
