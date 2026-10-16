@@ -37,7 +37,9 @@ import { IconeComponent } from '../icone/icone.component';
   ],
   host: { class: 'block' },
   template: `
+    <!-- h-full: numa grelha, os cartões da mesma linha ficam com a mesma altura. -->
     <div
+      class="flex h-full flex-col"
       role="group"
       [attr.aria-labelledby]="id + '-titulo'"
       [attr.aria-describedby]="id + '-descricao ' + id + '-erro'"
@@ -45,7 +47,7 @@ import { IconeComponent } from '../icone/icone.component';
     >
       @if (ficheiro(); as anexo) {
         <div
-          class="flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between"
+          class="flex flex-1 flex-col justify-center gap-4 rounded-xl border p-5"
           [class]="erro() ? 'border-red-400 bg-red-50/40' : 'border-gray-200 bg-[#FBF8F6]'"
         >
           <div class="flex min-w-0 items-start gap-4">
@@ -80,7 +82,9 @@ import { IconeComponent } from '../icone/icone.component';
             </div>
           </div>
 
-          <div class="flex shrink-0 items-center gap-2 sm:self-center">
+          <!-- Sempre por baixo da descrição e do ficheiro, centrados no cartão. -->
+          <div class="flex shrink-0 flex-wrap items-center justify-center gap-2">
+
             <button
               type="button"
               class="inline-flex items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-primary-deep transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
@@ -103,7 +107,7 @@ import { IconeComponent } from '../icone/icone.component';
         </div>
       } @else {
         <div
-          class="flex flex-col items-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors"
+          class="flex flex-1 flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors"
           [class]="classesMoldura()"
           (dragover)="aoArrastar($event, true)"
           (dragleave)="aoArrastar($event, false)"

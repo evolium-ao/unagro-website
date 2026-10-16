@@ -16,7 +16,8 @@ import { CandidaturaGeralEstadoService, LIMITES_DOSSIER_MB } from '../../estado/
   template: `
     <app-titulo-bloco icone="folder-input" [titulo]="textos().titulo" [descricao]="textos().descricao" />
 
-    <div class="mt-6 flex flex-col gap-4">
+    <!-- Dois cartões por linha no desktop; um por linha em telemóvel e tablet. -->
+    <div class="mt-6 grid gap-4 lg:grid-cols-2">
       <app-campo-documento
         formControlName="curriculo"
         aceita=".pdf,application/pdf"
@@ -82,7 +83,7 @@ import { CandidaturaGeralEstadoService, LIMITES_DOSSIER_MB } from '../../estado/
       />
 
       @if (dossierMuitoGrande()) {
-        <p class="text-sm text-red-600" role="alert">{{ textos().totalExcedido }}</p>
+        <p class="text-sm text-red-600 lg:col-span-2" role="alert">{{ textos().totalExcedido }}</p>
       }
     </div>
   `,
@@ -132,8 +133,8 @@ export class SecaoDossierComponent {
       ),
       carta: t('4. Carta de Motivação & Enquadramento Institucional', '4. Motivation Letter & Institutional Fit'),
       cartaDescricao: t(
-        'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 2 páginas) explanando a visão para o desenvolvimento do setor agrário nacional.',
-        'Letter addressed to the AgroSophia Installation Committee (maximum 2 pages) setting out your vision for the development of the national agricultural sector.',
+        'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 1 página com 420 palavras, fonte Times New Roman 12) explanando a visão para o desenvolvimento do setor agrário nacional.',
+        'Letter addressed to the AgroSophia Installation Committee (maximum 1 page with 420 words, font Times New Roman 12) setting out your vision for the development of the national agricultural sector.',
       ),
       opcional: t('(Opcional / Valorativo)', '(Optional / Adds value)'),
       selecionarPdf: t('Selecionar Ficheiro (PDF)', 'Select File (PDF)'),

@@ -11,8 +11,10 @@ export const environment = {
    * Documentação interactiva dos endpoints: `http://192.168.1.252:8001/docs/api`
    * (o esquema OpenAPI em bruto está em `/docs/api.json`).
    */
-  // apiUrl: 'http://192.168.1.252:8000/api',
-  apiUrl: 'https://apiunagro.evofenix.it.ao/api',
+  // A oferta da candidatura docente (`/candidaturas-docentes/areas`) e o novo
+  // `CandidaturaDocenteRequest` só existem, por agora, no servidor da rede local.
+  apiUrl: 'http://192.168.1.252:8000/api',
+  // apiUrl: 'https://apiunagro.evofenix.it.ao/api',
   /**
    * E-mail opcional enviado à MyMemory (`api.mymemory.translated.net`) para
    * traduzir conteúdo vindo da API — ver `TraducaoAutomaticaService`. Sem

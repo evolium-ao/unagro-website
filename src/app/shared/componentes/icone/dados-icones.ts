@@ -185,6 +185,8 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
   ],
   x: [p('M18 6 6 18'), p('m6 6 12 12')],
   check: [p('M20 6 9 17l-5-5')],
+  /** Mais — adicionar um item a uma lista. */
+  plus: [p('M5 12h14'), p('M12 5v14')],
   lock: [r('3', '11', '18', '11', '2'), p('M7 11V7a5 5 0 0 1 10 0v4')],
   'log-in': [p('M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'), p('m10 17 5-5-5-5'), p('M15 12H3')],
   'id-card': [
@@ -358,6 +360,9 @@ export const DADOS_ICONES: Record<string, NoIcone[]> = {
     p('M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'),
     p('M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'),
   ],
+  /** Duas folhas sobrepostas — copiar para a área de transferência. */
+  copy: [r('8', '8', '14', '14', '2', '2'), p('M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2')],
+  'arrow-left': [p('m12 19-7-7 7-7'), p('M19 12H5')],
   linkedin: [
     p('M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z'),
     r('2', '9', '4', '12'),

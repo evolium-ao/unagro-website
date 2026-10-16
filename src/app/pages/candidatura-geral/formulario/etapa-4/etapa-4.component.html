@@ -19,24 +19,24 @@
     <dl class="mt-6 flex flex-col gap-5 border-t border-gray-200 pt-5">
       <div>
         <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
-          {{ textos().areaPrioritaria }}
+          {{ textos().disciplinas }}
         </dt>
-        <dd class="mt-2 flex flex-wrap items-center gap-2">
-          @if (estado.areaSelecionada(); as area) {
-            <span class="rounded bg-[#E3F1E7] px-2.5 py-1 text-sm text-primary-deep">
-              {{ area.numero }}. {{ area.titulo }}
-            </span>
-            <span class="text-xs text-primary">({{ area.vagas }} {{ textos().vagas }})</span>
+        <dd class="mt-2">
+          @if (estado.disciplinasSelecionadas().length) {
+            <ol class="flex flex-col gap-2">
+              @for (escolhida of estado.disciplinasSelecionadas(); track escolhida.disciplina.id) {
+                <li class="flex flex-wrap items-center gap-2">
+                  <span class="rounded bg-[#E3F1E7] px-2.5 py-1 text-sm text-primary-deep">
+                    {{ escolhida.disciplina.nome }}
+                  </span>
+                  <span class="text-xs text-primary">{{ escolhida.curso.nome }}</span>
+                </li>
+              }
+            </ol>
           } @else {
             <span class="text-base text-primary-deep">—</span>
           }
         </dd>
-      </div>
-      <div>
-        <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
-          {{ textos().areaComplementar }}
-        </dt>
-        <dd class="mt-1 text-base text-primary-deep">{{ areaComplementar() }}</dd>
       </div>
     </dl>
   </app-etapa-4-bloco-revisao>
@@ -69,6 +69,31 @@
         </div>
       }
     </dl>
+
+    <dl class="mt-6 grid gap-x-10 gap-y-5 border-t border-gray-200 pt-5 sm:grid-cols-2">
+      @for (grupo of experiencias(); track grupo.titulo) {
+        <div>
+          <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">{{ grupo.titulo }}</dt>
+          <dd class="mt-2">
+            @if (grupo.itens.length) {
+              <ol class="flex flex-col gap-2">
+                @for (item of grupo.itens; track $index) {
+                  <li>
+                    <p class="text-sm text-primary-deep">
+                      {{ item.titulo }}
+                      <span class="ml-1 rounded bg-[#E3F1E7] px-2 py-0.5 text-xs">{{ item.tempo }}</span>
+                    </p>
+                    <p class="text-xs text-primary">{{ item.detalhe }}</p>
+                  </li>
+                }
+              </ol>
+            } @else {
+              <span class="text-base text-primary-deep">{{ textos().semExperiencias }}</span>
+            }
+          </dd>
+        </div>
+      }
+    </dl>
   </app-etapa-4-bloco-revisao>
 
   <!-- 3. Dossier -->
@@ -80,29 +105,52 @@
     [textoEditar]="textos().editar"
   >
     <ul class="flex flex-col gap-3">
-      @for (documento of documentos(); track documento.titulo) {
+      @for (documento of documentos(); track documento.campo) {
         <li
-          class="flex flex-col gap-3 rounded-lg border border-gray-200 bg-[#FBF8F6] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+          class="rounded-lg border bg-[#FBF8F6] px-4 py-4"
+          [class]="errosDocumento()[documento.campo] ? 'border-red-300' : 'border-gray-200'"
         >
-          <div class="flex min-w-0 items-center gap-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-text-secondary">
-              <app-icone [nome]="documento.icone" [tamanho]="16" />
-            </span>
-            <div class="min-w-0">
-              <p class="text-sm font-bold text-primary-deep">{{ documento.titulo }}</p>
-              <p class="mt-0.5 truncate text-xs text-text-secondary">{{ documento.ficheiro ?? textos().naoAnexado }}</p>
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex min-w-0 items-center gap-3">
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-text-secondary">
+                <app-icone [nome]="documento.icone" [tamanho]="16" />
+              </span>
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-primary-deep">{{ documento.titulo }}</p>
+                <p class="mt-0.5 truncate text-xs text-text-secondary">{{ documento.ficheiro ?? textos().naoAnexado }}</p>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 items-center gap-2 self-start sm:self-auto">
+              @if (documento.ficheiro) {
+                <span class="inline-flex items-center gap-1.5 rounded bg-[#E3F1E7] px-2.5 py-1 text-xs text-primary-deep">
+                  <app-icone nome="badge-check" [tamanho]="13" class="text-primary" />
+                  {{ documento.selo }}
+                </span>
+              }
+              <!-- O <label> abre o seletor de ficheiros; o input fica escondido mas acessível pelo teclado. -->
+              <label
+                class="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-primary-deep transition-colors hover:border-primary hover:text-primary has-[:focus-visible]:border-primary has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-primary/30"
+              >
+                <app-icone [nome]="documento.ficheiro ? 'rotate-cw' : 'paperclip'" [tamanho]="13" />
+                {{ documento.ficheiro ? textos().alterar : textos().anexar }}
+                <input
+                  type="file"
+                  class="sr-only"
+                  [accept]="documento.aceita"
+                  [attr.aria-label]="(documento.ficheiro ? textos().alterar : textos().anexar) + ': ' + documento.titulo"
+                  (change)="alterarDocumento(documento.campo, $event)"
+                />
+              </label>
             </div>
           </div>
-          @if (documento.ficheiro) {
-            <span
-              class="inline-flex shrink-0 items-center gap-1.5 self-start rounded bg-[#E3F1E7] px-2.5 py-1 text-xs text-primary-deep sm:self-auto"
-            >
-              <app-icone nome="badge-check" [tamanho]="13" class="text-primary" />
-              {{ documento.selo }}
-            </span>
+
+          @if (errosDocumento()[documento.campo]; as erro) {
+            <p class="mt-2 text-xs text-red-600" role="alert">{{ erro }}</p>
           }
         </li>
       }
     </ul>
+    <p class="mt-3 text-xs text-text-secondary">{{ textos().alterarDica }}</p>
   </app-etapa-4-bloco-revisao>
 </div>

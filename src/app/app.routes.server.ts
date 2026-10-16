@@ -2,8 +2,7 @@ import { RenderMode, ServerRoute } from '@angular/ssr';
 
 // Cada entrada aqui tem de ter a rota correspondente em `app.routes.ts`: o build
 // SSR falha com "server route does not match any routes" se uma delas estiver
-// comentada lá e não aqui. Ao reactivar as páginas em `app.routes.ts`, reactivar
-// também as entradas comentadas abaixo.
+// comentada lá e não aqui.
 const ROTAS_ESTATICAS = [
   // '',
   // 'sobre',
@@ -94,8 +93,12 @@ export const serverRoutes: ServerRoute[] = [
     // Qualquer caminho não coberto pelas rotas acima é, por definição, desconhecido:
     // renderizado em SSR sob pedido para mostrar a página 404 real da aplicação
     // (em vez do 404 em bruto do Express), com o código de estado HTTP correto.
+    //
+    // Enquanto o site principal estiver desligado em `app.routes.ts`, a `**` de lá
+    // redirecciona para `/candidatura-geral` — e um redireccionamento com estado
+    // 404 não é válido. Repor o `status: 404` quando a página 404 voltar.
     path: '**',
     renderMode: RenderMode.Server,
-    status: 404,
+    // status: 404,
   },
 ];

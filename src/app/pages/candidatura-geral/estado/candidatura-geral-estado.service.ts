@@ -1,18 +1,31 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, computed, inject } from '@angular/core';
+import { Injectable, PLATFORM_ID, computed, effect, inject, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { debounceTime, filter, merge } from 'rxjs';
+import { ANOS_DOCENCIA_EM_ABERTO, PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
+import {
+  ExperienciaDocenteCandidaturaGeral,
+  ExperienciaProfissionalCandidaturaGeral,
+} from '../../../core/modelos/candidatura-geral.model';
 import { ValidacaoService } from '../../../core/servicos/Validacao.service';
+import { CHAVE_DOSSIER_TOTAL, CampoEmFalta } from './campos-formulario';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
 
 /** Chave do rascunho no `localStorage` do navegador. */
 const CHAVE_RASCUNHO = 'unagro.candidatura-geral.rascunho';
 /** Pausa na escrita a partir da qual o rascunho é gravado sozinho. */
 const ESPERA_RASCUNHO_AUTOMATICO_MS = 800;
-const MAXIMO_TEXTO_CURTO = 255;
-/** Limite da "Síntese curricular" da etapa 2 — o contador do campo mostra-o. */
-export const MAXIMO_SINTESE = 500;
+export const MAXIMO_TEXTO_CURTO = 255;
+/** Disciplinas por candidatura — o `maxItems` de `areas` no `CandidaturaDocenteRequest`. */
+export const MAXIMO_DISCIPLINAS = 5;
+/** Entradas de cada lista de experiências — o `maxItems` da API. */
+export const MAXIMO_EXPERIENCIAS = 10;
+
+/** `id`s em texto, sem repetidos (o rascunho e o URL podem trazer qualquer coisa). */
+function idsUnicos(ids: unknown): string[] {
+  return Array.isArray(ids) ? [...new Set(ids.filter((id): id is string => typeof id === 'string' && !!id))] : [];
+}
 
 /** Ligação do perfil de investigador (ORCID, CiênciaVitae, …): `http(s)://` e um domínio. */
 const REGEX_LIGACAO = /^https?:\/\/[^\s/$.?#].[^\s]*$/i;
@@ -23,6 +36,20 @@ function validarLigacao(controlo: AbstractControl): ValidationErrors | null {
     return null;
   }
   return REGEX_LIGACAO.test(valor) ? null : { ligacaoInvalida: 'Ligação inválida (use https://…)' };
+}
+
+/**
+ * Nome completo: pelo menos dois nomes (nome e apelido), cada um com duas letras
+ * ou mais — "Ana", "A. Silva" ou "Ana S" não chegam. Hífens e apóstrofos
+ * contam como parte do nome ("Jean-Pierre", "D'Almeida").
+ */
+function validarNomeCompleto(controlo: AbstractControl): ValidationErrors | null {
+  const valor = (controlo.value ?? '').toString().trim();
+  if (!valor) {
+    return null;
+  }
+  const nomes = valor.split(/\s+/).filter((parte: string) => (parte.match(/\p{L}/gu) ?? []).length >= 2);
+  return nomes.length >= 2 ? null : { nomeIncompleto: 'Indique pelo menos dois nomes (nome e apelido)' };
 }
 
 /** BI angolano (9 dígitos, 2 letras, 3 dígitos) ou passaporte (6 a 12 caracteres alfanuméricos). */
@@ -39,14 +66,17 @@ function validarDocumentoIdentificacao(controlo: AbstractControl): ValidationErr
 
 /**
  * Limites do dossier da etapa 3, em MB — os textos "Formatos: … até N MB" lêem-nos daqui.
- * A API (`POST /candidaturas-docentes`) recusa com 422 qualquer anexo acima de 5 MB.
+ * São os da API (`POST /candidaturas-docentes`, medidos a 2026-10-13): por ficheiro
+ * recusa com 422 acima destes valores; o pedido inteiro acima de ~25 MB é cortado
+ * pelo servidor com 413, antes da validação — daí o total de 24 MB, com folga
+ * para os campos de texto.
  */
 export const LIMITES_DOSSIER_MB = {
-  curriculo: 5,
-  certificados: 5,
-  comprovativos: 5,
+  curriculo: 10,
+  certificados: 10,
+  comprovativos: 15,
   carta: 5,
-  total: 20,
+  total: 24,
 } as const;
 
 /** Campos de ficheiro: um `File` não se serializa, por isso nunca vão para o rascunho. */
@@ -61,6 +91,39 @@ function validarTamanhoTotalDossier(grupo: AbstractControl): ValidationErrors | 
   const valores = Object.values((grupo as FormGroup).getRawValue() as Record<string, unknown>);
   const bytes = valores.reduce<number>((soma, valor) => soma + (valor instanceof File ? valor.size : 0), 0);
   return bytes > LIMITES_DOSSIER_MB.total * 1024 * 1024 ? { dossierMuitoGrande: true } : null;
+}
+
+/**
+ * Os tempos de docência eram "Menos de 1 ano", "1 ano" … "40 anos" e "Mais de 40
+ * anos"; agora vão de 1 a 4 anos e "5 anos ou mais". Um rascunho antigo passa
+ * para a opção mais próxima, em vez de ficar com um tempo que já não existe.
+ */
+function tempoDocenciaAtual(id: string): string {
+  const emAberto = `${ANOS_DOCENCIA_EM_ABERTO}-ou-mais`;
+  if (id === 'menos-1') {
+    return '1';
+  }
+  if (id.startsWith('mais-')) {
+    return emAberto;
+  }
+  const anos = Number(id);
+  return Number.isInteger(anos) && anos >= ANOS_DOCENCIA_EM_ABERTO ? emAberto : id;
+}
+
+/** Entradas de uma lista do rascunho que têm todos os `campos` preenchidos com texto. */
+function entradasValidas<T>(lista: unknown, campos: (keyof T & string)[]): T[] {
+  if (!Array.isArray(lista)) {
+    return [];
+  }
+  return lista.filter(
+    (entrada): entrada is T =>
+      !!entrada &&
+      typeof entrada === 'object' &&
+      campos.every((campo) => {
+        const valor = (entrada as Record<string, unknown>)[campo];
+        return typeof valor === 'string' && valor.trim() !== '';
+      }),
+  );
 }
 
 /** Etapas do formulário, pela ordem das rotas `etapa-1` … `etapa-4`. */
@@ -83,7 +146,7 @@ export class CandidaturaGeralEstadoService {
   readonly dados = new FormGroup({
     nome: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
+      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO), validarNomeCompleto],
     }),
     nascimento: new FormControl('', {
       nonNullable: true,
@@ -101,34 +164,37 @@ export class CandidaturaGeralEstadoService {
       nonNullable: true,
       validators: [Validators.required, (c) => this.validacao.validarEmail(c)],
     }),
-    area: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    areaComplementar: new FormControl('', {
+    /** `id`s das disciplinas a lecionar (secção 2). O `required` recusa a lista vazia. */
+    disciplinas: new FormControl<string[]>([], {
       nonNullable: true,
-      validators: [Validators.maxLength(MAXIMO_TEXTO_CURTO)],
+      validators: [Validators.required, Validators.maxLength(MAXIMO_DISCIPLINAS)],
     }),
   });
 
   /** Etapa 2 — formação académica e experiência docente/profissional. */
   readonly formacao = new FormGroup({
     grau: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    instituicao: new FormControl('', {
+    universidade: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
     }),
-    especializacao: new FormControl('', {
+    faculdade: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
     }),
+    curso: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO)],
+    }),
+    pais: new FormControl(PAIS_PADRAO_CANDIDATURA_GERAL, { nonNullable: true }),
     identificadorInvestigador: new FormControl('', {
       nonNullable: true,
       validators: [Validators.maxLength(MAXIMO_TEXTO_CURTO), validarLigacao],
     }),
-    tempoDocencia: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    experienciaPratica: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    sintese: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required, Validators.maxLength(MAXIMO_SINTESE)],
-    }),
+    /** Lista da secção 2 — cada «Adicionar» junta uma. Pode ficar vazia. */
+    experienciasDocentes: new FormControl<ExperienciaDocenteCandidaturaGeral[]>([], { nonNullable: true }),
+    /** Lista da secção 3 — cada «Adicionar» junta uma. Pode ficar vazia. */
+    experienciasProfissionais: new FormControl<ExperienciaProfissionalCandidaturaGeral[]>([], { nonNullable: true }),
   });
 
   /** Etapa 3 — dossier documental (ficheiros) e declarações. */
@@ -154,18 +220,66 @@ export class CandidaturaGeralEstadoService {
 
   private readonly grupos: Record<number, FormGroup> = { 1: this.dados, 2: this.formacao, 3: this.dossier };
 
-  private readonly idAreaSelecionada = toSignal(this.dados.controls.area.valueChanges, {
-    initialValue: this.dados.controls.area.value,
+  private readonly idsDisciplinas = toSignal(this.dados.controls.disciplinas.valueChanges, {
+    initialValue: this.dados.controls.disciplinas.value,
   });
 
-  /** Área escolhida na etapa 1, já traduzida — é o cartão "Área seleccionada" do topo. */
-  readonly areaSelecionada = computed(
-    () => this.conteudo.areas().find((area) => area.id === this.idAreaSelecionada()) ?? null,
+  /** Disciplinas escolhidas na etapa 1, com o curso — cartão do topo, revisão e modal. */
+  readonly disciplinasSelecionadas = computed(() =>
+    this.idsDisciplinas().flatMap((id) => {
+      const escolhida = this.conteudo.disciplinasPorId().get(id);
+      return escolhida ? [escolhida] : [];
+    }),
   );
+
+  /**
+   * Pré-preenche as disciplinas vindas da página inicial (`?disciplinas=`). É uma
+   * escolha acabada de fazer, por isso substitui a do rascunho. Com a oferta já
+   * carregada, os `id`s que lá não existem caem logo; senão caem quando ela
+   * chegar (ver `limparDisciplinasInexistentes`). Devolve se aplicou alguma.
+   */
+  preencherDisciplinas(ids: string[]): boolean {
+    let escolhidas = idsUnicos(ids);
+    if (this.conteudo.ofertaCarregada()) {
+      const porId = this.conteudo.disciplinasPorId();
+      escolhidas = escolhidas.filter((id) => porId.has(id));
+    }
+    if (!escolhidas.length) {
+      return false;
+    }
+    const controlo = this.dados.controls.disciplinas;
+    controlo.setValue(escolhidas.slice(0, MAXIMO_DISCIPLINAS));
+    // "Sujo" para o rascunho automático gravar a escolha.
+    controlo.markAsDirty();
+    return true;
+  }
 
   constructor() {
     this.restaurarRascunho();
     this.guardarRascunhoAutomaticamente();
+    this.limparDisciplinasInexistentes();
+  }
+
+  /**
+   * A oferta chega da API depois de o rascunho ser lido: só então se sabe que
+   * `id`s ainda existem (um rascunho antigo, do tempo do mock, tem `id`s em
+   * texto que a API não conhece). Corre quando a oferta chega ou muda; as
+   * escolhas feitas depois disso já vêm do seletor, sempre válidas.
+   */
+  private limparDisciplinasInexistentes(): void {
+    effect(() => {
+      if (!this.conteudo.ofertaCarregada()) {
+        return;
+      }
+      const porId = this.conteudo.disciplinasPorId();
+      untracked(() => {
+        const controlo = this.dados.controls.disciplinas;
+        const validos = controlo.value.filter((id) => porId.has(id));
+        if (validos.length !== controlo.value.length) {
+          controlo.setValue(validos);
+        }
+      });
+    });
   }
 
   /** Marca os campos da etapa como tocados (para mostrar os erros) e diz se é válida. */
@@ -176,6 +290,28 @@ export class CandidaturaGeralEstadoService {
     }
     grupo.markAllAsTouched();
     return grupo.valid;
+  }
+
+  /**
+   * Campos da etapa por corrigir, pela ordem em que aparecem na página (a ordem
+   * dos controlos no grupo). Inclui o erro do total do dossier na etapa 3.
+   */
+  camposEmFalta(etapa: NumeroEtapa): CampoEmFalta[] {
+    const grupo = this.grupos[etapa];
+    if (!grupo) {
+      return [];
+    }
+    const campos: CampoEmFalta[] = Object.entries(grupo.controls)
+      .filter(([, controlo]) => controlo.invalid)
+      .map(([chave, controlo]) => ({
+        chave,
+        // O `requiredTrue` das declarações também marca `required`.
+        motivo: controlo.hasError('required') ? 'vazio' : 'invalido',
+      }));
+    if (grupo.hasError(CHAVE_DOSSIER_TOTAL)) {
+      campos.push({ chave: CHAVE_DOSSIER_TOTAL, motivo: 'invalido' });
+    }
+    return campos;
   }
 
   /**
@@ -254,6 +390,28 @@ export class CandidaturaGeralEstadoService {
         // `semFicheiros` também aqui: um rascunho antigo com `{}` num campo de
         // ficheiro faria o `required` passar sem haver anexo.
         this.grupos[Number(etapa)]?.patchValue(semFicheiros(valores ?? {}));
+      }
+      // Um rascunho antigo (com `area`) não tem disciplinas. Os `id`s que já não
+      // existam na oferta só caem quando ela chegar da API.
+      const disciplinas = this.dados.controls.disciplinas;
+      disciplinas.setValue(idsUnicos(disciplinas.value).slice(0, MAXIMO_DISCIPLINAS));
+      // As listas da etapa 2 vêm do JSON tal como foram gravadas: só passam as
+      // entradas com todos os campos em texto (um rascunho antigo não as tem).
+      const { experienciasDocentes, experienciasProfissionais } = this.formacao.controls;
+      experienciasDocentes.setValue(
+        entradasValidas<ExperienciaDocenteCandidaturaGeral>(experienciasDocentes.value, [
+          'universidade',
+          'faculdade',
+          'disciplina',
+          'tempo',
+        ]).map((experiencia) => ({ ...experiencia, tempo: tempoDocenciaAtual(experiencia.tempo) })),
+      );
+      experienciasProfissionais.setValue(
+        entradasValidas(experienciasProfissionais.value, ['empresa', 'area', 'tempo']),
+      );
+      const pais = this.formacao.controls.pais;
+      if (!pais.value) {
+        pais.setValue(PAIS_PADRAO_CANDIDATURA_GERAL);
       }
     } catch {
       // Rascunho ilegível ou armazenamento bloqueado: começa em branco.

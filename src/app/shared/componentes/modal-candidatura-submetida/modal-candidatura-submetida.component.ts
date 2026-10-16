@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { descarregarFicheiro } from '../../../core/api/descarregar-ficheiro';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { AlertModalService } from '../alert-modal/alert-modal.service';
 import { ModalDataService } from '../alert-modal/modal-data.service';
@@ -12,11 +13,25 @@ export const ID_MODAL_CANDIDATURA_SUBMETIDA = 'modal-candidatura-submetida';
 
 /** O que quem abre passa em `data`: a candidatura que a API acabou de criar. */
 export interface DadosCandidaturaSubmetida {
-  /** Código para o candidato guardar, p. ex. `AGRO-2026-DOC-000042`. */
+  /** `codigo` devolvido pela API, p. ex. `AGRO-2026-DOC-849204`. */
   codigo: string;
-  /** Área já formatada (`1. Engenharia Agronómica & Zootécnica`); vazia mostra "—". */
+  /** Disciplinas a lecionar, já em texto (`Drones Agrícolas, Avicultura`); vazio mostra "—". */
   area: string;
   submetidaEm: Date;
+  /** `pdf_url` da API — a ficha de candidatura. Sem ele, o comprovativo é impresso pelo browser. */
+  pdfUrl?: string | null;
+}
+
+/** Página pública da convocatória — o que o bloco "Partilhar vaga" divulga. */
+const ROTA_CONVOCATORIA = '/candidatura-geral';
+
+/** Botão de partilha: o rótulo é a marca (excepto "Email"); `cor` pinta o ícone. */
+interface RedePartilha {
+  id: string;
+  rotulo: string;
+  icone: string;
+  cor: string;
+  endereco: string;
 }
 
 const FUSO_LUANDA = 'Africa/Luanda';
@@ -75,7 +90,7 @@ const DURACAO_COPIADO_MS = 2000;
                   class="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary transition-colors hover:bg-primary/15"
                   (click)="copiar()"
                 >
-                  <app-icone [nome]="copiado() ? 'check' : 'file-text'" [tamanho]="14" />
+                  <app-icone [nome]="copiado() ? 'check' : 'copy'" [tamanho]="14" />
                   <span aria-live="polite">{{ copiado() ? textos().copiado : textos().copiar }}</span>
                 </button>
               </div>
@@ -95,22 +110,78 @@ const DURACAO_COPIADO_MS = 2000;
           </div>
         </div>
 
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+        <!-- Partilhar a convocatória -->
+        <section class="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-5 sm:p-6" [attr.aria-label]="textos().partilharTitulo">
+          <div class="flex items-start gap-3">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary" aria-hidden="true">
+              <app-icone nome="share-2" [tamanho]="16" />
+            </span>
+            <div class="min-w-0">
+              <p class="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
+                {{ textos().partilharTitulo }}
+              </p>
+              <p class="mt-1 text-[11px] text-text-secondary sm:text-xs">{{ textos().partilharTexto }}</p>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-col gap-2 sm:flex-row">
+            <label class="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2">
+              <app-icone nome="link" [tamanho]="15" class="shrink-0 text-text-secondary" />
+              <span class="sr-only">{{ textos().linkConvocatoria }}</span>
+              <input
+                #campoLink
+                type="text"
+                readonly
+                class="min-w-0 flex-1 truncate bg-transparent font-mono text-xs text-text-primary outline-none"
+                [value]="linkConvocatoria()"
+                (focus)="selecionarTexto($event)"
+              />
+            </label>
+            <button
+              type="button"
+              class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary-deep px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-primary-dark"
+              (click)="copiarLink(campoLink)"
+            >
+              <app-icone [nome]="linkCopiado() ? 'check' : 'copy'" [tamanho]="14" />
+              <span aria-live="polite">{{ linkCopiado() ? textos().linkCopiado : textos().copiarLink }}</span>
+            </button>
+          </div>
+
+          <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            @for (rede of redes(); track rede.id) {
+              <a
+                [href]="rede.endereco"
+                [attr.target]="rede.id === 'email' ? null : '_blank'"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-text-primary transition-colors hover:border-primary hover:text-primary-deep"
+                [attr.aria-label]="textos().partilharEm + ' ' + rede.rotulo"
+              >
+                <app-icone [nome]="rede.icone" [tamanho]="16" [class]="rede.cor" />
+                {{ rede.rotulo }}
+              </a>
+            }
+          </div>
+        </section>
+
+        <div class="mt-8 grid gap-3 sm:grid-cols-[auto_auto] sm:items-center sm:justify-between sm:gap-6">
           <app-botao
+            class="whitespace-nowrap"
             variante="profundo"
             icone="download"
-            paddingX="px-6"
+            paddingX="px-5"
             paddingY="py-2.5"
             tamanho="sm"
             [larguraTotal]="true"
+            [aCarregar]="aDescarregar()"
             (clicado)="descarregarComprovativo()"
           >
             {{ textos().descarregar }}
           </app-botao>
           <app-botao
+            class="whitespace-nowrap"
             variante="contorno"
-            icone="chevron-left"
-            paddingX="px-6"
+            icone="arrow-left"
+            paddingX="px-5"
             paddingY="py-2.5"
             tamanho="sm"
             [larguraTotal]="true"
@@ -119,10 +190,6 @@ const DURACAO_COPIADO_MS = 2000;
             {{ textos().voltar }}
           </app-botao>
         </div>
-
-        <p class="mt-8 border-t border-gray-200 pt-4 text-center text-[10px] leading-relaxed text-text-secondary sm:text-[11px]">
-          {{ textos().rodape }}
-        </p>
       </div>
     </div>
   `,
@@ -137,9 +204,62 @@ export class ModalCandidaturaSubmetidaComponent {
   protected readonly codigo = this.dados?.codigo ?? '—';
   protected readonly area = this.dados?.area?.trim() || '—';
   private readonly submetidaEm = this.dados?.submetidaEm ? new Date(this.dados.submetidaEm) : new Date();
+  private readonly pdfUrl = this.dados?.pdfUrl?.trim() || null;
+
+  /** A ficha em PDF está a ser descarregada (o botão mostra o indicador). */
+  protected readonly aDescarregar = signal(false);
 
   protected readonly copiado = signal(false);
   private temporizadorCopiado: ReturnType<typeof setTimeout> | undefined;
+  protected readonly linkCopiado = signal(false);
+  private temporizadorLink: ReturnType<typeof setTimeout> | undefined;
+
+  /**
+   * Endereço público da convocatória, que o candidato partilha. Só existe no
+   * browser (o modal nunca abre no SSR); no servidor fica o caminho relativo.
+   */
+  protected readonly linkConvocatoria = signal(
+    this.ehBrowser ? new URL(ROTA_CONVOCATORIA, window.location.origin).href : ROTA_CONVOCATORIA,
+  );
+
+  /** WhatsApp, LinkedIn, Telegram e Email, com o endereço de partilha já montado. */
+  protected readonly redes = computed<RedePartilha[]>(() => {
+    const url = encodeURIComponent(this.linkConvocatoria());
+    const t = this.textos();
+    const mensagem = encodeURIComponent(t.mensagemPartilha);
+    return [
+      {
+        id: 'whatsapp',
+        rotulo: 'WhatsApp',
+        icone: 'message-circle',
+        cor: 'text-[#25D366]',
+        endereco: `https://wa.me/?text=${encodeURIComponent(`${t.mensagemPartilha} ${this.linkConvocatoria()}`)}`,
+      },
+      {
+        id: 'linkedin',
+        rotulo: 'LinkedIn',
+        icone: 'linkedin',
+        cor: 'text-[#0A66C2]',
+        endereco: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      },
+      {
+        id: 'telegram',
+        rotulo: 'Telegram',
+        icone: 'send',
+        cor: 'text-[#229ED9]',
+        endereco: `https://t.me/share/url?url=${url}&text=${mensagem}`,
+      },
+      {
+        id: 'email',
+        rotulo: t.email,
+        icone: 'mail',
+        cor: 'text-text-secondary',
+        endereco: `mailto:?subject=${encodeURIComponent(t.assuntoEmail)}&body=${encodeURIComponent(
+          `${t.mensagemPartilha}\n\n${this.linkConvocatoria()}`,
+        )}`,
+      },
+    ];
+  });
   private molduraImpressao: HTMLIFrameElement | null = null;
 
   protected readonly textos = computed(() => {
@@ -153,7 +273,7 @@ export class ModalCandidaturaSubmetidaComponent {
         'Your preliminary expression of interest in joining the faculty has been recorded and forwarded to the Installation Office.',
       ),
       rotuloCodigo: t('Código de identificação da candidatura', 'Application identification code'),
-      rotuloArea: t('Área de candidatura', 'Application area'),
+      rotuloArea: t('Disciplinas a lecionar', 'Courses to teach'),
       copiar: t('Copiar', 'Copy'),
       copiado: t('Copiado', 'Copied'),
       submetidoEm: t(
@@ -162,9 +282,28 @@ export class ModalCandidaturaSubmetidaComponent {
       ),
       descarregar: t('Descarregar Comprovativo (PDF)', 'Download Receipt (PDF)'),
       voltar: t('Voltar à Página Principal', 'Back to Main Page'),
+      partilharTitulo: t('Partilhar vaga com colegas & investigadores', 'Share the call with colleagues & researchers'),
+      partilharTexto: t(
+        'Ajude a divulgar esta oportunidade académica na sua rede profissional',
+        'Help spread this academic opportunity across your professional network',
+      ),
+      linkConvocatoria: t('Endereço da convocatória', 'Call address'),
+      copiarLink: t('Copiar Link', 'Copy Link'),
+      linkCopiado: t('Link copiado', 'Link copied'),
+      partilharEm: t('Partilhar no', 'Share on'),
+      email: t('Email', 'Email'),
+      mensagemPartilha: t(
+        'A AgroSophia está a recrutar docentes, investigadores e especialistas no sector do agronegócio. Candidate-se:',
+        'AgroSophia is recruiting lecturers, researchers and specialists in the agribusiness sector. Apply here:',
+      ),
+      assuntoEmail: t(
+        'Recrutamento de docentes no agronegócio — AgroSophia',
+        'Agribusiness faculty recruitment — AgroSophia',
+      ),
+      // Rodapé do comprovativo em PDF (a nota antiga sobre o MESCTI saiu a pedido do cliente).
       rodape: t(
-        'Manifestação de Interesse Docente · Conforme o Decreto Presidencial n.º 310/20 e normas do MESCTI · República de Angola',
-        'Faculty Expression of Interest · Under Presidential Decree No. 310/20 and MESCTI regulations · Republic of Angola',
+        'AgroSophia · Gabinete da Comissão Instaladora · Icolo e Bengo, República de Angola',
+        'AgroSophia · Installation Committee Office · Icolo e Bengo, Republic of Angola',
       ),
       instituicao: t('Universidade Nacional de Agronomia (UNAGRO)', 'National University of Agronomy (UNAGRO)'),
       comprovativoTitulo: t('Comprovativo de Submissão de Candidatura', 'Application Submission Receipt'),
@@ -179,6 +318,7 @@ export class ModalCandidaturaSubmetidaComponent {
   constructor() {
     inject(DestroyRef).onDestroy(() => {
       clearTimeout(this.temporizadorCopiado);
+      clearTimeout(this.temporizadorLink);
       this.removerMolduraImpressao();
     });
   }
@@ -203,15 +343,54 @@ export class ModalCandidaturaSubmetidaComponent {
     this.temporizadorCopiado = setTimeout(() => this.copiado.set(false), DURACAO_COPIADO_MS);
   }
 
-  /**
-   * Sem endpoint de comprovativo na API nem biblioteca de PDF no projecto: imprime
-   * um HTML simples num iframe escondido e o "Guardar como PDF" do browser faz o resto.
-   * O iframe evita o bloqueador de janelas que um `window.open` pode apanhar.
-   */
-  protected descarregarComprovativo(): void {
+  /** Copia o endereço; sem acesso à área de transferência, deixa-o seleccionado no campo para Ctrl+C. */
+  protected async copiarLink(campo: HTMLInputElement): Promise<void> {
     if (!this.ehBrowser) {
       return;
     }
+    try {
+      await navigator.clipboard.writeText(this.linkConvocatoria());
+    } catch {
+      campo.focus();
+      campo.select();
+      return;
+    }
+    this.linkCopiado.set(true);
+    clearTimeout(this.temporizadorLink);
+    this.temporizadorLink = setTimeout(() => this.linkCopiado.set(false), DURACAO_COPIADO_MS);
+  }
+
+  /** Foco no campo do endereço selecciona-o todo, para copiar à mão num toque. */
+  protected selecionarTexto(evento: Event): void {
+    (evento.target as HTMLInputElement).select();
+  }
+
+  /**
+   * Descarrega a ficha de candidatura do `pdf_url` da API, como `<codigo>.pdf`.
+   * Sem `pdf_url`, imprime o comprovativo local.
+   */
+  protected async descarregarComprovativo(): Promise<void> {
+    if (!this.ehBrowser || this.aDescarregar()) {
+      return;
+    }
+    if (!this.pdfUrl) {
+      this.imprimirComprovativo();
+      return;
+    }
+    this.aDescarregar.set(true);
+    try {
+      await descarregarFicheiro(this.pdfUrl, `${this.codigo}.pdf`);
+    } finally {
+      this.aDescarregar.set(false);
+    }
+  }
+
+  /**
+   * Alternativa quando a API não devolve `pdf_url`: imprime um HTML simples num
+   * iframe escondido e o "Guardar como PDF" do browser faz o resto. O iframe
+   * evita o bloqueador de janelas que um `window.open` pode apanhar.
+   */
+  private imprimirComprovativo(): void {
     this.removerMolduraImpressao();
 
     const moldura = document.createElement('iframe');

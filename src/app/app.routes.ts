@@ -4,14 +4,6 @@ import { LayoutPrincipalComponent } from './layout/layout-principal/layout-princ
 import { LayoutCandidaturaComponent } from './layout/layout-candidatura/layout-candidatura.component';
 
 export const routes: Routes = [
-  // As páginas de autenticação vêm antes do layout principal de propósito: o
-  // `path: ''` de baixo casa por prefixo com qualquer URL, e a catch-all `**`
-  // que vive nos seus filhos apanharia `/entrar` e `/registo` como página 404.
-  //
-  // Cada uma traz a sua própria moldura em vez de partilharem um pai `path: ''`
-  // com filhos: um pai de caminho vazio casa também com `/`, e nesse caso o
-  // Angular renderiza a moldura com o outlet vazio em vez de recuar para o
-  // layout principal — a página inicial saía em branco.
   // {
   //   path: 'entrar',
   //   component: LayoutAutenticacaoComponent,
@@ -34,6 +26,15 @@ export const routes: Routes = [
   //     },
   //   ],
   // },
+  // O módulo da candidatura docente tem moldura própria (sem cabeçalho e com o
+  // rodapé do edital). Vem antes do `path: ''` de baixo pela mesma razão das
+  // páginas de autenticação: a catch-all `**` apanhá-lo-ia como 404.
+  {
+    path: 'candidatura-geral',
+    component: LayoutCandidaturaComponent,
+    loadChildren: () =>
+      import('./pages/candidatura-geral/candidatura-geral.routes').then((m) => m.CANDIDATURA_GERAL_ROUTES),
+  },
   // `/login` é o endereço que muita gente escreve à mão: encaminha para a rota
   // canónica em português em vez de cair na página 404.
   // { path: 'login', redirectTo: '/entrar', pathMatch: 'full' },
@@ -149,29 +150,8 @@ export const routes: Routes = [
   //     },
   //   ],
   // },
-  // O módulo da candidatura docente tem moldura própria (sem cabeçalho e com o
-  // rodapé do edital). Vem antes do `path: ''` de baixo pela mesma razão das
-  // páginas de autenticação: a catch-all `**` apanhá-lo-ia como 404.
   {
-    path: 'candidatura-geral',
-    component: LayoutCandidaturaComponent,
-    loadChildren: () =>
-      import('./pages/candidatura-geral/candidatura-geral.routes').then((m) => m.CANDIDATURA_GERAL_ROUTES),
-  },
-  // Moldura principal activa só com a 404, enquanto as restantes páginas acima
-  // estão comentadas.
-  {
-    path: '',
-    component: LayoutPrincipalComponent,
-    children: [
-      {
-        path: '**',
-        loadComponent: () =>
-          import('./pages/pagina-nao-encontrada/pagina-nao-encontrada.component').then(
-            (m) => m.PaginaNaoEncontradaComponent,
-          ),
-        data: { tituloChave: 'rotas.naoEncontrada.titulo', descricaoChave: 'rotas.naoEncontrada.descricao' },
-      },
-    ],
+    path: '**',
+    redirectTo: '/candidatura-geral',
   },
 ];

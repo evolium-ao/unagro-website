@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CandidaturaGeralEstadoService } from '../../estado/candidatura-geral-estado.service';
+import { SecaoExperienciaDocenteComponent } from './secao-experiencia-docente.component';
 import { SecaoExperienciaComponent } from './secao-experiencia.component';
 import { SecaoFormacaoAcademicaComponent } from './secao-formacao-academica.component';
 
@@ -10,7 +11,12 @@ import { SecaoFormacaoAcademicaComponent } from './secao-formacao-academica.comp
  */
 @Component({
   selector: 'app-etapa-2',
-  imports: [ReactiveFormsModule, SecaoFormacaoAcademicaComponent, SecaoExperienciaComponent],
+  imports: [
+    ReactiveFormsModule,
+    SecaoFormacaoAcademicaComponent,
+    SecaoExperienciaDocenteComponent,
+    SecaoExperienciaComponent,
+  ],
   templateUrl: './etapa-2.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

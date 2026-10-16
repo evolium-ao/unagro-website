@@ -88,8 +88,8 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
           (click)="toggleOpen()"
         >
           <span class="truncate flex items-center gap-2">
-            @if (selectedOptionsData().length) {
-              @if (!multiple() && selectedOptionsData()[0].icon) {
+            @if (selectedOptionsData().length || (permitirNovo() && selectedValues().length)) {
+              @if (!multiple() && selectedOptionsData()[0]?.icon) {
                 @if (isImageIcon(selectedOptionsData()[0].icon)) {
                   <img [src]="selectedOptionsData()[0].icon" class="w-4 h-4 object-contain shrink-0 {{ selectedOptionsData()[0].iconClass ?? '' }}" />
                 } @else {
@@ -111,13 +111,33 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
         @if (open()) {
           <div class="absolute z-100 mt-2 w-full rounded-md border border-gray-300 bg-white shadow-lg max-h-72 overflow-auto">
             @if (searchable()) {
-              <div class="px-3 py-2 border-b border-gray-200">
-                <input
-                  type="text"
-                  class="w-full px-3 py-2 rounded-md border border-gray-200 text-sm text-[#585959] focus:border-primary focus:outline-3 focus:outline-primary/20"
-                  placeholder="Pesquisar..."
-                  [(ngModel)]="searchTerm"
-                />
+              <!-- Fixa no topo da lista: ao fazer scroll pelas opções, a pesquisa (e o
+                   «Adicionar» do permitirNovo) ficam sempre à vista. -->
+              <div class="sticky top-0 z-10 border-b border-gray-200 bg-white">
+                <div class="px-3 py-2">
+                  <input
+                    type="text"
+                    class="w-full px-3 py-2 rounded-md border border-gray-200 text-sm text-[#585959] focus:border-primary focus:outline-3 focus:outline-primary/20"
+                    placeholder="Pesquisar..."
+                    [(ngModel)]="searchTerm"
+                    (keydown.enter)="aoEnterPesquisa($event)"
+                  />
+                  @if (permitirNovo() && !multiple() && dicaNovo() && !valorNovo()) {
+                    <p class="mt-1.5 text-[11px] leading-snug text-text-secondary">{{ dicaNovo() }}</p>
+                  }
+                </div>
+
+                @if (valorNovo(); as novo) {
+                  <!-- permitirNovo: o texto pesquisado não existe na lista e pode ser usado tal como está. -->
+                  <button
+                    type="button"
+                    class="flex w-full items-center gap-2 border-t border-gray-200 bg-primary/5 px-3 py-3 text-left text-sm font-medium text-primary hover:bg-primary/10 focus:bg-primary/10"
+                    (click)="selecionarNovo()"
+                  >
+                    <app-icone nome="plus" [tamanho]="16" class="shrink-0" />
+                    <span class="truncate">{{ textoNovo() }} «{{ novo }}»</span>
+                  </button>
+                }
               </div>
             }
 
@@ -152,7 +172,7 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
                   }
                 </button>
               }
-            } @else {
+            } @else if (!valorNovo()) {
               <div class="px-3 py-3 text-sm text-[#9A9A9A]">Nenhuma opção encontrada</div>
             }
           </div>
@@ -186,6 +206,16 @@ export class FormFieldSelectComponentV2<D> implements ControlValueAccessor, OnIn
   /** Permite desabilitar diretamente via template, sem depender de um FormControl. */
   readonly disabled = input<boolean>(false);
   readonly variante = input<VarianteCampo>('caixa');
+  /**
+   * Com `searchable` e sem `multiple`: deixa escolher o texto pesquisado quando
+   * não há opção com esse rótulo — o valor do controlo passa a ser o próprio
+   * texto. Por omissão `false` — nada muda nos outros selects.
+   */
+  readonly permitirNovo = input<boolean>(false);
+  /** Texto antes do valor novo ("Adicionar «…»") — recebe o texto já traduzido. */
+  readonly textoNovo = input<string>('Adicionar');
+  /** Dica por baixo da pesquisa, enquanto não há texto, a dizer que se pode escrever um valor novo. */
+  readonly dicaNovo = input<string>('');
 
   /**
    * Template opcional para renderização totalmente personalizada de cada item.
@@ -284,6 +314,41 @@ export class FormFieldSelectComponentV2<D> implements ControlValueAccessor, OnIn
     }
     return this.options().filter((option) => option.label.toLowerCase().includes(filter));
   });
+
+  /** Texto pesquisado que pode entrar como valor novo, ou `''` se não se aplica ou já existe na lista. */
+  readonly valorNovo = computed(() => {
+    if (!this.permitirNovo() || !this.searchable() || this.multiple()) {
+      return '';
+    }
+    const termo = this.searchTerm().trim().replace(/\s+/g, ' ');
+    if (!termo) {
+      return '';
+    }
+    const existe = this.options().some((option) => option.label.trim().toLowerCase() === termo.toLowerCase());
+    return existe ? '' : termo;
+  });
+
+  /** Enter na pesquisa escolhe o valor novo, em vez de submeter o formulário à volta. */
+  aoEnterPesquisa(evento: Event): void {
+    if (!this.permitirNovo()) {
+      return;
+    }
+    evento.preventDefault();
+    this.selecionarNovo();
+  }
+
+  /** Escolhe o texto pesquisado como valor (ver `permitirNovo`). */
+  selecionarNovo(): void {
+    const novo = this.valorNovo();
+    if (!novo || this.isDisabled()) {
+      return;
+    }
+    this.selectedValues.set([novo]);
+    this.onChange(novo);
+    this.onTouched();
+    this.searchTerm.set('');
+    this.open.set(false);
+  }
 
   onChange = (_value: unknown) => { };
   onTouched = () => { };
