@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { AlertModalService } from '../../../shared/componentes/alert-modal/alert-modal.service';
@@ -10,6 +12,11 @@ import {
 } from '../componentes/modal-consultar-candidatura.component';
 import { SeletorDisciplinasComponent } from '../componentes/seletor-disciplinas.component';
 import { LIMITES_DOSSIER_MB } from '../estado/candidatura-geral-estado.service';
+import {
+  DadosPartilhar,
+  ID_MODAL_PARTILHAR,
+  ModalPartilharComponent,
+} from '../../../shared/componentes/modal-partilhar/modal-partilhar.component';
 import { BannerDestaqueComponent } from '../../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
 import { CabecalhoSecaoComponent } from '../../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
@@ -23,6 +30,9 @@ import { RevelarAoScrollDirective } from '../../../shared/diretivas/revelar-ao-s
 
 /** Primeira etapa do formulário — destino do hero e dos cartões de área. */
 export const ROTA_ETAPA_1 = '/candidatura-geral/etapa-1';
+
+/** Endereço público da convocatória que o botão de partilha divulga (o mesmo do modal de submissão). */
+const LINK_CONVOCATORIA = new URL('/candidatura-geral', environment.siteUrl).href;
 
 @Component({
   selector: 'app-candidatura-geral-inicio',
@@ -46,6 +56,7 @@ export class CandidaturaGeralInicioComponent {
   private readonly conteudo = inject(CandidaturaGeralService);
   private readonly router = inject(Router);
   private readonly modais = inject(AlertModalService);
+  private readonly ehBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly rotaEtapa1 = ROTA_ETAPA_1;
 
@@ -69,6 +80,16 @@ export class CandidaturaGeralInicioComponent {
       ),
       heroCandidatar: t('Candidatar', 'Apply'),
       heroConsultar: t('Consultar candidatura', 'Check application'),
+      heroPartilhar: t('Partilhar convocatória', 'Share the call'),
+      partilhaDescricao: t(
+        'Ajude a divulgar esta oportunidade académica na sua rede profissional',
+        'Help spread this academic opportunity across your professional network',
+      ),
+      partilhaTitulo: t('Recrutamento de docentes no agronegócio — AgroSophia', 'Agribusiness faculty recruitment — AgroSophia'),
+      partilhaMensagem: t(
+        'A AgroSophia está a recrutar docentes, investigadores e especialistas no sector do agronegócio. Candidate-se:',
+        'AgroSophia is recruiting lecturers, researchers and specialists in the agribusiness sector. Apply here:',
+      ),
       heroPrazo: t('Prazo até 31 de Outubro de 2026', 'Deadline 31 October 2026'),
       heroLogoAlt: t('Logótipo AgroSophia', 'AgroSophia logo'),
       parceirosTitulo: t(
@@ -151,6 +172,42 @@ export class CandidaturaGeralInicioComponent {
       tamanho: 'xgrande',
       temHeader: false,
       semBotoes: true,
+    });
+  }
+
+  /**
+   * Botão de partilha do hero: abre a folha de partilha nativa do dispositivo.
+   * Onde o browser não a tem (Firefox de computador, Chrome em Linux), abre o
+   * modal de partilha com o link e os botões de WhatsApp, LinkedIn, Telegram e Email.
+   */
+  protected async partilhar(): Promise<void> {
+    if (!this.ehBrowser) {
+      return;
+    }
+    const t = this.textos();
+    const dados: ShareData = { title: t.partilhaTitulo, text: t.partilhaMensagem, url: LINK_CONVOCATORIA };
+    if (navigator.share && (navigator.canShare?.(dados) ?? true)) {
+      try {
+        await navigator.share(dados);
+      } catch {
+        // Cancelado pelo utilizador (`AbortError`) ou recusado: nada a fazer.
+      }
+      return;
+    }
+    const data: DadosPartilhar = {
+      titulo: t.heroPartilhar,
+      descricao: t.partilhaDescricao,
+      mensagem: t.partilhaMensagem,
+      assunto: t.partilhaTitulo,
+      url: LINK_CONVOCATORIA,
+    };
+    void this.modais.modal({
+      id: ID_MODAL_PARTILHAR,
+      template: ModalPartilharComponent,
+      tamanho: 'medio',
+      temHeader: false,
+      semBotoes: true,
+      data,
     });
   }
 

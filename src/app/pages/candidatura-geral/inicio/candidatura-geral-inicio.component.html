@@ -17,6 +17,12 @@
         class="min-w-0 flex-1 truncate text-left text-sm text-text-secondary hover:text-primary-deep">
         {{ emailContacto }}
       </a>
+      <!-- Partilha nativa do dispositivo; só o ícone (o nome vai no aria-label). -->
+      <button type="button"
+        class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-200 text-primary-deep transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary/40"
+        [attr.aria-label]="textos().heroPartilhar" [title]="textos().heroPartilhar" (click)="partilhar()">
+        <app-icone nome="share-2" [tamanho]="16" />
+      </button>
       <app-botao class="shrink-0" variante="profundo" tamanho="sm" [link]="rotaEtapa1" icone="arrow-right"
         posicaoIcone="direita">
         {{ textos().heroCandidatar }}

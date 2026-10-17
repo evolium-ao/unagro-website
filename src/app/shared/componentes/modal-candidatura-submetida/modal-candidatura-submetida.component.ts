@@ -1,8 +1,10 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../../environments/environment';
 import { descarregarFicheiro } from '../../../core/api/descarregar-ficheiro';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
+import { RedePartilha, redesPartilha } from '../../partilha/redes-partilha';
 import { AlertModalService } from '../alert-modal/alert-modal.service';
 import { ModalDataService } from '../alert-modal/modal-data.service';
 import { BotaoComponent } from '../botao/botao.component';
@@ -24,15 +26,6 @@ export interface DadosCandidaturaSubmetida {
 
 /** Página pública da convocatória — o que o bloco "Partilhar vaga" divulga. */
 const ROTA_CONVOCATORIA = '/candidatura-geral';
-
-/** Botão de partilha: o rótulo é a marca (excepto "Email"); `cor` pinta o ícone. */
-interface RedePartilha {
-  id: string;
-  rotulo: string;
-  icone: string;
-  cor: string;
-  endereco: string;
-}
 
 const FUSO_LUANDA = 'Africa/Luanda';
 const DURACAO_COPIADO_MS = 2000;
@@ -215,50 +208,20 @@ export class ModalCandidaturaSubmetidaComponent {
   private temporizadorLink: ReturnType<typeof setTimeout> | undefined;
 
   /**
-   * Endereço público da convocatória, que o candidato partilha. Só existe no
-   * browser (o modal nunca abre no SSR); no servidor fica o caminho relativo.
+   * Endereço público da convocatória, que o candidato partilha: sempre o domínio
+   * de produção (`environment.siteUrl`), mesmo a testar em `localhost`.
    */
-  protected readonly linkConvocatoria = signal(
-    this.ehBrowser ? new URL(ROTA_CONVOCATORIA, window.location.origin).href : ROTA_CONVOCATORIA,
-  );
+  protected readonly linkConvocatoria = signal(new URL(ROTA_CONVOCATORIA, environment.siteUrl).href);
 
   /** WhatsApp, LinkedIn, Telegram e Email, com o endereço de partilha já montado. */
   protected readonly redes = computed<RedePartilha[]>(() => {
-    const url = encodeURIComponent(this.linkConvocatoria());
     const t = this.textos();
-    const mensagem = encodeURIComponent(t.mensagemPartilha);
-    return [
-      {
-        id: 'whatsapp',
-        rotulo: 'WhatsApp',
-        icone: 'message-circle',
-        cor: 'text-[#25D366]',
-        endereco: `https://wa.me/?text=${encodeURIComponent(`${t.mensagemPartilha} ${this.linkConvocatoria()}`)}`,
-      },
-      {
-        id: 'linkedin',
-        rotulo: 'LinkedIn',
-        icone: 'linkedin',
-        cor: 'text-[#0A66C2]',
-        endereco: `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
-      },
-      {
-        id: 'telegram',
-        rotulo: 'Telegram',
-        icone: 'send',
-        cor: 'text-[#229ED9]',
-        endereco: `https://t.me/share/url?url=${url}&text=${mensagem}`,
-      },
-      {
-        id: 'email',
-        rotulo: t.email,
-        icone: 'mail',
-        cor: 'text-text-secondary',
-        endereco: `mailto:?subject=${encodeURIComponent(t.assuntoEmail)}&body=${encodeURIComponent(
-          `${t.mensagemPartilha}\n\n${this.linkConvocatoria()}`,
-        )}`,
-      },
-    ];
+    return redesPartilha({
+      url: this.linkConvocatoria(),
+      mensagem: t.mensagemPartilha,
+      assunto: t.assuntoEmail,
+      rotuloEmail: t.email,
+    });
   });
   private molduraImpressao: HTMLIFrameElement | null = null;
 
