@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, computed, effect, inject, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { debounceTime, filter, merge } from 'rxjs';
 import { ANOS_DOCENCIA_EM_ABERTO, PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
 import {
@@ -21,6 +21,8 @@ export const MAXIMO_TEXTO_CURTO = 255;
 export const MAXIMO_DISCIPLINAS = 5;
 /** Entradas de cada lista de experiências — o `maxItems` da API. */
 export const MAXIMO_EXPERIENCIAS = 10;
+/** Certificados opcionais além do obrigatório (`certificado_adicionais[]`). */
+export const MAXIMO_CERTIFICADOS_ADICIONAIS = 6;
 
 /** `id`s em texto, sem repetidos (o rascunho e o URL podem trazer qualquer coisa). */
 function idsUnicos(ids: unknown): string[] {
@@ -74,13 +76,15 @@ function validarDocumentoIdentificacao(controlo: AbstractControl): ValidationErr
 export const LIMITES_DOSSIER_MB = {
   curriculo: 10,
   certificados: 10,
+  /** Cada um dos certificados adicionais. */
+  certificadosAdicionais: 10,
   comprovativos: 15,
   carta: 5,
   total: 24,
 } as const;
 
 /** Campos de ficheiro: um `File` não se serializa, por isso nunca vão para o rascunho. */
-const CAMPOS_FICHEIRO = new Set(['curriculo', 'certificados', 'comprovativos', 'carta']);
+const CAMPOS_FICHEIRO = new Set(['curriculo', 'certificados', 'certificadosAdicionais', 'comprovativos', 'carta']);
 
 function semFicheiros(valores: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(valores).filter(([campo]) => !CAMPOS_FICHEIRO.has(campo)));
@@ -88,7 +92,8 @@ function semFicheiros(valores: Record<string, unknown>): Record<string, unknown>
 
 /** Soma dos anexos do dossier acima de `LIMITES_DOSSIER_MB.total` (validador do grupo). */
 function validarTamanhoTotalDossier(grupo: AbstractControl): ValidationErrors | null {
-  const valores = Object.values((grupo as FormGroup).getRawValue() as Record<string, unknown>);
+  // `flat`: os certificados adicionais são uma lista de ficheiros.
+  const valores = Object.values((grupo as FormGroup).getRawValue() as Record<string, unknown>).flat();
   const bytes = valores.reduce<number>((soma, valor) => soma + (valor instanceof File ? valor.size : 0), 0);
   return bytes > LIMITES_DOSSIER_MB.total * 1024 * 1024 ? { dossierMuitoGrande: true } : null;
 }
@@ -206,6 +211,8 @@ export class CandidaturaGeralEstadoService {
       certificados: new FormControl<File | null>(null, {
         validators: [Validators.required, this.validacao.validarFicheiro(['pdf'], LIMITES_DOSSIER_MB.certificados)],
       }),
+      /** Certificados opcionais — cada «Adicionar certificado» junta uma caixa (ver `adicionarCertificado`). */
+      certificadosAdicionais: new FormArray<FormControl<File | null>>([]),
       comprovativos: new FormControl<File | null>(null, {
         validators: [this.validacao.validarFicheiro(['pdf', 'zip'], LIMITES_DOSSIER_MB.comprovativos)],
       }),
@@ -343,9 +350,31 @@ export class CandidaturaGeralEstadoService {
     }
   }
 
+  /** Junta uma caixa de certificado adicional (vazia), até `MAXIMO_CERTIFICADOS_ADICIONAIS`. */
+  adicionarCertificado(): void {
+    const lista = this.dossier.controls.certificadosAdicionais;
+    if (lista.length >= MAXIMO_CERTIFICADOS_ADICIONAIS) {
+      return;
+    }
+    lista.push(
+      new FormControl<File | null>(null, {
+        validators: [this.validacao.validarFicheiro(['pdf'], LIMITES_DOSSIER_MB.certificadosAdicionais)],
+      }),
+    );
+  }
+
+  /** Retira a caixa `indice` dos certificados adicionais, com o ficheiro que tiver. */
+  removerCertificado(indice: number): void {
+    const lista = this.dossier.controls.certificadosAdicionais;
+    lista.removeAt(indice);
+    lista.markAsDirty();
+  }
+
   /** Apaga o rascunho e volta a pôr o formulário em branco. */
   limpar(): void {
     Object.values(this.grupos).forEach((grupo) => grupo.reset());
+    // O `reset()` esvazia os valores mas deixa as caixas: estas também saem.
+    this.dossier.controls.certificadosAdicionais.clear();
     if (!this.ehNavegador) {
       return;
     }

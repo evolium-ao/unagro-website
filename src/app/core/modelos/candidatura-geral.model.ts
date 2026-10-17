@@ -146,6 +146,8 @@ export interface NovaCandidaturaGeral {
   dossier: {
     curriculo: File | null;
     certificados: File | null;
+    /** Certificados opcionais (`certificado_adicionais[]` na API); uma caixa sem ficheiro fica a `null`. */
+    certificadosAdicionais: (File | null)[];
     comprovativos: File | null;
     carta: File | null;
     compromissoHonra: boolean;

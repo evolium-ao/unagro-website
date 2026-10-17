@@ -36,10 +36,7 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
   ],
   template: `
     <app-titulo-bloco icone="landmark" [titulo]="textos().titulo" [descricao]="textos().descricao">
-      <app-botao class="shrink-0" variante="primario" icone="plus" raio="medio" [desativado]="limiteAtingido()"
-        (clicado)="adicionar()">
-        {{ textos().adicionar }}
-      </app-botao>
+      
     </app-titulo-bloco>
 
     <div class="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
@@ -58,7 +55,13 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
         [options]="opcoesTempo()" [ngModel]="tempo()" (ngModelChange)="tempo.set($event ?? '')"
         [erro]="erroCampo(tempo())" />
     </div>
+    <div class="my-10">
+      <app-botao class="shrink-0" variante="primario" icone="plus" raio="medio" [desativado]="limiteAtingido()"
+              (clicado)="adicionar()">
+              {{ textos().adicionar }}
+            </app-botao>
 
+    </div>
     <app-etapa-2-lista-experiencias class="mt-2 block" [itens]="itens()" [tituloLista]="textos().lista"
       [textoVazio]="textos().vazia" [textoRemover]="textos().remover" [rotuloTotal]="textos().total"
       [total]="total()" [erro]="limiteAtingido() ? textos().limite : null" (remover)="remover($event)" />
@@ -113,7 +116,7 @@ export class SecaoExperienciaDocenteComponent {
         'Trajetória letiva no ensino superior e experiência no agronegócio ou investigação agrária.',
         'Higher education teaching record and experience in agribusiness or agricultural research.',
       ),
-      adicionar: t('Adicionar', 'Add'),
+      adicionar: t('Adicionar experiência', 'Add experience'),
       universidade: t('Universidade', 'University'),
       universidadePlaceholder: t('Ex.: Universidade Agostinho Neto', 'E.g. Agostinho Neto University'),
       faculdade: t('Faculdade', 'Faculty'),

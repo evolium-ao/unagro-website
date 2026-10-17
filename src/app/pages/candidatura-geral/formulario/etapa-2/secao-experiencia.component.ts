@@ -36,10 +36,7 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
   ],
   template: `
     <app-titulo-bloco icone="briefcase" [titulo]="textos().titulo" [descricao]="textos().descricao">
-      <app-botao class="shrink-0" variante="primario" icone="plus" raio="medio" [desativado]="limiteAtingido()"
-        (clicado)="adicionar()">
-        {{ textos().adicionar }}
-      </app-botao>
+     
     </app-titulo-bloco>
 
     <div class="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
@@ -51,6 +48,12 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
       <field-select-v2 class="sm:col-span-2" [obrigatorio]="true" [label]="textos().tempo"
         [placeholder]="textos().selecione" [options]="opcoesTempo()" [ngModel]="tempo()"
         (ngModelChange)="tempo.set($event ?? '')" [erro]="erroCampo(tempo())" />
+    </div>
+    <div class="my-10">
+      <app-botao class="shrink-0" variante="primario" icone="plus" raio="medio" [desativado]="limiteAtingido()"
+           (clicado)="adicionar()">
+           {{ textos().adicionar }}
+         </app-botao>
     </div>
 
     <app-etapa-2-lista-experiencias class="mt-2 block" [itens]="itens()" [tituloLista]="textos().lista"
@@ -107,7 +110,7 @@ export class SecaoExperienciaComponent {
         'Trajetória e experiência no agronegócio ou investigação agrária.',
         'Career and experience in agribusiness or agricultural research.',
       ),
-      adicionar: t('Adicionar', 'Add'),
+      adicionar: t('Adicionar experiência', 'Add experience'),
       empresa: t('Empresa', 'Company'),
       empresaPlaceholder: t('Ex.: Fazenda Agro-Industrial do Cuanza', 'E.g. Cuanza Agro-Industrial Farm'),
       area: t('Área de trabalho', 'Field of work'),

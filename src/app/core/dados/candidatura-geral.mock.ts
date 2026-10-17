@@ -160,8 +160,8 @@ export const PASSOS_CANDIDATURA_GERAL_MOCK: EtapaNumeradaCandidaturaGeral[] = [
     numero: 3,
     titulo: { pt: 'Homologação & Integração', en: 'Approval & Onboarding' },
     descricao: {
-      pt: 'Homologação final da lista e integração na IES.',
-      en: 'Final approval of the list and onboarding at the institution.',
+      pt: 'Homologação final e assinatura do contrato de promessa',
+      en: 'Final approval and signing of the promise contract',
     },
     fase: { pt: 'Posse & início', en: 'Appointment & start' },
   },

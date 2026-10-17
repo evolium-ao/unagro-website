@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { FormControl } from '@angular/forms';
 import { map } from 'rxjs';
 import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
 import { descreverTempoTotal } from '../../../../core/servicos/tempo-experiencia';
@@ -17,12 +18,17 @@ interface CampoRevisao {
   ligacao?: string;
 }
 
-/** Campo de ficheiro do dossier (etapa 3). */
+/** Campo de ficheiro único do dossier (etapa 3). */
 type CampoDossier = 'curriculo' | 'certificados' | 'comprovativos' | 'carta';
 
 /** Uma linha do dossier na revisão. Sem `ficheiro`, o documento (opcional) não foi anexado. */
 interface DocumentoRevisao {
-  campo: CampoDossier;
+  /** Identifica a linha: o campo, ou `certificadosAdicionais.<i>` para cada certificado adicional. */
+  chave: string;
+  /** Controlo que o «Alterar» troca. */
+  controlo: FormControl<File | null>;
+  /** Tamanho máximo por ficheiro, em MB. */
+  limite: number;
   titulo: string;
   icone: string;
   ficheiro: string | null;
@@ -168,46 +174,68 @@ export class Etapa4Component {
   });
 
   /** Erro do último «Alterar» recusado, por documento; o ficheiro anterior mantém-se. */
-  protected readonly errosDocumento = signal<Partial<Record<CampoDossier, string>>>({});
+  protected readonly errosDocumento = signal<Partial<Record<string, string>>>({});
 
   protected readonly documentos = computed<DocumentoRevisao[]>(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     const dossier = this.dossier();
+    const controlos = this.estado.dossier.controls;
     const descrever = (ficheiro: File | null) =>
       ficheiro ? `${ficheiro.name} (${formatarTamanho(ficheiro.size)})` : null;
     const valido = t('Verificado / Válido', 'Verified / Valid');
     const pdf = '.pdf,application/pdf';
+    const unico = (campo: CampoDossier) => ({
+      chave: campo,
+      controlo: controlos[campo],
+      limite: LIMITES_DOSSIER_MB[campo],
+      ficheiro: descrever(dossier[campo]),
+    });
+
+    // Só os certificados adicionais com ficheiro; a numeração é a das caixas da etapa 3.
+    const adicionais: DocumentoRevisao[] = controlos.certificadosAdicionais.controls.flatMap((controlo, i) =>
+      dossier.certificadosAdicionais[i]
+        ? [
+            {
+              chave: `certificadosAdicionais.${i}`,
+              controlo,
+              limite: LIMITES_DOSSIER_MB.certificadosAdicionais,
+              titulo: `${t('Certificado Adicional', 'Additional Certificate')} ${i + 1}`,
+              icone: 'graduation-cap',
+              ficheiro: descrever(dossier.certificadosAdicionais[i]),
+              selo: valido,
+              aceita: pdf,
+            },
+          ]
+        : [],
+    );
 
     return [
       {
-        campo: 'curriculo',
+        ...unico('curriculo'),
         titulo: t('Curriculum Vitae Circunstanciado', 'Detailed Curriculum Vitae'),
         icone: 'file-text',
-        ficheiro: descrever(dossier.curriculo),
         selo: valido,
         aceita: pdf,
       },
       {
-        campo: 'certificados',
+        ...unico('certificados'),
         titulo: t('Certificados de Habilitações & Equivalência', 'Qualification Certificates & Equivalence'),
         icone: 'graduation-cap',
-        ficheiro: descrever(dossier.certificados),
         selo: valido,
         aceita: pdf,
       },
+      ...adicionais,
       {
-        campo: 'comprovativos',
+        ...unico('comprovativos'),
         titulo: t('Comprovativos de Docência / I&D', 'Proof of Teaching / R&D'),
         icone: 'archive',
-        ficheiro: descrever(dossier.comprovativos),
         selo: t('Anexado', 'Attached'),
         aceita: '.pdf,.zip,application/pdf,application/zip',
       },
       {
-        campo: 'carta',
+        ...unico('carta'),
         titulo: t('Carta de Motivação & Enquadramento', 'Motivation Letter & Institutional Fit'),
         icone: 'mail',
-        ficheiro: descrever(dossier.carta),
         selo: valido,
         aceita: pdf,
       },
@@ -219,7 +247,7 @@ export class Etapa4Component {
    * com as mesmas regras da etapa 3 (tipo, tamanho por documento e total). Se o
    * novo ficheiro for recusado, volta o anterior e a linha mostra o motivo.
    */
-  protected alterarDocumento(campo: CampoDossier, evento: Event): void {
+  protected alterarDocumento(documento: DocumentoRevisao, evento: Event): void {
     const entrada = evento.target as HTMLInputElement;
     const novo = entrada.files?.[0];
     // Limpo já, para escolher de novo o mesmo ficheiro voltar a disparar `change`.
@@ -227,32 +255,29 @@ export class Etapa4Component {
     if (!novo) {
       return;
     }
-    const grupo = this.estado.dossier;
-    const controlo = grupo.controls[campo];
+    const { chave, controlo } = documento;
     const anterior = controlo.value;
     controlo.setValue(novo);
 
-    const erro = this.motivoRecusa(campo);
+    const erro = this.motivoRecusa(documento);
     if (erro) {
       controlo.setValue(anterior);
-      this.errosDocumento.update((erros) => ({ ...erros, [campo]: erro }));
+      this.errosDocumento.update((erros) => ({ ...erros, [chave]: erro }));
       return;
     }
     controlo.markAsDirty();
-    this.errosDocumento.update((erros) => ({ ...erros, [campo]: undefined }));
+    this.errosDocumento.update((erros) => ({ ...erros, [chave]: undefined }));
   }
 
-  /** Porque é que o ficheiro agora no `campo` não serve, ou `null` se servir. */
-  private motivoRecusa(campo: CampoDossier): string | null {
+  /** Porque é que o ficheiro agora na linha não serve, ou `null` se servir. */
+  private motivoRecusa({ chave, controlo, limite }: DocumentoRevisao): string | null {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
-    const controlo = this.estado.dossier.controls[campo];
     if (controlo.hasError('ficheiroTipoInvalido')) {
-      return campo === 'comprovativos'
+      return chave === 'comprovativos'
         ? t('Formato não aceite: use PDF ou ZIP.', 'Format not accepted: use PDF or ZIP.')
         : t('Formato não aceite: use PDF.', 'Format not accepted: use PDF.');
     }
     if (controlo.hasError('ficheiroMuitoGrande')) {
-      const limite = LIMITES_DOSSIER_MB[campo];
       return t(`O ficheiro não pode exceder ${limite}MB.`, `The file cannot exceed ${limite}MB.`);
     }
     if (this.estado.dossier.hasError('dossierMuitoGrande')) {

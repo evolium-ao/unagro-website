@@ -105,10 +105,10 @@
     [textoEditar]="textos().editar"
   >
     <ul class="flex flex-col gap-3">
-      @for (documento of documentos(); track documento.campo) {
+      @for (documento of documentos(); track documento.chave) {
         <li
           class="rounded-lg border bg-[#FBF8F6] px-4 py-4"
-          [class]="errosDocumento()[documento.campo] ? 'border-red-300' : 'border-gray-200'"
+          [class]="errosDocumento()[documento.chave] ? 'border-red-300' : 'border-gray-200'"
         >
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="flex min-w-0 items-center gap-3">
@@ -139,13 +139,13 @@
                   class="sr-only"
                   [accept]="documento.aceita"
                   [attr.aria-label]="(documento.ficheiro ? textos().alterar : textos().anexar) + ': ' + documento.titulo"
-                  (change)="alterarDocumento(documento.campo, $event)"
+                  (change)="alterarDocumento(documento, $event)"
                 />
               </label>
             </div>
           </div>
 
-          @if (errosDocumento()[documento.campo]; as erro) {
+          @if (errosDocumento()[documento.chave]; as erro) {
             <p class="mt-2 text-xs text-red-600" role="alert">{{ erro }}</p>
           }
         </li>

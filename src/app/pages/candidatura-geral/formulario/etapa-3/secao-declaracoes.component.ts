@@ -47,8 +47,8 @@ export class SecaoDeclaracoesComponent {
         'Declaration of Honour: I formally declare that all the information provided in this application and in the attached dossier is accurate and truthfully reflects the facts and my academic qualifications, and I am aware that false statements lead to the immediate cancellation of the process and legal liability.',
       ),
       consentimento: t(
-        'Consentimento para Tratamento de Dados Pessoais: Autorizo o Gabinete de Instalação, a proceder ao tratamento dos dados biométricos, profissionais e curriculares no estrito âmbito do credenciamento docente e processo de constituição institucional, em respeito às directivas de proteção de dados e normas emanadas pelo MESCTI da República de Angola.',
-        'Consent to Personal Data Processing: I authorise the Installation Office to process my biometric, professional and curricular data strictly within the scope of faculty accreditation and the institutional setup process, in accordance with data protection directives and the regulations issued by MESCTI of the Republic of Angola.',
+        'Consentimento para Tratamento de Dados Pessoais: Autorizo o Gabinete de Instalação, a proceder ao tratamento dos dados biométricos, profissionais e curriculares no estrito âmbito do credenciamento docente e processo de constituição institucional, em respeito às directivas de proteção de dados.',
+        'Consent for the Processing of Personal Data: I authorize the Installation Office to process my biometric, professional, and curricular data strictly within the scope of teacher accreditation and the institutional constitution process, in accordance with data protection directives.',
       ),
     };
   });

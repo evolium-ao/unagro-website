@@ -160,6 +160,11 @@ function paraPedido(
   for (const [campo, ficheiro] of Object.entries(anexos)) {
     if (ficheiro) corpo.set(campo, ficheiro, ficheiro.name);
   }
+  // Certificados extra, em lista à parte: `certificado_habilitacoes` não muda.
+  // A API ainda não lê este campo (ignora-o até ser atualizada).
+  for (const ficheiro of dossier.certificadosAdicionais) {
+    if (ficheiro) corpo.append('certificado_adicionais[]', ficheiro, ficheiro.name);
+  }
 
   // O `accepted` do Laravel não aceita "true"/"false" em multipart, só 1/0.
   corpo.set('declaracao_honra', dossier.compromissoHonra ? '1' : '0');

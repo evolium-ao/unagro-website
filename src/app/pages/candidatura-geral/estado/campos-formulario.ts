@@ -28,6 +28,7 @@ export const ROTULOS_CAMPOS: Record<string, TextoTraduzido> = {
     pt: 'Certificado(s) de Habilitações Literárias & Equivalência',
     en: 'Academic Qualification Certificate(s) & Equivalence',
   },
+  certificadosAdicionais: { pt: 'Certificados Adicionais', en: 'Additional Certificates' },
   comprovativos: { pt: 'Comprovativos de Docência / I&D / Prática Agrícola', en: 'Proof of Teaching / R&D / Agricultural Practice' },
   carta: { pt: 'Carta de Motivação & Enquadramento Institucional', en: 'Motivation Letter & Institutional Fit' },
   compromissoHonra: { pt: 'Declaração sob compromisso de honra', en: 'Declaration on my honour' },
@@ -46,7 +47,11 @@ export interface CampoEmFalta {
  * mantém o atributo no DOM) ou, para o erro do total do dossier, a secção.
  */
 export function seletorCampo(chave: string): string {
-  return chave === CHAVE_DOSSIER_TOTAL ? '#secao-dossier' : `[formcontrolname="${chave}"]`;
+  if (chave === CHAVE_DOSSIER_TOTAL) {
+    return '#secao-dossier';
+  }
+  // As caixas dos certificados adicionais usam `[formControl]`, sem nome no DOM.
+  return chave === 'certificadosAdicionais' ? '#certificados-dossier' : `[formcontrolname="${chave}"]`;
 }
 
 /**
