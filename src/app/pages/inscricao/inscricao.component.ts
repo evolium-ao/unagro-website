@@ -54,7 +54,7 @@ export class InscricaoComponent {
   );
 
   protected readonly selosHero = computed(() => [
-    this.traducao.getTraducao(['PROCESSO SELETIVO 2026', '2026 ADMISSIONS CYCLE']),
+    this.traducao.getTraducao(['PROCESSO SELECTIVO 2026', '2026 ADMISSIONS CYCLE']),
   ]);
 
   protected readonly ctasHero = computed<CtaBannerDestaque[]>(() => [

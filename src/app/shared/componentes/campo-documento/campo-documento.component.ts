@@ -176,7 +176,7 @@ export class CampoDocumentoComponent implements ControlValueAccessor {
   /** Filtro nativo do seletor de ficheiros, ex.: `.pdf,application/pdf`. */
   readonly aceita = input<string>('');
   /** Rótulo do botão do estado vazio. */
-  readonly textoSelecionar = input<string>('Selecionar ficheiro');
+  readonly textoSelecionar = input<string>('Seleccionar ficheiro');
   /** Linha de formatos/limite por baixo do botão, ex.: "Formatos: PDF até 10MB". */
   readonly textoFormatos = input<string>('');
   readonly textoAnexado = input<string>('Anexado');

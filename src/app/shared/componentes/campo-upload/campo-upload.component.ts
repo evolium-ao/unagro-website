@@ -123,7 +123,7 @@ export class CampoUploadComponent implements ControlValueAccessor, OnInit {
   readonly disabled = input<boolean>(false);
   /** Filtro nativo do seletor de ficheiros, ex.: `.pdf` ou `application/pdf`. */
   readonly aceita = input<string>('');
-  readonly textoAcao = input<string>('Selecione um arquivo');
+  readonly textoAcao = input<string>('Seleccione um arquivo');
   readonly textoArraste = input<string>('ou arraste e solte');
   readonly textoLimite = input<string>('');
   readonly textoTrocar = input<string>('Clique para trocar');

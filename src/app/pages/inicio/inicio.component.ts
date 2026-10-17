@@ -54,7 +54,7 @@ const PILARES_MODELO: PilarBruto[] = [
     icone: 'sprout',
     titulo: { pt: 'Educação em Solo Real', en: 'Education on Real Ground' },
     descricao: {
-      pt: 'Aprendizagem prática diretamente nos campos experimentais e projetos reais da indústria.',
+      pt: 'Aprendizagem prática directamente nos campos experimentais e projectos reais da indústria.',
       en: 'Hands-on learning straight from our experimental fields and real industry projects.',
     },
   },
@@ -81,7 +81,7 @@ const PILARES_MODELO: PilarBruto[] = [
     icone: 'handshake',
     titulo: { pt: 'Conexão com o Mercado', en: 'Industry Connections' },
     descricao: {
-      pt: 'Networking direto com grandes players do agronegócio e estágios garantidos.',
+      pt: 'Networking directo com grandes players do agronegócio e estágios garantidos.',
       en: 'Direct networking with major agribusiness players and guaranteed internships.',
     },
   },

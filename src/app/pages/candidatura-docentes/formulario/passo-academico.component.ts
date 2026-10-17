@@ -61,7 +61,7 @@ export class PassoAcademicoComponent {
     bloco: this.traducao.getTraducao(['Formação Académica', 'Academic Background']),
     titulacao: this.traducao.getTraducao(['Maior titulação', 'Highest degree']),
     titulacaoPlaceholder: this.traducao.getTraducao([
-      'Selecione a sua titulação…',
+      'Seleccione a sua titulação…',
       'Select your degree…',
     ]),
     universidade: this.traducao.getTraducao(['Universidade de origem', 'Awarding university']),

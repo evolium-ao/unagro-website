@@ -166,7 +166,7 @@ export class ModalInscricaoEventoComponent {
   protected readonly textos = computed(() => ({
     titulo: this.traducao.getTraducao(['Inscrição em Evento', 'Event Enrolment']),
     subtitulo: this.traducao.getTraducao([
-      'Preencha os dados abaixo para garantir sua vaga no evento selecionado.',
+      'Preencha os dados abaixo para garantir sua vaga no evento seleccionado.',
       'Fill in the details below to secure your place at the selected event.',
     ]),
     cancelar: this.traducao.getTraducao(['Cancelar', 'Cancel']),

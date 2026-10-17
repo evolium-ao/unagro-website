@@ -38,7 +38,7 @@ interface ServicoBruto {
 const SERVICOS_BRUTOS: ServicoBruto[] = [
   {
     icone: 'rocket',
-    titulo: { pt: 'Incubação de projetos', en: 'Project incubation' },
+    titulo: { pt: 'Incubação de projectos', en: 'Project incubation' },
     descricao: {
       pt: 'Acompanhamento de ideias com potencial de negócio no sector agropecuário.',
       en: 'Support for ideas with business potential in the agricultural sector.',
@@ -56,7 +56,7 @@ const SERVICOS_BRUTOS: ServicoBruto[] = [
     icone: 'flask-conical',
     titulo: { pt: 'Acesso a laboratórios', en: 'Access to laboratories' },
     descricao: {
-      pt: 'Utilização de infraestruturas da universidade para testar e validar soluções.',
+      pt: 'Utilização de infra-estruturas da universidade para testar e validar soluções.',
       en: 'Use of university facilities to test and validate solutions.',
     },
   },
@@ -109,7 +109,7 @@ const FORMAS_APOIO_BRUTAS: FormaApoioBruta[] = [
     icone: 'landmark',
     titulo: { pt: 'Financiar Ideias', en: 'Fund Ideas' },
     descricao: {
-      pt: 'Micro-subvenções para projetos académicos e MVPs em estágio inicial que precisam de pequenos impulsos para validação técnica.',
+      pt: 'Micro-subvenções para projectos académicos e MVPs em estágio inicial que precisam de pequenos impulsos para validação técnica.',
       en: 'Micro-grants for academic projects and early-stage MVPs that need a small push towards technical validation.',
     },
     textoAcao: { pt: 'Programa de Grants', en: 'Grants Programme' },
@@ -121,7 +121,7 @@ const FORMAS_APOIO_BRUTAS: FormaApoioBruta[] = [
     icone: 'sprout',
     titulo: { pt: 'Doar (Research)', en: 'Donate (Research)' },
     descricao: {
-      pt: 'Apoie a infraestrutura de pesquisa pura, bolsas de estudo e laboratórios compartilhados acessíveis a todos os nossos hubs.',
+      pt: 'Apoie a infra-estrutura de pesquisa pura, bolsas de estudo e laboratórios compartilhados acessíveis a todos os nossos hubs.',
       en: 'Support pure research infrastructure, scholarships and shared laboratories accessible to all our hubs.',
     },
     textoAcao: { pt: 'Fundo de Doação', en: 'Donation Fund' },
@@ -276,7 +276,7 @@ export class HubUnagroComponent {
 
   protected readonly descricaoAceleradora = computed(() =>
     this.traducao.getTraducao([
-      'Fundo dedicado a projetos que beneficiam diretamente cooperativas de mulheres rurais no interior do país.',
+      'Fundo dedicado a projectos que beneficiam directamente cooperativas de mulheres rurais no interior do país.',
       'A fund dedicated to projects that directly benefit rural women’s cooperatives in the country’s interior.',
     ]),
   );
@@ -318,7 +318,7 @@ export class HubUnagroComponent {
 
   protected readonly descricaoAcompanhar = computed(() =>
     this.traducao.getTraducao([
-      'Receba atualizações mensais sobre o desempenho das startups, rodadas de investimento e novos editais de pesquisa.',
+      'Receba actualizações mensais sobre o desempenho das startups, rodadas de investimento e novos editais de pesquisa.',
       'Get monthly updates on startup performance, investment rounds and new research calls.',
     ]),
   );
@@ -340,7 +340,7 @@ export class HubUnagroComponent {
 
   protected readonly confirmacaoSubscricao = computed(() =>
     this.traducao.getTraducao([
-      'Obrigado! Vai passar a receber as atualizações mensais no seu e-mail.',
+      'Obrigado! Vai passar a receber as actualizações mensais no seu e-mail.',
       'Thank you! You will now receive the monthly updates by e-mail.',
     ]),
   );

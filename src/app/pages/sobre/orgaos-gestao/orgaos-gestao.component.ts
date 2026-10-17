@@ -74,7 +74,7 @@ export class SobreOrgaosGestaoComponent {
     sobrerotulo: this.traducao.getTraducao(['Liderança Executiva', 'Executive Leadership']),
     titulo: this.traducao.getTraducao(['Órgãos de Gestão', 'Governing Bodies']),
     subtitulo: this.traducao.getTraducao([
-      'Nossa estrutura diretiva é composta por académicos e gestores comprometidos com a visão estratégica e a governança transparente da UNAGRO.',
+      'Nossa estrutura directiva é composta por académicos e gestores comprometidos com a visão estratégica e a governança transparente da UNAGRO.',
       "Our leadership structure is made up of academics and managers committed to UNAGRO's strategic vision and transparent governance.",
     ]),
   }));

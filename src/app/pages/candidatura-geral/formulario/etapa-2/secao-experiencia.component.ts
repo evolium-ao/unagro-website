@@ -107,7 +107,7 @@ export class SecaoExperienciaComponent {
     return {
       titulo: t('Secção 3: Experiência Profissional', 'Section 3: Professional Experience'),
       descricao: t(
-        'Trajetória e experiência no agronegócio ou investigação agrária.',
+        'Trajectória e experiência no agronegócio ou investigação agrária.',
         'Career and experience in agribusiness or agricultural research.',
       ),
       adicionar: t('Adicionar experiência', 'Add experience'),

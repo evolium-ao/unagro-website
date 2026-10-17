@@ -112,7 +112,7 @@ export class ExampleModalGenericoComponent {
   }
 
   confirmar() {
-    alert('Ação confirmada!');
+    alert('Acção confirmada!');
     this.fecharModal();
   }
 }

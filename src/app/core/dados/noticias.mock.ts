@@ -31,12 +31,12 @@ export const NOTICIAS_FALLBACK: NoticiaBruta[] = [
       en: 'New biotechnology laboratories',
     },
     resumo: {
-      pt: 'A UNAGRO expande a sua infraestrutura de ponta para potenciar a investigação em melhoramento de culturas.',
+      pt: 'A UNAGRO expande a sua infra-estrutura de ponta para potenciar a investigação em melhoramento de culturas.',
       en: 'UNAGRO expands its advanced infrastructure to strengthen research in crop improvement.',
     },
     conteudo: {
       pt:
-        'A UNAGRO abriu ao trabalho científico dois novos laboratórios de biotecnologia vegetal, equipados para cultura de tecidos, marcadores moleculares e conservação de germoplasma. A área construída acrescenta cerca de 600 metros quadrados à infraestrutura de investigação do campus.\n\n' +
+        'A UNAGRO abriu ao trabalho científico dois novos laboratórios de biotecnologia vegetal, equipados para cultura de tecidos, marcadores moleculares e conservação de germoplasma. A área construída acrescenta cerca de 600 metros quadrados à infra-estrutura de investigação do campus.\n\n' +
         'O objectivo é encurtar o tempo entre a selecção de material promissor e a sua chegada ao produtor. As primeiras linhas de trabalho concentram-se em variedades de milho e mandioca adaptadas às condições do planalto, com tolerância à seca e resistência às doenças mais frequentes nas explorações familiares.\n\n' +
         'Os laboratórios ficam disponíveis para os projectos de fim de curso e para as teses de mestrado, e abrem também a possibilidade de análises encomendadas por cooperativas e empresas do sector.',
       en:
@@ -56,7 +56,7 @@ export const NOTICIAS_FALLBACK: NoticiaBruta[] = [
       en: "'Inova Agro' contest rewards innovative startups",
     },
     resumo: {
-      pt: 'Jovens empreendedores apresentaram tecnologias disruptivas para o setor.',
+      pt: 'Jovens empreendedores apresentaram tecnologias disruptivas para o sector.',
       en: 'Young entrepreneurs presented disruptive technologies for the sector.',
     },
     conteudo: {

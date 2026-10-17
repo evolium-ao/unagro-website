@@ -67,11 +67,11 @@ export class PassoSubmissaoComponent {
   protected readonly textos = computed(() => ({
     bloco: this.traducao.getTraducao(['Pesquisa e Motivação', 'Research and Motivation']),
     intro: this.traducao.getTraducao([
-      'Por favor, forneça detalhes sobre a sua trajetória académica e como os seus objetivos de pesquisa se conectam com a missão da UNAGRO.',
+      'Por favor, forneça detalhes sobre a sua trajectória académica e como os seus objectivos de pesquisa se conectam com a missão da UNAGRO.',
       'Please provide details about your academic path and how your research goals connect with UNAGRO’s mission.',
     ]),
     linhasPesquisa: this.traducao.getTraducao([
-      'Áreas de pesquisa e projetos atuais',
+      'Áreas de pesquisa e projectos actuais',
       'Research areas and current projects',
     ]),
     linhasPesquisaPlaceholder: this.traducao.getTraducao([
@@ -90,7 +90,7 @@ export class PassoSubmissaoComponent {
       'Upload de curriculum vitae (PDF)',
       'Curriculum vitae upload (PDF)',
     ]),
-    uploadAcao: this.traducao.getTraducao(['Selecione um arquivo', 'Choose a file']),
+    uploadAcao: this.traducao.getTraducao(['Seleccione um arquivo', 'Choose a file']),
     uploadArraste: this.traducao.getTraducao(['ou arraste e solte', 'or drag and drop']),
     uploadLimite: this.traducao.getTraducao(['PDF até 5MB', 'PDF up to 5MB']),
     uploadTrocar: this.traducao.getTraducao(['Clique para trocar', 'Click to replace']),

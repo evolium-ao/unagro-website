@@ -39,7 +39,7 @@ export const ESTRUTURA: EstruturaOrganizacional = {
     id: 'reitoria',
     icone: 'trees',
     titulo: ['Reitoria', 'Rectorate'],
-    legenda: ['Direção Executiva', 'Executive Management'],
+    legenda: ['Direcção Executiva', 'Executive Management'],
   },
   viceReitorias: [
     {
@@ -65,7 +65,7 @@ export const ESTRUTURA: EstruturaOrganizacional = {
     icone: 'graduation-cap',
     titulo: ['Faculdades e Departamentos', 'Faculties and Departments'],
     legenda: [
-      'Unidades operacionais responsáveis pela execução direta das atividades de ensino, pesquisa e extensão em nossas diversas áreas do saber.',
+      'Unidades operacionais responsáveis pela execução directa das actividades de ensino, pesquisa e extensão em nossas diversas áreas do saber.',
       'Operational units responsible for directly delivering teaching, research and outreach across our various fields of knowledge.',
     ],
   },

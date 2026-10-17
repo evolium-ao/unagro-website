@@ -324,7 +324,7 @@ export class ModalConsultarCandidaturaComponent {
       submetidaEm: t('Submetida a', 'Submitted on'),
       descarregar: t('Descarregar ficha (PDF)', 'Download form (PDF)'),
       secaoDados: t('1. Dados Pessoais & Disciplinas', '1. Personal Details & Courses'),
-      disciplinas: t('Disciplinas a Lecionar', 'Courses to Teach'),
+      disciplinas: t('Disciplinas a Leccionar', 'Courses to Teach'),
       secaoFormacao: t('2. Formação Académica & Experiência', '2. Academic Background & Experience'),
       experienciaDocente: t('Experiência Docente', 'Teaching Experience'),
       experienciaProfissional: t('Experiência Profissional', 'Professional Experience'),

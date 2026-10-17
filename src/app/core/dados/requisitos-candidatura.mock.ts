@@ -24,7 +24,7 @@ export const DOCUMENTOS_CANDIDATURA_MOCK: DocumentoCandidatura[] = [
     icone: 'camera',
     titulo: { pt: 'Fotografias', en: 'Photographs' },
     descricao: {
-      pt: '2 fotografias tipo passe atualizadas (fundo branco).',
+      pt: '2 fotografias tipo passe actualizadas (fundo branco).',
       en: '2 recent passport-style photographs (white background).',
     },
   },
@@ -51,7 +51,7 @@ export const REQUISITOS_POR_NIVEL_MOCK: RequisitosPorNivel[] = [
     criterios: [
       { pt: 'Licenciatura concluída em área afim', en: "Completed bachelor's degree in a related field" },
       { pt: 'Certificado de licenciatura com média final', en: 'Degree certificate with final average grade' },
-      { pt: 'Curriculum Vitae atualizado', en: 'Up-to-date curriculum vitae' },
+      { pt: 'Curriculum Vitae actualizado', en: 'Up-to-date curriculum vitae' },
       { pt: 'Carta de motivação', en: 'Motivation letter' },
       { pt: 'Pagamento da taxa de candidatura', en: 'Payment of the application fee' },
     ],

@@ -151,11 +151,11 @@ export class CamposAgendarVisitaComponent {
     telefonePlaceholder: this.traducao.getTraducao(['+244 900 000 000', '+244 900 000 000']),
     data: this.traducao.getTraducao(['Data preferencial', 'Preferred date']),
     hora: this.traducao.getTraducao(['Hora preferencial', 'Preferred time']),
-    horaPlaceholder: this.traducao.getTraducao(['Selecione um horário', 'Select a time slot']),
+    horaPlaceholder: this.traducao.getTraducao(['Seleccione um horário', 'Select a time slot']),
     unidade: this.traducao.getTraducao(['Unidade a visitar', 'Unit to visit']),
     motivo: this.traducao.getTraducao(['Motivo da visita', 'Reason for the visit']),
     motivoPlaceholder: this.traducao.getTraducao([
-      'Descreva brevemente o objetivo da sua visita...',
+      'Descreva brevemente o objectivo da sua visita...',
       'Briefly describe the purpose of your visit...',
     ]),
     participantes: this.traducao.getTraducao(['Nº de participantes', 'No. of participants']),

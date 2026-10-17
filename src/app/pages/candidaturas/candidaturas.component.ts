@@ -42,11 +42,11 @@ const CAMPOS_TRADUZIVEIS_CURSO_OFERTA = ['titulo', 'faculdade', 'grau', 'duracao
 
 const BENEFICIOS_RECRUTAMENTO_BRUTOS: TextoTraduzido[] = [
   {
-    pt: 'Financiamento para projetos de pesquisa aprovados',
+    pt: 'Financiamento para projectos de pesquisa aprovados',
     en: 'Funding for approved research projects',
   },
-  { pt: 'Rede de colaboração internacional ativa', en: 'Active international collaboration network' },
-  { pt: 'Infraestrutura laboratorial de última geração', en: 'State-of-the-art laboratory facilities' },
+  { pt: 'Rede de colaboração internacional activa', en: 'Active international collaboration network' },
+  { pt: 'Infra-estrutura laboratorial de última geração', en: 'State-of-the-art laboratory facilities' },
 ];
 
 const REQUISITOS_BRUTOS: TextoTraduzido[] = [

@@ -87,7 +87,7 @@ export class BlocoFormacaoAcademicaComponent {
     mediaPlaceholder: this.traducao.getTraducao(['Ex: 16,5', 'E.g. 16.5']),
     curso: this.traducao.getTraducao(['Curso de interesse', 'Course of interest']),
     cursoPlaceholder: this.traducao.getTraducao([
-      'Selecione uma graduação...',
+      'Seleccione uma graduação...',
       'Select a degree...',
     ]),
   }));

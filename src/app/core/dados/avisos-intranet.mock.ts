@@ -16,7 +16,7 @@ export const AVISOS_INTRANET_MOCK: AvisoIntranet[] = [
     tipo: 'inscricao',
     titulo: { pt: 'Inscrições em épocas de exame abertas', en: 'Exam period registration open' },
     mensagem: {
-      pt: 'As inscrições para a época normal de exames decorrem até 5 de setembro.',
+      pt: 'As inscrições para a época normal de exames decorrem até 5 de Setembro.',
       en: 'Registration for the regular exam period runs until September 5.',
     },
     data: '2026-08-18',

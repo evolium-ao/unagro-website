@@ -122,7 +122,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
     periodo: ['Janeiro 2025 – Dezembro 2027', 'January 2025 – December 2027'],
     areaTematica: ['Melhoramento de Culturas', 'Crop Improvement'],
     resumo: [
-      'Seleção e teste de variedades de milho com maior tolerância a períodos de seca prolongada.',
+      'Selecção e teste de variedades de milho com maior tolerância a períodos de seca prolongada.',
       'Selection and testing of maize varieties with greater tolerance to prolonged drought periods.',
     ],
     resultado_principal: ['+35% Resistência à Seca', '+35% Drought Resistance'],
@@ -155,7 +155,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       {
         id: 'selecao-varietal',
         icone: 'sprout',
-        titulo: ['Seleção Varietal', 'Varietal Selection'],
+        titulo: ['Selecção Varietal', 'Varietal Selection'],
         descricao: [
           'Avaliar 12 variedades em ensaios de campo ao longo de três campanhas.',
           'Evaluate 12 varieties in field trials over three growing seasons.',
@@ -173,7 +173,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       {
         id: 'selecao-participativa',
         icone: 'users',
-        titulo: ['Seleção Participativa', 'Participatory Selection'],
+        titulo: ['Selecção Participativa', 'Participatory Selection'],
         descricao: [
           'Envolver 200 produtores na escolha das variedades finais.',
           'Involve 200 farmers in choosing the final varieties.',
@@ -226,7 +226,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         icone: 'wrench',
         titulo: ['Equipamento', 'Equipment'],
         descricao: [
-          'Frota de tratores autónomos e estufas inteligentes com climatização solar passiva.',
+          'Frota de tractores autónomos e estufas inteligentes com climatização solar passiva.',
           'A fleet of autonomous tractors and smart greenhouses with passive solar climate control.',
         ],
       },
@@ -278,7 +278,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         id: 'implementacao',
         titulo: ['Implementação', 'Implementation'],
         descricao: [
-          'Seleção participativa das variedades com os produtores.',
+          'Selecção participativa das variedades com os produtores.',
           'Participatory selection of varieties with the farmers.',
         ],
         estado: 'atual',
@@ -496,7 +496,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         icone: 'wrench',
         titulo: ['Equipamento', 'Equipment'],
         descricao: [
-          'Frota de tratores autónomos e estufas inteligentes com climatização solar passiva.',
+          'Frota de tractores autónomos e estufas inteligentes com climatização solar passiva.',
           'A fleet of autonomous tractors and smart greenhouses with passive solar climate control.',
         ],
       },
@@ -529,7 +529,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         periodo: ['Q1 2025', 'Q1 2025'],
         titulo: ['Planeamento', 'Planning'],
         descricao: [
-          'Seleção das explorações e acordos com os criadores.',
+          'Selecção das explorações e acordos com os criadores.',
           'Selection of farms and agreements with the breeders.',
         ],
         estado: 'concluida',
@@ -655,7 +655,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
     periodo: ['Janeiro 2025 – Dezembro 2026', 'January 2025 – December 2026'],
     areaTematica: ['Agronegócio e Cooperativismo', 'Agribusiness and Cooperatives'],
     resumo: [
-      'Apoio à gestão e comercialização coletiva de cooperativas de pequenos produtores.',
+      'Apoio à gestão e comercialização colectiva de cooperativas de pequenos produtores.',
       'Support for the management and collective marketing of smallholder cooperatives.',
     ],
     resultado_principal: ['6 Cooperativas Apoiadas', '6 Cooperatives Supported'],
@@ -665,7 +665,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       'On the outskirts of Luanda, hundreds of smallholders supply the urban markets every day, yet they do so in isolation and without contracts. With no storage or transport of their own, they sell at the farm gate to the first buyer who turns up.',
     ],
     desafio: [
-      'Pequenos produtores vendem a preços baixos por falta de organização coletiva e acesso a mercados.',
+      'Pequenos produtores vendem a preços baixos por falta de organização colectiva e acesso a mercados.',
       'Smallholder farmers sell at low prices due to lack of collective organization and market access.',
     ],
     estatisticasContexto: [
@@ -759,7 +759,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         icone: 'wrench',
         titulo: ['Equipamento', 'Equipment'],
         descricao: [
-          'Frota de tratores autónomos e estufas inteligentes com climatização solar passiva.',
+          'Frota de tractores autónomos e estufas inteligentes com climatização solar passiva.',
           'A fleet of autonomous tractors and smart greenhouses with passive solar climate control.',
         ],
       },
@@ -811,7 +811,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         id: 'implementacao',
         titulo: ['Implementação', 'Implementation'],
         descricao: [
-          'Centros de agregação e formação em gestão coletiva.',
+          'Centros de agregação e formação em gestão colectiva.',
           'Aggregation centres and training in collective management.',
         ],
         estado: 'atual',
@@ -884,7 +884,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       },
       {
         id: 'guia-comercializacao-coletiva',
-        titulo: ['Guia de Comercialização Coletiva.pdf', 'Collective Marketing Guide.pdf'],
+        titulo: ['Guia de Comercialização Colectiva.pdf', 'Collective Marketing Guide.pdf'],
       },
       {
         id: 'relatorio-financeiro-2025',
@@ -918,17 +918,17 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
     periodo: ['Fevereiro 2023 – Janeiro 2025', 'February 2023 – January 2025'],
     areaTematica: ['Agricultura Sustentável', 'Sustainable Agriculture'],
     resumo: [
-      'Reflorestação com espécies nativas em áreas afetadas por desmatamento.',
+      'Reflorestação com espécies nativas em áreas afectadas por desmatamento.',
       'Reforestation with native species in areas affected by deforestation.',
     ],
     resultado_principal: ['50k Árvores Plantadas', '50k Trees Planted'],
     imagem_url: '/imagens/desenvolvimento-projecto-1.png',
     contexto: [
-      'Localizada no coração da província de Luanda, a Fazenda da Quiminha foi outrora um símbolo de prosperidade agrícola. Contudo, décadas de obsolescência técnica e falta de investimento transformaram este vasto território num mosaico de terras áridas e infraestruturas em ruína.',
+      'Localizada no coração da província de Luanda, a Fazenda da Quiminha foi outrora um símbolo de prosperidade agrícola. Contudo, décadas de obsolescência técnica e falta de investimento transformaram este vasto território num mosaico de terras áridas e infra-estruturas em ruína.',
       'Located in the heart of Luanda province, the Quiminha Farm was once a symbol of agricultural prosperity. Decades of technical obsolescence and lack of investment, however, turned this vast territory into a patchwork of arid land and crumbling infrastructure.',
     ],
     desafio: [
-      'O desafio principal reside em reverter este ciclo, não apenas reativando a terra, mas regenerando o solo através de práticas biológicas que garantam a sustentabilidade a longo prazo num clima cada vez mais imprevisível.',
+      'O desafio principal reside em reverter este ciclo, não apenas reactivando a terra, mas regenerando o solo através de práticas biológicas que garantam a sustentabilidade a longo prazo num clima cada vez mais imprevisível.',
       'The main challenge lies in reversing this cycle — not merely bringing the land back into use, but regenerating the soil through biological practices that secure long-term sustainability in an increasingly unpredictable climate.',
     ],
     estatisticasContexto: [
@@ -940,7 +940,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       {
         id: 'inatividade-tecnica',
         valor: ['12 Anos', '12 Years'],
-        rotulo: ['Inatividade técnica', 'Technical inactivity'],
+        rotulo: ['Inactividade técnica', 'Technical inactivity'],
       },
     ],
     imagem_contexto_url: '/imagens/homem-do-campo.png',
@@ -963,7 +963,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         icone: 'trending-up',
         titulo: ['Produtividade', 'Productivity'],
         descricao: [
-          'Otimizar os ciclos de cultivo para 3 colheitas anuais.',
+          'Optimizar os ciclos de cultivo para 3 colheitas anuais.',
           'Optimise the cropping cycles to three harvests per year.',
         ],
       },
@@ -1023,7 +1023,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
         icone: 'wrench',
         titulo: ['Equipamento', 'Equipment'],
         descricao: [
-          'Frota de tratores autónomos e estufas inteligentes com climatização solar passiva.',
+          'Frota de tractores autónomos e estufas inteligentes com climatização solar passiva.',
           'A fleet of autonomous tractors and smart greenhouses with passive solar climate control.',
         ],
       },
@@ -1032,7 +1032,7 @@ export const PROJETOS_MOCK: ProjetoBruto[] = [
       {
         id: 'beneficiarios-diretos',
         valor: ['500+', '500+'],
-        rotulo: ['Beneficiários diretos', 'Direct beneficiaries'],
+        rotulo: ['Beneficiários directos', 'Direct beneficiaries'],
       },
       {
         id: 'hectares-recuperados',

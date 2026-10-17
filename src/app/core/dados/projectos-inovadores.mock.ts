@@ -10,7 +10,7 @@ export const PROJECTOS_INOVADORES_MOCK: ProjectoInovador[] = [
     id: 'vertical-farming-luanda',
     titulo: { pt: 'Vertical Farming Luanda', en: 'Vertical Farming Luanda' },
     descricao: {
-      pt: 'Projeto piloto para implementar fazendas verticais automatizadas em centros urbanos, reduzindo o custo logístico em 40%.',
+      pt: 'Projecto piloto para implementar fazendas verticais automatizadas em centros urbanos, reduzindo o custo logístico em 40%.',
       en: 'Pilot project to deploy automated vertical farms in urban centres, cutting logistics costs by 40%.',
     },
     destaque: true,

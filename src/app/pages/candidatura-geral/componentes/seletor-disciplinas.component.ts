@@ -175,17 +175,17 @@ export class SeletorDisciplinasComponent implements ControlValueAccessor {
     return {
       titulo: t('Registo de Intenção Curricular Multidisciplinar', 'Multidisciplinary Curricular Intention Record'),
       subtitulo: t(
-        'Pode adicionar múltiplos cursos e unidades curriculares que pretende lecionar.',
+        'Pode adicionar múltiplos cursos e unidades curriculares que pretende leccionar.',
         'You can add several degree programmes and course units you wish to teach.',
       ),
       adicionadas: t('Disciplinas Adicionadas', 'Courses Added'),
       adicionada: t('Disciplina Adicionada', 'Course Added'),
       curso: t('1. Escolha o curso', '1. Choose the degree programme'),
-      cursoPlaceholder: t('-- Selecione o curso --', '-- Select the degree programme --'),
+      cursoPlaceholder: t('-- Seleccione o curso --', '-- Select the degree programme --'),
       disciplina: t('2. Escolha a disciplina / Unidade curricular', '2. Choose the course / Course unit'),
-      disciplinaPlaceholder: t('-- Selecione a disciplina --', '-- Select the course --'),
+      disciplinaPlaceholder: t('-- Seleccione a disciplina --', '-- Select the course --'),
       adicionar: t('Adicionar', 'Add'),
-      listaTitulo: t('Disciplinas selecionadas pelo docente:', 'Courses selected by the lecturer:'),
+      listaTitulo: t('Disciplinas seleccionadas pelo docente:', 'Courses selected by the lecturer:'),
       listaDica: t('Clique no ícone de remoção para retirar', 'Click the remove icon to withdraw'),
       listaVazia: t(
         'Ainda não adicionou nenhuma disciplina. Escolha o curso, a disciplina e clique em «Adicionar».',

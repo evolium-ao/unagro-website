@@ -169,7 +169,7 @@ export class ModalInscricaoCursoComponent {
       'Short Course Enrolment',
     ]),
     subtitulo: this.traducao.getTraducao([
-      'Preencha os dados abaixo para garantir sua vaga no módulo selecionado.',
+      'Preencha os dados abaixo para garantir sua vaga no módulo seleccionado.',
       'Fill in the details below to secure your place in the selected module.',
     ]),
     cancelar: this.traducao.getTraducao(['Cancelar', 'Cancel']),

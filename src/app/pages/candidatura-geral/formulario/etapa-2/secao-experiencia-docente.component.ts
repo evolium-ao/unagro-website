@@ -113,7 +113,7 @@ export class SecaoExperienciaDocenteComponent {
     return {
       titulo: t('Secção 2: Experiência Docente', 'Section 2: Teaching Experience'),
       descricao: t(
-        'Trajetória letiva no ensino superior e experiência no agronegócio ou investigação agrária.',
+        'Trajectória lectiva no ensino superior e experiência no agronegócio ou investigação agrária.',
         'Higher education teaching record and experience in agribusiness or agricultural research.',
       ),
       adicionar: t('Adicionar experiência', 'Add experience'),
@@ -121,7 +121,7 @@ export class SecaoExperienciaDocenteComponent {
       universidadePlaceholder: t('Ex.: Universidade Agostinho Neto', 'E.g. Agostinho Neto University'),
       faculdade: t('Faculdade', 'Faculty'),
       faculdadePlaceholder: t('Ex.: Agronómica e Produção Vegetal', 'E.g. Agronomy and Crop Production'),
-      disciplina: t('Disciplina lecionada', 'Course taught'),
+      disciplina: t('Disciplina leccionada', 'Course taught'),
       adicionarDisciplina: t('Adicionar disciplina', 'Add course'),
       dicaDisciplina: t(
         'Não encontra a disciplina? Escreva-a na pesquisa para a adicionar.',

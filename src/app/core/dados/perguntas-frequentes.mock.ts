@@ -8,7 +8,7 @@ export const PERGUNTAS_FREQUENTES_MOCK: PerguntaFrequente[] = [
       en: 'Which payment methods are accepted?',
     },
     resposta: {
-      pt: 'Aceitamos pagamentos via Multicaixa Express, Transferência Bancária (apresentando comprovativo no portal) e Depósito Direto.',
+      pt: 'Aceitamos pagamentos via Multicaixa Express, Transferência Bancária (apresentando comprovativo no portal) e Depósito Directo.',
       en: 'We accept payments via Multicaixa Express, bank transfer (submitting the receipt in the portal) and direct deposit.',
     },
   },

@@ -75,6 +75,6 @@ export class CamposInscricaoEventoComponent {
     ]),
     telefone: this.traducao.getTraducao(['Telefone', 'Phone']),
     telefonePlaceholder: this.traducao.getTraducao(['+244 9XX XXX XXX', '+244 9XX XXX XXX']),
-    evento: this.traducao.getTraducao(['Evento selecionado', 'Selected event']),
+    evento: this.traducao.getTraducao(['Evento seleccionado', 'Selected event']),
   }));
 }

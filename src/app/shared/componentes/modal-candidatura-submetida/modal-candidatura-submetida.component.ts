@@ -273,7 +273,7 @@ export class ModalCandidaturaSubmetidaComponent {
         'Your preliminary expression of interest in joining the faculty has been recorded and forwarded to the Installation Office.',
       ),
       rotuloCodigo: t('Código de identificação da candidatura', 'Application identification code'),
-      rotuloArea: t('Disciplinas a lecionar', 'Courses to teach'),
+      rotuloArea: t('Disciplinas a leccionar', 'Courses to teach'),
       copiar: t('Copiar', 'Copy'),
       copiado: t('Copiado', 'Copied'),
       submetidoEm: t(

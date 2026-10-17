@@ -32,10 +32,10 @@ export class SecaoAreaCandidaturaComponent {
     return {
       titulo: t('Secção 2: Área de Candidatura & Vagas', 'Section 2: Application Area & Vacancies'),
       descricao: t(
-        'Selecione a linha de investigação e docência pretendida de acordo com a convocatória.',
+        'Seleccione a linha de investigação e docência pretendida de acordo com a convocatória.',
         'Select the intended research and teaching line in accordance with the call.',
       ),
-      semDisciplinas: t('Adicione pelo menos uma disciplina que pretende lecionar.', 'Add at least one course you wish to teach.'),
+      semDisciplinas: t('Adicione pelo menos uma disciplina que pretende leccionar.', 'Add at least one course you wish to teach.'),
     };
   });
 }

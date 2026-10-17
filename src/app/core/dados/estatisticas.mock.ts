@@ -28,7 +28,7 @@ export const ESTATISTICAS_INSTITUCIONAIS_MOCK: Estatistica[] = [
   {
     id: 'projetos',
     valor: '29',
-    rotulo: { pt: 'Projetos Desenvolvidos', en: 'Projects Developed' },
+    rotulo: { pt: 'Projectos Desenvolvidos', en: 'Projects Developed' },
     icone: 'flask-conical',
   },
 ];

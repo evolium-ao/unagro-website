@@ -67,7 +67,7 @@ export class Etapa4Component {
         'Identificação oficial e departamento académico de enquadramento.',
         'Official identification and academic department.',
       ),
-      disciplinas: t('Disciplinas a Lecionar', 'Courses to Teach'),
+      disciplinas: t('Disciplinas a Leccionar', 'Courses to Teach'),
       formacaoTitulo: t('2. Formação Académica & Experiência', '2. Academic Background & Experience'),
       formacaoDescricao: t(
         'Qualificações académicas, titulação e trajectória profissional consolidada.',

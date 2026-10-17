@@ -211,7 +211,7 @@ export class SecaoDossierComponent {
       ),
       curriculo: t('2. Curriculum Vitae Circunstanciado', '2. Detailed Curriculum Vitae'),
       curriculoDescricao: t(
-        'Modelo detalhado com publicações, docência e projetos aplicados.',
+        'Modelo detalhado com publicações, docência e projectos aplicados.',
         'Detailed template with publications, teaching and applied projects.',
       ),
       certificados: t(
@@ -239,18 +239,18 @@ export class SecaoDossierComponent {
         '3. Proof of Teaching / R&D / Agricultural Practice',
       ),
       comprovativosDescricao: t(
-        'Declarações de tempo de serviço, sumários letivos, artigos científicos de destaque ou certificados de consultoria agrária.',
+        'Declarações de tempo de serviço, sumários lectivos, artigos científicos de destaque ou certificados de consultoria agrária.',
         'Length-of-service statements, teaching summaries, notable scientific papers or agricultural consultancy certificates.',
       ),
       carta: t('4. Carta de Motivação & Enquadramento Institucional', '4. Motivation Letter & Institutional Fit'),
       cartaDescricao: t(
-        'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 1 página com 420 palavras, fonte Times New Roman 12) explanando a visão para o desenvolvimento do setor agrário nacional.',
+        'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 1 página com 420 palavras, fonte Times New Roman 12) explanando a visão para o desenvolvimento do sector agrário nacional.',
         'Letter addressed to the AgroSophia Installation Committee (maximum 1 page with 420 words, font Times New Roman 12) setting out your vision for the development of the national agricultural sector.',
       ),
       opcional: t('(Opcional / Valorativo)', '(Optional / Adds value)'),
-      selecionarPdf: t('Selecionar Ficheiro (PDF)', 'Select File (PDF)'),
-      selecionarDocumentos: t('Selecionar Documentos (PDF ou ZIP)', 'Select Documents (PDF or ZIP)'),
-      selecionarCarta: t('Selecionar Carta (PDF)', 'Select Letter (PDF)'),
+      selecionarPdf: t('Seleccionar Ficheiro (PDF)', 'Select File (PDF)'),
+      selecionarDocumentos: t('Seleccionar Documentos (PDF ou ZIP)', 'Select Documents (PDF or ZIP)'),
+      selecionarCarta: t('Seleccionar Carta (PDF)', 'Select Letter (PDF)'),
       formatosCurriculo: t(`Formatos: PDF até ${mb.curriculo}MB`, `Formats: PDF up to ${mb.curriculo}MB`),
       formatosCertificados: t(`Formatos: PDF até ${mb.certificados}MB`, `Formats: PDF up to ${mb.certificados}MB`),
       formatosCertificadoAdicional: t(

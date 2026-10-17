@@ -167,7 +167,7 @@ export class CartaoProjectoInovadorComponent {
   });
 
   protected readonly textoApoiar = computed(() =>
-    this.traducao.getTraducao(['Apoiar Projeto', 'Support Project']),
+    this.traducao.getTraducao(['Apoiar Projecto', 'Support Project']),
   );
 
   protected readonly rotuloProgresso = computed(() =>

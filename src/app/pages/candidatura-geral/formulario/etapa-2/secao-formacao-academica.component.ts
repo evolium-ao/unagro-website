@@ -133,7 +133,7 @@ export class SecaoFormacaoAcademicaComponent {
       faculdade: t('Faculdade', 'Faculty'),
       faculdadePlaceholder: t('Ex.: Agronómica e Produção Vegetal', 'E.g. Agronomy and Crop Production'),
       curso: t('Curso', 'Degree programme'),
-      cursoPlaceholder: t('Ex.: Fitotecnia e Proteção de Culturas', 'E.g. Crop Science and Protection'),
+      cursoPlaceholder: t('Ex.: Fitotecnia e Protecção de Culturas', 'E.g. Crop Science and Protection'),
       pais: t('País', 'Country'),
       selecione: t('Selecione...', 'Select...'),
       identificador: t(
@@ -141,7 +141,7 @@ export class SecaoFormacaoAcademicaComponent {
         'Researcher Identifier (ORCID / CiênciaVitae / Lattes / Google Scholar)',
       ),
       identificadorAjuda: t(
-        'Permite ao Gabinete Científico consultar prontamente as suas publicações indexadas e projetos de I&D.',
+        'Permite ao Gabinete Científico consultar prontamente as suas publicações indexadas e projectos de I&D.',
         'Allows the Scientific Office to promptly review your indexed publications and R&D projects.',
       ),
     };

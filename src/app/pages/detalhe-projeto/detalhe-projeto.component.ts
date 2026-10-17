@@ -295,10 +295,10 @@ export class DetalheProjetoComponent {
 
   /** Rótulos fixos da secção de objectivos — os objectivos em si vêm do projecto. */
   protected readonly tituloObjetivos = computed(() =>
-    this.traducao.getTraducao(['Objetivos do Projecto', 'Project Objectives']),
+    this.traducao.getTraducao(['Objectivos do Projecto', 'Project Objectives']),
   );
   protected readonly tituloObjetivoGeral = computed(() =>
-    this.traducao.getTraducao(['Objetivo Geral', 'Overall Objective']),
+    this.traducao.getTraducao(['Objectivo Geral', 'Overall Objective']),
   );
 
   /** Rótulo fixo da secção da solução — os componentes dela vêm do projecto. */
@@ -368,7 +368,7 @@ export class DetalheProjetoComponent {
       {
         id: 'telefone',
         icone: 'phone',
-        rotulo: this.traducao.getTraducao(['Telefone direto', 'Direct phone']),
+        rotulo: this.traducao.getTraducao(['Telefone directo', 'Direct phone']),
         valor: contacto.telefone,
       },
       {
@@ -394,7 +394,7 @@ export class DetalheProjetoComponent {
     this.traducao.getTraducao(['Tipo de Interessado', 'Type of Interest']),
   );
   protected readonly placeholderTipoInteressado = computed(() =>
-    this.traducao.getTraducao(['Selecione uma opção', 'Select an option']),
+    this.traducao.getTraducao(['Seleccione uma opção', 'Select an option']),
   );
   protected readonly rotuloMensagem = computed(() =>
     this.traducao.getTraducao(['Mensagem', 'Message']),

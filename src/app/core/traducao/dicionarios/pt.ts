@@ -43,7 +43,7 @@ export const pt = {
     enviar: 'Enviar',
     enviarMensagem: 'Enviar mensagem',
     voltarInicio: 'Voltar ao início',
-    selecionarIdioma: 'Selecionar idioma',
+    selecionarIdioma: 'Seleccionar idioma',
     pesquisar: 'Pesquisar',
     abrirMenu: 'Abrir menu',
     fecharMenu: 'Fechar menu',
@@ -90,7 +90,7 @@ export const pt = {
       campoEmail: 'Email',
       campoAssunto: 'Assunto',
       campoMensagem: 'Mensagem',
-      assuntoPlaceholder: 'Selecione um assunto',
+      assuntoPlaceholder: 'Seleccione um assunto',
       assuntoGeral: 'Informação geral',
       assuntoCandidaturas: 'Candidaturas',
       assuntoCursos: 'Cursos e formações',
@@ -121,10 +121,10 @@ export const pt = {
       titulo: 'Desenvolvimento',
       subtitulo:
         'Investigação aplicada, extensão e transferência de conhecimento ao serviço do sector agropecuário nacional.',
-      eixosTitulo: 'Eixos de atuação',
+      eixosTitulo: 'Eixos de actuação',
       projetosTitulo: 'Projetos',
       projetosTexto:
-        'Esta secção reúne os projetos de investigação e extensão da UNAGRO. Conteúdo em preparação.',
+        'Esta secção reúne os projectos de investigação e extensão da UNAGRO. Conteúdo em preparação.',
     },
     hub: {
       titulo: 'HUB UNAGRO',
@@ -141,10 +141,10 @@ export const pt = {
       solucaoTitulo: 'A solução',
       cronogramaTitulo: 'Cronograma',
       galeriaTitulo: 'Galeria',
-      contactoTitulo: 'Contactar a equipa do projeto',
+      contactoTitulo: 'Contactar a equipa do projecto',
       contactoDescricao:
-        'Tem interesse em colaborar ou saber mais sobre este projeto? Envie-nos uma mensagem.',
-      naoEncontrado: 'Projeto não encontrado.',
+        'Tem interesse em colaborar ou saber mais sobre este projecto? Envie-nos uma mensagem.',
+      naoEncontrado: 'Projecto não encontrado.',
     },
     estudantes: {
       titulo: 'Espaço do Estudante',
@@ -184,7 +184,7 @@ export const pt = {
       impactoTitulo: 'O nosso impacto',
       historiasTitulo: 'Histórias de sucesso',
       doacaoTitulo: 'Contribuir com a UNAGRO',
-      doacaoDescricao: 'Apoie bolsas de estudo e projetos de investigação com uma contribuição.',
+      doacaoDescricao: 'Apoie bolsas de estudo e projectos de investigação com uma contribuição.',
       campoNome: 'Nome completo',
       campoEmail: 'Email',
       campoValor: 'Valor da contribuição (Kz)',
@@ -236,7 +236,7 @@ export const pt = {
       heroCtaBrochura: 'Baixar a brochura em PDF',
       porqueTitulo: 'Por que a UNAGRO?',
       porqueDescricao:
-        'Nós não apenas ensinamos agricultura; nós definimos o seu futuro. Os nossos professores desfrutam de um ecossistema projetado para impulsionar a descoberta.',
+        'Nós não apenas ensinamos agricultura; nós definimos o seu futuro. Os nossos professores desfrutam de um ecossistema projectado para impulsionar a descoberta.',
       requisitosTitulo: 'Requisitos Gerais',
       duvidasTexto: 'Dúvidas sobre o processo?',
       duvidasLink: 'Contacte o RH Académico',
@@ -288,7 +288,7 @@ export const pt = {
     formacoes: {
       titulo: 'Formações',
       subtitulo:
-        'Cursos de curta duração para atualizar competências técnicas no sector agropecuário.',
+        'Cursos de curta duração para actualizar competências técnicas no sector agropecuário.',
       cursosTitulo: 'Cursos disponíveis',
       vantagensTitulo: 'Vantagens da certificação UNAGRO',
       datasTitulo: 'Próximas datas',
@@ -325,7 +325,7 @@ export const pt = {
       noticiasSubtitulo: 'Veja aqui notícias recentes',
       eventoTitulo: 'Próximo evento em destaque',
       ctaFinalTitulo: 'Pronto para começar o seu percurso na UNAGRO?',
-      ctaFinalSubtitulo: 'As candidaturas para o próximo ano letivo estão abertas.',
+      ctaFinalSubtitulo: 'As candidaturas para o próximo ano lectivo estão abertas.',
       ctaFinalBotao: 'Ver como me candidatar',
     },
   },
@@ -336,7 +336,7 @@ export const pt = {
       paragrafoUm:
         'Fundada em 2026, a Universidade de Agronegócio de Angola (UNAGRO) nasceu da visão estratégica de transformar o potencial agrícola de Angola em realidade económica tangível. O que começou como um centro de excelência em Luanda, rapidamente se expandiu para polos estratégicos na província de Icolo e Bengo.',
       paragrafoDois:
-        'Ao longo de um ano, a UNAGRO tem sido o berço de inovações fundamentais para o setor produtivo nacional, graduando mais de 5.000 profissionais que hoje lideram as principais explorações agrícolas e centros de investigação do país.',
+        'Ao longo de um ano, a UNAGRO tem sido o berço de inovações fundamentais para o sector produtivo nacional, graduando mais de 5.000 profissionais que hoje lideram as principais explorações agrícolas e centros de investigação do país.',
       destaqueTitulo: 'Reconhecimento Nacional',
       destaqueTexto: 'Certificada pelo Ministério do Ensino Superior e Inovação',
       fechar: 'Fechar a nossa história',
@@ -380,7 +380,7 @@ export const pt = {
     },
     inscricao: {
       titulo: 'Inscrição',
-      descricao: 'Formulário de inscrição no processo seletivo da UNAGRO.',
+      descricao: 'Formulário de inscrição no processo selectivo da UNAGRO.',
     },
     detalheCurso: {
       titulo: 'Curso',
@@ -392,7 +392,7 @@ export const pt = {
     },
     detalheProjeto: {
       titulo: 'Projeto',
-      descricao: 'Detalhes do projeto de investigação e extensão.',
+      descricao: 'Detalhes do projecto de investigação e extensão.',
     },
     detalheNoticia: {
       titulo: 'Notícia',

@@ -75,7 +75,7 @@ export class EtapaCronogramaComponent {
     const prefixo =
       etapa.periodo ??
       (etapa.estado === 'atual'
-        ? this.traducao.getTraducao(['Fase Atual', 'Current Phase'])
+        ? this.traducao.getTraducao(['Fase Actual', 'Current Phase'])
         : undefined);
 
     return prefixo ? `${prefixo} - ${etapa.descricao}` : etapa.descricao;

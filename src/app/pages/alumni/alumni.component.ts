@@ -257,7 +257,7 @@ export class AlumniComponent {
 
   protected readonly descricaoContribuir = computed(() =>
     this.traducao.getTraducao([
-      'O seu apoio permite-nos continuar a oferecer educação de excelência e a apoiar a próxima geração de talentos através de bolsas de estudo e infraestruturas de ponta.',
+      'O seu apoio permite-nos continuar a oferecer educação de excelência e a apoiar a próxima geração de talentos através de bolsas de estudo e infra-estruturas de ponta.',
       'Your support allows us to keep offering education of excellence and to back the next generation of talent through scholarships and state-of-the-art facilities.',
     ]),
   );

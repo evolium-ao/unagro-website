@@ -15,7 +15,7 @@ export const VANTAGENS_DOCENCIA_MOCK: VantagemDocencia[] = [
     icone: 'landmark',
     titulo: { pt: 'Financiamento de Pesquisa', en: 'Research Funding' },
     descricao: {
-      pt: 'Suporte institucional substancial para projetos de longo prazo e captação de recursos externos.',
+      pt: 'Suporte institucional substancial para projectos de longo prazo e captação de recursos externos.',
       en: 'Substantial institutional support for long-term projects and external fundraising.',
     },
   },
@@ -63,7 +63,7 @@ export const REQUISITOS_DOCENCIA_MOCK: RequisitoDocencia[] = [
     icone: 'languages',
     titulo: { pt: 'Proficiência Linguística', en: 'Language Proficiency' },
     descricao: {
-      pt: 'Fluência em Português e Inglês (nível académico) é mandatória para lecionar.',
+      pt: 'Fluência em Português e Inglês (nível académico) é mandatória para leccionar.',
       en: 'Fluency in Portuguese and English (academic level) is mandatory to teach.',
     },
   },

@@ -190,11 +190,11 @@ export const DOCUMENTOS_CANDIDATURA_GERAL_MOCK: DocumentoCandidaturaGeral[] = [
   {
     id: 'experiencia',
     titulo: {
-      pt: 'Comprovativo de Experiência no Setor Agrário (Se aplicável)',
+      pt: 'Comprovativo de Experiência no Sector Agrário (Se aplicável)',
       en: 'Proof of Experience in the Agricultural Sector (If applicable)',
     },
     descricao: {
-      pt: 'Declarações de serviço e projetos técnicos no setor.',
+      pt: 'Declarações de serviço e projectos técnicos no sector.',
       en: 'Employment statements and technical projects in the sector.',
     },
   },

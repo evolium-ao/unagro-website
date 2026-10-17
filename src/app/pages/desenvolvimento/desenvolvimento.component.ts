@@ -278,7 +278,7 @@ const PASSOS_METODOLOGIA_MOCK: PassoMetodologia[] = [
     icone: 'trending-up',
     titulo: ['Monitoramento', 'Monitoring'],
     descricao: [
-      'Acompanhamento de KPIs em tempo real e otimização dinâmica de performance.',
+      'Acompanhamento de KPIs em tempo real e optimização dinâmica de performance.',
       'Real-time KPI tracking and dynamic performance optimisation.',
     ],
   },

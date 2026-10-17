@@ -5,7 +5,7 @@ export const PILARES_FACULDADE_MOCK: PilarFaculdade[] = [
     id: 'ciencias-agrarias',
     nome: { pt: 'Educação em Solo Real', en: 'Education in Real Soil' },
     descricao: {
-      pt: 'Aprendizagem prática diretamente nos campos experimentais e projetos reais da indústria.',
+      pt: 'Aprendizagem prática directamente nos campos experimentais e projectos reais da indústria.',
       en: 'Practical learning directly in the experimental fields and real-world projects of the industry.',
     },
     icone: 'sprout',
@@ -38,7 +38,7 @@ export const PILARES_FACULDADE_MOCK: PilarFaculdade[] = [
       en: 'Market Connection',
     },
     descricao: {
-      pt: 'Networking direto com grandes players do agronegócio e estágios garantidos.',
+      pt: 'Networking directo com grandes players do agronegócio e estágios garantidos.',
       en: 'Direct networking with major agribusiness players and guaranteed internships.',
     },
     icone: 'trees',
