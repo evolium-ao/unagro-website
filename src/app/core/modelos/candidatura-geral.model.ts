@@ -161,6 +161,8 @@ export interface NovaCandidaturaGeral {
     compromissoHonra: boolean;
     consentimentoDados: boolean;
   };
+  /** Código OTP enviado para `dados.email` na etapa 4 — a API volta a verificá-lo ao receber. */
+  codigoOtp: string;
 }
 
 /** O que o modal de sucesso precisa da candidatura que a API acabou de criar. */

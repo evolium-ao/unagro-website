@@ -14,9 +14,9 @@ export const environment = {
   // A oferta da candidatura docente (`/candidaturas-docentes/areas`) e o novo
   // `CandidaturaDocenteRequest` só existem, por agora, no servidor da rede local.
   //apiUrl: 'http://192.168.1.252:8000/api',
-  apiUrl: 'https://apiunagro.evofenix.it.ao/api',
-
-  // apiUrl: 'https://apiunagro.evofenix.it.ao/api',
+  // a
+  //apiUrl: 'https://victory-them-either-printer.trycloudflare.com/api',
+   apiUrl: 'https://apiunagro.evofenix.it.ao/api',
   /**
    * Endereço público do site, sem barra no fim — base dos links que se
    * partilham (p. ex. a convocatória no modal de candidatura submetida). É o

@@ -22,6 +22,7 @@ import {
   ID_MODAL_CAMPOS_EM_FALTA,
   ModalCamposEmFaltaComponent,
 } from '../componentes/modal-campos-em-falta.component';
+import { opcoesModalVerificarEmail } from '../componentes/modal-verificar-email.component';
 import { irParaCampo } from '../estado/campos-formulario';
 import { CandidaturaGeralEstadoService, NumeroEtapa } from '../estado/candidatura-geral-estado.service';
 
@@ -174,7 +175,22 @@ export class FormularioCandidaturaComponent {
       void this.router.navigate([ROTA_CANDIDATURA_GERAL, `etapa-${etapa + 1}`]);
       return;
     }
+    // Sem o e-mail validado não se submete: abre o modal do código e, confirmado,
+    // segue com a submissão. Fechá-lo sem código deixa tudo como estava.
+    if (!this.estado.codigoOtp()) {
+      this.abrirModalVerificarEmail();
+      return;
+    }
     await this.submeter();
+  }
+
+  private abrirModalVerificarEmail(): void {
+    void this.modais.modal(
+      opcoesModalVerificarEmail({
+        email: this.estado.dados.controls.email.value,
+        aoConfirmar: () => void this.submeter(),
+      }),
+    );
   }
 
   /**
@@ -204,7 +220,8 @@ export class FormularioCandidaturaComponent {
    * mostra o motivo e mantém tudo preenchido para nova tentativa.
    */
   private async submeter(): Promise<void> {
-    if (this.enviar.isPending()) {
+    const codigoOtp = this.estado.codigoOtp();
+    if (this.enviar.isPending() || !codigoOtp) {
       return;
     }
     // Lida antes do `limpar()`: o modal mostra as disciplinas e o formulário fica em branco.
@@ -217,11 +234,17 @@ export class FormularioCandidaturaComponent {
         dados: this.estado.dados.getRawValue(),
         formacao: this.estado.formacao.getRawValue(),
         dossier: this.estado.dossier.getRawValue(),
+        codigoOtp,
       });
       this.estado.limpar();
       await this.abrirModalSucesso(submetida, disciplinas);
     } catch (erro) {
-      await this.modais.erro(this.mensagemErro(ErroApi.aPartirDe(erro)), this.textos().erroTitulo);
+      const falha = ErroApi.aPartirDe(erro);
+      // Código expirado ou já usado: o «Submeter» seguinte volta a pedir a validação.
+      if (falha.errosValidacao['codigo_otp']) {
+        this.estado.esquecerConfirmacaoEmail();
+      }
+      await this.modais.erro(this.mensagemErro(falha), this.textos().erroTitulo);
     }
   }
 

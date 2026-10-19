@@ -80,7 +80,7 @@ function nomePais(codigo: string): string {
  * lê no backoffice não depende do idioma do site.
  */
 function paraPedido(
-  { dados, formacao, dossier }: NovaCandidaturaGeral,
+  { dados, formacao, dossier, codigoOtp }: NovaCandidaturaGeral,
   disciplinasPorId: Map<string, DisciplinaEscolhidaCandidaturaGeral>,
 ): FormData {
   const corpo = new FormData();
@@ -103,6 +103,8 @@ function paraPedido(
     n_documento: dados.documento,
     telefone: dados.telefone,
     email: dados.email,
+    // Etapa 4 — prova de que o candidato recebeu o e-mail; a API recusa (422) sem ele.
+    codigo_otp: codigoOtp,
     // Etapa 2 — o `GrauAcademicoEnum` da API é o próprio nome do grau.
     grau_academico: grau?.rotulo.pt ?? formacao.grau,
     instituicao_ensino: formacao.universidade,

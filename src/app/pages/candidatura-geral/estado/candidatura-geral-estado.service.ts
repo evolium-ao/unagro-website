@@ -41,6 +41,11 @@ function idsUnicos(ids: unknown): string[] {
   return Array.isArray(ids) ? [...new Set(ids.filter((id): id is string => typeof id === 'string' && !!id))] : [];
 }
 
+/** O e-mail confirmado só conta para o mesmo endereço, sem diferenças de maiúsculas ou espaços. */
+function normalizarEmail(email: string | null | undefined): string {
+  return (email ?? '').trim().toLowerCase();
+}
+
 /** Ligação do perfil de investigador (ORCID, CiênciaVitae, …): `http(s)://` e um domínio. */
 const REGEX_LIGACAO = /^https?:\/\/[^\s/$.?#].[^\s]*$/i;
 
@@ -250,6 +255,31 @@ export class CandidaturaGeralEstadoService {
   );
 
   private readonly grupos: Record<number, FormGroup> = { 1: this.dados, 2: this.formacao, 3: this.dossier };
+
+  private readonly email = toSignal(this.dados.controls.email.valueChanges, {
+    initialValue: this.dados.controls.email.value,
+  });
+
+  /** Código OTP confirmado na etapa 4, com o e-mail para onde foi enviado. Fora do rascunho: expira. */
+  private readonly emailConfirmado = signal<{ email: string; codigo: string } | null>(null);
+
+  /**
+   * Código que segue no envio (`codigo_otp`), ou `null` se o e-mail ainda não foi
+   * confirmado — ou se mudou na etapa 1 depois de o ser: aí volta a pedir-se.
+   */
+  readonly codigoOtp = computed(() => {
+    const confirmado = this.emailConfirmado();
+    return confirmado && confirmado.email === normalizarEmail(this.email()) ? confirmado.codigo : null;
+  });
+
+  confirmarEmail(email: string, codigo: string): void {
+    this.emailConfirmado.set({ email: normalizarEmail(email), codigo });
+  }
+
+  /** O código foi recusado no envio (expirou ou já foi usado): o candidato tem de pedir outro. */
+  esquecerConfirmacaoEmail(): void {
+    this.emailConfirmado.set(null);
+  }
 
   private readonly idsDisciplinas = toSignal(this.dados.controls.disciplinas.valueChanges, {
     initialValue: this.dados.controls.disciplinas.value,
@@ -466,6 +496,7 @@ export class CandidaturaGeralEstadoService {
     Object.values(this.grupos).forEach((grupo) => grupo.reset());
     // O `reset()` esvazia os valores mas deixa as caixas: estas também saem.
     this.dossier.controls.certificadosAdicionais.clear();
+    this.emailConfirmado.set(null);
     if (!this.ehNavegador) {
       return;
     }

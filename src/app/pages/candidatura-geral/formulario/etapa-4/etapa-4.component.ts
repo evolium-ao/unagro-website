@@ -11,8 +11,11 @@ import {
   formatarPeriodo,
 } from '../../../../core/servicos/tempo-experiencia';
 import { TraducaoService } from '../../../../core/traducao/traducao.service';
+import { AlertModalService } from '../../../../shared/componentes/alert-modal/alert-modal.service';
+import { BotaoComponent } from '../../../../shared/componentes/botao/botao.component';
 import { formatarTamanho } from '../../../../shared/componentes/campo-documento/campo-documento.component';
 import { IconeComponent } from '../../../../shared/componentes/icone/icone.component';
+import { opcoesModalVerificarEmail } from '../../componentes/modal-verificar-email.component';
 import { CandidaturaGeralEstadoService, LIMITES_DOSSIER_MB } from '../../estado/candidatura-geral-estado.service';
 import { ROTA_CANDIDATURA_GERAL } from '../formulario-candidatura.component';
 import { BlocoRevisaoComponent } from './bloco-revisao.component';
@@ -52,13 +55,14 @@ const VAZIO = '—';
  */
 @Component({
   selector: 'app-etapa-4',
-  imports: [BlocoRevisaoComponent, IconeComponent],
+  imports: [BlocoRevisaoComponent, BotaoComponent, IconeComponent],
   templateUrl: './etapa-4.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Etapa4Component {
   private readonly traducao = inject(TraducaoService);
   private readonly conteudo = inject(CandidaturaGeralService);
+  private readonly modais = inject(AlertModalService);
   protected readonly estado = inject(CandidaturaGeralEstadoService);
 
   /** Destino do "Editar" de cada secção. Arrays fixos: criados no template, mudariam a cada verificação. */
@@ -96,8 +100,21 @@ export class Etapa4Component {
         'Pode substituir qualquer documento aqui, sem voltar à etapa 3.',
         'You can replace any document here without going back to step 3.',
       ),
+      validarEmail: t('Validar Email', 'Verify Email'),
+      emailValidado: t('E-mail validado', 'E-mail verified'),
+      emailPorValidar: t(
+        'Confirme o e-mail com o código que lhe vamos enviar. Sem esta validação a candidatura não pode ser submetida.',
+        'Confirm your e-mail with the code we will send you. Without this verification the application cannot be submitted.',
+      ),
     };
   });
+
+  /** O código OTP do e-mail actual já foi confirmado (volta a `false` se o e-mail mudar). */
+  protected readonly emailValidado = computed(() => this.estado.codigoOtp() !== null);
+
+  protected validarEmail(): void {
+    void this.modais.modal(opcoesModalVerificarEmail({ email: this.estado.dados.controls.email.value }));
+  }
 
   protected readonly camposDados = computed<CampoRevisao[]>(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);

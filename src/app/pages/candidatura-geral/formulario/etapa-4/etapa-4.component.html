@@ -16,6 +16,34 @@
       }
     </dl>
 
+    <!-- Validação do e-mail por código OTP: sem ela, a submissão fica bloqueada. -->
+    <div
+      class="mt-5 flex flex-col gap-3 rounded-lg border px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+      [class]="emailValidado() ? 'border-primary/30 bg-[#E3F1E7]' : 'border-amber-300 bg-amber-50'"
+    >
+      @if (emailValidado()) {
+        <p class="inline-flex items-center gap-2 text-sm font-semibold text-primary-deep">
+          <app-icone nome="badge-check" [tamanho]="16" class="text-primary" />
+          {{ textos().emailValidado }}
+        </p>
+      } @else {
+        <p class="flex items-start gap-2 text-xs leading-relaxed text-amber-900 sm:text-sm">
+          <app-icone nome="mail" [tamanho]="16" class="mt-0.5 shrink-0" />
+          {{ textos().emailPorValidar }}
+        </p>
+        <app-botao
+          class="shrink-0 self-start sm:self-auto"
+          variante="profundo"
+          tamanho="sm"
+          icone="shield-check"
+          paddingX="px-4"
+          (clicado)="validarEmail()"
+        >
+          {{ textos().validarEmail }}
+        </app-botao>
+      }
+    </div>
+
     <dl class="mt-6 flex flex-col gap-5 border-t border-gray-200 pt-5">
       <div>
         <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
