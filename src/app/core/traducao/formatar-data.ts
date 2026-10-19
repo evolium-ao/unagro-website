@@ -25,6 +25,21 @@ export function formatarDataCurta(iso: string, idioma: Idioma): string {
 }
 
 /**
+ * Formata um mês no formato do `<input type="month">` ("AAAA-MM") como "set 2015"
+ * — mês abreviado e ano, sem o ponto final que o português insere.
+ */
+export function formatarMesAno(mesAno: string, idioma: Idioma): string {
+  const [ano, mes] = mesAno.split('-').map(Number);
+  const partes = new Intl.DateTimeFormat(LOCAIS[idioma], { month: 'short', year: 'numeric' }).formatToParts(
+    new Date(ano, mes - 1, 1),
+  );
+  const valor = (tipo: Intl.DateTimeFormatPartTypes) =>
+    partes.find((parte) => parte.type === tipo)?.value ?? '';
+
+  return `${valor('month').replace('.', '')} ${valor('year')}`;
+}
+
+/**
  * Formata a antiguidade de uma data como "há 2 dias" / "2 days ago", escolhendo
  * a unidade mais legível (horas até um dia, depois dias, meses e anos).
  */

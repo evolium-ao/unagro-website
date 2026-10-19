@@ -62,6 +62,10 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
     },
   ],
   host: {
+    // `min-w-0`: como item de grid/flex o host não encolhia abaixo do texto
+    // escolhido (o `truncate` não quebra linha), e um nome comprido alargava o
+    // cartão em vez de terminar em "…" como no painel.
+    class: 'block min-w-0',
     '(document:click)': 'onDocumentClick($event)',
   },
   template: `
@@ -85,9 +89,13 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
           [attr.aria-expanded]="open()"
           [disabled]="isDisabled()"
           [attr.data-cy]="dataCy()"
+          [attr.title]="selectedOptionLabel() || null"
           (click)="toggleOpen()"
         >
-          <span class="truncate flex items-center gap-2">
+          <!-- w-0 flex-1: o texto escolhido (nowrap) deixa de contar para a largura
+               mínima do campo — senão um nome comprido alargava a grelha/cartão à
+               volta e o "…" nunca aparecia. A largura vem só do botão (w-full). -->
+          <span class="flex w-0 min-w-0 flex-1 items-center gap-2 overflow-hidden">
             @if (selectedOptionsData().length || (permitirNovo() && selectedValues().length)) {
               @if (!multiple() && selectedOptionsData()[0]?.icon) {
                 @if (isImageIcon(selectedOptionsData()[0].icon)) {
@@ -98,7 +106,7 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
               }
               <span class="truncate">{{ selectedOptionLabel() }}</span>
             } @else {
-              <span [class]="classesPlaceholder()">{{ placeholder() }}</span>
+              <span class="truncate" [class]="classesPlaceholder()">{{ placeholder() }}</span>
             }
           </span>
           <app-icone

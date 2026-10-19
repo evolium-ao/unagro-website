@@ -18,6 +18,13 @@ import {
 import { TituloBlocoComponent } from '../../../../shared/componentes/titulo-bloco/titulo-bloco.component';
 import { criarErrosFormulario } from '../../../../shared/formulario/erros-formulario';
 
+/**
+ * Homologação de estudos (licenciado/mestre/doutor) no SEPE — pedido do cliente:
+ * partilhar com quem não tem o certificado reconhecido pelo INAAREES.
+ */
+const LINK_HOMOLOGACAO_INAAREES =
+  'https://sepe.gov.ao/catalogo/mais-servicos/homologacao-de-estudos-feitos-em-angola/homologacao-de-estudos-graus-licenciado-mestre-e-doutor';
+
 /** Etapa 2, secção 1 — grau mais elevado, universidade/faculdade/curso/país e perfil de investigador. */
 @Component({
   selector: 'app-etapa-2-formacao-academica',
@@ -33,6 +40,16 @@ import { criarErrosFormulario } from '../../../../shared/formulario/erros-formul
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   template: `
     <app-titulo-bloco icone="graduation-cap" [titulo]="textos().titulo" [descricao]="textos().descricao" />
+
+    <a
+      [href]="linkHomologacaoInaarees"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+    >
+      <app-icone nome="external-link" [tamanho]="14" class="shrink-0" />
+      {{ textos().linkInaarees }}
+    </a>
 
     <div class="mt-6 flex flex-col gap-4">
       <app-grupo-cartoes-selecao
@@ -89,6 +106,9 @@ import { criarErrosFormulario } from '../../../../shared/formulario/erros-formul
           </span>
         </form-input-field>
         <p class="-mt-1 text-xs tracking-wide text-text-secondary">{{ textos().identificadorAjuda }}</p>
+        <!-- Pedido do cliente. -->
+
+        <p class="mt-3 text-xs tracking-wide  text-green-700">{{ textos().preferenciaGrau }}</p>
       </div>
     </div>
   `,
@@ -97,6 +117,8 @@ import { criarErrosFormulario } from '../../../../shared/formulario/erros-formul
 export class SecaoFormacaoAcademicaComponent {
   private readonly traducao = inject(TraducaoService);
   private readonly conteudo = inject(CandidaturaGeralService);
+
+  protected readonly linkHomologacaoInaarees = LINK_HOMOLOGACAO_INAAREES;
 
   protected readonly erros = criarErrosFormulario([
     'grau',
@@ -127,6 +149,10 @@ export class SecaoFormacaoAcademicaComponent {
         'Qualificações académicas formais obtidas ou homologadas pelo INAAREES / MESCTI.',
         'Formal academic qualifications obtained or recognised by INAAREES / MESCTI.',
       ),
+      linkInaarees: t(
+        'Certificado ainda não homologado pelo INAAREES? Veja como pedir a homologação',
+        'Certificate not yet recognised by INAAREES? See how to apply for recognition',
+      ),
       grau: t('Grau Académico Mais Elevado Concluído', 'Highest Academic Degree Completed'),
       universidade: t('Universidade', 'University'),
       universidadePlaceholder: t('Ex.: Universidade Agostinho Neto', 'E.g. Agostinho Neto University'),
@@ -143,6 +169,10 @@ export class SecaoFormacaoAcademicaComponent {
       identificadorAjuda: t(
         'Permite ao Gabinete Científico consultar prontamente as suas publicações indexadas e projectos de I&D.',
         'Allows the Scientific Office to promptly review your indexed publications and R&D projects.',
+      ),
+      preferenciaGrau: t(
+        'Os mestres e doutores serão preferenciados',
+        'Candidates holding a Master’s or Doctoral degree will be given preference',
       ),
     };
   });

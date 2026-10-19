@@ -3,7 +3,6 @@ import {
   AREAS_CANDIDATURA_GERAL_MOCK,
   AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK,
   PAISES_CANDIDATURA_GERAL,
-  TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK,
   CRITERIOS_CANDIDATURA_GERAL_MOCK,
   DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK,
   DOCUMENTOS_CANDIDATURA_GERAL_MOCK,
@@ -76,7 +75,6 @@ export class CandidaturaGeralService {
 
   private readonly grausBrutos = signal(GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK);
   private readonly intervalosBrutos = signal(INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK);
-  private readonly temposDocenciaBrutos = signal(TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK);
   private readonly areasTrabalhoBrutas = signal(AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK);
 
   /** Etapa 2 — graus académicos (cartões) e opções dos selects. */
@@ -86,10 +84,6 @@ export class CandidaturaGeralService {
   /** Tempo de cada experiência profissional, em intervalos ("De 8 a 12 anos"). */
   readonly intervalosExperiencia = computed(() =>
     localizarProfundo(this.intervalosBrutos(), this.traducao.idioma()),
-  );
-  /** Tempo de cada experiência docente, em anos ("12 anos"). */
-  readonly temposDocencia = computed(() =>
-    localizarProfundo(this.temposDocenciaBrutos(), this.traducao.idioma()),
   );
   readonly areasTrabalho = computed(() =>
     localizarProfundo(this.areasTrabalhoBrutas(), this.traducao.idioma()),

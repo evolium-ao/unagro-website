@@ -55,15 +55,17 @@ function comZero(valor: number): string {
         </div>
       </div>
     } @else if (variante() === 'caixasGrandes') {
-      <div class="flex flex-wrap justify-center gap-3 sm:gap-5">
+      <!-- Telemóvel: as quatro caixas numa linha, a dividir a largura (com largura
+           fixa partiam em 3 + 1); a partir de sm voltam à largura fixa. -->
+      <div class="grid grid-cols-4 gap-2 sm:flex sm:justify-center sm:gap-5">
         @for (unidade of unidades(); track unidade.rotulo) {
           <div
-            class="flex h-24 w-20 flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 sm:w-32"
+            class="flex h-20 min-w-0 flex-col items-center justify-center rounded-lg border border-white/10 bg-white/5 sm:h-24 sm:w-32"
           >
-            <span class="text-3xl font-bold tabular-nums text-secondary sm:text-4xl">{{
+            <span class="text-2xl font-bold tabular-nums text-secondary sm:text-4xl">{{
               unidade.valor
             }}</span>
-            <span class="mt-1 text-[10px] font-semibold uppercase tracking-wider text-white/60">
+            <span class="mt-1 text-[9px] font-semibold uppercase tracking-wide text-white/60 sm:text-[10px] sm:tracking-wider">
               {{ unidade.rotulo }}
             </span>
           </div>

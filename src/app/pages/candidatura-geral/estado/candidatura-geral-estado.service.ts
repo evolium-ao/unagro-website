@@ -1,9 +1,20 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, PLATFORM_ID, computed, effect, inject, untracked } from '@angular/core';
+import { Injectable, PLATFORM_ID, computed, effect, inject, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { debounceTime, filter, merge } from 'rxjs';
-import { ANOS_DOCENCIA_EM_ABERTO, PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
+import {
+  Observable,
+  debounceTime,
+  filter,
+  firstValueFrom,
+  map,
+  merge,
+  of,
+  startWith,
+  switchMap,
+  timer,
+} from 'rxjs';
+import { PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
 import {
   ExperienciaDocenteCandidaturaGeral,
   ExperienciaProfissionalCandidaturaGeral,
@@ -11,6 +22,7 @@ import {
 import { ValidacaoService } from '../../../core/servicos/Validacao.service';
 import { CHAVE_DOSSIER_TOTAL, CampoEmFalta } from './campos-formulario';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
+import { VerificacaoBi, VerificacaoBiService } from '../../../core/servicos/verificacao-bi.service';
 
 /** Chave do rascunho no `localStorage` do navegador. */
 const CHAVE_RASCUNHO = 'unagro.candidatura-geral.rascunho';
@@ -57,6 +69,16 @@ function validarNomeCompleto(controlo: AbstractControl): ValidationErrors | null
 /** BI angolano (9 dígitos, 2 letras, 3 dígitos) ou passaporte (6 a 12 caracteres alfanuméricos). */
 const REGEX_BI = /^\d{9}[A-Za-z]{2}\d{3}$/;
 const REGEX_PASSAPORTE = /^[A-Za-z0-9]{6,12}$/;
+/**
+ * Pausa na escrita do nº do BI antes de o verificar na AGT: a rota aceita só
+ * 10 pedidos por minuto, e a meio do número não vale a pena perguntar.
+ */
+const ESPERA_VERIFICACAO_BI_MS = 600;
+
+/** Último resultado da AGT, com o nº a que se refere (em maiúsculas). */
+export interface VerificacaoDocumento extends VerificacaoBi {
+  numero: string;
+}
 
 function validarDocumentoIdentificacao(controlo: AbstractControl): ValidationErrors | null {
   const valor = (controlo.value ?? '').toString().trim();
@@ -80,11 +102,19 @@ export const LIMITES_DOSSIER_MB = {
   certificadosAdicionais: 10,
   comprovativos: 15,
   carta: 5,
+  certificadoAgregacao: 10,
   total: 24,
 } as const;
 
 /** Campos de ficheiro: um `File` não se serializa, por isso nunca vão para o rascunho. */
-const CAMPOS_FICHEIRO = new Set(['curriculo', 'certificados', 'certificadosAdicionais', 'comprovativos', 'carta']);
+const CAMPOS_FICHEIRO = new Set([
+  'curriculo',
+  'certificados',
+  'certificadosAdicionais',
+  'comprovativos',
+  'carta',
+  'certificadoAgregacao',
+]);
 
 function semFicheiros(valores: Record<string, unknown>): Record<string, unknown> {
   return Object.fromEntries(Object.entries(valores).filter(([campo]) => !CAMPOS_FICHEIRO.has(campo)));
@@ -96,23 +126,6 @@ function validarTamanhoTotalDossier(grupo: AbstractControl): ValidationErrors | 
   const valores = Object.values((grupo as FormGroup).getRawValue() as Record<string, unknown>).flat();
   const bytes = valores.reduce<number>((soma, valor) => soma + (valor instanceof File ? valor.size : 0), 0);
   return bytes > LIMITES_DOSSIER_MB.total * 1024 * 1024 ? { dossierMuitoGrande: true } : null;
-}
-
-/**
- * Os tempos de docência eram "Menos de 1 ano", "1 ano" … "40 anos" e "Mais de 40
- * anos"; agora vão de 1 a 4 anos e "5 anos ou mais". Um rascunho antigo passa
- * para a opção mais próxima, em vez de ficar com um tempo que já não existe.
- */
-function tempoDocenciaAtual(id: string): string {
-  const emAberto = `${ANOS_DOCENCIA_EM_ABERTO}-ou-mais`;
-  if (id === 'menos-1') {
-    return '1';
-  }
-  if (id.startsWith('mais-')) {
-    return emAberto;
-  }
-  const anos = Number(id);
-  return Number.isInteger(anos) && anos >= ANOS_DOCENCIA_EM_ABERTO ? emAberto : id;
 }
 
 /** Entradas de uma lista do rascunho que têm todos os `campos` preenchidos com texto. */
@@ -146,6 +159,10 @@ export class CandidaturaGeralEstadoService {
   private readonly validacao = inject(ValidacaoService);
   private readonly conteudo = inject(CandidaturaGeralService);
   private readonly ehNavegador = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly verificacaoBi = inject(VerificacaoBiService);
+
+  /** Resposta da AGT ao nº de BI do campo `documento` — o ✓ da etapa 1 lê-a daqui. */
+  readonly verificacaoDocumento = signal<VerificacaoDocumento | null>(null);
 
   /** Etapa 1 — dados pessoais, contacto e área de candidatura. */
   readonly dados = new FormGroup({
@@ -160,6 +177,7 @@ export class CandidaturaGeralEstadoService {
     documento: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, validarDocumentoIdentificacao],
+      asyncValidators: [(c) => this.verificarBiNaAgt(c)],
     }),
     telefone: new FormControl('', {
       nonNullable: true,
@@ -219,6 +237,12 @@ export class CandidaturaGeralEstadoService {
       carta: new FormControl<File | null>(null, {
         validators: [Validators.required, this.validacao.validarFicheiro(['pdf'], LIMITES_DOSSIER_MB.carta)],
       }),
+      /** "Tem Agregação Pedagógica?" — `'sim' | 'nao' | ''`. O required de `certificadoAgregacao`
+       * é dinâmico (ver `sincronizarCertificadoAgregacao`), por isso começa sem validador. */
+      agregacaoPedagogica: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+      certificadoAgregacao: new FormControl<File | null>(null, {
+        validators: [this.validacao.validarFicheiro(['pdf'], LIMITES_DOSSIER_MB.certificadoAgregacao)],
+      }),
       compromissoHonra: new FormControl(false, { nonNullable: true, validators: [Validators.requiredTrue] }),
       consentimentoDados: new FormControl(false, { nonNullable: true, validators: [Validators.requiredTrue] }),
     },
@@ -265,6 +289,27 @@ export class CandidaturaGeralEstadoService {
     this.restaurarRascunho();
     this.guardarRascunhoAutomaticamente();
     this.limparDisciplinasInexistentes();
+    this.sincronizarCertificadoAgregacao();
+  }
+
+  /**
+   * O `certificadoAgregacao` só é obrigatório com `agregacaoPedagogica === 'sim'`
+   * (API: 422 se faltar). Ao responder "Não", limpa um ficheiro que já lá estivesse
+   * — a mesma regra que a API aplica quando o admin muda a resposta para não.
+   */
+  private sincronizarCertificadoAgregacao(): void {
+    const { agregacaoPedagogica, certificadoAgregacao } = this.dossier.controls;
+    agregacaoPedagogica.valueChanges.pipe(startWith(agregacaoPedagogica.value)).subscribe((resposta) => {
+      if (resposta === 'sim') {
+        certificadoAgregacao.addValidators(Validators.required);
+      } else {
+        certificadoAgregacao.removeValidators(Validators.required);
+        if (resposta === 'nao' && certificadoAgregacao.value) {
+          certificadoAgregacao.setValue(null);
+        }
+      }
+      certificadoAgregacao.updateValueAndValidity({ emitEvent: false });
+    });
   }
 
   /**
@@ -287,6 +332,52 @@ export class CandidaturaGeralEstadoService {
         }
       });
     });
+  }
+
+  /**
+   * Validador assíncrono do `documento`: só corre com o formato já válido (o
+   * Angular salta-o quando há erros síncronos) e só para BI — o passaporte não
+   * é verificado na AGT. O `timer` faz de debounce: cada tecla nova cancela a
+   * subscrição anterior, e com ela o pedido em curso. `{ biNaoConsta }` só
+   * quando a AGT diz que não consta; sem resposta (`null`) deixa seguir.
+   */
+  private verificarBiNaAgt(controlo: AbstractControl): Observable<ValidationErrors | null> {
+    const numero = (controlo.value ?? '').toString().trim().toUpperCase();
+    if (!this.ehNavegador || !REGEX_BI.test(numero)) {
+      return of(null);
+    }
+    return timer(ESPERA_VERIFICACAO_BI_MS).pipe(
+      switchMap(
+        () =>
+          new Observable<VerificacaoBi>((assinante) => {
+            const cancelar = new AbortController();
+            this.verificacaoBi.verificar(numero, cancelar.signal).then(
+              (resultado) => {
+                assinante.next(resultado);
+                assinante.complete();
+              },
+              (erro) => assinante.error(erro),
+            );
+            return () => cancelar.abort();
+          }),
+      ),
+      map(({ valido }) => {
+        this.verificacaoDocumento.set({ numero, valido });
+        return valido === false ? { biNaoConsta: true } : null;
+      }),
+    );
+  }
+
+  /**
+   * Espera que as verificações em curso na etapa (o BI na AGT) terminem, para
+   * o «Avançar» decidir com o resultado e não com o `PENDING` a meio.
+   */
+  async aguardarVerificacoes(etapa: NumeroEtapa): Promise<void> {
+    const grupo = this.grupos[etapa];
+    if (!grupo?.pending) {
+      return;
+    }
+    await firstValueFrom(grupo.statusChanges.pipe(filter((estado) => estado !== 'PENDING')));
   }
 
   /** Marca os campos da etapa como tocados (para mostrar os erros) e diz se é válida. */
@@ -425,15 +516,20 @@ export class CandidaturaGeralEstadoService {
       const disciplinas = this.dados.controls.disciplinas;
       disciplinas.setValue(idsUnicos(disciplinas.value).slice(0, MAXIMO_DISCIPLINAS));
       // As listas da etapa 2 vêm do JSON tal como foram gravadas: só passam as
-      // entradas com todos os campos em texto (um rascunho antigo não as tem).
+      // entradas com todos os campos em texto (um rascunho antigo não as tem). A
+      // doc. já não tem um campo "tempo" só de texto (ver `atual`, booleano), por
+      // isso valida-se o período à parte: um rascunho de antes desta mudança
+      // (sem `inicio`) cai fora, tal como um que tenha `inicio` sem `fim`/`atual`.
       const { experienciasDocentes, experienciasProfissionais } = this.formacao.controls;
       experienciasDocentes.setValue(
         entradasValidas<ExperienciaDocenteCandidaturaGeral>(experienciasDocentes.value, [
           'universidade',
           'faculdade',
           'disciplina',
-          'tempo',
-        ]).map((experiencia) => ({ ...experiencia, tempo: tempoDocenciaAtual(experiencia.tempo) })),
+          'inicio',
+        ])
+          .map((experiencia) => ({ ...experiencia, atual: experiencia.atual === true }))
+          .filter((experiencia) => experiencia.atual || !!experiencia.fim),
       );
       experienciasProfissionais.setValue(
         entradasValidas(experienciasProfissionais.value, ['empresa', 'area', 'tempo']),

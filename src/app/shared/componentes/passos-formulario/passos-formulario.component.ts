@@ -31,16 +31,18 @@ const CLASSES_LINHA: Record<FormaDistintivoPassos, string> = {
   imports: [IconeComponent],
   template: `
     @if (disposicao() === 'linha') {
+      <!-- Telemóvel: os passos lado a lado, em colunas, só com o nome por baixo do
+           distintivo; em sm empilham com o "ETAPA N", e em lg voltam a ficar em linha. -->
       <ol
-        class="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6 lg:flex-row lg:items-center lg:gap-4"
+        class="grid grid-cols-4 gap-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm sm:flex sm:flex-col sm:gap-4 sm:p-6 lg:flex-row lg:items-center lg:gap-4"
         [attr.aria-label]="rotuloLista()"
       >
         @for (rotulo of passos(); track rotulo; let i = $index, ultimo = $last) {
           @let concluido = mostrarConcluidos() && i < ativo();
           @let atual = i === ativo();
-          <li class="flex items-center gap-4" [class.lg:flex-1]="!ultimo">
+          <li class="flex min-w-0 flex-col items-center gap-2 text-center sm:flex-row sm:gap-4 sm:text-left" [class.lg:flex-1]="!ultimo">
             <span
-              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border text-sm font-bold transition-colors"
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border text-sm font-bold transition-colors sm:h-11 sm:w-11"
               [class]="
                 atual
                   ? 'border-primary-deep bg-primary-deep text-secondary'
@@ -58,14 +60,17 @@ const CLASSES_LINHA: Record<FormaDistintivoPassos, string> = {
             </span>
             <span class="flex min-w-0 flex-col">
               <span
-                class="text-[11px] font-semibold uppercase tracking-[0.08em]"
+                class="hidden text-[11px] font-semibold uppercase tracking-[0.08em] sm:block"
                 [class]="atual || concluido ? 'text-primary-deep' : 'text-text-secondary'"
               >
                 {{ prefixoPasso() }} {{ i + 1 }}@if (atual && sufixoAtivo()) {
                   {{ ' ' + sufixoAtivo() }}
                 }
               </span>
-              <span class="text-sm" [class]="atual || concluido ? 'text-primary-deep' : 'text-text-secondary'">
+              <span
+                class="text-[11px] leading-tight sm:text-sm sm:leading-normal"
+                [class]="(atual || concluido ? 'text-primary-deep' : 'text-text-secondary') + (atual ? ' font-semibold sm:font-normal' : '')"
+              >
                 {{ rotulo }}
               </span>
             </span>

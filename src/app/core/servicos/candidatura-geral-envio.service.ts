@@ -4,7 +4,6 @@ import {
   AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK,
   GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK,
   INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK,
-  TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK,
 } from '../dados/candidatura-geral.mock';
 import {
   CandidaturaGeralSubmetida,
@@ -13,7 +12,7 @@ import {
   OpcaoCandidaturaGeral,
 } from '../modelos/candidatura-geral.model';
 import { CandidaturaGeralService } from './candidatura-geral.service';
-import { descreverTempoTotal } from './tempo-experiencia';
+import { descreverTempoTotal, descreverTempoTotalPeriodo, duracaoPeriodo, formatarDuracaoAnos } from './tempo-experiencia';
 
 /** Só o que o site lê do `CandidaturaDocenteResource` devolvido no 201. */
 interface CandidaturaDocenteCriada {
@@ -90,11 +89,7 @@ function paraPedido(
     opcoes.find((opcao) => opcao.id === id)?.rotulo.pt ?? id;
   const docentes = formacao.experienciasDocentes;
   const profissionais = formacao.experienciasProfissionais;
-  const totalDocencia = descreverTempoTotal(
-    docentes.map((experiencia) => experiencia.tempo),
-    TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK,
-    'pt',
-  );
+  const totalDocencia = descreverTempoTotalPeriodo(docentes, 'pt');
   const totalProfissional = descreverTempoTotal(
     profissionais.map((experiencia) => experiencia.tempo),
     INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK,
@@ -136,7 +131,14 @@ function paraPedido(
     corpo.set(`${prefixo}[universidade]`, experiencia.universidade);
     corpo.set(`${prefixo}[faculdade]`, experiencia.faculdade);
     corpo.set(`${prefixo}[disciplina]`, experiencia.disciplina);
-    corpo.set(`${prefixo}[tempo_docencia]`, rotulo(TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK, experiencia.tempo));
+    // Período preenchido na etapa 2 ("De ___ à ___"); `tempo_docencia` mantém o
+    // nome do campo de sempre, agora com a duração calculada em vez de um balde.
+    corpo.set(`${prefixo}[data_inicio_docencia]`, experiencia.inicio);
+    if (!experiencia.atual && experiencia.fim) {
+      corpo.set(`${prefixo}[data_fim_docencia]`, experiencia.fim);
+    }
+    corpo.set(`${prefixo}[docencia_atual]`, experiencia.atual ? '1' : '0');
+    corpo.set(`${prefixo}[tempo_docencia]`, formatarDuracaoAnos(duracaoPeriodo(experiencia), 'pt'));
     corpo.set(`${prefixo}[tempo_experiencia_area]`, totalDocencia);
   });
   profissionais.forEach((experiencia, i) => {
@@ -156,6 +158,8 @@ function paraPedido(
     certificado_habilitacoes: dossier.certificados,
     comprovativo_docencia: dossier.comprovativos,
     carta_motivacao: dossier.carta,
+    // Só vai com "Sim" na pergunta (ver `agregacao`); com "Não" fica a `null`.
+    certificado_agregacao: dossier.certificadoAgregacao,
   };
   for (const [campo, ficheiro] of Object.entries(anexos)) {
     if (ficheiro) corpo.set(campo, ficheiro, ficheiro.name);
@@ -169,6 +173,11 @@ function paraPedido(
   // O `accepted` do Laravel não aceita "true"/"false" em multipart, só 1/0.
   corpo.set('declaracao_honra', dossier.compromissoHonra ? '1' : '0');
   corpo.set('consentimento_dados', dossier.consentimentoDados ? '1' : '0');
+  // `agregacao` aceita null (pergunta por responder); no site é sempre obrigatória,
+  // por isso só fica de fora se, por alguma falha, chegar aqui sem resposta.
+  if (dossier.agregacaoPedagogica) {
+    corpo.set('agregacao', dossier.agregacaoPedagogica === 'sim' ? '1' : '0');
+  }
 
   return corpo;
 }

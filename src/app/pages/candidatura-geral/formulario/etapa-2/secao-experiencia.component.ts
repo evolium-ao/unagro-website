@@ -49,8 +49,8 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
         [placeholder]="textos().selecione" [options]="opcoesTempo()" [ngModel]="tempo()"
         (ngModelChange)="tempo.set($event ?? '')" [erro]="erroCampo(tempo())" />
     </div>
-    <div class="my-10">
-      <app-botao class="shrink-0" variante="primario" icone="plus" raio="medio" [desativado]="limiteAtingido()"
+    <div class="my-6 sm:my-10">
+      <app-botao class="sm:inline-block sm:w-auto sm:shrink-0" [larguraTotal]="true" variante="primario" icone="plus" raio="medio" [desativado]="limiteAtingido()"
            (clicado)="adicionar()">
            {{ textos().adicionar }}
          </app-botao>

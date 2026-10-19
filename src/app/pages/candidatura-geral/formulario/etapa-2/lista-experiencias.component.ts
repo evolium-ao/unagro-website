@@ -19,7 +19,7 @@ export interface ItemExperiencia {
   imports: [IconeComponent],
   template: `
     <div class="flex flex-col gap-5">
-      <div class="rounded-2xl border bg-bg-lighter p-4 sm:p-5" [class]="erro() ? 'border-red-400' : 'border-gray-200'">
+      <div class="rounded-2xl border bg-bg-lighter p-3 sm:p-5" [class]="erro() ? 'border-red-400' : 'border-gray-200'">
         <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
           <p class="text-[11px] font-bold uppercase tracking-wide text-text-primary">{{ tituloLista() }}</p>
           <span
@@ -33,19 +33,22 @@ export interface ItemExperiencia {
         @if (itens().length) {
           <ol class="space-y-3">
             @for (item of itens(); track $index; let i = $index) {
-              <li class="flex items-center gap-4 rounded-xl border border-gray-200 bg-white px-4 py-3.5">
+              <!-- No telemóvel o tempo passa para baixo do texto, que senão ficava espremido. -->
+              <li class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-3 sm:gap-4 sm:px-4 sm:py-3.5">
                 <span
                   class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 text-[11px] font-bold text-text-primary">
                   {{ (i + 1).toString().padStart(2, '0') }}
                 </span>
-                <div class="min-w-0 flex-1">
-                  <p class="text-sm font-bold text-text-primary">{{ item.titulo }}</p>
-                  <p class="mt-0.5 truncate text-[11px] text-text-secondary">{{ item.detalhe }}</p>
+                <div class="flex min-w-0 flex-1 flex-col items-start sm:flex-row sm:items-center sm:gap-4">
+                  <div class="min-w-0 max-w-full sm:flex-1">
+                    <p class="text-sm font-bold text-text-primary">{{ item.titulo }}</p>
+                    <p class="mt-0.5 truncate text-[11px] text-text-secondary">{{ item.detalhe }}</p>
+                  </div>
+                  <span
+                    class="mt-1.5 shrink-0 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[11px] font-medium text-primary sm:mt-0">
+                    {{ item.tempo }}
+                  </span>
                 </div>
-                <span
-                  class="shrink-0 rounded-full border border-primary/20 bg-primary/5 px-2.5 py-0.5 text-[11px] font-medium text-primary">
-                  {{ item.tempo }}
-                </span>
                 <button type="button"
                   class="shrink-0 rounded-md p-1.5 text-text-secondary transition hover:bg-red-50 hover:text-red-600"
                   [attr.aria-label]="textoRemover() + ' ' + item.titulo" (click)="remover.emit(i)">

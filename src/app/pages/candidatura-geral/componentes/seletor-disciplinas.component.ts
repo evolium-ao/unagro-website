@@ -29,7 +29,8 @@ import {
     { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => SeletorDisciplinasComponent), multi: true },
   ],
   template: `
-    <div class="rounded-2xl border bg-bg-lighter p-5 sm:p-8" [class]="erro() ? 'border-red-400' : 'border-gray-200'">
+    <div class="rounded-2xl border bg-bg-lighter sm:p-8" [class.p-1]="compacto()" [class.p-4]="!compacto()"
+      [class]="erro() ? 'border-red-400' : 'border-gray-200'">
       <!-- Cabeçalho do registo + contador -->
       <div class="flex flex-col gap-3 border-b border-gray-200 pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -47,7 +48,9 @@ import {
 
       <!-- Curso → disciplina → Adicionar -->
       <div class="border-b border-gray-200 py-5">
-        <div class="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
+        <!-- minmax(0, …): as colunas nunca crescem com o nome escolhido no select
+             (um 1fr sozinho é minmax(auto, 1fr) e alargava o cartão). -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end">
           <field-select-v2 [label]="textos().curso" [options]="opcoesCurso()"
             [placeholder]="aCarregar() ? textos().aCarregar : textos().cursoPlaceholder" [searchable]="true"
             [bgTransparent]="true" [disabled]="desativado() || aCarregar() || limiteAtingido()"
@@ -56,7 +59,7 @@ import {
             [placeholder]="textos().disciplinaPlaceholder" [searchable]="true" [bgTransparent]="true"
             [disabled]="desativado() || !cursoEscolhido() || limiteAtingido()" [ngModel]="disciplinaEscolhida()"
             (ngModelChange)="disciplinaEscolhida.set($event ?? '')" [temError]="false" />
-          <app-botao variante="primario" icone="plus" raio="medio"
+          <app-botao class="md:inline-block md:w-auto" variante="primario" icone="plus" raio="medio" [larguraTotal]="true"
             [desativado]="desativado() || !disciplinaEscolhida() || limiteAtingido()" (clicado)="adicionar()">
             {{ textos().adicionar }}
           </app-botao>
@@ -85,7 +88,7 @@ import {
         @if (selecionadas().length) {
           <ol class="space-y-3">
             @for (escolhida of selecionadas(); track escolhida.disciplina.id; let i = $index) {
-              <li class="flex items-center gap-4 rounded-xl border border-gray-200 bg-white px-4 py-3.5">
+              <li class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-3 py-3 sm:gap-4 sm:px-4 sm:py-3.5">
                 <span
                   class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-gray-200 text-[11px] font-bold text-text-primary">
                   {{ (i + 1).toString().padStart(2, '0') }}
@@ -130,6 +133,8 @@ export class SeletorDisciplinasComponent implements ControlValueAccessor {
 
   /** Mensagem de validação vinda do formulário (p. ex. "campo obrigatório"). */
   readonly erro = input<string | null>(null);
+  /** Só 4px de padding no telemóvel (etapa 1); por omissão 16px. */
+  readonly compacto = input(false);
 
   /** `id` do curso no primeiro select, ou vazio. */
   protected readonly cursoEscolhido = signal('');

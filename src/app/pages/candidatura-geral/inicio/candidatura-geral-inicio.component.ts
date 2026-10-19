@@ -20,6 +20,7 @@ import {
 import { BannerDestaqueComponent } from '../../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
 import { CabecalhoSecaoComponent } from '../../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
+import { CartaoAvisoComponent } from '../../../shared/componentes/cartao-aviso/cartao-aviso.component';
 import { CartaoRecursoComponent } from '../../../shared/componentes/cartao-recurso/cartao-recurso.component';
 import { CartaoRequisitoComponent } from '../../../shared/componentes/cartao-requisito/cartao-requisito.component';
 import { ContadorRegressivoComponent } from '../../../shared/componentes/contador-regressivo/contador-regressivo.component';
@@ -41,6 +42,7 @@ const LINK_CONVOCATORIA = new URL('/candidatura-geral', environment.siteUrl).hre
     ContainerPaginaComponent,
     CabecalhoSecaoComponent,
     CartaoRequisitoComponent,
+    CartaoAvisoComponent,
     SeletorDisciplinasComponent,
     FormsModule,
     ContadorRegressivoComponent,
@@ -90,7 +92,7 @@ export class CandidaturaGeralInicioComponent {
         'A AgroSophia está a recrutar docentes, investigadores e especialistas no sector do agronegócio. Candidate-se:',
         'AgroSophia is recruiting lecturers, researchers and specialists in the agribusiness sector. Apply here:',
       ),
-      heroPrazo: t('Prazo até 31 de Outubro de 2026', 'Deadline 31 October 2026'),
+      heroPrazo: t('Prazo até 15 de Novembro de 2026', 'Deadline 15 November 2026'),
       heroLogoAlt: t('Logótipo AgroSophia', 'AgroSophia logo'),
       parceirosTitulo: t(
         'Enquadramento institucional & cooperação científica',
@@ -126,7 +128,7 @@ export class CandidaturaGeralInicioComponent {
       criteriosTitulo: t('Critérios de Admissão e Qualificação', 'Admission and Qualification Criteria'),
       criteriosDescricao: t('Perfil técnico e rigor académico com vivência de campo.', 'Technical profile and academic rigour with field experience.'),
       passosRotulo: t('Fases do concurso', 'Selection stages'),
-      passosTitulo: t('Como Candidatar-se em 3 Passos', 'How to Apply in 3 Steps'),
+      passosTitulo: t('Fases do concurso', 'Contest phases'),
       passosDescricao: t(
         'Procedimento selectivo transparente, público e baseado no mérito comprovado.',
         'A transparent, public selection procedure based on proven merit.',
@@ -138,7 +140,7 @@ export class CandidaturaGeralInicioComponent {
         `Single, legible PDF dossier (max. ${LIMITES_DOSSIER_MB.total}MB).`,
       ),
       prazoSelo: t('Prazo impreterível de submissão', 'Final submission deadline'),
-      prazoTitulo: t('31 de Outubro de 2026 às 23h59', '31 October 2026 at 11:59 pm'),
+      prazoTitulo: t('15 de Novembro de 2026 às 23h59', '15 November 2026 at 11:59 pm'),
       prazoTexto: t(
         'Horário Oficial de Luanda (GMT+1). Candidaturas recepcionadas após este termo serão integradas na bolsa suplementar de reserva curricular docente.',
         'Official Luanda time (GMT+1). Applications received after this deadline will join the supplementary faculty reserve pool.',

@@ -102,8 +102,12 @@ export interface ExperienciaDocenteCandidaturaGeral {
   faculdade: string;
   /** Nome da disciplina (texto: pode ter sido lecionada noutro plano curricular). */
   disciplina: string;
-  /** `id` da `OpcaoTempoCandidaturaGeral` (tempos de docência). */
-  tempo: string;
+  /** Início do período lectivo — "AAAA-MM", o formato do `<input type="month">`. */
+  inicio: string;
+  /** Fim do período ("AAAA-MM"); vazio quando `atual` é `true`. */
+  fim: string;
+  /** Ainda lecciona esta disciplina: ignora `fim` e a duração conta até hoje. */
+  atual: boolean;
 }
 
 /** Etapa 2, secção 3 — uma experiência profissional. */
@@ -150,6 +154,10 @@ export interface NovaCandidaturaGeral {
     certificadosAdicionais: (File | null)[];
     comprovativos: File | null;
     carta: File | null;
+    /** `'sim' | 'nao' | ''` (por responder) — a pergunta "Tem Agregação Pedagógica?". */
+    agregacaoPedagogica: string;
+    /** Obrigatório quando `agregacaoPedagogica` é `'sim'`. */
+    certificadoAgregacao: File | null;
     compromissoHonra: boolean;
     consentimentoDados: boolean;
   };

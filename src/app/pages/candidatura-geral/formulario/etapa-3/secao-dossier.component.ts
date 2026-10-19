@@ -5,6 +5,11 @@ import { map, merge } from 'rxjs';
 import { ValidacaoService } from '../../../../core/servicos/Validacao.service';
 import { TraducaoService } from '../../../../core/traducao/traducao.service';
 import { CampoDocumentoComponent } from '../../../../shared/componentes/campo-documento/campo-documento.component';
+import { CartaoAvisoComponent } from '../../../../shared/componentes/cartao-aviso/cartao-aviso.component';
+import {
+  GrupoCartoesSelecaoComponent,
+  OpcaoCartaoSelecao,
+} from '../../../../shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component';
 import { IconeComponent } from '../../../../shared/componentes/icone/icone.component';
 import { TituloBlocoComponent } from '../../../../shared/componentes/titulo-bloco/titulo-bloco.component';
 import { criarErrosFormulario } from '../../../../shared/formulario/erros-formulario';
@@ -16,21 +21,31 @@ import {
 
 /**
  * Etapa 3, secção 1 — primeiro os certificados (o obrigatório, os adicionais e a
- * caixa «Adicionar certificado»), depois CV, comprovativos e carta de motivação.
+ * caixa «Adicionar certificado»), depois CV, comprovativos, carta de motivação e,
+ * por fim, a pergunta "Tem Agregação Pedagógica?" (pedido do cliente): com "Não"
+ * avisa do prazo para a remeter; com "Sim" pede logo o certificado.
  */
 @Component({
   selector: 'app-etapa-3-dossier',
-  imports: [ReactiveFormsModule, CampoDocumentoComponent, IconeComponent, TituloBlocoComponent],
+  imports: [
+    ReactiveFormsModule,
+    CampoDocumentoComponent,
+    CartaoAvisoComponent,
+    GrupoCartoesSelecaoComponent,
+    IconeComponent,
+    TituloBlocoComponent,
+  ],
   viewProviders: [{ provide: ControlContainer, useExisting: FormGroupDirective }],
   template: `
     <app-titulo-bloco icone="folder-input" [titulo]="textos().titulo" [descricao]="textos().descricao" />
 
     <!--
       Dois cartões por linha no desktop; um por linha em telemóvel e tablet.
-      Linhas todas da mesma altura (mínimo 20rem): escolher ou remover um ficheiro
-      não muda o tamanho das caixas.
+      No desktop, linhas todas da mesma altura (mínimo 20rem): escolher ou remover
+      um ficheiro não muda o tamanho das caixas. Numa só coluna cada caixa fica
+      com a sua altura, sem os 20rem de espaço vazio.
     -->
-    <div id="certificados-dossier" class="mt-6 grid auto-rows-[minmax(20rem,1fr)] gap-4 lg:grid-cols-2">
+    <div id="certificados-dossier" class="mt-6 grid gap-4 lg:auto-rows-[minmax(20rem,1fr)] lg:grid-cols-2">
       <app-campo-documento
         formControlName="certificados"
         aceita=".pdf,application/pdf"
@@ -103,9 +118,9 @@ import {
       }
     </div>
 
-    <hr class="my-8 border-gray-200" />
+    <hr class="my-6 border-gray-200 sm:my-8" />
 
-    <div class="grid auto-rows-[minmax(20rem,1fr)] gap-4 lg:grid-cols-2">
+    <div class="grid gap-4 lg:auto-rows-[minmax(20rem,1fr)] lg:grid-cols-2">
       <app-campo-documento
         formControlName="curriculo"
         aceita=".pdf,application/pdf"
@@ -159,6 +174,49 @@ import {
     @if (dossierMuitoGrande()) {
       <p class="mt-4 text-sm text-red-600" role="alert">{{ textos().totalExcedido }}</p>
     }
+
+    <hr class="my-6 border-gray-200 sm:my-8" />
+
+    <!-- 5. Agregação Pedagógica (pedido do cliente): "Não" avisa do prazo, "Sim" pede o certificado. -->
+    <div class="flex flex-col gap-4">
+      <app-grupo-cartoes-selecao
+        class="block sm:max-w-sm"
+        formControlName="agregacaoPedagogica"
+        variante="caixa"
+        [colunas]="2"
+        [obrigatorio]="true"
+        [label]="textos().agregacaoPergunta"
+        [opcoes]="opcoesResposta()"
+        [erro]="erros.agregacaoPedagogica()"
+      />
+
+      @if (resposta() === 'nao') {
+        <app-cartao-aviso
+          icone="clock"
+          [selo]="textos().agregacaoAvisoSelo"
+          [titulo]="textos().agregacaoAvisoTitulo"
+          [descricao]="textos().agregacaoAvisoTexto"
+        />
+      }
+      @if (resposta() === 'sim') {
+        <app-campo-documento
+          class="block sm:max-w-md"
+          formControlName="certificadoAgregacao"
+          aceita=".pdf,application/pdf"
+          icone="file-up"
+          iconeAnexado="award"
+          [obrigatorio]="true"
+          [titulo]="textos().certificadoAgregacao"
+          [descricao]="textos().certificadoAgregacaoDescricao"
+          [textoSelecionar]="textos().selecionarPdf"
+          [textoFormatos]="textos().formatosCertificadoAgregacao"
+          [textoAnexado]="textos().anexado"
+          [textoSubstituir]="textos().substituir"
+          [textoRemover]="textos().remover"
+          [erro]="erros.certificadoAgregacao()"
+        />
+      }
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -170,7 +228,27 @@ export class SecaoDossierComponent {
   protected readonly certificadosAdicionais = this.dossier.controls.certificadosAdicionais;
   protected readonly maximo = MAXIMO_CERTIFICADOS_ADICIONAIS;
 
-  protected readonly erros = criarErrosFormulario(['curriculo', 'certificados', 'comprovativos', 'carta'] as const);
+  protected readonly erros = criarErrosFormulario([
+    'curriculo',
+    'certificados',
+    'comprovativos',
+    'carta',
+    'agregacaoPedagogica',
+    'certificadoAgregacao',
+  ] as const);
+
+  /** "Sim" / "Não" / "" (por responder), como signal — ver `sincronizarCertificadoAgregacao`. */
+  protected readonly resposta = toSignal(this.dossier.controls.agregacaoPedagogica.valueChanges, {
+    initialValue: this.dossier.controls.agregacaoPedagogica.value,
+  });
+
+  protected readonly opcoesResposta = computed<OpcaoCartaoSelecao[]>(() => {
+    const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
+    return [
+      { valor: 'sim', rotulo: t('Sim', 'Yes'), icone: 'check' },
+      { valor: 'nao', rotulo: t('Não', 'No'), icone: 'x' },
+    ];
+  });
 
   /**
    * Muda a cada evento do dossier ou da lista (caixa junta/retirada, ficheiro
@@ -262,6 +340,25 @@ export class SecaoDossierComponent {
         `Formats: PDF, ZIP up to ${mb.comprovativos}MB`,
       ),
       formatosCarta: t(`Formatos: PDF até ${mb.carta}MB`, `Formats: PDF up to ${mb.carta}MB`),
+      agregacaoPergunta: t('5. Tem Agregação Pedagógica?', '5. Do you hold a Teaching Qualification?'),
+      agregacaoAvisoSelo: t('Atenção ao candidato', 'Note to applicants'),
+      agregacaoAvisoTitulo: t(
+        'Remeta o certificado nos próximos meses',
+        'Submit the certificate in the coming months',
+      ),
+      agregacaoAvisoTexto: t(
+        'Tem entre 3 a 6 meses, a contar da submissão desta candidatura, para remeter o Certificado de Agregação Pedagógica ao Gabinete de Instalação.',
+        'You have between 3 and 6 months from submitting this application to send the Teaching Qualification Certificate to the Installation Office.',
+      ),
+      certificadoAgregacao: t('Certificado de Agregação Pedagógica', 'Teaching Qualification Certificate'),
+      certificadoAgregacaoDescricao: t(
+        'Arraste o ficheiro PDF ou clique para carregar o certificado de Agregação Pedagógica.',
+        'Drag the PDF file or click to upload the Teaching Qualification Certificate.',
+      ),
+      formatosCertificadoAgregacao: t(
+        `Formatos: PDF até ${mb.certificadoAgregacao}MB`,
+        `Formats: PDF up to ${mb.certificadoAgregacao}MB`,
+      ),
       anexado: t('Anexado', 'Attached'),
       substituir: t('Substituir', 'Replace'),
       remover: t('Remover', 'Remove'),

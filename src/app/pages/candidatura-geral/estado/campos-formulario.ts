@@ -31,6 +31,8 @@ export const ROTULOS_CAMPOS: Record<string, TextoTraduzido> = {
   certificadosAdicionais: { pt: 'Certificados Adicionais', en: 'Additional Certificates' },
   comprovativos: { pt: 'Comprovativos de Docência / I&D / Prática Agrícola', en: 'Proof of Teaching / R&D / Agricultural Practice' },
   carta: { pt: 'Carta de Motivação & Enquadramento Institucional', en: 'Motivation Letter & Institutional Fit' },
+  agregacaoPedagogica: { pt: 'Agregação Pedagógica (Sim/Não)', en: 'Teaching Qualification (Yes/No)' },
+  certificadoAgregacao: { pt: 'Certificado de Agregação Pedagógica', en: 'Teaching Qualification Certificate' },
   compromissoHonra: { pt: 'Declaração sob compromisso de honra', en: 'Declaration on my honour' },
   consentimentoDados: { pt: 'Consentimento para tratamento de dados pessoais', en: 'Consent to personal data processing' },
   [CHAVE_DOSSIER_TOTAL]: { pt: 'Tamanho total do dossier documental', en: 'Total size of the document dossier' },

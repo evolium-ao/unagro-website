@@ -3,7 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs';
 import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
-import { descreverTempoTotal } from '../../../../core/servicos/tempo-experiencia';
+import {
+  descreverTempoTotal,
+  descreverTempoTotalPeriodo,
+  duracaoPeriodo,
+  formatarDuracaoAnos,
+  formatarPeriodo,
+} from '../../../../core/servicos/tempo-experiencia';
 import { TraducaoService } from '../../../../core/traducao/traducao.service';
 import { formatarTamanho } from '../../../../shared/componentes/campo-documento/campo-documento.component';
 import { IconeComponent } from '../../../../shared/componentes/icone/icone.component';
@@ -19,7 +25,7 @@ interface CampoRevisao {
 }
 
 /** Campo de ficheiro único do dossier (etapa 3). */
-type CampoDossier = 'curriculo' | 'certificados' | 'comprovativos' | 'carta';
+type CampoDossier = 'curriculo' | 'certificados' | 'comprovativos' | 'carta' | 'certificadoAgregacao';
 
 /** Uma linha do dossier na revisão. Sem `ficheiro`, o documento (opcional) não foi anexado. */
 interface DocumentoRevisao {
@@ -80,6 +86,10 @@ export class Etapa4Component {
       ),
       naoAnexado: t('Não anexado (opcional)', 'Not attached (optional)'),
       semExperiencias: t('Nenhuma adicionada', 'None added'),
+      agregacaoRotulo: t('Agregação Pedagógica', 'Teaching Qualification'),
+      agregacaoSim: t('Sim', 'Yes'),
+      agregacaoNao: t('Não', 'No'),
+      certificadoAgregacao: t('Certificado de Agregação Pedagógica', 'Teaching Qualification Certificate'),
       alterar: t('Alterar', 'Change'),
       anexar: t('Anexar', 'Attach'),
       alterarDica: t(
@@ -108,11 +118,7 @@ export class Etapa4Component {
     const pais = this.conteudo.paises().find((opcao) => opcao.id === formacao.pais)?.rotulo;
     const identificador = formacao.identificadorInvestigador.trim();
     const idioma = this.traducao.idioma();
-    const docencia = descreverTempoTotal(
-      formacao.experienciasDocentes.map((experiencia) => experiencia.tempo),
-      this.conteudo.temposDocencia(),
-      idioma,
-    );
+    const docencia = descreverTempoTotalPeriodo(formacao.experienciasDocentes, idioma);
     const pratica = descreverTempoTotal(
       formacao.experienciasProfissionais.map((experiencia) => experiencia.tempo),
       this.conteudo.intervalosExperiencia(),
@@ -145,7 +151,7 @@ export class Etapa4Component {
     const formacao = this.estado.formacao.getRawValue();
     const rotulo = (opcoes: { id: string; rotulo: string }[], id: string) =>
       opcoes.find((opcao) => opcao.id === id)?.rotulo ?? '';
-    const tempos = this.conteudo.temposDocencia();
+    const idioma = this.traducao.idioma();
     const intervalos = this.conteudo.intervalosExperiencia();
     const areas = this.conteudo.areasTrabalho();
     return [
@@ -153,8 +159,8 @@ export class Etapa4Component {
         titulo: t('Experiência Docente', 'Teaching Experience'),
         itens: formacao.experienciasDocentes.map((experiencia) => ({
           titulo: experiencia.disciplina,
-          detalhe: `${experiencia.universidade} · ${experiencia.faculdade}`,
-          tempo: rotulo(tempos, experiencia.tempo),
+          detalhe: `${experiencia.universidade} · ${experiencia.faculdade} · ${formatarPeriodo(experiencia, idioma)}`,
+          tempo: formatarDuracaoAnos(duracaoPeriodo(experiencia), idioma),
         })),
       },
       {
@@ -175,6 +181,13 @@ export class Etapa4Component {
 
   /** Erro do último «Alterar» recusado, por documento; o ficheiro anterior mantém-se. */
   protected readonly errosDocumento = signal<Partial<Record<string, string>>>({});
+
+  /** "Sim" / "Não" da pergunta "Tem Agregação Pedagógica?" (etapa 3). */
+  protected readonly agregacaoResposta = computed(() => {
+    const t = this.textos();
+    const resposta = this.dossier().agregacaoPedagogica;
+    return resposta === 'sim' ? t.agregacaoSim : resposta === 'nao' ? t.agregacaoNao : VAZIO;
+  });
 
   protected readonly documentos = computed<DocumentoRevisao[]>(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
@@ -239,6 +252,18 @@ export class Etapa4Component {
         selo: valido,
         aceita: pdf,
       },
+      // Só entra na lista com "Sim" na pergunta da etapa 3 — com "Não" não há nada para anexar aqui.
+      ...(dossier.agregacaoPedagogica === 'sim'
+        ? [
+            {
+              ...unico('certificadoAgregacao'),
+              titulo: t('Certificado de Agregação Pedagógica', 'Teaching Qualification Certificate'),
+              icone: 'award',
+              selo: valido,
+              aceita: pdf,
+            },
+          ]
+        : []),
     ];
   });
 

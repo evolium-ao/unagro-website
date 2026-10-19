@@ -164,6 +164,8 @@ export class FormularioCandidaturaComponent {
       formacao: this.estado.formacao.getRawValue(),
       dossier: this.estado.dossier.getRawValue(),
     });
+    // Com o BI ainda a ser verificado, o grupo está `PENDING` (nem válido nem inválido).
+    await this.estado.aguardarVerificacoes(etapa);
     if (!this.estado.validarEtapa(etapa)) {
       this.mostrarCamposEmFalta(etapa);
       return;

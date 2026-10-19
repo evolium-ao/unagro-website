@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-5 sm:gap-8">
   <!-- 1. Dados pessoais & área -->
   <app-etapa-4-bloco-revisao
     icone="user"
@@ -104,10 +104,17 @@
     [rotaEditar]="rotasEditar[2]"
     [textoEditar]="textos().editar"
   >
+    <dl class="mb-4 flex items-center gap-2 border-b border-gray-200 pb-4">
+      <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
+        {{ textos().agregacaoRotulo }}
+      </dt>
+      <dd class="text-sm font-semibold text-primary-deep">{{ agregacaoResposta() }}</dd>
+    </dl>
+
     <ul class="flex flex-col gap-3">
       @for (documento of documentos(); track documento.chave) {
         <li
-          class="rounded-lg border bg-[#FBF8F6] px-4 py-4"
+          class="rounded-lg border bg-[#FBF8F6] px-3 py-3 sm:px-4 sm:py-4"
           [class]="errosDocumento()[documento.chave] ? 'border-red-300' : 'border-gray-200'"
         >
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

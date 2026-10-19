@@ -17,7 +17,7 @@ import { SeletorDisciplinasComponent } from '../../componentes/seletor-disciplin
     <app-titulo-bloco icone="target" [titulo]="textos().titulo" [descricao]="textos().descricao" />
 
     <!-- O único erro possível é a lista vazia: mensagem própria em vez do genérico. -->
-    <app-seletor-disciplinas class="mt-6 block" formControlName="disciplinas"
+    <app-seletor-disciplinas class="mt-6 block" formControlName="disciplinas" [compacto]="true"
       [erro]="erros.disciplinas() ? textos().semDisciplinas : null" />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

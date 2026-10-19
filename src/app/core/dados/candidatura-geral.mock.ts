@@ -9,7 +9,7 @@ import {
 } from '../modelos/candidatura-geral.model';
 
 /** Fim do prazo de submissão, na hora de Luanda (GMT+1). */
-export const PRAZO_CANDIDATURA_GERAL = '2026-10-31T23:59:00+01:00';
+export const PRAZO_CANDIDATURA_GERAL = '2026-11-15T23:59:00+01:00';
 
 export const DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK: DestaqueCandidaturaGeral[] = [
   {
@@ -249,31 +249,6 @@ export const INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidatur
   { id: '8-12', min: 8, max: 12, rotulo: { pt: 'De 8 a 12 anos', en: '8 to 12 years' } },
   // `min` é inclusivo: "mais de 12" começa nos 13.
   { id: 'mais-12', min: 13, max: null, rotulo: { pt: 'Mais de 12 anos', en: 'More than 12 years' } },
-];
-
-/** A partir daqui a docência entra como "N anos ou mais" (pedido do cliente). */
-export const ANOS_DOCENCIA_EM_ABERTO = 5;
-
-/** Anos de cada experiência docente (etapa 2, secção 2): "1 ano" … "4 anos" e "5 anos ou mais". */
-export const TEMPOS_DOCENCIA_CANDIDATURA_GERAL_MOCK: OpcaoTempoCandidaturaGeral[] = [
-  ...Array.from({ length: ANOS_DOCENCIA_EM_ABERTO - 1 }, (_, i) => {
-    const anos = i + 1;
-    return {
-      id: String(anos),
-      min: anos,
-      max: anos,
-      rotulo: anos === 1 ? { pt: '1 ano', en: '1 year' } : { pt: `${anos} anos`, en: `${anos} years` },
-    };
-  }),
-  {
-    id: `${ANOS_DOCENCIA_EM_ABERTO}-ou-mais`,
-    min: ANOS_DOCENCIA_EM_ABERTO,
-    max: null,
-    rotulo: {
-      pt: `${ANOS_DOCENCIA_EM_ABERTO} anos ou mais`,
-      en: `${ANOS_DOCENCIA_EM_ABERTO} years or more`,
-    },
-  },
 ];
 
 /** Áreas de trabalho da experiência profissional — seguem os departamentos da oferta curricular. */

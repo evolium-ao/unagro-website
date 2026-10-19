@@ -14,7 +14,7 @@ export const environment = {
   // A oferta da candidatura docente (`/candidaturas-docentes/areas`) e o novo
   // `CandidaturaDocenteRequest` só existem, por agora, no servidor da rede local.
   //apiUrl: 'http://192.168.1.252:8000/api',
-  apiUrl: 'https://apiunagro.evofenix.it.ao/api',
+  apiUrl: 'http://192.168.1.252:8000/api',
 
   // apiUrl: 'https://apiunagro.evofenix.it.ao/api',
   /**
@@ -22,7 +22,7 @@ export const environment = {
    * partilham (p. ex. a convocatória no modal de candidatura submetida). É o
    * de produção também aqui, para o link partilhado nunca ser `localhost`.
    */
-  siteUrl: 'https://unagro.evofenix.it.ao',
+  siteUrl: 'https://unagro.evoubuntu.it.ao/candidatura-geral',
   /**
    * E-mail opcional enviado à MyMemory (`api.mymemory.translated.net`) para
    * traduzir conteúdo vindo da API — ver `TraducaoAutomaticaService`. Sem
