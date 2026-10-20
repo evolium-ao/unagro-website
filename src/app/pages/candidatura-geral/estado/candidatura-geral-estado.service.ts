@@ -6,6 +6,7 @@ import {
   Observable,
   debounceTime,
   filter,
+  finalize,
   firstValueFrom,
   map,
   merge,
@@ -168,6 +169,16 @@ export class CandidaturaGeralEstadoService {
 
   /** Resposta da AGT ao nº de BI do campo `documento` — o ✓ da etapa 1 lê-a daqui. */
   readonly verificacaoDocumento = signal<VerificacaoDocumento | null>(null);
+
+  /**
+   * `true` enquanto o BI actual está a ser verificado na AGT. Existe à parte do
+   * `status` (`PENDING`) do controlo porque esse vem de um `EventEmitter` sem
+   * memória: se a verificação arrancar antes de a etapa 1 estar montada (BI já
+   * preenchido pelo rascunho ao abrir a página), o `toSignal` do componente
+   * perde a transição e o relógio fica a girar para sempre. Este sinal é lido
+   * directamente, nunca por subscrição, por isso não tem esse problema.
+   */
+  readonly aVerificarDocumento = signal(false);
 
   /** Etapa 1 — dados pessoais, contacto e área de candidatura. */
   readonly dados = new FormGroup({
@@ -376,6 +387,7 @@ export class CandidaturaGeralEstadoService {
     if (!this.ehNavegador || !REGEX_BI.test(numero)) {
       return of(null);
     }
+    this.aVerificarDocumento.set(true);
     return timer(ESPERA_VERIFICACAO_BI_MS).pipe(
       switchMap(
         () =>
@@ -395,6 +407,7 @@ export class CandidaturaGeralEstadoService {
         this.verificacaoDocumento.set({ numero, valido });
         return valido === false ? { biNaoConsta: true } : null;
       }),
+      finalize(() => this.aVerificarDocumento.set(false)),
     );
   }
 

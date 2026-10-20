@@ -7,7 +7,6 @@
 export const environment = {
   producao: true,
   apiUrl: 'https://apiunagro.evofenix.it.ao/api',
-
   /** Endereço público do site, sem barra no fim — base dos links que se partilham. */
   siteUrl: 'https://unagro.evoubuntu.it.ao/candidatura-geral',
   traducaoEmail: 'admiro.andre@evolium.ao',

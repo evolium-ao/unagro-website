@@ -106,9 +106,6 @@ export class SecaoDadosPessoaisComponent {
   ] as const);
 
   private readonly controloDocumento = this.estado.dados.controls.documento;
-  private readonly statusDocumento = toSignal(this.controloDocumento.statusChanges, {
-    initialValue: this.controloDocumento.status,
-  });
   private readonly valorDocumento = toSignal(this.controloDocumento.valueChanges, {
     initialValue: this.controloDocumento.value,
   });
@@ -120,24 +117,28 @@ export class SecaoDadosPessoaisComponent {
     return verificacao?.numero === numero ? verificacao : null;
   });
 
+  /**
+   * Não lê o `status` do controlo (um `EventEmitter` sem memória): se a
+   * verificação arrancar antes deste componente montar — BI já preenchido
+   * pelo rascunho ao abrir a página — perder-se-ia a transição e o indicador
+   * ficava preso em "a verificar" para sempre. `aVerificarDocumento` e
+   * `verificacaoDocumento` são `signal`s do estado, lidos directamente, por
+   * isso reflectem sempre o valor actual.
+   */
   protected readonly estadoDocumento = computed<EstadoVerificacao>(() => {
-    const status = this.statusDocumento();
-    if (status === 'PENDING') {
+    if (this.estado.aVerificarDocumento()) {
       return 'aVerificar';
     }
     const verificacao = this.verificacaoAtual();
-    if (!verificacao) {
+    if (!verificacao || verificacao.valido === null) {
       return null;
     }
-    if (verificacao.valido === false && status === 'INVALID') {
-      return 'invalido';
-    }
-    return verificacao.valido === true && status === 'VALID' ? 'valido' : null;
+    return verificacao.valido ? 'valido' : 'invalido';
   });
 
   /** AGT indisponível (ou limite de pedidos): o candidato pode seguir, mas fica a saber. */
   protected readonly biPorVerificar = computed(
-    () => this.statusDocumento() === 'VALID' && this.verificacaoAtual()?.valido === null,
+    () => !this.estado.aVerificarDocumento() && this.verificacaoAtual()?.valido === null,
   );
 
   /** O «não consta na AGT» aparece logo, sem esperar que o campo seja tocado. */
