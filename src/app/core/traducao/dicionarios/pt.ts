@@ -371,7 +371,7 @@ export const pt = {
     candidaturaGeral: {
       titulo: 'Processo de Candidatura para Docentes',
       descricao:
-        'Convocatória oficial para mestres, doutores e investigadores: áreas, critérios, documentos e prazo de candidatura.',
+        'Candidaturas para docentes, investigadores e especialistas no sector do agronegócio. Ensino superior no Icolo e Bengo, Luanda. Prazo até 15 de Novembro de 2026.',
     },
     candidaturaGeralFormulario: {
       titulo: 'Candidatura ao Corpo Docente',

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { DADOS_ESTRUTURADOS_CANDIDATURA_GERAL } from './candidatura-geral.seo';
 import { etapaGuard } from './estado/etapa.guard';
 
 /**
@@ -14,10 +15,16 @@ export const CANDIDATURA_GERAL_ROUTES: Routes = [
       import('./inicio/candidatura-geral-inicio.component').then(
         (m) => m.CandidaturaGeralInicioComponent,
       ),
-    data: { tituloChave: 'rotas.candidaturaGeral.titulo', descricaoChave: 'rotas.candidaturaGeral.descricao' },
+    data: {
+      tituloChave: 'rotas.candidaturaGeral.titulo',
+      descricaoChave: 'rotas.candidaturaGeral.descricao',
+      imagem: '/imagens/og-candidatura-geral-v1.jpg',
+      dadosEstruturados: DADOS_ESTRUTURADOS_CANDIDATURA_GERAL,
+    },
   },
   {
-    // Moldura das etapas: cada `etapa-N` é filha e traz `data.etapa`.
+    // Moldura das etapas: cada `etapa-N` é filha e traz `data.etapa`. Ficam fora
+    // dos motores de busca (`indexar: false`): são o formulário, não a convocatória.
     path: '',
     loadComponent: () =>
       import('./formulario/formulario-candidatura.component').then((m) => m.FormularioCandidaturaComponent),
@@ -29,6 +36,7 @@ export const CANDIDATURA_GERAL_ROUTES: Routes = [
           etapa: 1,
           tituloChave: 'rotas.candidaturaGeralFormulario.titulo',
           descricaoChave: 'rotas.candidaturaGeralFormulario.descricao',
+          indexar: false,
         },
       },
       {
@@ -39,6 +47,7 @@ export const CANDIDATURA_GERAL_ROUTES: Routes = [
           etapa: 2,
           tituloChave: 'rotas.candidaturaGeralFormulario.titulo',
           descricaoChave: 'rotas.candidaturaGeralFormulario.descricao',
+          indexar: false,
         },
       },
       {
@@ -49,6 +58,7 @@ export const CANDIDATURA_GERAL_ROUTES: Routes = [
           etapa: 3,
           tituloChave: 'rotas.candidaturaGeralFormulario.titulo',
           descricaoChave: 'rotas.candidaturaGeralFormulario.descricao',
+          indexar: false,
         },
       },
       {
@@ -59,6 +69,7 @@ export const CANDIDATURA_GERAL_ROUTES: Routes = [
           etapa: 4,
           tituloChave: 'rotas.candidaturaGeralFormulario.titulo',
           descricaoChave: 'rotas.candidaturaGeralFormulario.descricao',
+          indexar: false,
         },
       },
     ],

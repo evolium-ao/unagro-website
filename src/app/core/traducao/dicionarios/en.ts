@@ -364,7 +364,7 @@ export const en = {
     candidaturaGeral: {
       titulo: 'Faculty Application Process',
       descricao:
-        'Official call for masters, doctors and researchers: areas, criteria, documents and application deadline.',
+        'Applications for lecturers, researchers and specialists in the agribusiness sector. Higher education in Icolo e Bengo, Luanda. Deadline 15 November 2026.',
     },
     candidaturaGeralFormulario: {
       titulo: 'Faculty Application',

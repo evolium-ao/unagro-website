@@ -268,7 +268,7 @@ export class ModalCandidaturaSubmetidaComponent {
         'AgroSophia · Gabinete da Comissão Instaladora · Icolo e Bengo, República de Angola',
         'AgroSophia · Installation Committee Office · Icolo e Bengo, Republic of Angola',
       ),
-      instituicao: t('Universidade Nacional de Agronomia (UNAGRO)', 'National University of Agronomy (UNAGRO)'),
+      instituicao: t('AGROSOPHIA, Lda.', 'AGROSOPHIA, Lda.'),
       comprovativoTitulo: t('Comprovativo de Submissão de Candidatura', 'Application Submission Receipt'),
       comprovativoData: t('Data e hora de submissão', 'Submission date and time'),
       comprovativoNota: t(

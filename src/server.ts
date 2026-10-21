@@ -36,6 +36,15 @@ app.use(
 );
 
 /**
+ * Enquanto o site principal estiver desligado, a raiz é a convocatória: 301 (e não
+ * o 302 do `redirectTo` do router) para os motores de busca passarem a indexar
+ * `/candidatura-geral`. Retirar quando a página inicial voltar.
+ */
+app.get('/', (req, res) => {
+  res.redirect(301, '/candidatura-geral');
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 app.use((req, res, next) => {
