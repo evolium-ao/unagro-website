@@ -199,6 +199,11 @@ export class CandidaturaGeralInicioComponent {
       duvidasOpcaoProcesso: t('Processo de submissão', 'Submission process'),
       duvidasOpcaoPrazos: t('Prazos e calendário', 'Deadlines and schedule'),
       duvidasOpcaoOutro: t('Outro assunto', 'Other subject'),
+      duvidasTextoNovoAssunto: t('Adicionar assunto', 'Add subject'),
+      duvidasDicaNovoAssunto: t(
+        'Não encontra o assunto? Escreva-o na pesquisa para o adicionar.',
+        'Can’t find the subject? Type it in the search box to add it.',
+      ),
       duvidasRotuloMensagem: t('A sua pergunta / mensagem', 'Your question / message'),
       duvidasPlaceholderMensagem: t(
         'Descreva a sua dúvida de forma objectiva…',
@@ -256,10 +261,11 @@ export class CandidaturaGeralInicioComponent {
   protected readonly disciplinasAdicionadas = signal<string[]>([]);
 
   /**
-   * 8 sessão — canal de dúvidas sobre a candidatura, `POST /duvidas`. `assunto` é um
-   * enum fechado do lado da API (`enquadramento`, `documentacao`, `submissao`, `prazos`,
-   * `outro`, de `GET /duvidas/assuntos`) — ao contrário do `tipo_interesse` do
-   * `ContatoRequest`, não aceita texto livre.
+   * 8 sessão — canal de dúvidas sobre a candidatura, `POST /duvidas`. A documentação
+   * da API declara `assunto` como enum fechado (`enquadramento`, `documentacao`,
+   * `submissao`, `prazos`, `outro`, de `GET /duvidas/assuntos`), mas o servidor aceita
+   * na prática qualquer valor — por isso o `permitirNovo` do select, como em
+   * `tipo_interesse` de `ContatoRequest`.
    */
   protected readonly formularioDuvidas = new FormGroup({
     nome: new FormControl('', {

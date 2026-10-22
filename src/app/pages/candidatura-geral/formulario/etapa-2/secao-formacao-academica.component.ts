@@ -146,7 +146,7 @@ export class SecaoFormacaoAcademicaComponent {
     return {
       titulo: t('Secção 1: Formação Académica & Habilitações', 'Section 1: Academic Background & Qualifications'),
       descricao: t(
-        'Qualificações académicas formais obtidas ou homologadas pelo INAAREES / MESCTI.',
+        'OS MESTRES E DOUTORES SERÃO PREFERENCIADOS',
         'Formal academic qualifications obtained or recognised by INAAREES / MESCTI.',
       ),
       linkInaarees: t(

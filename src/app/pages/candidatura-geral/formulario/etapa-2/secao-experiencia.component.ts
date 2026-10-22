@@ -40,12 +40,14 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
     </app-titulo-bloco>
 
     <div class="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
-      <form-input-field [obrigatorio]="true" [label]="textos().empresa" [placeholder]="textos().empresaPlaceholder"
+      <form-input-field [label]="textos().empresa" [placeholder]="textos().empresaPlaceholder"
         [ngModel]="empresa()" (ngModelChange)="empresa.set($event)" [erro]="erroCampo(empresa())" />
-      <field-select-v2 [obrigatorio]="true" [label]="textos().area" [placeholder]="textos().selecione"
-        [searchable]="true" [options]="opcoesArea()" [ngModel]="area()" (ngModelChange)="area.set($event ?? '')"
+      <!-- permitirNovo: a área pode não estar na lista — ver "Disciplina leccionada" da secção 2. -->
+      <field-select-v2 [label]="textos().area" [placeholder]="textos().selecione"
+        [searchable]="true" [permitirNovo]="true" [textoNovo]="textos().adicionarArea" [dicaNovo]="textos().dicaArea"
+        [options]="opcoesArea()" [ngModel]="area()" (ngModelChange)="area.set($event ?? '')"
         [erro]="erroCampo(area())" />
-      <field-select-v2 class="sm:col-span-2" [obrigatorio]="true" [label]="textos().tempo"
+      <field-select-v2 class="sm:col-span-2" [label]="textos().tempo"
         [placeholder]="textos().selecione" [options]="opcoesTempo()" [ngModel]="tempo()"
         (ngModelChange)="tempo.set($event ?? '')" [erro]="erroCampo(tempo())" />
     </div>
@@ -105,7 +107,7 @@ export class SecaoExperienciaComponent {
   protected readonly textos = computed(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
-      titulo: t('Secção 3: Experiência Profissional', 'Section 3: Professional Experience'),
+      titulo: t('Secção 3: Experiência Profissional (Opcional)', 'Section 3: Professional Experience (Optional)'),
       descricao: t(
         'Trajectória e experiência no agronegócio ou investigação agrária.',
         'Career and experience in agribusiness or agricultural research.',
@@ -114,6 +116,11 @@ export class SecaoExperienciaComponent {
       empresa: t('Empresa', 'Company'),
       empresaPlaceholder: t('Ex.: Fazenda Agro-Industrial do Cuanza', 'E.g. Cuanza Agro-Industrial Farm'),
       area: t('Área de trabalho', 'Field of work'),
+      adicionarArea: t('Adicionar área', 'Add field'),
+      dicaArea: t(
+        'Não encontra a área? Escreva-a na pesquisa para a adicionar.',
+        'Can’t find the field? Type it in the search box to add it.',
+      ),
       tempo: t('Tempo de Experiência', 'Length of Experience'),
       selecione: t('Selecione...', 'Select...'),
       obrigatorio: t('Campo obrigatório', 'Required field'),

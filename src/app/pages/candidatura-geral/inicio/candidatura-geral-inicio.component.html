@@ -257,11 +257,11 @@
           [erro]="erroDuvidaEmail()" />
       </div>
 
-      <!-- assunto: enum fechado do lado da API (GET /duvidas/assuntos) — sem permitirNovo, ao
-           contrário do "Disciplina leccionada" da etapa 2, que aceita texto livre. -->
       <field-select-v2 class="mt-5 block" variante="destacado" formControlName="assunto" [obrigatorio]="true"
         [label]="textos().duvidasRotuloAssunto" [placeholder]="textos().duvidasPlaceholderAssunto"
-        [options]="opcoesAssuntoDuvida()" [erro]="erroDuvidaAssunto()" />
+        [options]="opcoesAssuntoDuvida()" [erro]="erroDuvidaAssunto()"
+        [searchable]="true" [permitirNovo]="true" [textoNovo]="textos().duvidasTextoNovoAssunto"
+        [dicaNovo]="textos().duvidasDicaNovoAssunto" />
 
       <form-input-field class="mt-5 block" variante="destacado" type="textarea" [rows]="5" [obrigatorio]="true"
         formControlName="pergunta" [label]="textos().duvidasRotuloMensagem"
