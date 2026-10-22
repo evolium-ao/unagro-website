@@ -81,6 +81,9 @@ export class SeoService {
     this.propriedade('og:site_name', MARCA);
     this.propriedade('og:type', 'website');
     this.propriedade('og:locale', ingles ? 'en_GB' : 'pt_AO');
+    // O idioma troca no mesmo URL (botão PT/EN), não por rota — por isso só um
+    // `og:locale:alternate`, o outro dos dois que o site serve.
+    this.propriedade('og:locale:alternate', ingles ? 'pt_AO' : 'en_GB');
     this.propriedade('og:title', titulo);
     this.propriedade('og:url', url);
     this.propriedade('og:image', imagem);
