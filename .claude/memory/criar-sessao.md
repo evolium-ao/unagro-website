@@ -2086,8 +2086,8 @@ autenticação.
 subscrição de `hub-unagro`, onde é ele que alinha o botão com a caixa de texto (há um
 comentário no template a dizê-lo). Só quem passa `true` perde o rótulo.
 
-**Inputs (acrescentados):** `variante: 'caixa' | 'minimalista' | 'sublinhado'` (por omissão
-`'caixa'`) · `ocultarRotuloVazio: boolean` (por omissão `false`)
+**Inputs (acrescentados):** `variante: 'caixa' | 'minimalista' | 'sublinhado' | 'destacado'`
+(por omissão `'caixa'`) · `ocultarRotuloVazio: boolean` (por omissão `false`)
 
 **Como usar:**
 
@@ -2097,9 +2097,74 @@ comentário no template a dizê-lo). Só quem passa `true` perde o rótulo.
       <app-icone leftIcon nome="lock" [tamanho]="16" />
     </form-input-field>
 
-**Usado em:** `entrar` (variante `sublinhado`); `contactos`, `detalhe-projeto`, `hub-unagro`,
-`inscricao`, `candidatura-docentes`, `modal-agendar-visita`, `modal-inscricao-curso`
-(variantes anteriores, intactas)
+**Estendido em** 2026-10-22 (sessão "Dúvidas sobre o Concurso de Candidatura" de
+`candidatura-geral/inicio`) com a variante **`destacado`**, aditiva, em **par com o mesmo
+input no `field-select-v2`** (mesmo ficheiro de tipos próprio, `select-field-v2.ts`, sem
+`sublinhado`): a mesma caixa branca `rounded-xl border border-gray-200` da `caixa` — só mais
+arredondada e com mais respiro (`px-4` em vez de `px-3`) —, mas com o **rótulo em maiúsculas,
+negrito e escuro** (`text-text-primary`) em vez do rótulo cinzento e fino de `caixa`. É o
+estilo do mockup com labels tipo "NOME COMPLETO *" sobre um cartão de formulário em
+`bg-bg-lighter`; nem a `caixa` (rótulo claro, não maiúsculo) nem a `minimalista`/`sublinhado`
+(sem caixa) serviam. `fundoBranco` e `classesGatilho`/`classesMoldura` passaram a tratar
+`destacado` como a `caixa` (grupo `caixa || destacado`), e os valores por omissão de ambos os
+componentes continuam `'caixa'` — `entrar`, `contactos`, `detalhe-projeto`, `hub-unagro`,
+`inscricao`, `candidatura-docentes`, `modal-agendar-visita`, `modal-inscricao-curso` saem
+iguais.
+
+**Usado em:** `entrar` (variante `sublinhado`); `candidatura-geral/inicio` (variante
+`destacado`, nos dois campos); `contactos`, `detalhe-projeto`, `hub-unagro`, `inscricao`,
+`candidatura-docentes`, `modal-agendar-visita`, `modal-inscricao-curso` (variantes
+anteriores, intactas)
+
+### field-select-v2 (existente, estendido)
+
+**Onde:** `src/app/shared/componentes/select-field-v2/select-field-v2.ts`
+**Estendido para:** sessão "Dúvidas sobre o Concurso de Candidatura" de
+`candidatura-geral/inicio` (2026-10-22)
+**Descrição:** ganhou a mesma variante **`destacado`** do `form-input-field` (ver essa
+entrada) — caixa branca mais arredondada com o rótulo em maiúsculas negrito escuro. O gatilho
+do select (`classesGatilho`) ganhou um terceiro ramo a par de `caixa`, com a mesma caixa
+`rounded-xl border-gray-200`. Por omissão continua `'caixa'`.
+
+**Inputs:** `variante: 'caixa' | 'minimalista' | 'destacado'` (por omissão `'caixa'`)
+
+**Usado em:** `candidatura-geral/inicio` (variante `destacado`, no select de assunto);
+`candidatura-geral/formulario` (etapas de formação académica e experiência), `contactos`,
+`desenvolvimento` (dentro do `app-modal-agendar-visita`), `detalhe-projeto`, `inscricao`,
+`candidatura-docentes` (variantes `caixa`/`minimalista`, intactas)
+
+### Canal de dúvidas sobre a candidatura (`candidatura-geral/inicio`, 2026-10-22)
+
+**Onde:** `src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.html`
+(`#secao-duvidas`, 8ª e última sessão, logo a seguir a `#secao-prazo`)
+**Descrição:** cabeçalho centrado (`app-cabecalho-secao` `tema="verde"`,
+`tamanhoDescricao="pequeno"`, sem traços) seguido de um formulário único num cartão
+`rounded-3xl bg-bg-lighter` — nome e e-mail lado a lado, assunto/categoria e a pergunta em
+`textarea` a toda a largura, e o botão `app-botao` `variante="profundo"` com
+`class="uppercase tracking-wide"` (texto do `textos()` fica em frase normal; o CSS é que o
+maiusculiza, como já se fazia no `app-selo` de `contactos`). É um bloco único, não uma
+lista, por isso ficou em markup da página, como o formulário de `contactos`.
+**Não é um componente novo**: os campos usam a variante `destacado` nova do
+`form-input-field`/`field-select-v2` (ver essas entradas) — não havia cartão de formulário
+partilhado para reaproveitar, e um único formulário não justificava extrair um.
+
+**Dados:** **sem modelo, mock nem serviço novos** — reaproveita a `NovoContacto` /
+`ContatosService` já usada por `contactos` (`POST /contatos`), porque não existe endpoint
+próprio para a Comissão Instaladora e `tipo_interesse` é texto livre do lado da API. A única
+coisa nova é um bloco de entradas em `ROTULOS_ASSUNTO_PT`
+(`src/app/core/servicos/contatos.service.ts`): `candidatura-enquadramento`,
+`candidatura-documentacao`, `candidatura-processo`, `candidatura-outro` — todas aditivas, as
+quatro antigas (`geral`, `candidaturas`, `cursos`, `imprensa`) intactas. As categorias do
+select são conteúdo estrutural fixo (computed sobre `textos()`), não uma lista da API.
+**No dia em que a Comissão tiver endpoint próprio**, troca-se só o `mutationFn` do
+`envioDuvida` por um serviço novo — nenhuma outra linha muda.
+
+O `erroDuvidaX` de cada campo segue o mesmo `sinalErroDuvida` (cópia do `sinalErro` de
+`contactos`): `toSignal(controlo.events)` + `computed` que só mostra mensagem depois de
+`touched`. O `mb-16 sm:mb-26` que dava o respiro antes do rodapé (`app-rodape-candidatura`)
+saiu de `#secao-prazo` (deixou de ser a última sessão) e passou para `#secao-duvidas`.
+
+**Usado em:** `candidatura-geral/inicio`
 
 ### Página `entrar` — `/entrar` (2026-09-07)
 

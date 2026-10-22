@@ -17,12 +17,15 @@ interface ContatoRequest {
 }
 
 /**
- * Rótulo **em português** de cada opção do select "Assunto" do formulário, pelo
- * `id` que o `FormControl` guarda. A API é monolingue e `tipo_interesse` é texto
- * livre — vai sempre a mesma cadeia para o backoffice, mesmo quando o visitante
- * preenche o formulário em inglês (mesmo padrão do
+ * Rótulo **em português** de cada opção do select "Assunto" do formulário de
+ * `/contactos`, pelo `id` que o `FormControl` guarda. A API é monolingue e
+ * `tipo_interesse` é texto livre — vai sempre a mesma cadeia para o backoffice,
+ * mesmo quando o visitante preenche o formulário em inglês (mesmo padrão do
  * `DocenciaService.rotuloTitulacaoEmPortugues`, para o `maior_titulo` das
  * candidaturas de docentes).
+ *
+ * O canal de dúvidas da candidatura (`candidatura-geral/inicio`) tem o seu
+ * próprio `POST /duvidas` (ver `DuvidasService`) e não passa por aqui.
  */
 const ROTULOS_ASSUNTO_PT: Record<string, string> = {
   geral: 'Informação geral',

@@ -347,7 +347,7 @@ export class SecaoDossierComponent {
         'Submit the certificate in the coming months',
       ),
       agregacaoAvisoTexto: t(
-        'Tem entre 3 a 6 meses, a contar da submissão desta candidatura, para remeter o Certificado de Agregação Pedagógica ao Gabinete de Instalação.',
+        'Tem entre 3 a 6 meses, a contar da submissão desta candidatura, para remeter o Certificado de Agregação Pedagógica ao Gabinete da Comissão Instaladora.',
         'You have between 3 and 6 months from submitting this application to send the Teaching Qualification Certificate to the Installation Office.',
       ),
       certificadoAgregacao: t('Certificado de Agregação Pedagógica', 'Teaching Qualification Certificate'),

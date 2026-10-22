@@ -1,9 +1,21 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
+import { injectMutation } from '@tanstack/angular-query-experimental';
 import { environment } from '../../../../environments/environment';
+import { ErroApi } from '../../../core/api/erro-api';
+import { NovaDuvida } from '../../../core/modelos/duvida.model';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
+import { DuvidasService } from '../../../core/servicos/duvidas.service';
 import { TraducaoService } from '../../../core/traducao/traducao.service';
 import { AlertModalService } from '../../../shared/componentes/alert-modal/alert-modal.service';
 import {
@@ -26,8 +38,19 @@ import { CartaoRequisitoComponent } from '../../../shared/componentes/cartao-req
 import { ContadorRegressivoComponent } from '../../../shared/componentes/contador-regressivo/contador-regressivo.component';
 import { ContainerPaginaComponent } from '../../../shared/componentes/container-pagina/container-pagina.component';
 import { EspacoImagemComponent } from '../../../shared/componentes/espaco-imagem/espaco-imagem.component';
+import { FormFieldInputComponentV2 } from '../../../shared/componentes/input-field/form-input-field';
 import { IconeComponent } from '../../../shared/componentes/icone/icone.component';
+import {
+  FormFieldSelectComponentV2,
+  SelectOptionV2,
+} from '../../../shared/componentes/select-field-v2/select-field-v2';
 import { RevelarAoScrollDirective } from '../../../shared/diretivas/revelar-ao-scroll.directive';
+
+/** `nome`/`email` do formulário de dúvidas levam o mesmo limite do `DuvidaRequest` da API. */
+const MAXIMO_TEXTO_CURTO_DUVIDA = 255;
+/** `pergunta` do `DuvidaRequest`: `minLength` 5, `maxLength` 2000. */
+const MINIMO_PERGUNTA_DUVIDA = 5;
+const MAXIMO_PERGUNTA_DUVIDA = 2000;
 
 /** Primeira etapa do formulário — destino do hero e dos cartões de área. */
 export const ROTA_ETAPA_1 = '/candidatura-geral/etapa-1';
@@ -45,9 +68,12 @@ const LINK_CONVOCATORIA = new URL('/candidatura-geral', environment.siteUrl).hre
     CartaoAvisoComponent,
     SeletorDisciplinasComponent,
     FormsModule,
+    ReactiveFormsModule,
     ContadorRegressivoComponent,
     IconeComponent,
     BotaoComponent,
+    FormFieldInputComponentV2,
+    FormFieldSelectComponentV2,
     RevelarAoScrollDirective,
   ],
   templateUrl: './candidatura-geral-inicio.component.html',
@@ -59,6 +85,7 @@ export class CandidaturaGeralInicioComponent {
   private readonly router = inject(Router);
   private readonly modais = inject(AlertModalService);
   private readonly ehBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly duvidas = inject(DuvidasService);
 
   protected readonly rotaEtapa1 = ROTA_ETAPA_1;
 
@@ -80,7 +107,7 @@ export class CandidaturaGeralInicioComponent {
         'A AGROSOPHIA, Lda. procura docentes, investigadores e especialistas no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50km de Luanda) virado para o ensino superior e prática do agronegócio. Os Mestres e Doutores serão preferenciados.',
         'AGROSOPHIA, Lda. is looking for lecturers, researchers and specialists in the agribusiness sector to develop an institutional project based in Icolo e Bengo (50km from Luanda) focused on higher education and agribusiness practice. Masters and Doctors will be given preference.',
       ),
-      heroCandidatar: t('Candidatar', 'Apply'),
+      heroCandidatar: t('Candidatar-se', 'Apply'),
       heroConsultar: t('Consultar candidatura', 'Check application'),
       heroPartilhar: t('Partilhar convocatória', 'Share the call'),
       partilhaDescricao: t(
@@ -152,6 +179,68 @@ export class CandidaturaGeralInicioComponent {
         minutos: t('Minutos', 'Minutes'),
         segundos: t('Segundos', 'Seconds'),
       },
+      duvidasRotulo: t('Canal de esclarecimento & dúvidas', 'Clarification & questions channel'),
+      duvidasTitulo: t(
+        'Dúvidas sobre o Concurso de Candidatura?',
+        'Questions about the Application Contest?',
+      ),
+      duvidasDescricao: t(
+        'Tem alguma questão sobre o enquadramento, documentação necessária ou processo de submissão? Envie a sua pergunta directamente à Comissão Instaladora.',
+        'Do you have a question about the framework, required documentation or submission process? Send it directly to the Installation Committee.',
+      ),
+      duvidasRotuloNome: t('Nome completo', 'Full name'),
+      duvidasPlaceholderNome: t('Seu nome completo', 'Your full name'),
+      duvidasRotuloEmail: t('Correio electrónico', 'E-mail address'),
+      duvidasPlaceholderEmail: t('exemplo@dominio.ao', 'example@domain.ao'),
+      duvidasRotuloAssunto: t('Assunto / Categoria', 'Subject / Category'),
+      duvidasPlaceholderAssunto: t('Seleccione o tema…', 'Select a topic…'),
+      duvidasOpcaoEnquadramento: t('Enquadramento e requisitos', 'Framework and requirements'),
+      duvidasOpcaoDocumentacao: t('Documentação necessária', 'Required documentation'),
+      duvidasOpcaoProcesso: t('Processo de submissão', 'Submission process'),
+      duvidasOpcaoPrazos: t('Prazos e calendário', 'Deadlines and schedule'),
+      duvidasOpcaoOutro: t('Outro assunto', 'Other subject'),
+      duvidasRotuloMensagem: t('A sua pergunta / mensagem', 'Your question / message'),
+      duvidasPlaceholderMensagem: t(
+        'Descreva a sua dúvida de forma objectiva…',
+        'Describe your question clearly…',
+      ),
+      duvidasEnviar: this.envioDuvida?.isPending()
+        ? t('A enviar…', 'Sending…')
+        : t('Enviar pergunta à comissão', 'Send question to the committee'),
+      duvidasNota: t(
+        'Tempo médio de resposta: até 48 horas úteis via correio electrónico.',
+        'Average response time: within 48 business hours by e-mail.',
+      ),
+      duvidasTituloSucesso: t('Pergunta enviada', 'Question sent'),
+      duvidasMensagemSucesso: t(
+        'A sua pergunta foi enviada à Comissão Instaladora. Receberá a resposta por correio electrónico em até 48 horas úteis.',
+        'Your question was sent to the Installation Committee. You will receive a reply by e-mail within 48 business hours.',
+      ),
+      duvidasErroNomeObrigatorio: t('Indique o seu nome.', 'Please enter your name.'),
+      duvidasErroNomeTamanho: t(
+        'O nome não pode ter mais de 255 caracteres.',
+        'The name cannot be longer than 255 characters.',
+      ),
+      duvidasErroEmailObrigatorio: t('Indique o seu e-mail.', 'Please enter your e-mail.'),
+      duvidasErroEmailTamanho: t(
+        'O e-mail não pode ter mais de 255 caracteres.',
+        'The e-mail cannot be longer than 255 characters.',
+      ),
+      duvidasErroEmailInvalido: t('E-mail inválido.', 'Invalid e-mail address.'),
+      duvidasErroAssunto: t('Escolha um assunto.', 'Please choose a subject.'),
+      duvidasErroMensagem: t('Escreva a sua pergunta.', 'Please write your question.'),
+      duvidasErroMensagemCurta: t(
+        `A pergunta tem de ter pelo menos ${MINIMO_PERGUNTA_DUVIDA} caracteres.`,
+        `The question must be at least ${MINIMO_PERGUNTA_DUVIDA} characters long.`,
+      ),
+      duvidasErroGenerico: t(
+        'Não foi possível enviar a pergunta. Tente novamente dentro de alguns instantes.',
+        'Could not send the question. Please try again in a few moments.',
+      ),
+      duvidasErroSemLigacao: t(
+        'Não foi possível contactar o servidor. Verifique a ligação e tente novamente.',
+        'Could not reach the server. Check your connection and try again.',
+      ),
     };
   });
 
@@ -165,6 +254,86 @@ export class CandidaturaGeralInicioComponent {
    * «Confirmar Seleção» leva-os à etapa 1, que os pré-preenche no formulário.
    */
   protected readonly disciplinasAdicionadas = signal<string[]>([]);
+
+  /**
+   * 8 sessão — canal de dúvidas sobre a candidatura, `POST /duvidas`. `assunto` é um
+   * enum fechado do lado da API (`enquadramento`, `documentacao`, `submissao`, `prazos`,
+   * `outro`, de `GET /duvidas/assuntos`) — ao contrário do `tipo_interesse` do
+   * `ContatoRequest`, não aceita texto livre.
+   */
+  protected readonly formularioDuvidas = new FormGroup({
+    nome: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(MAXIMO_TEXTO_CURTO_DUVIDA)],
+    }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.email, Validators.maxLength(MAXIMO_TEXTO_CURTO_DUVIDA)],
+    }),
+    assunto: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    pergunta: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.minLength(MINIMO_PERGUNTA_DUVIDA),
+        Validators.maxLength(MAXIMO_PERGUNTA_DUVIDA),
+      ],
+    }),
+  });
+
+  protected readonly envioDuvida = injectMutation<void, ErroApi, NovaDuvida>(() => ({
+    mutationFn: (dados) => this.duvidas.criar(dados),
+  }));
+
+  /**
+   * Categorias do canal de dúvidas — o enum fechado de `AssuntoDuvidaEnum`, conteúdo
+   * estrutural fixo (muda tão pouco quanto os outros selects de
+   * `candidatura-geral.service.ts`), não uma consulta à parte.
+   */
+  protected readonly opcoesAssuntoDuvida = computed<SelectOptionV2[]>(() => {
+    const t = this.textos();
+    return [
+      { value: 'enquadramento', label: t.duvidasOpcaoEnquadramento },
+      { value: 'documentacao', label: t.duvidasOpcaoDocumentacao },
+      { value: 'submissao', label: t.duvidasOpcaoProcesso },
+      { value: 'prazos', label: t.duvidasOpcaoPrazos },
+      { value: 'outro', label: t.duvidasOpcaoOutro },
+    ];
+  });
+
+  protected readonly erroDuvidaNome = this.sinalErroDuvida(this.formularioDuvidas.controls.nome, (erros) =>
+    erros['required'] ? this.textos().duvidasErroNomeObrigatorio : this.textos().duvidasErroNomeTamanho,
+  );
+
+  protected readonly erroDuvidaEmail = this.sinalErroDuvida(this.formularioDuvidas.controls.email, (erros) => {
+    if (erros['required']) return this.textos().duvidasErroEmailObrigatorio;
+    if (erros['maxlength']) return this.textos().duvidasErroEmailTamanho;
+    return this.textos().duvidasErroEmailInvalido;
+  });
+
+  protected readonly erroDuvidaAssunto = this.sinalErroDuvida(this.formularioDuvidas.controls.assunto, () =>
+    this.textos().duvidasErroAssunto,
+  );
+
+  protected readonly erroDuvidaMensagem = this.sinalErroDuvida(this.formularioDuvidas.controls.pergunta, (erros) =>
+    erros['minlength'] ? this.textos().duvidasErroMensagemCurta : this.textos().duvidasErroMensagem,
+  );
+
+  /** Mesma lógica de `contactos`: as mensagens de validação 422 do Laravel passam à frente do texto genérico. */
+  protected readonly mensagemErroDuvida = computed(() => {
+    const erro = this.envioDuvida.error();
+    if (!erro) {
+      return '';
+    }
+    const doServidor = Object.values(erro.errosValidacao).flat();
+    if (doServidor.length) {
+      return doServidor.join(' ');
+    }
+    if (erro.estado === 0) {
+      return this.textos().duvidasErroSemLigacao;
+    }
+    return this.textos().duvidasErroGenerico;
+  });
 
   /** "Consultar candidatura" do hero — modal com a pesquisa por código ou BI / passaporte. */
   protected abrirConsulta(): void {
@@ -220,5 +389,48 @@ export class CandidaturaGeralInicioComponent {
       return;
     }
     void this.router.navigate([this.rotaEtapa1], { queryParams: { disciplinas: ids.join(',') } });
+  }
+
+  /** Submete o canal de dúvidas — mesmo padrão de `enviar()` de `contactos`, agora para `POST /duvidas`. */
+  protected enviarDuvida(): void {
+    if (this.envioDuvida.isPending()) {
+      return;
+    }
+    if (this.formularioDuvidas.invalid) {
+      this.formularioDuvidas.markAllAsTouched();
+      return;
+    }
+
+    const valores = this.formularioDuvidas.getRawValue();
+
+    this.envioDuvida.mutate(
+      {
+        nome: valores.nome,
+        email: valores.email,
+        assunto: valores.assunto,
+        pergunta: valores.pergunta,
+      },
+      {
+        onSuccess: () => {
+          this.formularioDuvidas.reset({ nome: '', email: '', assunto: '', pergunta: '' });
+          void this.modais.sucesso(this.textos().duvidasMensagemSucesso, this.textos().duvidasTituloSucesso);
+        },
+      },
+    );
+  }
+
+  /**
+   * O `criarErrosFormulario` injecta o `FormGroupDirective` e não serve numa classe de
+   * página; este sinal por controlo é o mesmo padrão de `contactos` — reage ao
+   * `touched` e à validade via `toSignal(controlo.events)`.
+   */
+  private sinalErroDuvida(controlo: FormControl<string>, mensagem: (erros: ValidationErrors) => string) {
+    const eventos = toSignal(controlo.events);
+
+    return computed(() => {
+      eventos();
+      if (!controlo.touched || controlo.valid) return null;
+      return mensagem(controlo.errors ?? {});
+    });
   }
 }

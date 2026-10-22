@@ -9,30 +9,25 @@
        empilhados, à mesma largura; a partir de `md` ficam lado a lado. O `data-animar`
        fica só no contentor — o banner anima todos os `[data-animar]`, e aninhados
        animavam duas vezes. -->
-  <div class="mx-auto mt-8 flex w-full max-w-md flex-col items-stretch gap-3 md:mx-0 md:max-w-none md:flex-row md:items-center"
+  <div class="mx-auto mt-8 flex w-full max-w-md flex-col items-stretch md:mx-0 md:max-w-none md:flex-row md:items-center gap-3"
     data-animar="ctas">
     <!-- Telemóvel: e-mail e partilha numa linha, «Candidatar» à largura toda por
          baixo — lado a lado o e-mail ficava cortado a meio. -->
-    <div class="flex w-full min-w-0 flex-wrap items-center gap-2 rounded-xl bg-white p-1.5 shadow-lg md:max-w-md md:flex-1 md:flex-nowrap md:pl-4">
-      <app-icone nome="mail" [tamanho]="16" class="ml-2.5 shrink-0 text-text-secondary md:ml-0" />
-      <a [href]="'mailto:' + emailContacto"
-        class="min-w-0 flex-1 truncate text-left text-sm text-text-secondary hover:text-primary-deep">
-        {{ emailContacto }}
-      </a>
+    <div class="flex  min-w-0 flex-nowrap items-center gap-2 rounded-xl">
       <!-- Partilha nativa do dispositivo; só o ícone (o nome vai no aria-label). -->
       <button type="button"
-        class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-200 text-primary-deep transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary focus-visible:outline-2 focus-visible:outline-primary/40"
+        class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary-deep text-white transition-colors hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary/40"
         [attr.aria-label]="textos().heroPartilhar" [title]="textos().heroPartilhar" (click)="partilhar()">
         <app-icone nome="share-2" [tamanho]="16" />
       </button>
-      <app-botao class="basis-full md:inline-block md:w-auto md:shrink-0 md:basis-auto" variante="profundo" tamanho="sm"
+      <app-botao class="basis-full md:inline-block md:w-auto md:shrink-0 md:basis-auto" variante="profundo" tamanho="md"
         [link]="rotaEtapa1" icone="arrow-right" posicaoIcone="direita" [larguraTotal]="true">
         {{ textos().heroCandidatar }}
       </app-botao>
     </div>
     <!-- Quem já se candidatou: consulta pelo código ou pelo BI / passaporte. -->
     <app-botao class="block w-full whitespace-nowrap md:w-auto md:shrink-0" variante="glass"
-      tamanho="md" icone="search" raio="medio" [larguraTotal]="true" (clicado)="abrirConsulta()">
+      tamanho="md" icone="search" raio="completo" [larguraTotal]="true" (clicado)="abrirConsulta()">
       {{ textos().heroConsultar }}
     </app-botao>
   </div>
@@ -217,7 +212,7 @@
 </section>
 
 <!-- 7 sessão — prazo e contagem decrescente -->
-<section id="secao-prazo" class="bg-primary-deep px-4 py-16 text-center sm:px-6 sm:py-20 lg:px-8 mb-16 sm:mb-26">
+<section id="secao-prazo" class="bg-primary-deep px-4 py-16 text-center sm:px-6 sm:py-20 lg:px-8">
   <app-container-pagina>
     <div class="flex flex-col items-center" appRevelarAoScroll>
       <span
@@ -235,5 +230,55 @@
         {{ textos().prazoCandidatar }}
       </app-botao>
     </div>
+  </app-container-pagina>
+</section>
+
+<!-- 8 sessão — canal de dúvidas sobre a candidatura: formulário à Comissão Instaladora -->
+<section id="secao-duvidas" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8 mb-16 sm:mb-26">
+  <app-container-pagina>
+    <div class="text-center" appRevelarAoScroll>
+      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-deep">
+        {{ textos().duvidasRotulo }}
+      </p>
+      <app-cabecalho-secao [titulo]="textos().duvidasTitulo" [descricao]="textos().duvidasDescricao" tema="verde"
+        tamanhoDescricao="pequeno" [mostrarTracos]="false" />
+    </div>
+
+    <form [formGroup]="formularioDuvidas" (ngSubmit)="enviarDuvida()"
+      class="mx-auto mt-10 max-w-3xl rounded-3xl border border-gray-100 bg-bg-lighter p-6 shadow-xl shadow-black/5 sm:mt-12 sm:p-10"
+      appRevelarAoScroll>
+      <div class="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+        <form-input-field variante="destacado" formControlName="nome" [obrigatorio]="true"
+          [label]="textos().duvidasRotuloNome" [placeholder]="textos().duvidasPlaceholderNome"
+          [erro]="erroDuvidaNome()" />
+
+        <form-input-field variante="destacado" type="email" formControlName="email" [obrigatorio]="true"
+          [label]="textos().duvidasRotuloEmail" [placeholder]="textos().duvidasPlaceholderEmail"
+          [erro]="erroDuvidaEmail()" />
+      </div>
+
+      <!-- assunto: enum fechado do lado da API (GET /duvidas/assuntos) — sem permitirNovo, ao
+           contrário do "Disciplina leccionada" da etapa 2, que aceita texto livre. -->
+      <field-select-v2 class="mt-5 block" variante="destacado" formControlName="assunto" [obrigatorio]="true"
+        [label]="textos().duvidasRotuloAssunto" [placeholder]="textos().duvidasPlaceholderAssunto"
+        [options]="opcoesAssuntoDuvida()" [erro]="erroDuvidaAssunto()" />
+
+      <form-input-field class="mt-5 block" variante="destacado" type="textarea" [rows]="5" [obrigatorio]="true"
+        formControlName="pergunta" [label]="textos().duvidasRotuloMensagem"
+        [placeholder]="textos().duvidasPlaceholderMensagem" [erro]="erroDuvidaMensagem()" />
+
+      <app-botao class="mt-6 uppercase tracking-wide" tipo="submit" variante="profundo" tamanho="lg" raio="medio"
+        icone="arrow-right" posicaoIcone="direita" [larguraTotal]="true" [aCarregar]="envioDuvida.isPending()"
+        [desativado]="envioDuvida.isPending()">
+        {{ textos().duvidasEnviar }}
+      </app-botao>
+
+      @if (envioDuvida.isError()) {
+      <p class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-relaxed text-red-700"
+        role="alert">{{ mensagemErroDuvida() }}</p>
+      }
+
+      <p class="mt-5 text-center text-xs text-text-secondary">{{ textos().duvidasNota }}</p>
+    </form>
   </app-container-pagina>
 </section>

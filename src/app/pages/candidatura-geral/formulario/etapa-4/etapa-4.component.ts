@@ -85,7 +85,7 @@ export class Etapa4Component {
       ),
       dossierTitulo: t('3. Dossier Documental & Declarações Jurídicas', '3. Document Dossier & Legal Declarations'),
       dossierDescricao: t(
-        'Ficheiros submetidos para validação pelo Gabinete de Instalação.',
+        'Ficheiros submetidos para validação pelo Gabinete da Comissão Instaladora.',
         'Files submitted for validation by the Installation Office.',
       ),
       naoAnexado: t('Não anexado (opcional)', 'Not attached (optional)'),

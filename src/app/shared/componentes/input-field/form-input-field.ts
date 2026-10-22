@@ -15,9 +15,12 @@ type ErroFnOuTexto = (form: FormGroup) => string | null | boolean;
  * `caixa` = campo emoldurado clássico; `minimalista` = rótulo em maiúsculas e campo
  * sem moldura, sublinhado apenas em foco — o estilo do formulário de candidatura;
  * `sublinhado` = uma única linha cinzenta sob todo o campo (ícone incluído) que se
- * pinta a verde em foco — o estilo dos ecrãs de autenticação.
+ * pinta a verde em foco — o estilo dos ecrãs de autenticação; `destacado` = a mesma
+ * caixa branca da `caixa`, mas com o rótulo em maiúsculas negrito e escuro
+ * (`text-text-primary`) em vez do cinzento — o estilo do cartão de formulário sobre
+ * fundo `bg-bg-lighter` (canal de dúvidas da candidatura).
  */
-export type VarianteCampo = 'caixa' | 'minimalista' | 'sublinhado';
+export type VarianteCampo = 'caixa' | 'minimalista' | 'sublinhado' | 'destacado';
 
 import { Directive } from '@angular/core';
 
@@ -37,6 +40,7 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
   caixa: 'text-xs font-medium text-black truncate',
   minimalista: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
   sublinhado: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
+  destacado: 'text-xs font-bold uppercase tracking-[0.08em] text-text-primary truncate',
 };
 
 const CLASSES_TEXTO: Record<VarianteCampo, string> = {
@@ -45,6 +49,7 @@ const CLASSES_TEXTO: Record<VarianteCampo, string> = {
   // Sem `border-b` próprio: nesta variante a linha é da moldura, para atravessar
   // também o ícone à esquerda.
   sublinhado: 'py-2 text-sm text-text-primary placeholder:text-text-secondary/70',
+  destacado: 'py-2.5 text-sm text-text-primary placeholder:text-gray-400',
 };
 
 @Component({
@@ -177,7 +182,7 @@ export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
   );
   protected readonly classesTexto = computed(() => CLASSES_TEXTO[this.variante()]);
   protected readonly fundoBranco = computed(
-    () => !this.bgTransparent() && this.variante() === 'caixa',
+    () => !this.bgTransparent() && (this.variante() === 'caixa' || this.variante() === 'destacado'),
   );
 
   /**
@@ -191,6 +196,13 @@ export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
       return temErro
         ? 'rounded-md border border-red-500 bg-white px-3 pr-1 outline-2 outline-red-300'
         : 'rounded-md border border-[#E2E8F0] bg-white px-3 pr-1 focus-within:border-primary focus-within:outline-3 focus-within:outline-primary/20';
+    }
+
+    // Caixa branca mais arredondada, do cartão de formulário sobre `bg-bg-lighter`.
+    if (this.variante() === 'destacado') {
+      return temErro
+        ? 'rounded-xl border border-red-500 bg-white px-4 pr-3 outline-2 outline-red-300'
+        : 'rounded-xl border border-gray-200 bg-white px-4 pr-3 focus-within:border-primary focus-within:outline-3 focus-within:outline-primary/20';
     }
 
     // A linha vive na moldura, por isso atravessa o ícone e o campo de uma ponta à outra.

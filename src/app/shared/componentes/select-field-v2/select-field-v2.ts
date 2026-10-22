@@ -42,12 +42,18 @@ export interface SelectOptionTemplateContext<T> {
 
 type ErroFnOuTexto = (form: FormGroup) => string | null | boolean;
 
-/** Mesmas variantes do `form-input-field`, para os dois campos combinarem no mesmo formulário. */
-export type VarianteCampo = 'caixa' | 'minimalista';
+/**
+ * Mesmas variantes do `form-input-field`, para os dois campos combinarem no mesmo
+ * formulário. `destacado` é a caixa branca com o rótulo em maiúsculas negrito e
+ * escuro, do cartão de formulário sobre `bg-bg-lighter` (canal de dúvidas da
+ * candidatura).
+ */
+export type VarianteCampo = 'caixa' | 'minimalista' | 'destacado';
 
 const CLASSES_ROTULO: Record<VarianteCampo, string> = {
   caixa: 'text-xs font-medium text-black truncate',
   minimalista: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
+  destacado: 'text-xs font-bold uppercase tracking-[0.08em] text-text-primary truncate',
 };
 
 @Component({
@@ -69,7 +75,7 @@ const CLASSES_ROTULO: Record<VarianteCampo, string> = {
     '(document:click)': 'onDocumentClick($event)',
   },
   template: `
-    <div class="flex flex-col" [class]="variante() === 'minimalista' ? 'gap-y-1' : 'gap-y-2'"
+    <div class="flex flex-col" [class]="variante() === 'caixa' ? 'gap-y-2' : 'gap-y-1'"
       [class.bg-white]="fundoBranco()" animate.enter="animete-titulo-1">
       <label [class]="classesRotulo()">
         {{ label() }}
@@ -264,7 +270,7 @@ export class FormFieldSelectComponentV2<D> implements ControlValueAccessor, OnIn
 
   protected readonly classesRotulo = computed(() => CLASSES_ROTULO[this.variante()]);
   protected readonly fundoBranco = computed(
-    () => !this.bgTransparent() && this.variante() === 'caixa',
+    () => !this.bgTransparent() && (this.variante() === 'caixa' || this.variante() === 'destacado'),
   );
   protected readonly classesPlaceholder = computed(() =>
     this.variante() === 'minimalista' ? 'text-text-primary/55' : 'text-[#9A9A9A]',
@@ -278,6 +284,14 @@ export class FormFieldSelectComponentV2<D> implements ControlValueAccessor, OnIn
       return temErro
         ? 'rounded-md border border-red-500 bg-white px-3 py-2 text-sm text-[#585959] outline-2 outline-red-300'
         : 'rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-[#585959] hover:border-primary focus:border-primary focus:outline-3 focus:outline-primary/20';
+    }
+
+    // Caixa branca mais arredondada, do cartão de formulário sobre `bg-bg-lighter`.
+    // `py-2.5` (não `py-3`) para a altura bater certo com o `form-input-field` ao lado.
+    if (this.variante() === 'destacado') {
+      return temErro
+        ? 'rounded-xl border border-red-500 bg-white px-4 py-2.5 text-sm text-text-primary outline-2 outline-red-300'
+        : 'rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-text-primary hover:border-primary focus:border-primary focus:outline-3 focus:outline-primary/20';
     }
 
     return temErro

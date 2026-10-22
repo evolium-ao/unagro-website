@@ -232,7 +232,7 @@ export class ModalCandidaturaSubmetidaComponent {
       fechar: t('Fechar e voltar à página principal', 'Close and return to the main page'),
       titulo: t('Candidatura Submetida com Sucesso!', 'Application Submitted Successfully!'),
       mensagem: t(
-        'A sua manifestação de interesse preliminar para o corpo docente foi registada e encaminhada ao Gabinete de Instalação.',
+        'A sua manifestação de interesse preliminar para o corpo docente foi registada e encaminhada ao Gabinete da Comissão Instaladora.',
         'Your preliminary expression of interest in joining the faculty has been recorded and forwarded to the Installation Office.',
       ),
       rotuloCodigo: t('Código de identificação da candidatura', 'Application identification code'),
@@ -272,7 +272,7 @@ export class ModalCandidaturaSubmetidaComponent {
       comprovativoTitulo: t('Comprovativo de Submissão de Candidatura', 'Application Submission Receipt'),
       comprovativoData: t('Data e hora de submissão', 'Submission date and time'),
       comprovativoNota: t(
-        'Guarde este comprovativo. O código de identificação será pedido em qualquer contacto com o Gabinete de Instalação.',
+        'Guarde este comprovativo. O código de identificação será pedido em qualquer contacto com o Gabinete da Comissão Instaladora.',
         'Keep this receipt. The identification code will be requested in any contact with the Installation Office.',
       ),
     };

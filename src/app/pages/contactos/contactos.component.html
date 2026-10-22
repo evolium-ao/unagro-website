@@ -21,7 +21,8 @@
           </div>
 
           <field-select-v2 class="mt-4 block" variante="minimalista" formControlName="assunto" [label]="rotuloAssunto()"
-            [placeholder]="placeholderAssunto()" [options]="opcoesAssuntoSelect()" [erro]="erroAssunto()" />
+            [placeholder]="placeholderAssunto()" [options]="opcoesAssuntoSelect()" [erro]="erroAssunto()"
+            [searchable]="true" [permitirNovo]="true" [textoNovo]="textoNovoAssunto()" [dicaNovo]="dicaNovoAssunto()" />
 
           <form-input-field class="mt-4 block" variante="minimalista" type="textarea" [rows]="5"
             formControlName="mensagem" [label]="rotuloMensagem()" [placeholder]="placeholderMensagem()"

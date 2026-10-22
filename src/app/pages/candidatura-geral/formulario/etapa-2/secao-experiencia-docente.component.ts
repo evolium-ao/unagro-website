@@ -44,13 +44,13 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
     </app-titulo-bloco>
 
     <div class="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
-      <form-input-field [obrigatorio]="true" [label]="textos().universidade" [placeholder]="textos().universidadePlaceholder"
+      <form-input-field [label]="textos().universidade" [placeholder]="textos().universidadePlaceholder"
         [ngModel]="universidade()" (ngModelChange)="universidade.set($event)"
         [erro]="erroCampo(universidade())" />
-      <form-input-field [obrigatorio]="true" [label]="textos().faculdade" [placeholder]="textos().faculdadePlaceholder"
+      <form-input-field [label]="textos().faculdade" [placeholder]="textos().faculdadePlaceholder"
         [ngModel]="faculdade()" (ngModelChange)="faculdade.set($event)" [erro]="erroCampo(faculdade())" />
       <!-- permitirNovo: a disciplina pode ter sido lecionada noutro plano curricular e não estar na lista. -->
-      <field-select-v2 class="sm:col-span-2" [obrigatorio]="true" [label]="textos().disciplina" [placeholder]="textos().selecione"
+      <field-select-v2 class="sm:col-span-2" [label]="textos().disciplina" [placeholder]="textos().selecione"
         [searchable]="true" [permitirNovo]="true" [textoNovo]="textos().adicionarDisciplina"
         [dicaNovo]="textos().dicaDisciplina"
         [options]="opcoesDisciplina()" [ngModel]="disciplina()"
@@ -61,9 +61,9 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
          duração calculada ao vivo — ver tempo-experiencia.ts. -->
     <div class="mt-4 flex flex-col gap-3">
       <div class="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-        <form-input-field type="month" [obrigatorio]="true" [label]="textos().inicio"
+        <form-input-field type="month" [label]="textos().inicio"
           [ngModel]="inicio()" (ngModelChange)="inicio.set($event)" [erro]="erroInicio()" />
-        <form-input-field type="month" [obrigatorio]="!atual()" [disabled]="atual()" [label]="textos().fim"
+        <form-input-field type="month" [disabled]="atual()" [label]="textos().fim"
           [ngModel]="fim()" (ngModelChange)="fim.set($event)" [erro]="erroFim()" />
       </div>
       <app-caixa-confirmacao [ngModel]="atual()" (ngModelChange)="mudarAtual($event)">
@@ -131,7 +131,7 @@ export class SecaoExperienciaDocenteComponent {
   protected readonly textos = computed(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
-      titulo: t('Secção 2: Experiência Docente', 'Section 2: Teaching Experience'),
+      titulo: t('Secção 2: Experiência Docente (Opcional)', 'Section 2: Teaching Experience (Optional)'),
       descricao: t(
         'Trajectória lectiva no ensino superior e experiência no agronegócio ou investigação agrária.',
         'Higher education teaching record and experience in agribusiness or agricultural research.',

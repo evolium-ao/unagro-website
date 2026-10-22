@@ -233,6 +233,18 @@ export class ContactosComponent {
     this.traducao.getTraducao(['Escolha o assunto', 'Choose a subject']),
   );
 
+  /** permitirNovo: o assunto pode não estar na lista — ver `disciplina` na candidatura geral. */
+  protected readonly textoNovoAssunto = computed(() =>
+    this.traducao.getTraducao(['Adicionar assunto', 'Add subject']),
+  );
+
+  protected readonly dicaNovoAssunto = computed(() =>
+    this.traducao.getTraducao([
+      'Não encontra o assunto? Escreva-o na pesquisa para o adicionar.',
+      'Can’t find the subject? Type it in the search box to add it.',
+    ]),
+  );
+
   protected readonly rotuloMensagem = computed(() =>
     this.traducao.getTraducao(['Mensagem', 'Message']),
   );
