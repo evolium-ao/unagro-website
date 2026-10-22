@@ -104,8 +104,12 @@ export class CandidaturaGeralInicioComponent {
       heroDestaque: t('agronegócio', 'agribusiness'),
       heroFim: t('', 'sector'),
       heroSubtitulo: t(
-        'A AGROSOPHIA, Lda. procura docentes, investigadores e especialistas no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50km de Luanda) virado para o ensino superior e prática do agronegócio. Os Mestres e Doutores serão preferenciados.',
-        'AGROSOPHIA, Lda. is looking for lecturers, researchers and specialists in the agribusiness sector to develop an institutional project based in Icolo e Bengo (50km from Luanda) focused on higher education and agribusiness practice. Masters and Doctors will be given preference.',
+        'A AGROSOPHIA, Lda. procura docentes, investigadores e especialistas no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50km de Luanda) virado para o ensino superior e prática do agronegócio.',
+        'AGROSOPHIA, Lda. is looking for lecturers, researchers and specialists in the agribusiness sector to develop an institutional project based in Icolo e Bengo (50km from Luanda) focused on higher education and agribusiness practice.',
+      ),
+      heroSeloPreferencia: t(
+        'Os Mestres e Doutores serão preferenciados',
+        'Masters and Doctors will be given preference',
       ),
       heroCandidatar: t('Candidatar-se', 'Apply'),
       heroConsultar: t('Consultar candidatura', 'Check application'),
