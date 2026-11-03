@@ -17,6 +17,7 @@ import {
 } from '../../../../shared/componentes/select-field-v2/select-field-v2';
 import { TituloBlocoComponent } from '../../../../shared/componentes/titulo-bloco/titulo-bloco.component';
 import { criarErrosFormulario } from '../../../../shared/formulario/erros-formulario';
+import { CandidaturaGeralEstadoService } from '../../estado/candidatura-geral-estado.service';
 
 /**
  * Homologação de estudos (licenciado/mestre/doutor) no SEPE — pedido do cliente:
@@ -41,15 +42,18 @@ const LINK_HOMOLOGACAO_INAAREES =
   template: `
     <app-titulo-bloco icone="graduation-cap" [titulo]="textos().titulo" [descricao]="textos().descricao" />
 
-    <a
-      [href]="linkHomologacaoInaarees"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-    >
-      <app-icone nome="external-link" [tamanho]="14" class="shrink-0" />
-      {{ textos().linkInaarees }}
-    </a>
+    <!-- A homologação INAAREES e a preferência por mestres e doutores são do concurso docente. -->
+    @if (estado.ehDocente()) {
+      <a
+        [href]="linkHomologacaoInaarees"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+      >
+        <app-icone nome="external-link" [tamanho]="14" class="shrink-0" />
+        {{ textos().linkInaarees }}
+      </a>
+    }
 
     <div class="mt-6 flex flex-col gap-4">
       <app-grupo-cartoes-selecao
@@ -108,7 +112,9 @@ const LINK_HOMOLOGACAO_INAAREES =
         <p class="-mt-1 text-xs tracking-wide text-text-secondary">{{ textos().identificadorAjuda }}</p>
         <!-- Pedido do cliente. -->
 
-        <p class="mt-3 text-xs tracking-wide  text-green-700">{{ textos().preferenciaGrau }}</p>
+        @if (estado.ehDocente()) {
+          <p class="mt-3 text-xs tracking-wide  text-green-700">{{ textos().preferenciaGrau }}</p>
+        }
       </div>
     </div>
   `,
@@ -117,6 +123,7 @@ const LINK_HOMOLOGACAO_INAAREES =
 export class SecaoFormacaoAcademicaComponent {
   private readonly traducao = inject(TraducaoService);
   private readonly conteudo = inject(CandidaturaGeralService);
+  protected readonly estado = inject(CandidaturaGeralEstadoService);
 
   protected readonly linkHomologacaoInaarees = LINK_HOMOLOGACAO_INAAREES;
 
@@ -145,10 +152,15 @@ export class SecaoFormacaoAcademicaComponent {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
       titulo: t('Secção 1: Formação Académica & Habilitações', 'Section 1: Academic Background & Qualifications'),
-      descricao: t(
-        'OS MESTRES E DOUTORES SERÃO PREFERENCIADOS',
-        'Formal academic qualifications obtained or recognised by INAAREES / MESCTI.',
-      ),
+      descricao: this.estado.ehDocente()
+        ? t(
+            'OS MESTRES E DOUTORES SERÃO PREFERENCIADOS',
+            'Formal academic qualifications obtained or recognised by INAAREES / MESCTI.',
+          )
+        : t(
+            'Habilitações académicas formais obtidas ou reconhecidas pelo INAAREES / MESCTI.',
+            'Formal academic qualifications obtained or recognised by INAAREES / MESCTI.',
+          ),
       linkInaarees: t(
         'Certificado ainda não homologado pelo INAAREES? Veja como pedir a homologação',
         'Certificate not yet recognised by INAAREES? See how to apply for recognition',

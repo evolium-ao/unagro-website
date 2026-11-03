@@ -7,8 +7,14 @@
       <app-etapa-1-dados-pessoais />
     </section>
 
-    <section id="secao-area" class="rounded-2xl border border-gray-100 bg-white p-1 shadow-sm sm:p-10">
-      <app-etapa-1-area-candidatura />
-    </section>
+    @if (estado.ehDocente()) {
+      <section id="secao-area" class="rounded-2xl border border-gray-100 bg-white p-1 shadow-sm sm:p-10">
+        <app-etapa-1-area-candidatura />
+      </section>
+    } @else {
+      <section id="secao-funcao" class="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-10">
+        <app-etapa-1-funcao-candidatura />
+      </section>
+    }
   }
 </form>

@@ -21,7 +21,7 @@
         <app-icone nome="share-2" [tamanho]="16" />
       </button>
       <app-botao class="basis-full md:inline-block md:w-auto md:shrink-0 md:basis-auto" variante="profundo" tamanho="md"
-        [link]="rotaEtapa1" icone="arrow-right" posicaoIcone="direita" [larguraTotal]="true">
+        icone="arrow-right" posicaoIcone="direita" [larguraTotal]="true" (clicado)="abrirEscolhaTipo()">
         {{ textos().heroCandidatar }}
       </app-botao>
     </div>
@@ -33,7 +33,10 @@
   </div>
 
 
-  <div class="mt-10 flex items-center justify-center gap-3 md:justify-start" data-animar="ctas">
+  <!-- Telemóvel: ícones por cima e os dois selos empilhados, cada um à largura do ecrã
+       (lado a lado ficavam espremidos em círculos de 3 linhas); a partir de `sm`, em linha. -->
+  <div class="mx-auto mt-8 flex w-full max-w-md flex-col items-center gap-3 sm:mt-10 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center md:mx-0 md:justify-start"
+    data-animar="ctas">
     <div class="flex -space-x-1.5" aria-hidden="true">
       <span
         class="flex h-7 w-7 items-center justify-center rounded-md border-2 border-primary-deep bg-primary text-white">
@@ -51,10 +54,11 @@
     <!-- Pedido do cliente: prazo em destaque e a piscar; sem animação para quem
          pede menos movimento no sistema. -->
     <span
-      class="rounded-full bg-accent px-4 py-1.5 text-sm font-bold text-primary-deep shadow-md motion-safe:animate-pulse sm:text-base">
+      class="w-full rounded-2xl bg-accent px-4 py-2 text-center text-sm font-bold leading-snug text-primary-deep shadow-md motion-safe:animate-pulse sm:w-auto sm:rounded-full sm:py-1.5 sm:text-base">
       {{ textos().heroPrazo }}
     </span>
-    <span class="rounded-full bg-accent px-4 py-1.5 text-sm font-bold text-primary-deep shadow-md sm:text-base">
+    <span
+      class="w-full rounded-2xl bg-accent px-4 py-2 text-center text-sm font-bold leading-snug text-primary-deep shadow-md sm:w-auto sm:rounded-full sm:py-1.5 sm:text-base">
       {{ textos().heroSeloPreferencia }}
     </span>
   </div>
@@ -228,7 +232,7 @@
       <div class="mt-8 w-full sm:mt-10 sm:w-auto">
         <app-contador-regressivo [dataAlvo]="prazo()" variante="caixasGrandes" [rotulos]="textos().contador" />
       </div>
-      <app-botao variante="secundario" icone="arrow-right" posicaoIcone="direita" raio="medio" [link]="rotaEtapa1"
+      <app-botao variante="secundario" icone="arrow-right" posicaoIcone="direita" raio="medio" (clicado)="abrirEscolhaTipo()"
         class="mt-8 sm:mt-12">
         {{ textos().prazoCandidatar }}
       </app-botao>

@@ -65,6 +65,13 @@ export class Etapa4Component {
   private readonly modais = inject(AlertModalService);
   protected readonly estado = inject(CandidaturaGeralEstadoService);
 
+  constructor() {
+    // Para mostrar o nome da função (e não o `id`) mesmo com a página aberta de um rascunho.
+    if (!this.estado.ehDocente()) {
+      this.conteudo.pedirFuncoes();
+    }
+  }
+
   /** Destino do "Editar" de cada secção. Arrays fixos: criados no template, mudariam a cada verificação. */
   protected readonly rotasEditar = [1, 2, 3].map((etapa) => [ROTA_CANDIDATURA_GERAL, `etapa-${etapa}`]);
 
@@ -72,7 +79,9 @@ export class Etapa4Component {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
       editar: t('Editar', 'Edit'),
-      dadosTitulo: t('1. Dados Pessoais & Disciplinas', '1. Personal Details & Courses'),
+      dadosTitulo: this.estado.ehDocente()
+        ? t('1. Dados Pessoais & Disciplinas', '1. Personal Details & Courses')
+        : t('1. Dados Pessoais', '1. Personal Details'),
       dadosDescricao: t(
         'Identificação oficial e departamento académico de enquadramento.',
         'Official identification and academic department.',
@@ -125,6 +134,14 @@ export class Etapa4Component {
       { rotulo: t('N.º de BI / Passaporte', 'ID Card / Passport No.'), valor: dados.documento || VAZIO },
       { rotulo: t('Contacto Telefónico', 'Phone Number'), valor: formatarTelefone(dados.telefone) },
       { rotulo: t('E-mail Principal', 'Main E-mail'), valor: dados.email || VAZIO },
+      ...(this.estado.ehDocente()
+        ? []
+        : [
+            {
+              rotulo: t('Função Pretendida', 'Desired Position'),
+              valor: this.conteudo.funcoesPorId().get(dados.funcaoId)?.nome ?? (dados.funcaoId || VAZIO),
+            },
+          ]),
     ];
   });
 
@@ -142,6 +159,7 @@ export class Etapa4Component {
       idioma,
     );
 
+    const docente = this.estado.ehDocente();
     return [
       {
         rotulo: t('Grau Académico Mais Elevado', 'Highest Academic Degree'),
@@ -157,7 +175,9 @@ export class Etapa4Component {
         valor: identificador ? identificador.replace(/^https?:\/\//i, '') : VAZIO,
         ligacao: identificador || undefined,
       },
-      { rotulo: t('Tempo Total de Docência', 'Total Teaching Experience'), valor: docencia || VAZIO },
+      ...(docente
+        ? [{ rotulo: t('Tempo Total de Docência', 'Total Teaching Experience'), valor: docencia || VAZIO }]
+        : []),
       { rotulo: t('Tempo Total de Experiência Profissional', 'Total Professional Experience'), valor: pratica || VAZIO },
     ];
   });
@@ -172,14 +192,18 @@ export class Etapa4Component {
     const intervalos = this.conteudo.intervalosExperiencia();
     const areas = this.conteudo.areasTrabalho();
     return [
-      {
-        titulo: t('Experiência Docente', 'Teaching Experience'),
-        itens: formacao.experienciasDocentes.map((experiencia) => ({
-          titulo: experiencia.disciplina,
-          detalhe: `${experiencia.universidade} · ${experiencia.faculdade} · ${formatarPeriodo(experiencia, idioma)}`,
-          tempo: formatarDuracaoAnos(duracaoPeriodo(experiencia), idioma),
-        })),
-      },
+      ...(this.estado.ehDocente()
+        ? [
+            {
+              titulo: t('Experiência Docente', 'Teaching Experience'),
+              itens: formacao.experienciasDocentes.map((experiencia) => ({
+                titulo: experiencia.disciplina,
+                detalhe: `${experiencia.universidade} · ${experiencia.faculdade} · ${formatarPeriodo(experiencia, idioma)}`,
+                tempo: formatarDuracaoAnos(duracaoPeriodo(experiencia), idioma),
+              })),
+            },
+          ]
+        : []),
       {
         titulo: t('Experiência Profissional', 'Professional Experience'),
         itens: formacao.experienciasProfissionais.map((experiencia) => ({
@@ -255,13 +279,17 @@ export class Etapa4Component {
         aceita: pdf,
       },
       ...adicionais,
-      {
-        ...unico('comprovativos'),
-        titulo: t('Comprovativos de Docência / I&D', 'Proof of Teaching / R&D'),
-        icone: 'archive',
-        selo: t('Anexado', 'Attached'),
-        aceita: '.pdf,.zip,application/pdf,application/zip',
-      },
+      ...(this.estado.ehDocente()
+        ? [
+            {
+              ...unico('comprovativos'),
+              titulo: t('Comprovativos de Docência / I&D', 'Proof of Teaching / R&D'),
+              icone: 'archive',
+              selo: t('Anexado', 'Attached'),
+              aceita: '.pdf,.zip,application/pdf,application/zip',
+            },
+          ]
+        : []),
       {
         ...unico('carta'),
         titulo: t('Carta de Motivação & Enquadramento', 'Motivation Letter & Institutional Fit'),

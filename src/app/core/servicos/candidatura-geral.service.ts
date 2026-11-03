@@ -12,7 +12,9 @@ import {
   PRAZO_CANDIDATURA_GERAL,
 } from '../dados/candidatura-geral.mock';
 import { injectQuery } from '@tanstack/angular-query-experimental';
+import { funcoesCandidaturaQueries } from '../consultas/funcoes-candidatura.queries';
 import { ofertaCurricularQueries } from '../consultas/oferta-curricular.queries';
+import { FuncoesCandidaturaService } from './funcoes-candidatura.service';
 import { DisciplinaEscolhidaCandidaturaGeral } from '../modelos/candidatura-geral.model';
 import { OfertaCurricularService } from './oferta-curricular.service';
 import { localizarProfundo } from '../traducao/localizar-profundo';
@@ -23,6 +25,7 @@ import { TraducaoService } from '../traducao/traducao.service';
 export class CandidaturaGeralService {
   private readonly traducao = inject(TraducaoService);
   private readonly ofertaCurricular = inject(OfertaCurricularService);
+  private readonly funcoesApi = inject(FuncoesCandidaturaService);
 
   private readonly destaquesBrutos = signal(DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK);
   private readonly areasBrutas = signal(AREAS_CANDIDATURA_GERAL_MOCK);
@@ -63,6 +66,31 @@ export class CandidaturaGeralService {
   /** Volta a pedir a oferta (botão "Tentar novamente" do registo de disciplinas). */
   recarregarOferta(): void {
     void this.consultaOferta.refetch();
+  }
+
+  /**
+   * Funções administrativas, de `GET /candidaturas-docentes/funcoes`. Só são
+   * pedidas depois de `pedirFuncoes()` (o candidato escolheu "Administrativa"):
+   * o docente nunca gasta este pedido.
+   */
+  private readonly funcoesPedidas = signal(false);
+  private readonly consultaFuncoes = injectQuery(() => ({
+    ...funcoesCandidaturaQueries.lista(this.funcoesApi),
+    enabled: this.funcoesPedidas(),
+  }));
+
+  readonly funcoes = computed(() => this.consultaFuncoes.data() ?? []);
+  readonly funcoesACarregar = computed(() => this.funcoesPedidas() && this.consultaFuncoes.isPending());
+  readonly funcoesFalharam = computed(() => this.consultaFuncoes.isError() && !this.consultaFuncoes.data());
+  readonly funcoesPorId = computed(() => new Map(this.funcoes().map((funcao) => [funcao.id, funcao])));
+
+  pedirFuncoes(): void {
+    this.funcoesPedidas.set(true);
+  }
+
+  /** Volta a pedir as funções (botão "Tentar novamente" do modal). */
+  recarregarFuncoes(): void {
+    void this.consultaFuncoes.refetch();
   }
 
   /** Cada disciplina (com o seu curso) por `id`, para validar as que chegam por URL ou rascunho. */

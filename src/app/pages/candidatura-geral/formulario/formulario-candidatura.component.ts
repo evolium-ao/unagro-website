@@ -67,7 +67,9 @@ export class FormularioCandidaturaComponent {
       migalha: t(`Candidatura — Etapa ${n} de ${TOTAL_ETAPAS}`, `Application — Step ${n} of ${TOTAL_ETAPAS}`),
       voltarPrincipal: t('Voltar à Página Principal / Convocatória', 'Back to Main Page / Call'),
       selo: t('Fase Provisória / Manifestação de Interesse Oficial', 'Provisional Stage / Official Expression of Interest'),
-      titulo: t('Candidatura ao Corpo Docente', 'Faculty Application'),
+      titulo: this.estado.ehDocente()
+        ? t('Candidatura ao Corpo Docente', 'Faculty Application')
+        : t('Candidatura na Área Administrativa', 'Administrative Area Application'),
       subtitulo: t(
         'Preencha os seus dados pessoais, percurso académico e anexe o dossier documental obrigatório para formalizar a sua manifestação de interesse.',
         'Fill in your personal details and academic background and attach the mandatory document dossier to formalise your expression of interest.',
@@ -128,7 +130,7 @@ export class FormularioCandidaturaComponent {
   protected readonly passos = computed(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return [
-      t('Dados & Área', 'Details & Area'),
+      this.estado.ehDocente() ? t('Dados & Área', 'Details & Area') : t('Dados Pessoais', 'Personal Details'),
       t('Formação & Experiência', 'Education & Experience'),
       t('Dossier & Declaração', 'Dossier & Declaration'),
       t('Revisão & Submissão', 'Review & Submission'),
@@ -225,12 +227,15 @@ export class FormularioCandidaturaComponent {
       return;
     }
     // Lida antes do `limpar()`: o modal mostra as disciplinas e o formulário fica em branco.
-    const disciplinas = this.estado
-      .disciplinasSelecionadas()
-      .map((escolhida) => escolhida.disciplina.nome)
-      .join(', ');
+    const disciplinas = this.estado.ehDocente()
+      ? this.estado
+          .disciplinasSelecionadas()
+          .map((escolhida) => escolhida.disciplina.nome)
+          .join(', ')
+      : this.traducao.getTraducao(['Área Administrativa', 'Administrative Area']);
     try {
       const submetida = await this.enviar.mutateAsync({
+        tipo: this.estado.tipo(),
         dados: this.estado.dados.getRawValue(),
         formacao: this.estado.formacao.getRawValue(),
         dossier: this.estado.dossier.getRawValue(),

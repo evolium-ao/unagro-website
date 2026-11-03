@@ -137,21 +137,24 @@ import {
         [erro]="erros.curriculo()"
       />
 
-      <app-campo-documento
-        formControlName="comprovativos"
-        aceita=".pdf,.zip,application/pdf,application/zip"
-        icone="folder-up"
-        iconeAnexado="folder-input"
-        [rotuloOpcional]="textos().opcional"
-        [titulo]="textos().comprovativos"
-        [descricao]="textos().comprovativosDescricao"
-        [textoSelecionar]="textos().selecionarDocumentos"
-        [textoFormatos]="textos().formatosComprovativos"
-        [textoAnexado]="textos().anexado"
-        [textoSubstituir]="textos().substituir"
-        [textoRemover]="textos().remover"
-        [erro]="erros.comprovativos()"
-      />
+      <!-- Só o docente prova docência / I&D / prática agrícola. -->
+      @if (estado.ehDocente()) {
+        <app-campo-documento
+          formControlName="comprovativos"
+          aceita=".pdf,.zip,application/pdf,application/zip"
+          icone="folder-up"
+          iconeAnexado="folder-input"
+          [rotuloOpcional]="textos().opcional"
+          [titulo]="textos().comprovativos"
+          [descricao]="textos().comprovativosDescricao"
+          [textoSelecionar]="textos().selecionarDocumentos"
+          [textoFormatos]="textos().formatosComprovativos"
+          [textoAnexado]="textos().anexado"
+          [textoSubstituir]="textos().substituir"
+          [textoRemover]="textos().remover"
+          [erro]="erros.comprovativos()"
+        />
+      }
 
       <app-campo-documento
         formControlName="carta"
@@ -175,9 +178,9 @@ import {
       <p class="mt-4 text-sm text-red-600" role="alert">{{ textos().totalExcedido }}</p>
     }
 
+    <!-- 5. Agregação Pedagógica (pedido do cliente): "Não" avisa do prazo, "Sim" pede o certificado. Só docente. -->
+    @if (estado.ehDocente()) {
     <hr class="my-6 border-gray-200 sm:my-8" />
-
-    <!-- 5. Agregação Pedagógica (pedido do cliente): "Não" avisa do prazo, "Sim" pede o certificado. -->
     <div class="flex flex-col gap-4">
       <app-grupo-cartoes-selecao
         class="block sm:max-w-sm"
@@ -217,6 +220,7 @@ import {
         />
       }
     </div>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -320,7 +324,10 @@ export class SecaoDossierComponent {
         'Declarações de tempo de serviço, sumários lectivos, artigos científicos de destaque ou certificados de consultoria agrária.',
         'Length-of-service statements, teaching summaries, notable scientific papers or agricultural consultancy certificates.',
       ),
-      carta: t('4. Carta de Motivação & Enquadramento Institucional', '4. Motivation Letter & Institutional Fit'),
+      // Sem os comprovativos (administrativo), a carta passa a ser a 3.
+      carta: this.estado.ehDocente()
+        ? t('4. Carta de Motivação & Enquadramento Institucional', '4. Motivation Letter & Institutional Fit')
+        : t('3. Carta de Motivação & Enquadramento Institucional', '3. Motivation Letter & Institutional Fit'),
       cartaDescricao: t(
         'Carta dirigida à Comissão Instaladora da AgroSophia (máximo 1 página com 420 palavras, fonte Times New Roman 12) explanando a visão para o desenvolvimento do sector agrário nacional.',
         'Letter addressed to the AgroSophia Installation Committee (maximum 1 page with 420 words, font Times New Roman 12) setting out your vision for the development of the national agricultural sector.',

@@ -19,6 +19,7 @@ import { PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-g
 import {
   ExperienciaDocenteCandidaturaGeral,
   ExperienciaProfissionalCandidaturaGeral,
+  TipoCandidatura,
 } from '../../../core/modelos/candidatura-geral.model';
 import { ValidacaoService } from '../../../core/servicos/Validacao.service';
 import { CHAVE_DOSSIER_TOTAL, CampoEmFalta } from './campos-formulario';
@@ -180,6 +181,13 @@ export class CandidaturaGeralEstadoService {
    */
   readonly aVerificarDocumento = signal(false);
 
+  /**
+   * Perfil da candidatura, escolhido no modal da página inicial. `DOCENTE` por
+   * omissão: quem abre `/etapa-N` sem passar pelo modal vê o formulário docente.
+   */
+  readonly tipo = signal<TipoCandidatura>('DOCENTE');
+  readonly ehDocente = computed(() => this.tipo() === 'DOCENTE');
+
   /** Etapa 1 — dados pessoais, contacto e área de candidatura. */
   readonly dados = new FormGroup({
     nome: new FormControl('', {
@@ -208,6 +216,8 @@ export class CandidaturaGeralEstadoService {
       nonNullable: true,
       validators: [Validators.required, Validators.maxLength(MAXIMO_DISCIPLINAS)],
     }),
+    /** `id` da função administrativa pretendida (`funcao_id`). Só o administrativo a preenche. */
+    funcaoId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   /** Etapa 2 — formação académica e experiência docente/profissional. */
@@ -311,6 +321,9 @@ export class CandidaturaGeralEstadoService {
    * chegar (ver `limparDisciplinasInexistentes`). Devolve se aplicou alguma.
    */
   preencherDisciplinas(ids: string[]): boolean {
+    if (!this.ehDocente()) {
+      return false;
+    }
     let escolhidas = idsUnicos(ids);
     if (this.conteudo.ofertaCarregada()) {
       const porId = this.conteudo.disciplinasPorId();
@@ -328,9 +341,57 @@ export class CandidaturaGeralEstadoService {
 
   constructor() {
     this.restaurarRascunho();
+    this.aplicarTipo();
     this.guardarRascunhoAutomaticamente();
     this.limparDisciplinasInexistentes();
     this.sincronizarCertificadoAgregacao();
+  }
+
+  /** Muda o perfil e ajusta o que o formulário pede; grava logo, porque só o tipo mudou. */
+  definirTipo(tipo: TipoCandidatura, funcaoId = ''): void {
+    this.tipo.set(tipo);
+    this.aplicarTipo();
+    if (tipo === 'ADMINISTRATIVO' && funcaoId) {
+      this.dados.controls.funcaoId.setValue(funcaoId);
+      this.dados.controls.funcaoId.markAsDirty();
+    }
+    this.guardarRascunho();
+  }
+
+  /**
+   * O que só o docente preenche (disciplinas, experiência docente, comprovativos e
+   * agregação pedagógica) é esvaziado e desactivado para o administrativo: um
+   * controlo desactivado não conta para a validade nem para a lista de campos em
+   * falta. Esvaziar é preciso porque o `getRawValue()` ainda traria os valores.
+   */
+  private aplicarTipo(): void {
+    const docente = this.ehDocente();
+    const { disciplinas } = this.dados.controls;
+    const { experienciasDocentes } = this.formacao.controls;
+    const { comprovativos, agregacaoPedagogica, certificadoAgregacao } = this.dossier.controls;
+    const soDocente: AbstractControl[] = [
+      disciplinas,
+      experienciasDocentes,
+      comprovativos,
+      agregacaoPedagogica,
+      certificadoAgregacao,
+    ];
+    const { funcaoId } = this.dados.controls;
+    // O inverso: a função só existe no administrativo; ao voltar a docente repõe-se, para não enviar um `funcao_id` escondido.
+    if (docente) {
+      funcaoId.setValue('');
+      funcaoId.disable();
+      soDocente.forEach((controlo) => controlo.enable());
+    } else {
+      funcaoId.enable();
+      // Com eventos: os sinais ligados a `valueChanges` (disciplinas, lista) e o total do dossier recalculam.
+      disciplinas.setValue([]);
+      experienciasDocentes.setValue([]);
+      comprovativos.setValue(null);
+      agregacaoPedagogica.setValue('');
+      certificadoAgregacao.setValue(null);
+      soDocente.forEach((controlo) => controlo.disable());
+    }
   }
 
   /**
@@ -474,9 +535,12 @@ export class CandidaturaGeralEstadoService {
       return false;
     }
     try {
-      const rascunho = Object.fromEntries(
-        Object.entries(this.grupos).map(([etapa, grupo]) => [etapa, semFicheiros(grupo.getRawValue())]),
-      );
+      const rascunho = {
+        ...Object.fromEntries(
+          Object.entries(this.grupos).map(([etapa, grupo]) => [etapa, semFicheiros(grupo.getRawValue())]),
+        ),
+        tipo: this.tipo(),
+      };
       localStorage.setItem(CHAVE_RASCUNHO, JSON.stringify(rascunho));
       return true;
     } catch {
@@ -510,6 +574,9 @@ export class CandidaturaGeralEstadoService {
     // O `reset()` esvazia os valores mas deixa as caixas: estas também saem.
     this.dossier.controls.certificadosAdicionais.clear();
     this.emailConfirmado.set(null);
+    // O `reset()` não reactiva os campos só do docente: volta ao perfil por omissão.
+    this.tipo.set('DOCENTE');
+    this.aplicarTipo();
     if (!this.ehNavegador) {
       return;
     }
@@ -549,8 +616,11 @@ export class CandidaturaGeralEstadoService {
       if (!bruto) {
         return;
       }
-      const rascunho = JSON.parse(bruto) as Record<string, Record<string, unknown>>;
-      for (const [etapa, valores] of Object.entries(rascunho)) {
+      const { tipo, ...etapas } = JSON.parse(bruto) as { tipo?: unknown } & Record<string, Record<string, unknown>>;
+      if (tipo === 'DOCENTE' || tipo === 'ADMINISTRATIVO') {
+        this.tipo.set(tipo);
+      }
+      for (const [etapa, valores] of Object.entries(etapas)) {
         // `semFicheiros` também aqui: um rascunho antigo com `{}` num campo de
         // ficheiro faria o `required` passar sem haver anexo.
         this.grupos[Number(etapa)]?.patchValue(semFicheiros(valores ?? {}));

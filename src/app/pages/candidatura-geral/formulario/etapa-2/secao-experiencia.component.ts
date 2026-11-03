@@ -67,7 +67,8 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
 export class SecaoExperienciaComponent {
   private readonly traducao = inject(TraducaoService);
   private readonly conteudo = inject(CandidaturaGeralService);
-  private readonly controlo = inject(CandidaturaGeralEstadoService).formacao.controls.experienciasProfissionais;
+  private readonly estado = inject(CandidaturaGeralEstadoService);
+  private readonly controlo = this.estado.formacao.controls.experienciasProfissionais;
 
   protected readonly empresa = signal('');
   protected readonly area = signal('');
@@ -107,7 +108,10 @@ export class SecaoExperienciaComponent {
   protected readonly textos = computed(() => {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
-      titulo: t('Secção 3: Experiência Profissional (Opcional)', 'Section 3: Professional Experience (Optional)'),
+      // Sem a secção da experiência docente (administrativo), esta passa a ser a 2.
+      titulo: this.estado.ehDocente()
+        ? t('Secção 3: Experiência Profissional (Opcional)', 'Section 3: Professional Experience (Optional)')
+        : t('Secção 2: Experiência Profissional (Opcional)', 'Section 2: Professional Experience (Optional)'),
       descricao: t(
         'Trajectória e experiência no agronegócio ou investigação agrária.',
         'Career and experience in agribusiness or agricultural research.',

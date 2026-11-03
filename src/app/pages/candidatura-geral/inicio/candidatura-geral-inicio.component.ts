@@ -13,6 +13,7 @@ import { Router } from '@angular/router';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { environment } from '../../../../environments/environment';
 import { ErroApi } from '../../../core/api/erro-api';
+import { TipoCandidatura } from '../../../core/modelos/candidatura-geral.model';
 import { NovaDuvida } from '../../../core/modelos/duvida.model';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
 import { DuvidasService } from '../../../core/servicos/duvidas.service';
@@ -22,6 +23,7 @@ import {
   ID_MODAL_CONSULTAR_CANDIDATURA,
   ModalConsultarCandidaturaComponent,
 } from '../componentes/modal-consultar-candidatura.component';
+import { opcoesModalTipoCandidatura } from '../componentes/modal-tipo-candidatura.component';
 import { SeletorDisciplinasComponent } from '../componentes/seletor-disciplinas.component';
 import { LIMITES_DOSSIER_MB } from '../estado/candidatura-geral-estado.service';
 import {
@@ -100,12 +102,15 @@ export class CandidaturaGeralInicioComponent {
     const t = (pt: string, en: string) => this.traducao.getTraducao([pt, en]);
     return {
       heroSelo: t('Fase provisória / Manifestação de interesse', 'Provisional stage / Expression of interest'),
-      heroTitulo: t('Docentes, investigadores e especialistas no sector do', 'Lecturers, researchers and specialists in the'),
+      heroTitulo: t(
+        'Docentes, investigadores, especialistas e equipa administrativa no sector do',
+        'Lecturers, researchers, specialists and administrative staff in the',
+      ),
       heroDestaque: t('agronegócio', 'agribusiness'),
       heroFim: t('', 'sector'),
       heroSubtitulo: t(
-        'A AGROSOPHIA, Lda. procura docentes, investigadores e especialistas no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50km de Luanda) virado para o ensino superior e prática do agronegócio.',
-        'AGROSOPHIA, Lda. is looking for lecturers, researchers and specialists in the agribusiness sector to develop an institutional project based in Icolo e Bengo (50km from Luanda) focused on higher education and agribusiness practice.',
+        'A AGROSOPHIA, Lda. procura docentes, investigadores, especialistas e equipa administrativa no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50km de Luanda) virado para o ensino superior e prática do agronegócio.',
+        'AGROSOPHIA, Lda. is looking for lecturers, researchers, specialists and administrative staff in the agribusiness sector to develop an institutional project based in Icolo e Bengo (50km from Luanda) focused on higher education and agribusiness practice.',
       ),
       heroSeloPreferencia: t(
         'Os Mestres e Doutores serão preferenciados',
@@ -120,8 +125,8 @@ export class CandidaturaGeralInicioComponent {
       ),
       partilhaTitulo: t('Recrutamento de docentes no agronegócio — AgroSophia', 'Agribusiness faculty recruitment — AgroSophia'),
       partilhaMensagem: t(
-        'A AgroSophia está a recrutar docentes, investigadores e especialistas no sector do agronegócio. Candidate-se:',
-        'AgroSophia is recruiting lecturers, researchers and specialists in the agribusiness sector. Apply here:',
+        'A AgroSophia está a recrutar docentes, investigadores, especialistas e equipa administrativa no sector do agronegócio. Candidate-se:',
+        'AgroSophia is recruiting lecturers, researchers, specialists and administrative staff in the agribusiness sector. Apply here:',
       ),
       heroPrazo: t('Prazo até 15 de Novembro de 2026', 'Deadline 15 November 2026'),
       heroLogoAlt: t('Logótipo AgroSophia', 'AgroSophia logo'),
@@ -398,7 +403,19 @@ export class CandidaturaGeralInicioComponent {
     if (!ids.length) {
       return;
     }
-    void this.router.navigate([this.rotaEtapa1], { queryParams: { disciplinas: ids.join(',') } });
+    // As disciplinas só seguem para o docente; o administrativo não as escolhe.
+    this.abrirEscolhaTipo((tipo) =>
+      this.router.navigate([this.rotaEtapa1], {
+        queryParams: tipo === 'DOCENTE' ? { disciplinas: ids.join(',') } : {},
+      }),
+    );
+  }
+
+  /** «Candidatar-se» / «Candidatar-me agora»: o modal pergunta o perfil e só então abre a etapa 1. */
+  protected abrirEscolhaTipo(
+    seguir: (tipo: TipoCandidatura) => unknown = () => this.router.navigateByUrl(this.rotaEtapa1),
+  ): void {
+    void this.modais.modal(opcoesModalTipoCandidatura({ aoEscolher: (tipo) => void seguir(tipo) }));
   }
 
   /** Submete o canal de dúvidas — mesmo padrão de `enviar()` de `contactos`, agora para `POST /duvidas`. */

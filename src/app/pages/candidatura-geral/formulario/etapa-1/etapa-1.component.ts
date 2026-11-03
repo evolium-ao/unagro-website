@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CandidaturaGeralEstadoService } from '../../estado/candidatura-geral-estado.service';
 import { SecaoAreaCandidaturaComponent } from './secao-area-candidatura.component';
 import { SecaoDadosPessoaisComponent } from './secao-dados-pessoais.component';
+import { SecaoFuncaoCandidaturaComponent } from './secao-funcao-candidatura.component';
 
 /**
  * Etapa 1 — Dados & Disciplinas (`/candidatura-geral/etapa-1`). Os botões de
@@ -11,7 +12,12 @@ import { SecaoDadosPessoaisComponent } from './secao-dados-pessoais.component';
  */
 @Component({
   selector: 'app-etapa-1',
-  imports: [ReactiveFormsModule, SecaoDadosPessoaisComponent, SecaoAreaCandidaturaComponent],
+  imports: [
+    ReactiveFormsModule,
+    SecaoDadosPessoaisComponent,
+    SecaoAreaCandidaturaComponent,
+    SecaoFuncaoCandidaturaComponent,
+  ],
   templateUrl: './etapa-1.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

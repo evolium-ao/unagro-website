@@ -44,6 +44,7 @@
       }
     </div>
 
+    @if (estado.ehDocente()) {
     <dl class="mt-6 flex flex-col gap-5 border-t border-gray-200 pt-5">
       <div>
         <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
@@ -67,6 +68,7 @@
         </dd>
       </div>
     </dl>
+    }
   </app-etapa-4-bloco-revisao>
 
   <!-- 2. Formação & experiência -->
@@ -132,12 +134,14 @@
     [rotaEditar]="rotasEditar[2]"
     [textoEditar]="textos().editar"
   >
+    @if (estado.ehDocente()) {
     <dl class="mb-4 flex items-center gap-2 border-b border-gray-200 pb-4">
       <dt class="text-[11px] font-medium uppercase tracking-[0.08em] text-text-secondary">
         {{ textos().agregacaoRotulo }}
       </dt>
       <dd class="text-sm font-semibold text-primary-deep">{{ agregacaoResposta() }}</dd>
     </dl>
+    }
 
     <ul class="flex flex-col gap-3">
       @for (documento of documentos(); track documento.chave) {

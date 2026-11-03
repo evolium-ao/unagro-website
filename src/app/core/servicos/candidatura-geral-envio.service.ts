@@ -80,14 +80,16 @@ function nomePais(codigo: string): string {
  * lê no backoffice não depende do idioma do site.
  */
 function paraPedido(
-  { dados, formacao, dossier, codigoOtp }: NovaCandidaturaGeral,
+  { tipo, dados, formacao, dossier, codigoOtp }: NovaCandidaturaGeral,
   disciplinasPorId: Map<string, DisciplinaEscolhidaCandidaturaGeral>,
 ): FormData {
   const corpo = new FormData();
+  // O que é só do docente (disciplinas, experiência docente, comprovativos, agregação) não segue no administrativo.
+  const docente = tipo === 'DOCENTE';
   const grau = GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK.find((opcao) => opcao.id === formacao.grau);
   const rotulo = (opcoes: OpcaoCandidaturaGeral[], id: string) =>
     opcoes.find((opcao) => opcao.id === id)?.rotulo.pt ?? id;
-  const docentes = formacao.experienciasDocentes;
+  const docentes = docente ? formacao.experienciasDocentes : [];
   const profissionais = formacao.experienciasProfissionais;
   const totalDocencia = descreverTempoTotalPeriodo(docentes, 'pt');
   const totalProfissional = descreverTempoTotal(
@@ -97,12 +99,16 @@ function paraPedido(
   );
 
   const textos: Record<string, string> = {
+    // Perfil escolhido no modal: `DOCENTE` | `ADMINISTRATIVO`.
+    tipo,
     // Etapa 1
     nome_completo: dados.nome,
     data_nascimento: dados.nascimento,
     n_documento: dados.documento,
     telefone: dados.telefone,
     email: dados.email,
+    // Só o administrativo: a função a que se candidata (de `GET /candidaturas-docentes/funcoes`).
+    funcao_id: docente ? '' : dados.funcaoId,
     // Etapa 4 — prova de que o candidato recebeu o e-mail; a API recusa (422) sem ele.
     codigo_otp: codigoOtp,
     // Etapa 2 — o `GrauAcademicoEnum` da API é o próprio nome do grau.
@@ -118,7 +124,7 @@ function paraPedido(
   }
 
   // Etapa 1 — disciplinas a lecionar, cada uma com o curso a que pertence.
-  dados.disciplinas.forEach((id, i) => {
+  (docente ? dados.disciplinas : []).forEach((id, i) => {
     const escolhida = disciplinasPorId.get(id);
     if (escolhida) {
       corpo.set(`areas[${i}][curso_id]`, escolhida.curso.id);
@@ -158,10 +164,10 @@ function paraPedido(
   const anexos: Record<string, File | null> = {
     curriculo: dossier.curriculo,
     certificado_habilitacoes: dossier.certificados,
-    comprovativo_docencia: dossier.comprovativos,
+    comprovativo_docencia: docente ? dossier.comprovativos : null,
     carta_motivacao: dossier.carta,
     // Só vai com "Sim" na pergunta (ver `agregacao`); com "Não" fica a `null`.
-    certificado_agregacao: dossier.certificadoAgregacao,
+    certificado_agregacao: docente ? dossier.certificadoAgregacao : null,
   };
   for (const [campo, ficheiro] of Object.entries(anexos)) {
     if (ficheiro) corpo.set(campo, ficheiro, ficheiro.name);
@@ -177,7 +183,7 @@ function paraPedido(
   corpo.set('consentimento_dados', dossier.consentimentoDados ? '1' : '0');
   // `agregacao` aceita null (pergunta por responder); no site é sempre obrigatória,
   // por isso só fica de fora se, por alguma falha, chegar aqui sem resposta.
-  if (dossier.agregacaoPedagogica) {
+  if (docente && dossier.agregacaoPedagogica) {
     corpo.set('agregacao', dossier.agregacaoPedagogica === 'sim' ? '1' : '0');
   }
 

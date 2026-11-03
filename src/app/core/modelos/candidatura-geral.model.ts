@@ -119,12 +119,32 @@ export interface ExperienciaProfissionalCandidaturaGeral {
   tempo: string;
 }
 
+/** Função administrativa a concurso, de `GET /candidaturas-docentes/funcoes`. */
+export interface FuncaoCandidaturaGeral {
+  /** `id` da API em texto, como as disciplinas; o envio (`funcao_id`) volta a mandá-lo como veio. */
+  id: string;
+  nome: string;
+  /** Código do grupo (`chefia`). */
+  grupo: string;
+  /** "Direcção e chefia" — por onde a lista se ordena. */
+  grupoRotulo: string;
+  area: string;
+  servico: string;
+  vagas: number;
+  perfil: string;
+}
+
+/** Perfil da candidatura: decide que secções e documentos o formulário pede. */
+export type TipoCandidatura = 'DOCENTE' | 'ADMINISTRATIVO';
+
 /**
  * Candidatura do formulário `/candidatura-geral`, na forma que o **site**
  * preenche — os `getRawValue()` das etapas 1 a 3. Quem a traduz para o
  * `CandidaturaDocenteRequest` da API é o `CandidaturaGeralEnvioService`.
  */
 export interface NovaCandidaturaGeral {
+  /** Perfil escolhido no modal da página inicial — campo `tipo` da API. */
+  tipo: TipoCandidatura;
   dados: {
     nome: string;
     /** `AAAA-MM-DD`, do `<input type="date">`. */
@@ -134,6 +154,8 @@ export interface NovaCandidaturaGeral {
     email: string;
     /** `id`s das `DisciplinaCandidaturaGeral` que o docente quer lecionar. */
     disciplinas: string[];
+    /** `id` da `FuncaoCandidaturaGeral` pretendida — só no administrativo, `''` no docente. */
+    funcaoId: string;
   };
   formacao: {
     /** `id` do `GrauAcademicoCandidaturaGeral`. */

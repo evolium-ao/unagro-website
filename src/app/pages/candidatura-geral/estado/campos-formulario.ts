@@ -15,6 +15,7 @@ export const ROTULOS_CAMPOS: Record<string, TextoTraduzido> = {
   telefone: { pt: 'Contacto Telefónico Principal', en: 'Main Phone Number' },
   email: { pt: 'E-mail Principal de Correspondência', en: 'Main Correspondence E-mail' },
   disciplinas: { pt: 'Área de Candidatura & Vagas (disciplinas)', en: 'Application Area & Vacancies (courses)' },
+  funcaoId: { pt: 'Função Pretendida', en: 'Desired Position' },
   // Etapa 2
   grau: { pt: 'Grau Académico Mais Elevado Concluído', en: 'Highest Academic Degree Completed' },
   universidade: { pt: 'Universidade', en: 'University' },

@@ -33,9 +33,9 @@ export const DADOS_ESTRUTURADOS_CANDIDATURA_GERAL = {
     },
     {
       '@type': 'JobPosting',
-      title: 'Docentes, investigadores e especialistas no sector do agronegócio',
+      title: 'Docentes, investigadores, especialistas e equipa administrativa no sector do agronegócio',
       description:
-        '<p>A AGROSOPHIA, Lda. procura docentes, investigadores e especialistas no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50 km de Luanda), virado para o ensino superior e a prática do agronegócio. Os Mestres e Doutores serão preferenciados.</p>' +
+        '<p>A AGROSOPHIA, Lda. procura docentes, investigadores, especialistas e equipa administrativa no sector do agronegócio para desenvolver um projecto institucional com sede no Icolo e Bengo (50 km de Luanda), virado para o ensino superior e a prática do agronegócio. Os Mestres e Doutores serão preferenciados.</p>' +
         '<ul><li>Perfil académico: Licenciados, Mestres ou Doutorados.</li>' +
         '<li>Aptidão para aulas práticas em campo e ensaios experimentais («Ensino em Solo Real»).</li>' +
         '<li>Investigação aplicada e artigos indexados focados nos desafios africanos.</li></ul>' +
