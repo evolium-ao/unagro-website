@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { EvoTextField } from '@evolium-kit/toolkit/components';
-import type { EvoSelectOption } from '@evolium-kit/toolkit/components';
 import { ExperienciaProfissionalCandidaturaGeral } from '../../../../core/modelos/candidatura-geral.model';
 import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
 import { descreverTempoTotal } from '../../../../core/servicos/tempo-experiencia';
@@ -45,9 +44,8 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
     <div class="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
       <form-input-field [label]="textos().empresa" [placeholder]="textos().empresaPlaceholder"
         [ngModel]="empresa()" (ngModelChange)="empresa.set($event)" [erro]="erroCampo(empresa())" />
-      <!-- Texto livre com sugestões (freeSolo): o valor é o texto escrito ou o rótulo da sugestão escolhida. -->
-      <evo-text-field type="autoComplete" [freeSolo]="true" [label]="textos().area"
-        [placeholder]="textos().areaPlaceholder" [options]="opcoesArea()" [maxlength]="maximoTexto"
+      <evo-text-field [label]="textos().area"
+        [placeholder]="textos().areaPlaceholder" [maxlength]="maximoTexto"
         [ngModel]="area()" (ngModelChange)="area.set($event ?? '')" [error]="erroCampo(area())" />
       <field-select-v2 class="sm:col-span-2" [label]="textos().tempo"
         [placeholder]="textos().selecione" [options]="opcoesTempo()" [ngModel]="tempo()"
@@ -84,10 +82,6 @@ export class SecaoExperienciaComponent {
 
   protected readonly maximoTexto = MAXIMO_TEXTO_CURTO;
 
-  /** Sugestões do campo livre: o `value` é o próprio rótulo, porque é o texto que se guarda e envia. */
-  protected readonly opcoesArea = computed<EvoSelectOption<string>[]>(() =>
-    this.conteudo.areasTrabalho().map((opcao) => ({ value: opcao.rotulo, label: opcao.rotulo })),
-  );
   protected readonly opcoesTempo = computed<SelectOptionV2[]>(() =>
     this.conteudo.intervalosExperiencia().map((opcao) => ({ value: opcao.id, label: opcao.rotulo })),
   );
@@ -124,7 +118,7 @@ export class SecaoExperienciaComponent {
       empresa: t('Empresa', 'Company'),
       empresaPlaceholder: t('Ex.: Fazenda Agro-Industrial do Cuanza', 'E.g. Cuanza Agro-Industrial Farm'),
       area: t('Área de trabalho', 'Field of work'),
-      areaPlaceholder: t('Escreva ou escolha a sua área', 'Type or choose your field'),
+      areaPlaceholder: t('Escreva a sua área de trabalho', 'Type your field of work'),
       tempo: t('Tempo de Experiência', 'Length of Experience'),
       selecione: t('Selecione...', 'Select...'),
       obrigatorio: t('Campo obrigatório', 'Required field'),

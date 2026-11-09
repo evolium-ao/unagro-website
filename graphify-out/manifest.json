@@ -906,9 +906,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts": {
-    "mtime": 1794214244.836561,
-    "seen": 1794214330.3438382,
-    "ast_hash": "9b597026a7eb7008e37f67b81e926b7f",
+    "mtime": 1794224013.5779595,
+    "seen": 1794224038.9766133,
+    "ast_hash": "8ac3bf0dc308fd380bb6cf02d9876f23",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/etapa-2/secao-formacao-academica.component.ts": {
@@ -1884,9 +1884,9 @@
     "semantic_hash": "1289536d6d8f94242a4ffc598d094633"
   },
   "src/server.ts": {
-    "mtime": 1792659747.0248823,
-    "seen": 1792663022.8318112,
-    "ast_hash": "7b3436c6743a32c59460606bbc110fb7",
+    "mtime": 1794217163.2001183,
+    "seen": 1794224038.9942963,
+    "ast_hash": "166128f7f11458ee6adf56e51a09062b",
     "semantic_hash": ""
   },
   "tsconfig.app.json": {
@@ -2850,9 +2850,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts": {
-    "mtime": 1792661730.0969055,
-    "seen": 1792663022.7905264,
-    "ast_hash": "cf4fb522b09b3240acfe1b3152ade535",
+    "mtime": 1794224014.1474419,
+    "seen": 1794224038.976611,
+    "ast_hash": "5f13d9a6f09408945bdc7bebbce48003",
     "semantic_hash": ""
   },
   "imagen/candidatura-geral-etapa-2-v2.png": {

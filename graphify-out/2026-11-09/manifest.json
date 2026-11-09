@@ -564,9 +564,9 @@
     "semantic_hash": "d2f80e75baafe45bf4344374510992ac"
   },
   "src/app/core/servicos/candidatura-geral-envio.service.ts": {
-    "mtime": 1793703295.9911015,
-    "seen": 1793703386.7612886,
-    "ast_hash": "e80a197158a3e16937b786a52de9f5a3",
+    "mtime": 1794214274.4102104,
+    "seen": 1794214330.3277628,
+    "ast_hash": "f8363e16b11bddf61f143434424812f5",
     "semantic_hash": ""
   },
   "src/app/core/servicos/candidatura-geral.service.ts": {
@@ -870,9 +870,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts": {
-    "mtime": 1793703253.2712798,
-    "seen": 1793703386.7848036,
-    "ast_hash": "47a05d41d83cf12b8814cc0a7ca4f381",
+    "mtime": 1794214274.556344,
+    "seen": 1794214330.3417885,
+    "ast_hash": "b1c5d7cb8fb8fa4f871ee536775d8cdf",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/estado/etapa.guard.ts": {
@@ -906,9 +906,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts": {
-    "mtime": 1793696036.6532643,
-    "seen": 1793696119.6336362,
-    "ast_hash": "d14c3ac14d24be11a01ef17e8bdf8f67",
+    "mtime": 1794214244.836561,
+    "seen": 1794214330.3438382,
+    "ast_hash": "9b597026a7eb7008e37f67b81e926b7f",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/etapa-2/secao-formacao-academica.component.ts": {
@@ -942,9 +942,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/etapa-4/etapa-4.component.ts": {
-    "mtime": 1793703304.159793,
-    "seen": 1793703386.7904131,
-    "ast_hash": "2d8f1acb8377edc577a914c6de837db0",
+    "mtime": 1794214250.0522742,
+    "seen": 1794214330.3451195,
+    "ast_hash": "bc948d3fa641f0015b1ef59f648f49f9",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/formulario/formulario-candidatura.component.ts": {
@@ -954,9 +954,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.ts": {
-    "mtime": 1793696022.3965943,
-    "seen": 1793696119.6340127,
-    "ast_hash": "c292ca7b381a856d0338eb14fc9cb282",
+    "mtime": 1794213107.4954631,
+    "seen": 1794214330.3453643,
+    "ast_hash": "720ae2a83d80e15b5970289241dd0257",
     "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.ts": {
@@ -2004,10 +2004,10 @@
     "semantic_hash": "9378bd03d56baaf78bd738ab3848f142"
   },
   "CLAUDE.md": {
-    "mtime": 1790848425.2228763,
-    "seen": 1790849448.6422882,
-    "ast_hash": "8a6643a420fdad6bfb583523bc6cef16",
-    "semantic_hash": "8a6643a420fdad6bfb583523bc6cef16"
+    "mtime": 1794214028.606164,
+    "seen": 1794214330.4076319,
+    "ast_hash": "fae86724e97a54efdd8b9e3cddf3f7da",
+    "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1787575162.0043323,
@@ -2100,9 +2100,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.html": {
-    "mtime": 1793696022.5350032,
-    "seen": 1793696119.669172,
-    "ast_hash": "02835e5fa28ea335447955a0c752c43e",
+    "mtime": 1794213081.9104106,
+    "seen": 1794214330.414779,
+    "ast_hash": "798fe349ab4daaa09ca6128e1de3f4a2",
     "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.html": {
@@ -2958,9 +2958,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/candidatura-geral.seo.ts": {
-    "mtime": 1792659747.0168462,
-    "seen": 1792663022.7880006,
-    "ast_hash": "3a139221f5ae9d9e02edf12c11aa6b4d",
+    "mtime": 1793711699.981235,
+    "seen": 1794214330.3405318,
+    "ast_hash": "535b62a78eb782bd772a517a2eefa641",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/componentes/modal-verificar-email.component.ts": {
@@ -3024,9 +3024,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts": {
-    "mtime": 1793703339.8814487,
-    "seen": 1793703386.78427,
-    "ast_hash": "cbc2b16bb75a303bb78b3f3f07494c03",
+    "mtime": 1793703421.2588253,
+    "seen": 1794214330.3410401,
+    "ast_hash": "71ed039581c225c50db19eb86752019d",
     "semantic_hash": ""
   },
   "src/app/core/consultas/funcoes-candidatura.queries.ts": {
@@ -3045,6 +3045,12 @@
     "mtime": 1793703294.933537,
     "seen": 1793703386.7856197,
     "ast_hash": "0691676da6261c03c21460a4954935dc",
+    "semantic_hash": ""
+  },
+  ".claude/skills/evolium-toolkit/SKILL.md": {
+    "mtime": 1794214028.148399,
+    "seen": 1794214330.4036903,
+    "ast_hash": "2ca5e561bfba66a38a9c9dc2417ab4d7",
     "semantic_hash": ""
   }
 }

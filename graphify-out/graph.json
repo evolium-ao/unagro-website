@@ -728,7 +728,7 @@
       "file_type": "code",
       "norm_label": "secaoexperienciadocentecomponent",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L91"
+      "source_location": "L87"
     },
     {
       "id": "src_app_shared_componentes_modal_agendar_visita_modal_agendar_visita_component_modalagendarvisitacomponent",
@@ -2070,6 +2070,97 @@
       "source_location": "L43"
     },
     {
+      "id": "src_app_core_modelos_candidatura_geral_model_tipocandidatura",
+      "label": "TipoCandidatura",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "tipocandidatura",
+      "source_file": "src/app/core/modelos/candidatura-geral.model.ts",
+      "source_location": "L138"
+    },
+    {
+      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice",
+      "label": "CandidaturaGeralService",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "candidaturageralservice",
+      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
+      "source_location": "L25"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_componentes_modal_tipo_candidatura_component_dadostipocandidatura",
+      "label": "DadosTipoCandidatura",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "dadostipocandidatura",
+      "source_file": "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts",
+      "source_location": "L21"
+    },
+    {
+      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_errofnoutexto",
+      "label": "ErroFnOuTexto",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "errofnoutexto",
+      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_selectoptiontemplatecontext",
+      "label": "SelectOptionTemplateContext",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "selectoptiontemplatecontext",
+      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_selectoptionv2",
+      "label": "SelectOptionV2",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "selectoptionv2",
+      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
+      "source_location": "L19"
+    },
+    {
+      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_variantecampo",
+      "label": "VarianteCampo",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "variantecampo",
+      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
+      "source_location": "L51"
+    },
+    {
       "id": "src_app_core_modelos_contacto_model_novocontacto",
       "label": "NovoContacto",
       "_callable": true,
@@ -2226,6 +2317,19 @@
       "source_location": "L43"
     },
     {
+      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_dossier_component_secaodossiercomponent",
+      "label": "SecaoDossierComponent",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "secaodossiercomponent",
+      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/secao-dossier.component.ts",
+      "source_location": "L227"
+    },
+    {
       "id": "src_app_shared_componentes_campo_upload_campo_upload_component_errofnoutexto",
       "label": "ErroFnOuTexto",
       "_callable": true,
@@ -2252,56 +2356,43 @@
       "source_location": "L21"
     },
     {
-      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_errofnoutexto",
-      "label": "ErroFnOuTexto",
+      "id": "src_app_shared_componentes_cartao_aviso_cartao_aviso_component_cartaoavisocomponent",
+      "label": "CartaoAvisoComponent",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "@angular/core",
       "file_type": "code",
-      "norm_label": "errofnoutexto",
-      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
-      "source_location": "L43"
+      "norm_label": "cartaoavisocomponent",
+      "source_file": "src/app/shared/componentes/cartao-aviso/cartao-aviso.component.ts",
+      "source_location": "L35"
     },
     {
-      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_selectoptiontemplatecontext",
-      "label": "SelectOptionTemplateContext",
+      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_opcaocartaoselecao",
+      "label": "OpcaoCartaoSelecao",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "@angular/core",
       "file_type": "code",
-      "norm_label": "selectoptiontemplatecontext",
-      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
-      "source_location": "L38"
+      "norm_label": "opcaocartaoselecao",
+      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
+      "source_location": "L13"
     },
     {
-      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_selectoptionv2",
-      "label": "SelectOptionV2",
+      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_variantegrupocartoes",
+      "label": "VarianteGrupoCartoes",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
       "community_name": "@angular/core",
       "file_type": "code",
-      "norm_label": "selectoptionv2",
-      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
-      "source_location": "L19"
-    },
-    {
-      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_variantecampo",
-      "label": "VarianteCampo",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "@angular/core",
-      "file_type": "code",
-      "norm_label": "variantecampo",
-      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
-      "source_location": "L51"
+      "norm_label": "variantegrupocartoes",
+      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
+      "source_location": "L28"
     },
     {
       "id": "src_app_shared_componentes_titulo_bloco_titulo_bloco_component_tituloblococomponent",
@@ -4163,32 +4254,6 @@
       "source_location": "L43"
     },
     {
-      "id": "src_app_core_modelos_candidatura_geral_model_tipocandidatura",
-      "label": "TipoCandidatura",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": "tipocandidatura",
-      "source_file": "src/app/core/modelos/candidatura-geral.model.ts",
-      "source_location": "L138"
-    },
-    {
-      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice",
-      "label": "CandidaturaGeralService",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": "candidaturageralservice",
-      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
-      "source_location": "L25"
-    },
-    {
       "id": "src_app_core_servicos_verificacao_bi_service_verificacaobi",
       "label": "VerificacaoBi",
       "_callable": true,
@@ -4226,19 +4291,6 @@
       "norm_label": "verificacaobiservice",
       "source_file": "src/app/core/servicos/verificacao-bi.service.ts",
       "source_location": "L28"
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_componentes_modal_tipo_candidatura_component_dadostipocandidatura",
-      "label": "DadosTipoCandidatura",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": "dadostipocandidatura",
-      "source_file": "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts",
-      "source_location": "L21"
     },
     {
       "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_verificacaodocumento",
@@ -6119,7 +6171,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 9,
-      "community_name": "secao-dossier.component.ts",
+      "community_name": "etapa-3.component.html template",
       "file_type": "code",
       "norm_label": "etapa3component",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/etapa-3.component.ts",
@@ -6132,63 +6184,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 9,
-      "community_name": "secao-dossier.component.ts",
+      "community_name": "etapa-3.component.html template",
       "file_type": "code",
       "norm_label": "secaodeclaracoescomponent",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/secao-declaracoes.component.ts",
       "source_location": "L32"
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_dossier_component_secaodossiercomponent",
-      "label": "SecaoDossierComponent",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "secaodossiercomponent",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/secao-dossier.component.ts",
-      "source_location": "L227"
-    },
-    {
-      "id": "src_app_shared_componentes_cartao_aviso_cartao_aviso_component_cartaoavisocomponent",
-      "label": "CartaoAvisoComponent",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "cartaoavisocomponent",
-      "source_file": "src/app/shared/componentes/cartao-aviso/cartao-aviso.component.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_opcaocartaoselecao",
-      "label": "OpcaoCartaoSelecao",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "opcaocartaoselecao",
-      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
-      "source_location": "L13"
-    },
-    {
-      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_variantegrupocartoes",
-      "label": "VarianteGrupoCartoes",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "variantegrupocartoes",
-      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
-      "source_location": "L28"
     },
     {
       "id": "src_app_core_modelos_candidatura_docente_model_novacandidaturadocente",
@@ -6626,7 +6626,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "experienciaprofissionalcandidaturageral",
       "source_file": "src/app/core/modelos/candidatura-geral.model.ts",
@@ -6639,7 +6639,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "etapa2component",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/etapa-2.component.ts",
@@ -6652,7 +6652,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "itemexperiencia",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/lista-experiencias.component.ts",
@@ -6665,7 +6665,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "listaexperienciascomponent",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/lista-experiencias.component.ts",
@@ -6678,11 +6678,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "secaoexperienciacomponent",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L69"
+      "source_location": "L67"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_formacao_academica_component_secaoformacaoacademicacomponent",
@@ -6691,7 +6691,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "secaoformacaoacademicacomponent",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-formacao-academica.component.ts",
@@ -7088,7 +7088,7 @@
       "file_type": "code",
       "norm_label": ".adicionar()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L205"
+      "source_location": "L193"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_atualizar",
@@ -7100,7 +7100,7 @@
       "file_type": "code",
       "norm_label": ".atualizar()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L239"
+      "source_location": "L227"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_errocampo",
@@ -7112,7 +7112,7 @@
       "file_type": "code",
       "norm_label": ".errocampo()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L174"
+      "source_location": "L162"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_errofim",
@@ -7124,7 +7124,7 @@
       "file_type": "code",
       "norm_label": ".errofim()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L182"
+      "source_location": "L170"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_erroinicio",
@@ -7136,7 +7136,7 @@
       "file_type": "code",
       "norm_label": ".erroinicio()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L178"
+      "source_location": "L166"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_fimantesdoinicio",
@@ -7148,7 +7148,7 @@
       "file_type": "code",
       "norm_label": ".fimantesdoinicio()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L193"
+      "source_location": "L181"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_mudaratual",
@@ -7160,7 +7160,7 @@
       "file_type": "code",
       "norm_label": ".mudaratual()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L198"
+      "source_location": "L186"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component_secaoexperienciadocentecomponent_remover",
@@ -7172,7 +7172,7 @@
       "file_type": "code",
       "norm_label": ".remover()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L235"
+      "source_location": "L223"
     },
     {
       "id": "src_app_shared_componentes_modal_agendar_visita_modal_agendar_visita_component_modalagendarvisitacomponent_fechar",
@@ -8183,6 +8183,42 @@
       "source_location": "L52"
     },
     {
+      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice_pedirfuncoes",
+      "label": ".pedirFuncoes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": ".pedirfuncoes()",
+      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
+      "source_location": "L87"
+    },
+    {
+      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice_recarregarfuncoes",
+      "label": ".recarregarFuncoes()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": ".recarregarfuncoes()",
+      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
+      "source_location": "L92"
+    },
+    {
+      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice_recarregaroferta",
+      "label": ".recarregarOferta()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": ".recarregaroferta()",
+      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
+      "source_location": "L67"
+    },
+    {
       "id": "src_app_core_servicos_contatos_service_contatosservice_criar",
       "label": ".criar()",
       "_callable": true,
@@ -8687,18 +8723,6 @@
       "source_location": "L501"
     },
     {
-      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_candidaturageralestadoservice_confirmaremail",
-      "label": ".confirmarEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "CandidaturaGeralEstadoService",
-      "file_type": "code",
-      "norm_label": ".confirmaremail()",
-      "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
-      "source_location": "L296"
-    },
-    {
       "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_candidaturageralestadoservice_constructor",
       "label": ".constructor()",
       "_callable": true,
@@ -8867,6 +8891,18 @@
       "source_location": "L446"
     },
     {
+      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_entradasvalidas",
+      "label": "entradasValidas()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 23,
+      "community_name": "CandidaturaGeralEstadoService",
+      "file_type": "code",
+      "norm_label": "entradasvalidas()",
+      "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
+      "source_location": "L139"
+    },
+    {
       "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_idsunicos",
       "label": "idsUnicos()",
       "_callable": true,
@@ -8877,18 +8913,6 @@
       "norm_label": "idsunicos()",
       "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
       "source_location": "L42"
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_normalizaremail",
-      "label": "normalizarEmail()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 23,
-      "community_name": "CandidaturaGeralEstadoService",
-      "file_type": "code",
-      "norm_label": "normalizaremail()",
-      "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
-      "source_location": "L47"
     },
     {
       "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_semficheiros",
@@ -10871,42 +10895,6 @@
       "source_location": "L159"
     },
     {
-      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice_pedirfuncoes",
-      "label": ".pedirFuncoes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": ".pedirfuncoes()",
-      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
-      "source_location": "L87"
-    },
-    {
-      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice_recarregarfuncoes",
-      "label": ".recarregarFuncoes()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": ".recarregarfuncoes()",
-      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
-      "source_location": "L92"
-    },
-    {
-      "id": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice_recarregaroferta",
-      "label": ".recarregarOferta()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": ".recarregaroferta()",
-      "source_file": "src/app/core/servicos/candidatura-geral.service.ts",
-      "source_location": "L67"
-    },
-    {
       "id": "src_app_core_servicos_verificacao_bi_service_verificacaobiservice_verificar",
       "label": ".verificar()",
       "_callable": true,
@@ -10919,16 +10907,28 @@
       "source_location": "L32"
     },
     {
-      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_entradasvalidas",
-      "label": "entradasValidas()",
+      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_candidaturageralestadoservice_confirmaremail",
+      "label": ".confirmarEmail()",
       "_callable": true,
       "_origin": "ast",
       "community": 49,
       "community_name": "candidatura-geral-estado.service.ts",
       "file_type": "code",
-      "norm_label": "entradasvalidas()",
+      "norm_label": ".confirmaremail()",
       "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
-      "source_location": "L139"
+      "source_location": "L296"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_normalizaremail",
+      "label": "normalizarEmail()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "candidatura-geral-estado.service.ts",
+      "file_type": "code",
+      "norm_label": "normalizaremail()",
+      "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
+      "source_location": "L47"
     },
     {
       "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_validardocumentoidentificacao",
@@ -12868,11 +12868,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": ".adicionar()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L149"
+      "source_location": "L143"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component_secaoexperienciacomponent_atualizar",
@@ -12880,11 +12880,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": ".atualizar()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L173"
+      "source_location": "L167"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component_secaoexperienciacomponent_errocampo",
@@ -12892,11 +12892,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": ".errocampo()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L145"
+      "source_location": "L139"
     },
     {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component_secaoexperienciacomponent_remover",
@@ -12904,11 +12904,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": ".remover()",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L169"
+      "source_location": "L163"
     },
     {
       "id": "src_app_core_servicos_candidatura_geral_envio_service_candidaturageralenvioservice_criar",
@@ -16240,6 +16240,94 @@
       "source_location": "L1"
     },
     {
+      "id": "src_app_core_servicos_candidatura_geral_service_ts_injectable",
+      "label": "Injectable",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "injectable",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_componentes_modal_tipo_candidatura_component",
+      "label": "modal-tipo-candidatura.component.ts",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "modal-tipo-candidatura.component.ts",
+      "source_file": "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_componentes_modal_tipo_candidatura_component_id_modal_tipo_candidatura",
+      "label": "ID_MODAL_TIPO_CANDIDATURA",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "id_modal_tipo_candidatura",
+      "source_file": "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts",
+      "source_location": "L18"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_componentes_seletor_disciplinas_component",
+      "label": "seletor-disciplinas.component.ts",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "seletor-disciplinas.component.ts",
+      "source_file": "src/app/pages/candidatura-geral/componentes/seletor-disciplinas.component.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_shared_componentes_modal_agendar_visita_campos_agendar_visita_component",
+      "label": "campos-agendar-visita.component.ts",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "campos-agendar-visita.component.ts",
+      "source_file": "src/app/shared/componentes/modal-agendar-visita/campos-agendar-visita.component.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_shared_componentes_modal_agendar_visita_campos_agendar_visita_component_horarios",
+      "label": "HORARIOS",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "horarios",
+      "source_file": "src/app/shared/componentes/modal-agendar-visita/campos-agendar-visita.component.ts",
+      "source_location": "L10"
+    },
+    {
+      "id": "src_app_shared_componentes_select_field_v2_select_field_v2",
+      "label": "select-field-v2.ts",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "select-field-v2.ts",
+      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_classes_rotulo",
+      "label": "CLASSES_ROTULO",
+      "_origin": "ast",
+      "community": 194,
+      "community_name": "modal-tipo-candidatura.component.ts",
+      "file_type": "code",
+      "norm_label": "classes_rotulo",
+      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
+      "source_location": "L53"
+    },
+    {
       "id": "src_app_core_modelos_contacto_model",
       "label": "contacto.model.ts",
       "_origin": "ast",
@@ -16548,17 +16636,6 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_pages_candidatura_geral_componentes_seletor_disciplinas_component",
-      "label": "seletor-disciplinas.component.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "@angular/core",
-      "file_type": "code",
-      "norm_label": "seletor-disciplinas.component.ts",
-      "source_file": "src/app/pages/candidatura-geral/componentes/seletor-disciplinas.component.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_1_secao_area_candidatura_component",
       "label": "secao-area-candidatura.component.ts",
       "_origin": "ast",
@@ -16592,6 +16669,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_etapa_3_component",
+      "label": "etapa-3.component.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "etapa-3.component.ts",
+      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/etapa-3.component.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_declaracoes_component",
       "label": "secao-declaracoes.component.ts",
       "_origin": "ast",
@@ -16601,6 +16689,28 @@
       "norm_label": "secao-declaracoes.component.ts",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/secao-declaracoes.component.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_dossier_component",
+      "label": "secao-dossier.component.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "secao-dossier.component.ts",
+      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/secao-dossier.component.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_dossier_component_ts_component",
+      "label": "Component",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "component",
+      "source_file": "",
+      "source_location": ""
     },
     {
       "id": "src_app_pages_inscricao_formulario_bloco_dados_pessoais_component",
@@ -16647,6 +16757,17 @@
       "source_location": "L1"
     },
     {
+      "id": "src_app_shared_componentes_campo_documento_campo_documento_component",
+      "label": "campo-documento.component.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "campo-documento.component.ts",
+      "source_file": "src/app/shared/componentes/campo-documento/campo-documento.component.ts",
+      "source_location": "L1"
+    },
+    {
       "id": "src_app_shared_componentes_campo_upload_campo_upload_component",
       "label": "campo-upload.component.ts",
       "_origin": "ast",
@@ -16658,6 +16779,72 @@
       "source_location": "L1"
     },
     {
+      "id": "src_app_shared_componentes_cartao_aviso_cartao_aviso_component",
+      "label": "cartao-aviso.component.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "cartao-aviso.component.ts",
+      "source_file": "src/app/shared/componentes/cartao-aviso/cartao-aviso.component.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_shared_componentes_cartao_aviso_cartao_aviso_component_ts_component",
+      "label": "Component",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "component",
+      "source_file": "",
+      "source_location": ""
+    },
+    {
+      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component",
+      "label": "grupo-cartoes-selecao.component.ts",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "grupo-cartoes-selecao.component.ts",
+      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_classes_botao",
+      "label": "CLASSES_BOTAO",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "classes_botao",
+      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
+      "source_location": "L41"
+    },
+    {
+      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_classes_colunas",
+      "label": "CLASSES_COLUNAS",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "classes_colunas",
+      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
+      "source_location": "L30"
+    },
+    {
+      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_classes_legenda",
+      "label": "CLASSES_LEGENDA",
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "@angular/core",
+      "file_type": "code",
+      "norm_label": "classes_legenda",
+      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
+      "source_location": "L36"
+    },
+    {
       "id": "src_app_shared_componentes_mapa_google_mapa_google_component",
       "label": "mapa-google.component.ts",
       "_origin": "ast",
@@ -16667,28 +16854,6 @@
       "norm_label": "mapa-google.component.ts",
       "source_file": "src/app/shared/componentes/mapa-google/mapa-google.component.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_modal_agendar_visita_campos_agendar_visita_component",
-      "label": "campos-agendar-visita.component.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "@angular/core",
-      "file_type": "code",
-      "norm_label": "campos-agendar-visita.component.ts",
-      "source_file": "src/app/shared/componentes/modal-agendar-visita/campos-agendar-visita.component.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_modal_agendar_visita_campos_agendar_visita_component_horarios",
-      "label": "HORARIOS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "@angular/core",
-      "file_type": "code",
-      "norm_label": "horarios",
-      "source_file": "src/app/shared/componentes/modal-agendar-visita/campos-agendar-visita.component.ts",
-      "source_location": "L10"
     },
     {
       "id": "src_app_shared_componentes_modal_inscricao_curso_campos_inscricao_curso_component",
@@ -16711,28 +16876,6 @@
       "norm_label": "campos-inscricao-evento.component.ts",
       "source_file": "src/app/shared/componentes/modal-inscricao-evento/campos-inscricao-evento.component.ts",
       "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_select_field_v2_select_field_v2",
-      "label": "select-field-v2.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "@angular/core",
-      "file_type": "code",
-      "norm_label": "select-field-v2.ts",
-      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_select_field_v2_select_field_v2_classes_rotulo",
-      "label": "CLASSES_ROTULO",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "@angular/core",
-      "file_type": "code",
-      "norm_label": "classes_rotulo",
-      "source_file": "src/app/shared/componentes/select-field-v2/select-field-v2.ts",
-      "source_location": "L53"
     },
     {
       "id": "src_app_shared_componentes_titulo_bloco_titulo_bloco_component",
@@ -17866,17 +18009,6 @@
       "norm_label": "@angular/platform-server",
       "source_file": "package.json",
       "source_location": "L20"
-    },
-    {
-      "id": "ref_evolium_kit_toolkit",
-      "label": "@evolium-kit/toolkit",
-      "_origin": "ast",
-      "community": 28,
-      "community_name": "package.json",
-      "file_type": "concept",
-      "norm_label": "@evolium-kit/toolkit",
-      "source_file": "package.json",
-      "source_location": "L23"
     },
     {
       "id": "ref_jsdom",
@@ -19782,17 +19914,6 @@
       "source_location": "L287"
     },
     {
-      "id": "src_app_core_servicos_candidatura_geral_service_ts_injectable",
-      "label": "Injectable",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": "injectable",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
       "id": "src_app_core_servicos_verificacao_bi_service",
       "label": "verificacao-bi.service.ts",
       "_origin": "ast",
@@ -19813,28 +19934,6 @@
       "norm_label": "injectable",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_componentes_modal_tipo_candidatura_component",
-      "label": "modal-tipo-candidatura.component.ts",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": "modal-tipo-candidatura.component.ts",
-      "source_file": "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_componentes_modal_tipo_candidatura_component_id_modal_tipo_candidatura",
-      "label": "ID_MODAL_TIPO_CANDIDATURA",
-      "_origin": "ast",
-      "community": 49,
-      "community_name": "candidatura-geral-estado.service.ts",
-      "file_type": "code",
-      "norm_label": "id_modal_tipo_candidatura",
-      "source_file": "src/app/pages/candidatura-geral/componentes/modal-tipo-candidatura.component.ts",
-      "source_location": "L18"
     },
     {
       "id": "src_app_pages_candidatura_geral_estado_campos_formulario_chave_dossier_total",
@@ -19868,6 +19967,17 @@
       "norm_label": "campos_ficheiro",
       "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
       "source_location": "L117"
+    },
+    {
+      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_maximo_certificados_adicionais",
+      "label": "MAXIMO_CERTIFICADOS_ADICIONAIS",
+      "_origin": "ast",
+      "community": 49,
+      "community_name": "candidatura-geral-estado.service.ts",
+      "file_type": "code",
+      "norm_label": "maximo_certificados_adicionais",
+      "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
+      "source_location": "L39"
     },
     {
       "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_maximo_disciplinas",
@@ -20879,7 +20989,7 @@
       "file_type": "code",
       "norm_label": "reqhandler",
       "source_file": "src/server.ts",
-      "source_location": "L77"
+      "source_location": "L80"
     },
     {
       "id": "ref_express",
@@ -23171,33 +23281,11 @@
       "source_location": "L1"
     },
     {
-      "id": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service_maximo_certificados_adicionais",
-      "label": "MAXIMO_CERTIFICADOS_ADICIONAIS",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "maximo_certificados_adicionais",
-      "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
-      "source_location": "L39"
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_etapa_3_component",
-      "label": "etapa-3.component.ts",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "etapa-3.component.ts",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/etapa-3.component.ts",
-      "source_location": "L1"
-    },
-    {
       "id": "src_app_pages_candidatura_geral_formulario_etapa_3_etapa_3_component_ts_component",
       "label": "Component",
       "_origin": "ast",
       "community": 9,
-      "community_name": "secao-dossier.component.ts",
+      "community_name": "etapa-3.component.html template",
       "file_type": "code",
       "norm_label": "component",
       "source_file": "",
@@ -23208,110 +23296,11 @@
       "label": "Component",
       "_origin": "ast",
       "community": 9,
-      "community_name": "secao-dossier.component.ts",
+      "community_name": "etapa-3.component.html template",
       "file_type": "code",
       "norm_label": "component",
       "source_file": "",
       "source_location": ""
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_dossier_component",
-      "label": "secao-dossier.component.ts",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "secao-dossier.component.ts",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-3/secao-dossier.component.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_pages_candidatura_geral_formulario_etapa_3_secao_dossier_component_ts_component",
-      "label": "Component",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "component",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "src_app_shared_componentes_campo_documento_campo_documento_component",
-      "label": "campo-documento.component.ts",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "campo-documento.component.ts",
-      "source_file": "src/app/shared/componentes/campo-documento/campo-documento.component.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_cartao_aviso_cartao_aviso_component",
-      "label": "cartao-aviso.component.ts",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "cartao-aviso.component.ts",
-      "source_file": "src/app/shared/componentes/cartao-aviso/cartao-aviso.component.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_cartao_aviso_cartao_aviso_component_ts_component",
-      "label": "Component",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "component",
-      "source_file": "",
-      "source_location": ""
-    },
-    {
-      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component",
-      "label": "grupo-cartoes-selecao.component.ts",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "grupo-cartoes-selecao.component.ts",
-      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_classes_botao",
-      "label": "CLASSES_BOTAO",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "classes_botao",
-      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
-      "source_location": "L41"
-    },
-    {
-      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_classes_colunas",
-      "label": "CLASSES_COLUNAS",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "classes_colunas",
-      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
-      "source_location": "L30"
-    },
-    {
-      "id": "src_app_shared_componentes_grupo_cartoes_selecao_grupo_cartoes_selecao_component_classes_legenda",
-      "label": "CLASSES_LEGENDA",
-      "_origin": "ast",
-      "community": 9,
-      "community_name": "secao-dossier.component.ts",
-      "file_type": "code",
-      "norm_label": "classes_legenda",
-      "source_file": "src/app/shared/componentes/grupo-cartoes-selecao/grupo-cartoes-selecao.component.ts",
-      "source_location": "L36"
     },
     {
       "id": "src_app_core_modelos_candidatura_docente_model",
@@ -24165,7 +24154,7 @@
       "label": "MAXIMO_EXPERIENCIAS",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "maximo_experiencias",
       "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
@@ -24176,7 +24165,7 @@
       "label": "MAXIMO_TEXTO_CURTO",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "maximo_texto_curto",
       "source_file": "src/app/pages/candidatura-geral/estado/candidatura-geral-estado.service.ts",
@@ -24187,7 +24176,7 @@
       "label": "etapa-2.component.ts",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "etapa-2.component.ts",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/etapa-2.component.ts",
@@ -24198,7 +24187,7 @@
       "label": "Component",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "component",
       "source_file": "",
@@ -24209,7 +24198,7 @@
       "label": "lista-experiencias.component.ts",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "lista-experiencias.component.ts",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/lista-experiencias.component.ts",
@@ -24220,7 +24209,7 @@
       "label": "Component",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "component",
       "source_file": "",
@@ -24231,7 +24220,7 @@
       "label": "secao-experiencia.component.ts",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "secao-experiencia.component.ts",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
@@ -24242,7 +24231,7 @@
       "label": "Component",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "component",
       "source_file": "",
@@ -24253,7 +24242,7 @@
       "label": "secao-experiencia-docente.component.ts",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "secao-experiencia-docente.component.ts",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
@@ -24264,11 +24253,22 @@
       "label": "Component",
       "_origin": "ast",
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "file_type": "code",
       "norm_label": "component",
       "source_file": "",
       "source_location": ""
+    },
+    {
+      "id": "ref_evolium_kit_toolkit",
+      "label": "@evolium-kit/toolkit",
+      "_origin": "ast",
+      "community": 98,
+      "community_name": "secao-experiencia.component.ts",
+      "file_type": "concept",
+      "norm_label": "@evolium-kit/toolkit",
+      "source_file": "package.json",
+      "source_location": "L23"
     },
     {
       "id": "src_app_core_servicos_candidatura_geral_envio_service",
@@ -27831,7 +27831,7 @@
       "author": null,
       "captured_at": null,
       "community": 9,
-      "community_name": "secao-dossier.component.ts",
+      "community_name": "etapa-3.component.html template",
       "contributor": null,
       "file_type": "document",
       "norm_label": "etapa-3.component.html template",
@@ -27982,7 +27982,7 @@
       "author": null,
       "captured_at": null,
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "contributor": null,
       "file_type": "document",
       "norm_label": "etapa-2.component.html template",
@@ -27997,7 +27997,7 @@
       "author": null,
       "captured_at": null,
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "contributor": null,
       "file_type": "document",
       "norm_label": "etapa-4.component.html template",
@@ -28012,7 +28012,7 @@
       "author": null,
       "captured_at": null,
       "community": 98,
-      "community_name": "secao-experiencia-docente.component.ts",
+      "community_name": "secao-experiencia.component.ts",
       "contributor": null,
       "file_type": "rationale",
       "norm_label": "multi-step application wizard (etapas 1-4 via child routes)",
@@ -29760,7 +29760,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L162",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -29772,7 +29772,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L170",
+      "source_location": "L164",
       "weight": 1.0
     },
     {
@@ -29784,7 +29784,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L219",
+      "source_location": "L207",
       "weight": 1.0
     },
     {
@@ -29796,7 +29796,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L225",
+      "source_location": "L213",
       "weight": 1.0
     },
     {
@@ -29808,7 +29808,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L189",
+      "source_location": "L177",
       "weight": 1.0
     },
     {
@@ -29820,7 +29820,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L236",
+      "source_location": "L224",
       "weight": 1.0
     },
     {
@@ -31824,7 +31824,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L29",
+      "source_location": "L28",
       "weight": 1.0
     },
     {
@@ -31836,7 +31836,7 @@
       "confidence_score": 1.0,
       "context": "decorator",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L30",
+      "source_location": "L29",
       "weight": 1.0
     },
     {
@@ -41155,7 +41155,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
-      "target": "src_app_shared_componentes_botao_botao_component_botaocomponent",
+      "target": "src_app_shared_componentes_input_field_form_input_field_formfieldinputcomponentv2",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41167,7 +41167,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
-      "target": "src_app_shared_componentes_input_field_form_input_field_formfieldinputcomponentv2",
+      "target": "src_app_shared_componentes_select_field_v2_select_field_v2_formfieldselectcomponentv2",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41179,18 +41179,6 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
-      "target": "src_app_shared_componentes_select_field_v2_select_field_v2_formfieldselectcomponentv2",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
       "target": "src_app_shared_componentes_select_field_v2_select_field_v2_selectoptionv2",
       "relation": "imports",
       "_origin": "ast",
@@ -41198,7 +41186,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L12",
+      "source_location": "L11",
       "weight": 1.0
     },
     {
@@ -41210,7 +41198,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -41222,7 +41210,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -41234,7 +41222,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -41246,7 +41234,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -41258,7 +41246,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -41270,7 +41258,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -41282,7 +41270,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -41294,7 +41282,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L7",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -41306,12 +41294,24 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
       "target": "src_app_core_traducao_traducao_service_traducaoservice",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
+      "target": "src_app_shared_componentes_botao_botao_component_botaocomponent",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -41371,30 +41371,6 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_shared_componentes_select_field_v2_select_field_v2_formfieldselectcomponentv2",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_shared_componentes_select_field_v2_select_field_v2_selectoptionv2",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L16",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
       "target": "src_app_shared_componentes_titulo_bloco_titulo_bloco_component_tituloblococomponent",
       "relation": "imports",
       "_origin": "ast",
@@ -41402,7 +41378,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -41414,7 +41390,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -41426,7 +41402,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -41438,7 +41414,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -41450,7 +41426,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -41462,24 +41438,12 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
       "target": "src_app_core_modelos_candidatura_geral_model_experienciadocentecandidaturageral",
-      "relation": "imports",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L4",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_core_servicos_candidatura_geral_service_candidaturageralservice",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -58171,7 +58135,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
-      "target": "src_app_shared_componentes_botao_botao_component",
+      "target": "src_app_shared_componentes_input_field_form_input_field",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -58183,7 +58147,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
-      "target": "src_app_shared_componentes_input_field_form_input_field",
+      "target": "src_app_shared_componentes_select_field_v2_select_field_v2",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -58195,18 +58159,6 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
-      "target": "src_app_shared_componentes_select_field_v2_select_field_v2",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L12",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
       "target": "src_app_shared_componentes_titulo_bloco_titulo_bloco_component",
       "relation": "imports_from",
       "_origin": "ast",
@@ -58214,7 +58166,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L16",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -58226,7 +58178,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0
     },
     {
@@ -58250,7 +58202,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L22",
+      "source_location": "L21",
       "weight": 1.0
     },
     {
@@ -58274,8 +58226,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L5",
-      "type_only": true,
+      "source_location": "L4",
       "weight": 1.0
     },
     {
@@ -58287,7 +58238,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L6",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -58299,7 +58250,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L7",
+      "source_location": "L6",
       "weight": 1.0
     },
     {
@@ -58311,12 +58262,24 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L8",
+      "source_location": "L7",
       "weight": 1.0
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
       "target": "src_app_core_traducao_traducao_service",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_component",
+      "target": "src_app_shared_componentes_botao_botao_component",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -58376,7 +58339,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_shared_componentes_select_field_v2_select_field_v2",
+      "target": "src_app_shared_componentes_titulo_bloco_titulo_bloco_component",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -58388,18 +58351,6 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_shared_componentes_titulo_bloco_titulo_bloco_component",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L17",
-      "weight": 1.0
-    },
-    {
-      "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
       "target": "src_app_pages_candidatura_geral_estado_candidatura_geral_estado_service",
       "relation": "imports_from",
       "_origin": "ast",
@@ -58407,7 +58358,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L18",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -58431,7 +58382,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0
     },
     {
@@ -58448,7 +58399,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_core_modelos_candidatura_geral_model",
+      "target": "ref_evolium_kit_toolkit",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -58460,7 +58411,7 @@
     },
     {
       "source": "src_app_pages_candidatura_geral_formulario_etapa_2_secao_experiencia_docente_component",
-      "target": "src_app_core_servicos_candidatura_geral_service",
+      "target": "src_app_core_modelos_candidatura_geral_model",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -70791,7 +70742,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L173",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -70803,7 +70754,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L239",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -76880,7 +76831,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L69",
+      "source_location": "L67",
       "weight": 1.0
     },
     {
@@ -76891,7 +76842,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L91",
+      "source_location": "L87",
       "weight": 1.0
     },
     {
@@ -81742,7 +81693,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/server.ts",
-      "source_location": "L77",
+      "source_location": "L80",
       "weight": 1.0
     },
     {
@@ -83517,7 +83468,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L145",
+      "source_location": "L139",
       "weight": 1.0
     },
     {
@@ -83528,7 +83479,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L149",
+      "source_location": "L143",
       "weight": 1.0
     },
     {
@@ -83539,7 +83490,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L169",
+      "source_location": "L163",
       "weight": 1.0
     },
     {
@@ -83550,7 +83501,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia.component.ts",
-      "source_location": "L173",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -83561,7 +83512,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L174",
+      "source_location": "L162",
       "weight": 1.0
     },
     {
@@ -83572,7 +83523,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L178",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -83583,7 +83534,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L182",
+      "source_location": "L170",
       "weight": 1.0
     },
     {
@@ -83594,7 +83545,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L193",
+      "source_location": "L181",
       "weight": 1.0
     },
     {
@@ -83605,7 +83556,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L198",
+      "source_location": "L186",
       "weight": 1.0
     },
     {
@@ -83616,7 +83567,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L205",
+      "source_location": "L193",
       "weight": 1.0
     },
     {
@@ -83627,7 +83578,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L235",
+      "source_location": "L223",
       "weight": 1.0
     },
     {
@@ -83638,7 +83589,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/app/pages/candidatura-geral/formulario/etapa-2/secao-experiencia-docente.component.ts",
-      "source_location": "L239",
+      "source_location": "L227",
       "weight": 1.0
     },
     {
@@ -92878,5 +92829,5 @@
       "source_file": "public/imagens/staff-projecto-dr-maria.png"
     }
   ],
-  "built_at_commit": "ea4f1fec704d80a4eb7fad5e8a37edffe0dde6a9"
+  "built_at_commit": "56486a83bf5538ce4940a6450cc55b4736019ccc"
 }

@@ -2,9 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { EvoTextField } from '@evolium-kit/toolkit/components';
-import type { EvoSelectOption } from '@evolium-kit/toolkit/components';
 import { ExperienciaDocenteCandidaturaGeral } from '../../../../core/modelos/candidatura-geral.model';
-import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
 import {
   descreverTempoTotalPeriodo,
   duracaoPeriodo,
@@ -50,9 +48,8 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
         [erro]="erroCampo(universidade())" />
       <form-input-field [label]="textos().faculdade" [placeholder]="textos().faculdadePlaceholder"
         [ngModel]="faculdade()" (ngModelChange)="faculdade.set($event)" [erro]="erroCampo(faculdade())" />
-      <!-- freeSolo: a disciplina pode ter sido lecionada noutro plano curricular e não estar na lista. -->
-      <evo-text-field class="sm:col-span-2" type="autoComplete" [freeSolo]="true" [label]="textos().disciplina"
-        [placeholder]="textos().disciplinaPlaceholder" [options]="opcoesDisciplina()" [maxlength]="maximoTexto"
+      <evo-text-field class="sm:col-span-2" [label]="textos().disciplina"
+        [placeholder]="textos().disciplinaPlaceholder" [maxlength]="maximoTexto"
         [ngModel]="disciplina()" (ngModelChange)="disciplina.set($event ?? '')" [error]="erroCampo(disciplina())" />
     </div>
 
@@ -89,7 +86,6 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
 })
 export class SecaoExperienciaDocenteComponent {
   private readonly traducao = inject(TraducaoService);
-  private readonly conteudo = inject(CandidaturaGeralService);
   private readonly controlo = inject(CandidaturaGeralEstadoService).formacao.controls.experienciasDocentes;
 
   protected readonly universidade = signal('');
@@ -107,10 +103,6 @@ export class SecaoExperienciaDocenteComponent {
   private readonly experiencias = toSignal(this.controlo.valueChanges, { initialValue: this.controlo.value });
 
   protected readonly maximoTexto = MAXIMO_TEXTO_CURTO;
-
-  protected readonly opcoesDisciplina = computed<EvoSelectOption<string>[]>(() =>
-    this.conteudo.nomesDisciplinas().map((nome) => ({ value: nome, label: nome })),
-  );
 
   /** Duração do período em preenchimento, antes de «Adicionar» — feedback ao vivo. */
   protected readonly duracaoTexto = computed(() => {
@@ -143,7 +135,7 @@ export class SecaoExperienciaDocenteComponent {
       faculdade: t('Faculdade', 'Faculty'),
       faculdadePlaceholder: t('Ex.: Agronómica e Produção Vegetal', 'E.g. Agronomy and Crop Production'),
       disciplina: t('Disciplina leccionada', 'Course taught'),
-      disciplinaPlaceholder: t('Escreva ou escolha a disciplina', 'Type or choose the course'),
+      disciplinaPlaceholder: t('Escreva a disciplina leccionada', 'Type the course taught'),
       inicio: t('Início', 'Start'),
       fim: t('Até', 'End'),
       atual: t('Actualmente lecciono esta disciplina', 'I currently teach this course'),

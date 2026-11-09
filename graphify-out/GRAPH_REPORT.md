@@ -1,17 +1,17 @@
 # Graph Report - web-site-unagro  (2026-11-09)
 
 ## Corpus Check
-- 377 files · ~1,929,389 words
+- 377 files · ~1,929,268 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 16 file(s) not represented in the graph (top: (none) 6, .css 5, .ico 2)
 
 ## Summary
-- 2278 nodes · 5545 edges · 199 communities (103 shown, 96 thin omitted)
+- 2278 nodes · 5541 edges · 200 communities (104 shown, 96 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 111 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ea4f1fec`
+- Built from commit: `56486a83`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,7 +25,7 @@
 - detalhe-curso.component.ts
 - candidatura-geral.model.ts
 - ModalCandidaturaSubmetidaComponent
-- secao-dossier.component.ts
+- etapa-3.component.html template
 - modal-candidatura-submetida.component.ts
 - SeletorDisciplinasComponent
 - inscricao.component.ts
@@ -114,7 +114,7 @@
 - angular.json
 - serve
 - scripts
-- secao-experiencia-docente.component.ts
+- secao-experiencia.component.ts
 - etapa-4.component.ts
 - FormacoesComponent
 - pilar-icone.component.ts
@@ -209,6 +209,7 @@
 - Staff projecto Dr. Luis - portrait with data dashboards
 - Staff projecto Dr. Paulo - portrait in hi-vis vest
 - formulario-candidatura.component.ts
+- modal-tipo-candidatura.component.ts
 - contactos.component.ts
 - candidatura-geral-inicio.component.ts
 - form-input-field.ts
@@ -261,7 +262,7 @@
 - **Course card images** — public_imagens_image_curso_1_image, public_imagens_image_curso_2_image, public_imagens_image_curso_3_image [INFERRED 0.95]
 - **Project staff portraits** — public_imagens_staff_projecto_dr_paulo_image, public_imagens_staff_projecto_dr_joao_image, public_imagens_staff_projecto_dr_luis_image, public_imagens_staff_projecto_dr_maria_image [INFERRED 0.95]
 
-## Communities (199 total, 96 thin omitted)
+## Communities (200 total, 96 thin omitted)
 
 ### Community 0 - "candidaturas.component.ts"
 Cohesion: 0.06
@@ -272,8 +273,8 @@ Cohesion: 0.09
 Nodes (14): Credenciais, Sessao, Utilizador, AutenticacaoService, paraSessao(), paraUtilizador(), RespostaLoginApi, UtilizadorApi (+6 more)
 
 ### Community 2 - "@angular/core"
-Cohesion: 0.21
-Nodes (12): @angular/core, @angular/forms, ErroFnOuTexto, TemaCampoUpload, HORARIOS, CLASSES_ROTULO, ErroFnOuTexto, SelectOptionTemplateContext (+4 more)
+Cohesion: 0.17
+Nodes (13): @angular/core, @angular/forms, SecaoDossierComponent, ErroFnOuTexto, TemaCampoUpload, CartaoAvisoComponent, CLASSES_BOTAO, CLASSES_COLUNAS (+5 more)
 
 ### Community 3 - "desenvolvimento.component.ts"
 Cohesion: 0.06
@@ -295,9 +296,9 @@ Nodes (11): CAMPOS_TRADUZIVEIS_CURSO, DetalheCursoComponent, FAQ_CURSO_BRUTO, ME
 Cohesion: 0.12
 Nodes (26): funcoesCandidaturaQueries, ofertaCurricularQueries, AREAS_CANDIDATURA_GERAL_MOCK, AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK, CRITERIOS_CANDIDATURA_GERAL_MOCK, DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK, DOCUMENTOS_CANDIDATURA_GERAL_MOCK, GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK (+18 more)
 
-### Community 9 - "secao-dossier.component.ts"
-Cohesion: 0.13
-Nodes (11): MAXIMO_CERTIFICADOS_ADICIONAIS, Etapa3Component, etapa-3.component.html template, SecaoDeclaracoesComponent, SecaoDossierComponent, CartaoAvisoComponent, CLASSES_BOTAO, CLASSES_COLUNAS (+3 more)
+### Community 9 - "etapa-3.component.html template"
+Cohesion: 0.40
+Nodes (3): Etapa3Component, etapa-3.component.html template, SecaoDeclaracoesComponent
 
 ### Community 10 - "modal-candidatura-submetida.component.ts"
 Cohesion: 0.31
@@ -348,8 +349,8 @@ Cohesion: 0.24
 Nodes (6): NovaCandidaturaAluno, CandidaturaAlunosService, paraPedido(), aplicarTraducaoTextos(), CAMPOS_PASSO_UM, EXTENSOES_CERTIFICADO
 
 ### Community 23 - "CandidaturaGeralEstadoService"
-Cohesion: 0.12
-Nodes (4): CandidaturaGeralEstadoService, idsUnicos(), normalizarEmail(), semFicheiros()
+Cohesion: 0.13
+Nodes (4): CandidaturaGeralEstadoService, entradasValidas(), idsUnicos(), semFicheiros()
 
 ### Community 25 - "FormFieldInputComponentV2 (form-input-field)"
 Cohesion: 0.09
@@ -365,7 +366,7 @@ Nodes (14): BotaoCompartilharComponent, CLASSES_GATILHO, RedeCompartilhar, REDES
 
 ### Community 28 - "package.json"
 Cohesion: 0.09
-Nodes (22): name, packageManager, private, version, @angular/build, @angular/cli, @angular/compiler, @angular/compiler-cli (+14 more)
+Nodes (21): name, packageManager, private, version, @angular/build, @angular/cli, @angular/compiler, @angular/compiler-cli (+13 more)
 
 ### Community 29 - "treinamentos.service.ts"
 Cohesion: 0.29
@@ -432,8 +433,8 @@ Cohesion: 0.13
 Nodes (4): CandidaturaGeralSubmetida, ModalVerificarEmailComponent, NumeroEtapa, FormularioCandidaturaComponent
 
 ### Community 49 - "candidatura-geral-estado.service.ts"
-Cohesion: 0.10
-Nodes (13): PAIS_PADRAO_CANDIDATURA_GERAL, TipoCandidatura, CandidaturaGeralService, VerificacaoBi, VerificacaoBiApi, VerificacaoBiService, DadosTipoCandidatura, ID_MODAL_TIPO_CANDIDATURA (+5 more)
+Cohesion: 0.12
+Nodes (10): PAIS_PADRAO_CANDIDATURA_GERAL, VerificacaoBi, VerificacaoBiApi, VerificacaoBiService, CHAVE_DOSSIER_TOTAL, CAMPOS_FICHEIRO, MAXIMO_CERTIFICADOS_ADICIONAIS, MAXIMO_DISCIPLINAS (+2 more)
 
 ### Community 52 - "api.service.ts"
 Cohesion: 0.08
@@ -587,9 +588,9 @@ Nodes (7): serve, test, builder, configurations, defaultConfiguration, builder, 
 Cohesion: 0.29
 Nodes (7): scripts, build, ng, serve:ssr:web-site-unagro, start, test, watch
 
-### Community 98 - "secao-experiencia-docente.component.ts"
-Cohesion: 0.14
-Nodes (10): ExperienciaProfissionalCandidaturaGeral, MAXIMO_EXPERIENCIAS, MAXIMO_TEXTO_CURTO, Etapa2Component, etapa-2.component.html template, ItemExperiencia, ListaExperienciasComponent, SecaoExperienciaComponent (+2 more)
+### Community 98 - "secao-experiencia.component.ts"
+Cohesion: 0.13
+Nodes (11): @evolium-kit/toolkit, ExperienciaProfissionalCandidaturaGeral, MAXIMO_EXPERIENCIAS, MAXIMO_TEXTO_CURTO, Etapa2Component, etapa-2.component.html template, ItemExperiencia, ListaExperienciasComponent (+3 more)
 
 ### Community 99 - "etapa-4.component.ts"
 Cohesion: 0.12
@@ -659,6 +660,10 @@ Nodes (3): index.html (WebSiteUnagro shell), app-root, Google Fonts (Quicksand, 
 Cohesion: 0.30
 Nodes (7): DadosCamposEmFalta, ID_MODAL_CAMPOS_EM_FALTA, ModalCamposEmFaltaComponent, CampoEmFalta, irParaCampo(), ROTULOS_CAMPOS, seletorCampo()
 
+### Community 194 - "modal-tipo-candidatura.component.ts"
+Cohesion: 0.14
+Nodes (10): TipoCandidatura, CandidaturaGeralService, DadosTipoCandidatura, ID_MODAL_TIPO_CANDIDATURA, HORARIOS, CLASSES_ROTULO, ErroFnOuTexto, SelectOptionTemplateContext (+2 more)
+
 ### Community 196 - "contactos.component.ts"
 Cohesion: 0.05
 Nodes (24): NovoContacto, ContatoRequest, ContatosService, paraPedido(), ROTULOS_ASSUNTO_PT, ContactosComponent, DetalheLocalizacaoBruto, DETALHES_LOCALIZACAO_BRUTOS (+16 more)
@@ -697,11 +702,11 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `Dados prontos para a API (modelo, mock, serviço, página)` and `Modelos vindos da API só com texto simples`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `@angular/core` connect `@angular/core` to `candidaturas.component.ts`, `entrar.component.ts`, `cabecalho-secao.component.ts`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `detalhe-curso.component.ts`, `candidatura-geral.model.ts`, `secao-dossier.component.ts`, `modal-candidatura-submetida.component.ts`, `inscricao.component.ts`, `cursos.service.ts`, `RevelarAoScrollDirective`, `TextoTraduzido`, `eventos.component.ts`, `modal-consultar-candidatura.component.ts`, `alumni.component.ts`, `@angular/router`, `formulario-inscricao.component.ts`, `projetos.service.ts`, `botao-compartilhar.component.ts`, `package.json`, `treinamentos.service.ts`, `formacoes.component.ts`, `localizar-profundo.ts`, `estudantes.component.ts`, `publicacoes.service.ts`, `modal-inscricao-evento.component.ts`, `inscricoes.service.ts`, `projetos.mock.ts`, `oferta-curricular.service.ts`, `laboratorios.service.ts`, `candidatura-geral-estado.service.ts`, `api.service.ts`, `modal-agendar-visita.component.ts`, `docencia.service.ts`, `@angular/common`, `rodape.component.ts`, `alumni.service.ts`, `formulario-candidatura.component.ts`, `banner-destaque.component.ts`, `etapa-1.component.ts`, `contactos.component.ts`, `app.config.ts`, `perguntas-frequentes.service.ts`, `candidatura-geral-inicio.component.ts`, `faculdades-departamentos.component.ts`, `form-input-field.ts`, `sobre.component.ts`, `cartao-recurso.component.ts`, `projectos-inovadores.service.ts`, `cabecalho.component.ts`, `cartao-vidro.component.ts`, `campo-texto.component.ts`, `TraducaoService`, `cartao-proxima-data.component.ts`, `alert-modal.service.ts`, `modal-inscricao-curso.component.ts`, `formulario-docente.component.ts`, `detalhe-projeto.component.ts`, `item-estatistica.component.ts`, `seo.service.ts`, `secao-experiencia-docente.component.ts`, `etapa-4.component.ts`, `pilar-icone.component.ts`, `intranet.service.ts`, `app.config.server.ts`, `inicio.component.ts`, `capaUtilizavel`, `formatar-data.ts`, `WrapperAuthBackGroundComponent`, `TiraHorizontalDirective`?**
+- **Why does `@angular/core` connect `@angular/core` to `candidaturas.component.ts`, `entrar.component.ts`, `cabecalho-secao.component.ts`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `detalhe-curso.component.ts`, `candidatura-geral.model.ts`, `modal-candidatura-submetida.component.ts`, `inscricao.component.ts`, `cursos.service.ts`, `RevelarAoScrollDirective`, `TextoTraduzido`, `eventos.component.ts`, `modal-consultar-candidatura.component.ts`, `alumni.component.ts`, `@angular/router`, `formulario-inscricao.component.ts`, `projetos.service.ts`, `botao-compartilhar.component.ts`, `package.json`, `treinamentos.service.ts`, `formacoes.component.ts`, `localizar-profundo.ts`, `estudantes.component.ts`, `publicacoes.service.ts`, `modal-inscricao-evento.component.ts`, `inscricoes.service.ts`, `projetos.mock.ts`, `oferta-curricular.service.ts`, `laboratorios.service.ts`, `candidatura-geral-estado.service.ts`, `api.service.ts`, `modal-agendar-visita.component.ts`, `docencia.service.ts`, `@angular/common`, `rodape.component.ts`, `alumni.service.ts`, `formulario-candidatura.component.ts`, `modal-tipo-candidatura.component.ts`, `etapa-1.component.ts`, `contactos.component.ts`, `app.config.ts`, `perguntas-frequentes.service.ts`, `banner-destaque.component.ts`, `candidatura-geral-inicio.component.ts`, `faculdades-departamentos.component.ts`, `form-input-field.ts`, `sobre.component.ts`, `cartao-recurso.component.ts`, `projectos-inovadores.service.ts`, `cabecalho.component.ts`, `cartao-vidro.component.ts`, `campo-texto.component.ts`, `TraducaoService`, `cartao-proxima-data.component.ts`, `alert-modal.service.ts`, `modal-inscricao-curso.component.ts`, `formulario-docente.component.ts`, `detalhe-projeto.component.ts`, `item-estatistica.component.ts`, `seo.service.ts`, `secao-experiencia.component.ts`, `etapa-4.component.ts`, `pilar-icone.component.ts`, `intranet.service.ts`, `app.config.server.ts`, `inicio.component.ts`, `capaUtilizavel`, `formatar-data.ts`, `WrapperAuthBackGroundComponent`, `TiraHorizontalDirective`?**
   _High betweenness centrality (0.286) - this node is a cross-community bridge._
-- **Why does `TraducaoService` connect `TraducaoService` to `candidaturas.component.ts`, `entrar.component.ts`, `@angular/core`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `detalhe-curso.component.ts`, `candidatura-geral.model.ts`, `secao-dossier.component.ts`, `modal-candidatura-submetida.component.ts`, `inscricao.component.ts`, `RevelarAoScrollDirective`, `TextoTraduzido`, `BotaoComponent`, `eventos.component.ts`, `modal-consultar-candidatura.component.ts`, `alumni.component.ts`, `@angular/router`, `formulario-inscricao.component.ts`, `projetos.service.ts`, `botao-compartilhar.component.ts`, `formacoes.component.ts`, `localizar-profundo.ts`, `estudantes.component.ts`, `modal-inscricao-evento.component.ts`, `projetos.mock.ts`, `candidatura-geral-estado.service.ts`, `Etapa4Component`, `modal-agendar-visita.component.ts`, `docencia.service.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `contactos.component.ts`, `perguntas-frequentes.service.ts`, `candidatura-geral-inicio.component.ts`, `faculdades-departamentos.component.ts`, `form-input-field.ts`, `sobre.component.ts`, `projectos-inovadores.service.ts`, `cabecalho.component.ts`, `cartao-proxima-data.component.ts`, `modal-inscricao-curso.component.ts`, `formulario-docente.component.ts`, `detalhe-projeto.component.ts`, `seo.service.ts`, `secao-experiencia-docente.component.ts`, `etapa-4.component.ts`, `intranet.service.ts`, `inicio.component.ts`, `formatar-data.ts`?**
+- **Why does `TraducaoService` connect `TraducaoService` to `candidaturas.component.ts`, `entrar.component.ts`, `@angular/core`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `detalhe-curso.component.ts`, `candidatura-geral.model.ts`, `modal-candidatura-submetida.component.ts`, `inscricao.component.ts`, `RevelarAoScrollDirective`, `TextoTraduzido`, `BotaoComponent`, `eventos.component.ts`, `modal-consultar-candidatura.component.ts`, `alumni.component.ts`, `@angular/router`, `formulario-inscricao.component.ts`, `projetos.service.ts`, `botao-compartilhar.component.ts`, `formacoes.component.ts`, `localizar-profundo.ts`, `estudantes.component.ts`, `modal-inscricao-evento.component.ts`, `projetos.mock.ts`, `Etapa4Component`, `modal-agendar-visita.component.ts`, `docencia.service.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `modal-tipo-candidatura.component.ts`, `contactos.component.ts`, `perguntas-frequentes.service.ts`, `candidatura-geral-inicio.component.ts`, `faculdades-departamentos.component.ts`, `form-input-field.ts`, `sobre.component.ts`, `projectos-inovadores.service.ts`, `cabecalho.component.ts`, `cartao-proxima-data.component.ts`, `modal-inscricao-curso.component.ts`, `formulario-docente.component.ts`, `detalhe-projeto.component.ts`, `seo.service.ts`, `secao-experiencia.component.ts`, `etapa-4.component.ts`, `intranet.service.ts`, `inicio.component.ts`, `formatar-data.ts`?**
   _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Why does `IconeComponent` connect `TraducaoService` to `candidaturas.component.ts`, `entrar.component.ts`, `@angular/core`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `detalhe-curso.component.ts`, `cabecalho-secao.component.ts`, `secao-dossier.component.ts`, `modal-candidatura-submetida.component.ts`, `inscricao.component.ts`, `RevelarAoScrollDirective`, `BotaoComponent`, `eventos.component.ts`, `modal-consultar-candidatura.component.ts`, `alumni.component.ts`, `@angular/router`, `botao-compartilhar.component.ts`, `formacoes.component.ts`, `estudantes.component.ts`, `modal-inscricao-evento.component.ts`, `projetos.mock.ts`, `candidatura-geral-estado.service.ts`, `modal-agendar-visita.component.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `banner-destaque.component.ts`, `contactos.component.ts`, `candidatura-geral-inicio.component.ts`, `faculdades-departamentos.component.ts`, `cartao-recurso.component.ts`, `sobre.component.ts`, `form-input-field.ts`, `cabecalho.component.ts`, `cartao-proxima-data.component.ts`, `modal-inscricao-curso.component.ts`, `formulario-docente.component.ts`, `secao-experiencia-docente.component.ts`, `etapa-4.component.ts`, `pilar-icone.component.ts`, `inicio.component.ts`, `formatar-data.ts`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+- **Why does `IconeComponent` connect `TraducaoService` to `candidaturas.component.ts`, `entrar.component.ts`, `@angular/core`, `desenvolvimento.component.ts`, `hub-unagro.component.ts`, `selo.component.ts`, `detalhe-curso.component.ts`, `cabecalho-secao.component.ts`, `modal-candidatura-submetida.component.ts`, `inscricao.component.ts`, `RevelarAoScrollDirective`, `BotaoComponent`, `eventos.component.ts`, `modal-consultar-candidatura.component.ts`, `alumni.component.ts`, `@angular/router`, `botao-compartilhar.component.ts`, `formacoes.component.ts`, `estudantes.component.ts`, `modal-inscricao-evento.component.ts`, `projetos.mock.ts`, `modal-agendar-visita.component.ts`, `rodape.component.ts`, `formulario-candidatura.component.ts`, `modal-tipo-candidatura.component.ts`, `banner-destaque.component.ts`, `contactos.component.ts`, `candidatura-geral-inicio.component.ts`, `faculdades-departamentos.component.ts`, `cartao-recurso.component.ts`, `sobre.component.ts`, `form-input-field.ts`, `cabecalho.component.ts`, `cartao-proxima-data.component.ts`, `modal-inscricao-curso.component.ts`, `formulario-docente.component.ts`, `secao-experiencia.component.ts`, `etapa-4.component.ts`, `pilar-icone.component.ts`, `inicio.component.ts`, `formatar-data.ts`?**
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **Are the 9 inferred relationships involving `TraducaoService` (e.g. with `cabecalho.component.html template` and `rodape.component.html template`) actually correct?**
   _`TraducaoService` has 9 INFERRED edges - model-reasoned connections that need verification._
