@@ -15,7 +15,7 @@ import {
   switchMap,
   timer,
 } from 'rxjs';
-import { PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
+import { AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK, PAIS_PADRAO_CANDIDATURA_GERAL } from '../../../core/dados/candidatura-geral.mock';
 import {
   ExperienciaDocenteCandidaturaGeral,
   ExperienciaProfissionalCandidaturaGeral,
@@ -645,8 +645,12 @@ export class CandidaturaGeralEstadoService {
           .map((experiencia) => ({ ...experiencia, atual: experiencia.atual === true }))
           .filter((experiencia) => experiencia.atual || !!experiencia.fim),
       );
+      // A área era o `id` de uma lista; agora é texto livre. Um rascunho antigo traz o `id`: troca-se pelo rótulo.
       experienciasProfissionais.setValue(
-        entradasValidas(experienciasProfissionais.value, ['empresa', 'area', 'tempo']),
+        entradasValidas(experienciasProfissionais.value, ['empresa', 'area', 'tempo']).map((experiencia) => ({
+          ...experiencia,
+          area: AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK.find((opcao) => opcao.id === experiencia.area)?.rotulo.pt ?? experiencia.area,
+        })),
       );
       const pais = this.formacao.controls.pais;
       if (!pais.value) {

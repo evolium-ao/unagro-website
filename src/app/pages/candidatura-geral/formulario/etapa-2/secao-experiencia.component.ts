@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { EvoTextField } from '@evolium-kit/toolkit/components';
+import type { EvoSelectOption } from '@evolium-kit/toolkit/components';
 import { ExperienciaProfissionalCandidaturaGeral } from '../../../../core/modelos/candidatura-geral.model';
 import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
 import { descreverTempoTotal } from '../../../../core/servicos/tempo-experiencia';
@@ -31,6 +33,7 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
     BotaoComponent,
     FormFieldInputComponentV2,
     FormFieldSelectComponentV2,
+    EvoTextField,
     ListaExperienciasComponent,
     TituloBlocoComponent,
   ],
@@ -42,11 +45,10 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
     <div class="mt-6 grid gap-x-6 gap-y-4 sm:grid-cols-2">
       <form-input-field [label]="textos().empresa" [placeholder]="textos().empresaPlaceholder"
         [ngModel]="empresa()" (ngModelChange)="empresa.set($event)" [erro]="erroCampo(empresa())" />
-      <!-- permitirNovo: a área pode não estar na lista — ver "Disciplina leccionada" da secção 2. -->
-      <field-select-v2 [label]="textos().area" [placeholder]="textos().selecione"
-        [searchable]="true" [permitirNovo]="true" [textoNovo]="textos().adicionarArea" [dicaNovo]="textos().dicaArea"
-        [options]="opcoesArea()" [ngModel]="area()" (ngModelChange)="area.set($event ?? '')"
-        [erro]="erroCampo(area())" />
+      <!-- Texto livre com sugestões (freeSolo): o valor é o texto escrito ou o rótulo da sugestão escolhida. -->
+      <evo-text-field type="autoComplete" [freeSolo]="true" [label]="textos().area"
+        [placeholder]="textos().areaPlaceholder" [options]="opcoesArea()" [maxlength]="maximoTexto"
+        [ngModel]="area()" (ngModelChange)="area.set($event ?? '')" [error]="erroCampo(area())" />
       <field-select-v2 class="sm:col-span-2" [label]="textos().tempo"
         [placeholder]="textos().selecione" [options]="opcoesTempo()" [ngModel]="tempo()"
         (ngModelChange)="tempo.set($event ?? '')" [erro]="erroCampo(tempo())" />
@@ -80,19 +82,21 @@ export class SecaoExperienciaComponent {
 
   private readonly experiencias = toSignal(this.controlo.valueChanges, { initialValue: this.controlo.value });
 
-  protected readonly opcoesArea = computed<SelectOptionV2[]>(() =>
-    this.conteudo.areasTrabalho().map((opcao) => ({ value: opcao.id, label: opcao.rotulo })),
+  protected readonly maximoTexto = MAXIMO_TEXTO_CURTO;
+
+  /** Sugestões do campo livre: o `value` é o próprio rótulo, porque é o texto que se guarda e envia. */
+  protected readonly opcoesArea = computed<EvoSelectOption<string>[]>(() =>
+    this.conteudo.areasTrabalho().map((opcao) => ({ value: opcao.rotulo, label: opcao.rotulo })),
   );
   protected readonly opcoesTempo = computed<SelectOptionV2[]>(() =>
     this.conteudo.intervalosExperiencia().map((opcao) => ({ value: opcao.id, label: opcao.rotulo })),
   );
 
   protected readonly itens = computed<ItemExperiencia[]>(() => {
-    const areas = this.conteudo.areasTrabalho();
     const tempos = this.conteudo.intervalosExperiencia();
     return this.experiencias().map((experiencia) => ({
       titulo: experiencia.empresa,
-      detalhe: areas.find((opcao) => opcao.id === experiencia.area)?.rotulo ?? '',
+      detalhe: experiencia.area,
       tempo: tempos.find((opcao) => opcao.id === experiencia.tempo)?.rotulo ?? '',
     }));
   });
@@ -120,11 +124,7 @@ export class SecaoExperienciaComponent {
       empresa: t('Empresa', 'Company'),
       empresaPlaceholder: t('Ex.: Fazenda Agro-Industrial do Cuanza', 'E.g. Cuanza Agro-Industrial Farm'),
       area: t('Área de trabalho', 'Field of work'),
-      adicionarArea: t('Adicionar área', 'Add field'),
-      dicaArea: t(
-        'Não encontra a área? Escreva-a na pesquisa para a adicionar.',
-        'Can’t find the field? Type it in the search box to add it.',
-      ),
+      areaPlaceholder: t('Escreva ou escolha a sua área', 'Type or choose your field'),
       tempo: t('Tempo de Experiência', 'Length of Experience'),
       selecione: t('Selecione...', 'Select...'),
       obrigatorio: t('Campo obrigatório', 'Required field'),
@@ -149,7 +149,7 @@ export class SecaoExperienciaComponent {
   protected adicionar(): void {
     const experiencia: ExperienciaProfissionalCandidaturaGeral = {
       empresa: this.empresa().trim().slice(0, MAXIMO_TEXTO_CURTO),
-      area: this.area(),
+      area: this.area().trim().slice(0, MAXIMO_TEXTO_CURTO),
       tempo: this.tempo(),
     };
     if (this.limiteAtingido()) {

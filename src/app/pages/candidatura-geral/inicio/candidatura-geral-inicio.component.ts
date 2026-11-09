@@ -1,10 +1,9 @@
 import { isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, PLATFORM_ID, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormControl,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -24,7 +23,6 @@ import {
   ModalConsultarCandidaturaComponent,
 } from '../componentes/modal-consultar-candidatura.component';
 import { opcoesModalTipoCandidatura } from '../componentes/modal-tipo-candidatura.component';
-import { SeletorDisciplinasComponent } from '../componentes/seletor-disciplinas.component';
 import { LIMITES_DOSSIER_MB } from '../estado/candidatura-geral-estado.service';
 import {
   DadosPartilhar,
@@ -34,7 +32,6 @@ import {
 import { BannerDestaqueComponent } from '../../../shared/componentes/banner-destaque/banner-destaque.component';
 import { BotaoComponent } from '../../../shared/componentes/botao/botao.component';
 import { CabecalhoSecaoComponent } from '../../../shared/componentes/cabecalho-secao/cabecalho-secao.component';
-import { CartaoAvisoComponent } from '../../../shared/componentes/cartao-aviso/cartao-aviso.component';
 import { CartaoRecursoComponent } from '../../../shared/componentes/cartao-recurso/cartao-recurso.component';
 import { CartaoRequisitoComponent } from '../../../shared/componentes/cartao-requisito/cartao-requisito.component';
 import { ContadorRegressivoComponent } from '../../../shared/componentes/contador-regressivo/contador-regressivo.component';
@@ -67,9 +64,6 @@ const LINK_CONVOCATORIA = new URL('/candidatura-geral', environment.siteUrl).hre
     ContainerPaginaComponent,
     CabecalhoSecaoComponent,
     CartaoRequisitoComponent,
-    CartaoAvisoComponent,
-    SeletorDisciplinasComponent,
-    FormsModule,
     ReactiveFormsModule,
     ContadorRegressivoComponent,
     IconeComponent,
@@ -143,23 +137,6 @@ export class CandidaturaGeralInicioComponent {
         'Ao abrigo do Decreto Executivo n.º 337/22 (MESCTI), está aberto o concurso para constituição do corpo docente da nova IES no Polo da Quiminha.',
         'Under Executive Decree no. 337/22 (MESCTI), applications are open to build the faculty of the new higher education institution at the Quiminha campus.',
       ),
-      disciplinaRotulo: t('Atribuição de cátedras & regência', 'Chair & course assignment'),
-      disciplinaTitulo: t('Escolha a Disciplina a Leccionar', 'Choose the Course to Teach'),
-      disciplinaDescricao: t(
-        'Indique a unidade curricular de preferência para aceder aos módulos curriculares, perfil de competências e submeter a sua candidatura.',
-        'Indicate your preferred course unit to access the curricular modules and competence profile, and submit your application.',
-      ),
-      disciplinaAvisoSelo: t('Atenção ao candidato', 'Note to applicants'),
-      disciplinaAvisoTitulo: t('Seleccione a disciplina que pretende leccionar', 'Select the course you wish to teach'),
-      disciplinaAvisoTexto: t(
-        'Carregue os requisitos curriculares específicos por unidade curricular e submeta a sua intenção formal de regência e leccionação no concurso.',
-        'Upload the specific curricular requirements for each course unit and submit your formal intention to lead and teach in the competition.',
-      ),
-      disciplinaRodape: t(
-        'As disciplinas seleccionadas serão incorporadas no seu dossier de candidatura docente ao submeter.',
-        'The selected courses will be included in your lecturer application dossier when you submit.',
-      ),
-      disciplinaConfirmar: t('Confirmar Selecção', 'Confirm Selection'),
       criteriosRotulo: t('Perfil do candidato & requisitos', 'Candidate profile & requirements'),
       criteriosTitulo: t('Critérios de Admissão e Qualificação', 'Admission and Qualification Criteria'),
       criteriosDescricao: t('Perfil técnico e rigor académico com vivência de campo.', 'Technical profile and academic rigour with field experience.'),
@@ -262,12 +239,6 @@ export class CandidaturaGeralInicioComponent {
 
   /** Contacto oficial da convocatória, mostrado no campo do hero. */
   protected readonly emailContacto = 'agrosophia@yahoo.com';
-
-  /**
-   * 3 sessão — `id`s das disciplinas adicionadas no `app-seletor-disciplinas`.
-   * «Confirmar Seleção» leva-os à etapa 1, que os pré-preenche no formulário.
-   */
-  protected readonly disciplinasAdicionadas = signal<string[]>([]);
 
   /**
    * 8 sessão — canal de dúvidas sobre a candidatura, `POST /duvidas`. A documentação
@@ -395,20 +366,6 @@ export class CandidaturaGeralInicioComponent {
       semBotoes: true,
       data,
     });
-  }
-
-  /** Abre a etapa 1 com as disciplinas escolhidas em `?disciplinas=id1,id2`. */
-  protected confirmarSelecao(): void {
-    const ids = this.disciplinasAdicionadas();
-    if (!ids.length) {
-      return;
-    }
-    // As disciplinas só seguem para o docente; o administrativo não as escolhe.
-    this.abrirEscolhaTipo((tipo) =>
-      this.router.navigate([this.rotaEtapa1], {
-        queryParams: tipo === 'DOCENTE' ? { disciplinas: ids.join(',') } : {},
-      }),
-    );
   }
 
   /** «Candidatar-se» / «Candidatar-me agora»: o modal pergunta o perfil e só então abre a etapa 1. */

@@ -190,7 +190,6 @@ export class Etapa4Component {
       opcoes.find((opcao) => opcao.id === id)?.rotulo ?? '';
     const idioma = this.traducao.idioma();
     const intervalos = this.conteudo.intervalosExperiencia();
-    const areas = this.conteudo.areasTrabalho();
     return [
       ...(this.estado.ehDocente()
         ? [
@@ -208,7 +207,7 @@ export class Etapa4Component {
         titulo: t('Experiência Profissional', 'Professional Experience'),
         itens: formacao.experienciasProfissionais.map((experiencia) => ({
           titulo: experiencia.empresa,
-          detalhe: rotulo(areas, experiencia.area),
+          detalhe: experiencia.area,
           tempo: rotulo(intervalos, experiencia.tempo),
         })),
       },

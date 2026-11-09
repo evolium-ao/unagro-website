@@ -1,6 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+@import '@evolium-kit/toolkit/styles/evolium-theme.css';
+@import '@evolium-kit/toolkit/styles/evolium-components.css';
+
+/*
+ * Toolkit Evolium, ligada só para o evo-text-field (sem provideEvoTheme nem modo escuro).
+ * Fora de qualquer @layer, para ganhar aos valores por omissão da toolkit.
+ */
+:root {
+  color-scheme: light;
+  --evo-color-primary: #1b4d3e;
+  --evo-color-primary-hover: #143b2f;
+  --evo-color-primary-soft: #e3f1e7;
+  --evo-font-sans: 'Inter', sans-serif;
+}
 
 @theme {
   --color-primary: #1b4d3e;

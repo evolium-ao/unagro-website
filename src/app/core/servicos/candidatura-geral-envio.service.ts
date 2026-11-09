@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ApiService } from '../api/api.service';
 import {
-  AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK,
   GRAUS_ACADEMICOS_CANDIDATURA_GERAL_MOCK,
   INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK,
 } from '../dados/candidatura-geral.mock';
@@ -152,7 +151,7 @@ function paraPedido(
   profissionais.forEach((experiencia, i) => {
     const prefixo = `experiencias_profissionais[${i}]`;
     corpo.set(`${prefixo}[empresa]`, experiencia.empresa);
-    corpo.set(`${prefixo}[area_trabalho]`, rotulo(AREAS_TRABALHO_CANDIDATURA_GERAL_MOCK, experiencia.area));
+    corpo.set(`${prefixo}[area_trabalho]`, experiencia.area);
     corpo.set(
       `${prefixo}[tempo_experiencia]`,
       rotulo(INTERVALOS_EXPERIENCIA_CANDIDATURA_GERAL_MOCK, experiencia.tempo),

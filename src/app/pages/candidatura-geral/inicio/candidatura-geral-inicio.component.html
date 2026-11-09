@@ -1,4 +1,4 @@
-<!-- Hero — o campo de contacto com o "Candidatar" (abre a etapa 1), a linha do
+﻿<!-- Hero — o campo de contacto com o "Candidatar" (abre a etapa 1), a linha do
      prazo e o logótipo entram pelo slot de conteúdo do banner. -->
 <app-banner-destaque [titulo]="textos().heroTitulo" [tituloDestaque]="textos().heroDestaque"
   [tituloFim]="textos().heroFim" [subtitulo]="textos().heroSubtitulo" [selos]="selosHero()"
@@ -103,39 +103,6 @@
     </div>
   </app-container-pagina>
 </section> -->
-
-<!-- 3 sessão — escolha da disciplina a lecionar (substitui as áreas e os termos de
-     referência, pontos 8 e 9 do pedido do cliente). O docente escolhe o curso, a
-     disciplina desse curso e clica em «Adicionar»; pode juntar disciplinas de vários
-     cursos. «Confirmar Seleção» abre a etapa 1 com `?disciplinas=`. -->
-
-<section id="secao-disciplina" class="bg-white py-10 sm:px-6 sm:py-20 lg:px-8">
-  <app-container-pagina>
-    <div class="text-center" appRevelarAoScroll>
-      <p class="mb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary-deep">
-        {{ textos().disciplinaRotulo }}
-      </p>
-      <app-cabecalho-secao [titulo]="textos().disciplinaTitulo" [descricao]="textos().disciplinaDescricao" tema="verde"
-        tamanhoDescricao="pequeno" [mostrarTracos]="false" />
-    </div>
-
-    <app-cartao-aviso class="mt-6 block sm:mt-10" appRevelarAoScroll icone="graduation-cap"
-      [selo]="textos().disciplinaAvisoSelo" [titulo]="textos().disciplinaAvisoTitulo"
-      [descricao]="textos().disciplinaAvisoTexto" />
-
-    <app-seletor-disciplinas class="mt-6 block sm:mt-12" appRevelarAoScroll [ngModel]="disciplinasAdicionadas()"
-      (ngModelChange)="disciplinasAdicionadas.set($event)">
-      <!-- Rodapé -->
-      <div class="flex flex-col gap-4 border-t border-gray-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <p class="text-xs text-text-secondary">{{ textos().disciplinaRodape }}</p>
-        <app-botao class="sm:inline-block sm:w-auto" variante="primario" icone="check" raio="medio"
-          [larguraTotal]="true" [desativado]="!disciplinasAdicionadas().length" (clicado)="confirmarSelecao()">
-          {{ textos().disciplinaConfirmar }}
-        </app-botao>
-      </div>
-    </app-seletor-disciplinas>
-  </app-container-pagina>
-</section>
 
 <!-- 4 sessão — critérios de admissão -->
 <section id="secao-criterios" class="bg-bg-lighter py-10 sm:px-6 sm:py-20 lg:px-8">

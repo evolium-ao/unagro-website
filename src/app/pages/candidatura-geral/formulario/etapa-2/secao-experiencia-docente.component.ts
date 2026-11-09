@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { EvoTextField } from '@evolium-kit/toolkit/components';
+import type { EvoSelectOption } from '@evolium-kit/toolkit/components';
 import { ExperienciaDocenteCandidaturaGeral } from '../../../../core/modelos/candidatura-geral.model';
 import { CandidaturaGeralService } from '../../../../core/servicos/candidatura-geral.service';
 import {
@@ -13,7 +15,6 @@ import { TraducaoService } from '../../../../core/traducao/traducao.service';
 import { BotaoComponent } from '../../../../shared/componentes/botao/botao.component';
 import { CaixaConfirmacaoComponent } from '../../../../shared/componentes/caixa-confirmacao/caixa-confirmacao.component';
 import { FormFieldInputComponentV2 } from '../../../../shared/componentes/input-field/form-input-field';
-import { FormFieldSelectComponentV2, SelectOptionV2 } from '../../../../shared/componentes/select-field-v2/select-field-v2';
 import { TituloBlocoComponent } from '../../../../shared/componentes/titulo-bloco/titulo-bloco.component';
 import {
   CandidaturaGeralEstadoService,
@@ -34,7 +35,7 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
     BotaoComponent,
     CaixaConfirmacaoComponent,
     FormFieldInputComponentV2,
-    FormFieldSelectComponentV2,
+    EvoTextField,
     ListaExperienciasComponent,
     TituloBlocoComponent,
   ],
@@ -49,12 +50,10 @@ import { ItemExperiencia, ListaExperienciasComponent } from './lista-experiencia
         [erro]="erroCampo(universidade())" />
       <form-input-field [label]="textos().faculdade" [placeholder]="textos().faculdadePlaceholder"
         [ngModel]="faculdade()" (ngModelChange)="faculdade.set($event)" [erro]="erroCampo(faculdade())" />
-      <!-- permitirNovo: a disciplina pode ter sido lecionada noutro plano curricular e não estar na lista. -->
-      <field-select-v2 class="sm:col-span-2" [label]="textos().disciplina" [placeholder]="textos().selecione"
-        [searchable]="true" [permitirNovo]="true" [textoNovo]="textos().adicionarDisciplina"
-        [dicaNovo]="textos().dicaDisciplina"
-        [options]="opcoesDisciplina()" [ngModel]="disciplina()"
-        (ngModelChange)="disciplina.set($event ?? '')" [erro]="erroCampo(disciplina())" />
+      <!-- freeSolo: a disciplina pode ter sido lecionada noutro plano curricular e não estar na lista. -->
+      <evo-text-field class="sm:col-span-2" type="autoComplete" [freeSolo]="true" [label]="textos().disciplina"
+        [placeholder]="textos().disciplinaPlaceholder" [options]="opcoesDisciplina()" [maxlength]="maximoTexto"
+        [ngModel]="disciplina()" (ngModelChange)="disciplina.set($event ?? '')" [error]="erroCampo(disciplina())" />
     </div>
 
     <!-- Período lectivo: "De ___ à ___", com "Actualmente" a dispensar o fim e a
@@ -107,7 +106,9 @@ export class SecaoExperienciaDocenteComponent {
 
   private readonly experiencias = toSignal(this.controlo.valueChanges, { initialValue: this.controlo.value });
 
-  protected readonly opcoesDisciplina = computed<SelectOptionV2[]>(() =>
+  protected readonly maximoTexto = MAXIMO_TEXTO_CURTO;
+
+  protected readonly opcoesDisciplina = computed<EvoSelectOption<string>[]>(() =>
     this.conteudo.nomesDisciplinas().map((nome) => ({ value: nome, label: nome })),
   );
 
@@ -142,11 +143,7 @@ export class SecaoExperienciaDocenteComponent {
       faculdade: t('Faculdade', 'Faculty'),
       faculdadePlaceholder: t('Ex.: Agronómica e Produção Vegetal', 'E.g. Agronomy and Crop Production'),
       disciplina: t('Disciplina leccionada', 'Course taught'),
-      adicionarDisciplina: t('Adicionar disciplina', 'Add course'),
-      dicaDisciplina: t(
-        'Não encontra a disciplina? Escreva-a na pesquisa para a adicionar.',
-        'Can’t find the course? Type it in the search box to add it.',
-      ),
+      disciplinaPlaceholder: t('Escreva ou escolha a disciplina', 'Type or choose the course'),
       inicio: t('Início', 'Start'),
       fim: t('Até', 'End'),
       atual: t('Actualmente lecciono esta disciplina', 'I currently teach this course'),
@@ -155,7 +152,6 @@ export class SecaoExperienciaDocenteComponent {
         'O fim do período tem de ser depois do início.',
         'The end of the period must be after the start.',
       ),
-      selecione: t('Selecione...', 'Select...'),
       obrigatorio: t('Campo obrigatório', 'Required field'),
       lista: t('Experiências docentes adicionadas', 'Teaching experience added'),
       vazia: t(
