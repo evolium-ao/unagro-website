@@ -4,25 +4,36 @@ FROM node:22.22.3-alpine AS builder
 
 ARG NODE_OPTIONS
 ENV NODE_OPTIONS=$NODE_OPTIONS
+ARG GITHUB_PACKAGES_TOKEN
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json .npmrc ./
 RUN npm ci
 
 COPY . .
 
 RUN npm run build
 
-# ─── Stage 2: Runtime
-FROM node:22-alpine AS runtime
+# ─── Stage 2: Dependências de produção (o token fica só neste stage, descartado no final)
+FROM node:22.22.3-alpine AS prod-deps
+
+ARG GITHUB_PACKAGES_TOKEN
+
+WORKDIR /app
+
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci --omit=dev
+
+# ─── Stage 3: Runtime
+FROM node:22.22.3-alpine AS runtime
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+COPY --from=prod-deps /app/node_modules /app/node_modules
 
 # Copy the entire dist folder from builder
 COPY --from=builder /app/dist /app/dist
