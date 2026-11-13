@@ -9,7 +9,26 @@ import {
 } from '../modelos/candidatura-geral.model';
 
 /** Fim do prazo de submissão, na hora de Luanda (GMT+1). */
-export const PRAZO_CANDIDATURA_GERAL = '2026-11-15T23:59:00+01:00';
+export const PRAZO_CANDIDATURA_GERAL = '2026-12-11T23:59:00+01:00';
+
+const MESES_PT = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+const MESES_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+// Lê os campos do próprio texto (já na hora de Luanda) para não depender do fuso do servidor/browser.
+const [ANO_PRAZO, MES_PRAZO, DIA_PRAZO, HORA_PRAZO, MINUTO_PRAZO] = PRAZO_CANDIDATURA_GERAL.match(/\d+/g)!.map(Number);
+
+const DIA_MES_PT = `${DIA_PRAZO} de ${MESES_PT[MES_PRAZO - 1]} de ${ANO_PRAZO}`;
+const DIA_MES_EN = `${DIA_PRAZO} ${MESES_EN[MES_PRAZO - 1]} ${ANO_PRAZO}`;
+const HORA_PT = `${HORA_PRAZO}h${String(MINUTO_PRAZO).padStart(2, '0')}`;
+const HORA_EN = `${HORA_PRAZO % 12 || 12}:${String(MINUTO_PRAZO).padStart(2, '0')} ${HORA_PRAZO < 12 ? 'am' : 'pm'}`;
+
+/** Textos do prazo, derivados de `PRAZO_CANDIDATURA_GERAL` — não escrever a data à mão noutro sítio. */
+export const PRAZO_CANDIDATURA_GERAL_TEXTO = {
+  dataPt: DIA_MES_PT,
+  dataEn: DIA_MES_EN,
+  dataHoraPt: `${DIA_MES_PT} às ${HORA_PT}`,
+  dataHoraEn: `${DIA_MES_EN} at ${HORA_EN}`,
+} as const;
 
 export const DESTAQUES_VISAO_CANDIDATURA_GERAL_MOCK: DestaqueCandidaturaGeral[] = [
   {

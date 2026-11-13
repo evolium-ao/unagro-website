@@ -1,3 +1,4 @@
+import { PRAZO_CANDIDATURA_GERAL_TEXTO } from '../../dados/candidatura-geral.mock';
 import { Dicionario } from '../dicionario';
 
 export const pt = {
@@ -371,7 +372,7 @@ export const pt = {
     candidaturaGeral: {
       titulo: 'Processo de Candidatura para Docentes',
       descricao:
-        'Candidaturas para docentes, investigadores e especialistas no sector do agronegócio. Ensino superior no Icolo e Bengo, Luanda. Prazo até 15 de Novembro de 2026.',
+        `Candidaturas para docentes, investigadores e especialistas no sector do agronegócio. Ensino superior no Icolo e Bengo, Luanda. Prazo até ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataPt}.`,
     },
     candidaturaGeralFormulario: {
       titulo: 'Candidatura ao Corpo Docente',

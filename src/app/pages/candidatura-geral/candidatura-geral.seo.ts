@@ -1,4 +1,4 @@
-import { PRAZO_CANDIDATURA_GERAL } from '../../core/dados/candidatura-geral.mock';
+import { PRAZO_CANDIDATURA_GERAL, PRAZO_CANDIDATURA_GERAL_TEXTO } from '../../core/dados/candidatura-geral.mock';
 import { environment } from '../../../environments/environment';
 
 const ORIGEM = new URL(environment.siteUrl).origin;
@@ -39,7 +39,7 @@ export const DADOS_ESTRUTURADOS_CANDIDATURA_GERAL = {
         '<ul><li>Perfil académico: Licenciados, Mestres ou Doutorados.</li>' +
         '<li>Aptidão para aulas práticas em campo e ensaios experimentais («Ensino em Solo Real»).</li>' +
         '<li>Investigação aplicada e artigos indexados focados nos desafios africanos.</li></ul>' +
-        '<p>Candidaturas até 15 de Novembro de 2026, às 23h59.</p>',
+        `<p>Candidaturas até ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataHoraPt.replace(' às ', ', às ')}.</p>`,
       datePosted: '2026-09-30',
       validThrough: PRAZO_CANDIDATURA_GERAL,
       directApply: true,

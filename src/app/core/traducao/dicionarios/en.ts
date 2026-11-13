@@ -1,3 +1,4 @@
+import { PRAZO_CANDIDATURA_GERAL_TEXTO } from '../../dados/candidatura-geral.mock';
 import { Dicionario } from '../dicionario';
 
 export const en = {
@@ -364,7 +365,7 @@ export const en = {
     candidaturaGeral: {
       titulo: 'Faculty Application Process',
       descricao:
-        'Applications for lecturers, researchers and specialists in the agribusiness sector. Higher education in Icolo e Bengo, Luanda. Deadline 15 November 2026.',
+        `Applications for lecturers, researchers and specialists in the agribusiness sector. Higher education in Icolo e Bengo, Luanda. Deadline ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataEn}.`,
     },
     candidaturaGeralFormulario: {
       titulo: 'Faculty Application',

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { environment } from '../../../../environments/environment';
 import { ErroApi } from '../../../core/api/erro-api';
+import { PRAZO_CANDIDATURA_GERAL_TEXTO } from '../../../core/dados/candidatura-geral.mock';
 import { TipoCandidatura } from '../../../core/modelos/candidatura-geral.model';
 import { NovaDuvida } from '../../../core/modelos/duvida.model';
 import { CandidaturaGeralService } from '../../../core/servicos/candidatura-geral.service';
@@ -122,7 +123,7 @@ export class CandidaturaGeralInicioComponent {
         'A AgroSophia está a recrutar docentes, investigadores, especialistas e equipa administrativa no sector do agronegócio. Candidate-se:',
         'AgroSophia is recruiting lecturers, researchers, specialists and administrative staff in the agribusiness sector. Apply here:',
       ),
-      heroPrazo: t('Prazo até 15 de Novembro de 2026', 'Deadline 15 November 2026'),
+      heroPrazo: t(`Prazo até ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataPt}`, `Deadline ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataEn}`),
       heroLogoAlt: t('Logótipo AgroSophia', 'AgroSophia logo'),
       parceirosTitulo: t(
         'Enquadramento institucional & cooperação científica',
@@ -153,7 +154,7 @@ export class CandidaturaGeralInicioComponent {
         `Single, legible PDF dossier (max. ${LIMITES_DOSSIER_MB.total}MB).`,
       ),
       prazoSelo: t('Prazo impreterível de submissão', 'Final submission deadline'),
-      prazoTitulo: t('15 de Novembro de 2026 às 23h59', '15 November 2026 at 11:59 pm'),
+      prazoTitulo: t(PRAZO_CANDIDATURA_GERAL_TEXTO.dataHoraPt, PRAZO_CANDIDATURA_GERAL_TEXTO.dataHoraEn),
       prazoTexto: t(
         'Horário Oficial de Luanda (GMT+1). Candidaturas recepcionadas após este termo serão integradas na bolsa suplementar de reserva curricular docente.',
         'Official Luanda time (GMT+1). Applications received after this deadline will join the supplementary faculty reserve pool.',
