@@ -36,9 +36,9 @@
     "semantic_hash": "cb7ed9a56930402d9059ea5a9773d60e"
   },
   "angular.json": {
-    "mtime": 1792395948.968588,
-    "seen": 1792399317.3664534,
-    "ast_hash": "94ddac693c4b8d8bc2c5b1074d8b3fea",
+    "mtime": 1795162343.8939753,
+    "seen": 1795162967.2498298,
+    "ast_hash": "4bc813da2420c05f4f8646ab852f504c",
     "semantic_hash": ""
   },
   "package.json": {
@@ -60,15 +60,15 @@
     "semantic_hash": "f1c098e7346a48a860dca27564aa7756"
   },
   "src/app/app.routes.server.ts": {
-    "mtime": 1792596739.6735811,
-    "seen": 1792663022.7467444,
-    "ast_hash": "6a39978a5d07d3d052ebf9f2e674a9dd",
+    "mtime": 1795162841.1776502,
+    "seen": 1795162967.2515526,
+    "ast_hash": "892ffaa605cb2f125d86864c48f523e9",
     "semantic_hash": ""
   },
   "src/app/app.routes.ts": {
-    "mtime": 1792596739.6766036,
-    "seen": 1792663022.7467475,
-    "ast_hash": "43041de9cd9d1cc86714536d5ad3583c",
+    "mtime": 1795162885.488742,
+    "seen": 1795162967.2515576,
+    "ast_hash": "910111a2de2ebeec3cfa52fef951a10e",
     "semantic_hash": ""
   },
   "src/app/app.spec.ts": {
@@ -222,9 +222,9 @@
     "semantic_hash": ""
   },
   "src/app/core/dados/candidatura-geral.mock.ts": {
-    "mtime": 1792414613.4954422,
-    "seen": 1792414644.2181766,
-    "ast_hash": "8e673c8cefa299c9fac8f1d8c274e77c",
+    "mtime": 1794557574.5691998,
+    "seen": 1795162229.4467118,
+    "ast_hash": "5e5d055983204e513f968538373a3dac",
     "semantic_hash": ""
   },
   "src/app/core/dados/docencia.mock.ts": {
@@ -714,15 +714,15 @@
     "semantic_hash": "266a8aae7cf8e7094cfef2de10120408"
   },
   "src/app/core/traducao/dicionarios/en.ts": {
-    "mtime": 1792659747.0124762,
-    "seen": 1792663022.7814357,
-    "ast_hash": "4387d71e443afb9d39a965d67b8dbfe6",
+    "mtime": 1794557582.501124,
+    "seen": 1795162229.4630163,
+    "ast_hash": "80d206768a8fd2e5af82baae7f02fad1",
     "semantic_hash": ""
   },
   "src/app/core/traducao/dicionarios/pt.ts": {
-    "mtime": 1792659747.014143,
-    "seen": 1792663022.781438,
-    "ast_hash": "56189797b2e52023f909781dcd0973df",
+    "mtime": 1794557582.4387813,
+    "seen": 1795162229.463019,
+    "ast_hash": "f56127b8b127cea5cc0fd32c1269c13d",
     "semantic_hash": ""
   },
   "src/app/core/traducao/formatar-data.ts": {
@@ -954,9 +954,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/inicio/candidatura-geral-inicio.component.ts": {
-    "mtime": 1794213107.4954631,
-    "seen": 1794214330.3453643,
-    "ast_hash": "720ae2a83d80e15b5970289241dd0257",
+    "mtime": 1794557575.8345268,
+    "seen": 1795162229.4705741,
+    "ast_hash": "b0aa4c153a59bb4ba9eb5bcf2fcbfc19",
     "semantic_hash": ""
   },
   "src/app/pages/candidaturas/candidaturas.component.ts": {
@@ -1884,9 +1884,9 @@
     "semantic_hash": "1289536d6d8f94242a4ffc598d094633"
   },
   "src/server.ts": {
-    "mtime": 1794217163.2001183,
-    "seen": 1794224038.9942963,
-    "ast_hash": "166128f7f11458ee6adf56e51a09062b",
+    "mtime": 1795162841.0643585,
+    "seen": 1795162967.3886325,
+    "ast_hash": "b507527aa1e5f4916fb9e08f22b120d2",
     "semantic_hash": ""
   },
   "tsconfig.app.json": {
@@ -2958,9 +2958,9 @@
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/candidatura-geral.seo.ts": {
-    "mtime": 1793711699.981235,
-    "seen": 1794214330.3405318,
-    "ast_hash": "535b62a78eb782bd772a517a2eefa641",
+    "mtime": 1794557576.0998173,
+    "seen": 1795162229.4670198,
+    "ast_hash": "64c834cbb195500452aac7a2427da5f7",
     "semantic_hash": ""
   },
   "src/app/pages/candidatura-geral/componentes/modal-verificar-email.component.ts": {
@@ -3051,6 +3051,12 @@
     "mtime": 1794214028.148399,
     "seen": 1794214330.4036903,
     "ast_hash": "2ca5e561bfba66a38a9c9dc2417ab4d7",
+    "semantic_hash": ""
+  },
+  "docs/AGROSOPHIA-AUDITORIA_SEGURANCA.pdf": {
+    "mtime": 1794827866.820868,
+    "seen": 1795162229.5048466,
+    "ast_hash": "407563cf958fdd40a88ba36a30d0ca62",
     "semantic_hash": ""
   }
 }
