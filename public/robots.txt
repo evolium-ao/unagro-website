@@ -1,7 +1,6 @@
-# Convocatória AgroSophia — só a página pública da candidatura é indexada; as
-# etapas do formulário dependem do rascunho de cada candidato.
 User-agent: *
-Allow: /candidatura-geral
-Disallow: /candidatura-geral/etapa-
+Allow: /
+Disallow: /entrar
+Disallow: /registo
 
-Sitemap: https://candidaturas.agrosophia.ao/sitemap.xml
+Sitemap: https://agrosophia.ao/sitemap.xml

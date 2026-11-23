@@ -60,7 +60,7 @@ describe('SeoService', () => {
     await configurar();
     const meta = TestBed.inject(Meta);
     expect(meta.getTag('property="og:title"')?.content).toBe('Início | AgroSophia');
-    expect(meta.getTag('property="og:image"')?.content).toMatch(/^https:\/\/.+\/imagens\/og-candidatura-geral-v1\.jpg$/);
+    expect(meta.getTag('property="og:image"')?.content).toMatch(/^https:\/\/.+\/imagens\/campus-hero\.png$/);
     expect(meta.getTag('name="robots"')?.content).toBe('index, follow');
     expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(/^https:\/\//);
     expect(document.head.querySelector('script#dados-estruturados')).toBeNull();

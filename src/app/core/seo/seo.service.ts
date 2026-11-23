@@ -10,8 +10,11 @@ import { TraducaoService } from '../traducao/traducao.service';
 /** Nome da marca no título do separador e nas pré-visualizações das redes sociais. */
 export const MARCA = 'AgroSophia';
 
-/** Imagem de partilha por omissão (Open Graph): 1200×630, JPG — as redes não aceitam SVG. */
-const IMAGEM_PADRAO = '/imagens/og-candidatura-geral-v1.jpg';
+/**
+ * Imagem de partilha por omissão (Open Graph) — as redes não aceitam SVG.
+ * TODO: trocar por uma imagem dedicada 1200×630 em JPG (`og-site-v1.jpg`).
+ */
+const IMAGEM_PADRAO = '/imagens/campus-hero.png';
 
 @Injectable({ providedIn: 'root' })
 export class SeoService {

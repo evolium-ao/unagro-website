@@ -17,10 +17,10 @@ export const environment = {
   //apiUrl: 'https://apiunagro.evofenix.it.ao/api',
   /**
    * Endereço público do site, sem barra no fim — base dos links que se
-   * partilham (p. ex. a convocatória no modal de candidatura submetida). É o
-   * de produção também aqui, para o link partilhado nunca ser `localhost`.
+   * partilham (SEO: canónico e Open Graph). É o de produção também aqui, para
+   * o link partilhado nunca ser `localhost`.
    */
-  siteUrl: 'https://candidaturas.agrosophia.ao/candidatura-geral',
+  siteUrl: 'https://agrosophia.ao',
   /**
    * E-mail opcional enviado à MyMemory (`api.mymemory.translated.net`) para
    * traduzir conteúdo vindo da API — ver `TraducaoAutomaticaService`. Sem

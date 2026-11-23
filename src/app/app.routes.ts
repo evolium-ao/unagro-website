@@ -1,14 +1,10 @@
 import { Routes } from '@angular/router';
 
-// Os layouts são carregados sob pedido para não entrarem no bundle inicial:
-// quem abre só a candidatura geral não precisa do layout principal nem do de
-// autenticação.
+// Os layouts são carregados sob pedido para não entrarem no bundle inicial.
 const carregarLayoutAutenticacao = () =>
   import('./layout/layout-autenticacao/layout-autenticacao.component').then((m) => m.LayoutAutenticacaoComponent);
 const carregarLayoutPrincipal = () =>
   import('./layout/layout-principal/layout-principal.component').then((m) => m.LayoutPrincipalComponent);
-const carregarLayoutCandidatura = () =>
-  import('./layout/layout-candidatura/layout-candidatura.component').then((m) => m.LayoutCandidaturaComponent);
 
 export const routes: Routes = [
   {
@@ -32,15 +28,6 @@ export const routes: Routes = [
         data: { tituloChave: 'rotas.registo.titulo', descricaoChave: 'rotas.registo.descricao' },
       },
     ],
-  },
-  // O módulo da candidatura docente tem moldura própria (sem cabeçalho e com o
-  // rodapé do edital). Vem antes do `path: ''` de baixo pela mesma razão das
-  // páginas de autenticação: a catch-all `**` apanhá-lo-ia como 404.
-  {
-    path: 'candidatura-geral',
-    loadComponent: carregarLayoutCandidatura,
-    loadChildren: () =>
-      import('./pages/candidatura-geral/candidatura-geral.routes').then((m) => m.CANDIDATURA_GERAL_ROUTES),
   },
   // `/login` é o endereço que muita gente escreve à mão: encaminha para a rota
   // canónica em português em vez de cair na página 404.

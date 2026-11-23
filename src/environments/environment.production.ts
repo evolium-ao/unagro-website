@@ -8,6 +8,6 @@ export const environment = {
   producao: true,
   apiUrl: 'https://apiunagro.evofenix.it.ao/api',
   /** Endereço público do site, sem barra no fim — base dos links que se partilham. */
-  siteUrl: 'https://candidaturas.agrosophia.ao/candidatura-geral',
+  siteUrl: 'https://agrosophia.ao',
   traducaoEmail: 'admiro.andre@evolium.ao',
 };

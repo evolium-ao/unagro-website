@@ -1,8 +1,8 @@
 {
-  "name": "AgroSophia — Candidaturas",
+  "name": "AgroSophia",
   "short_name": "AgroSophia",
   "lang": "pt",
-  "start_url": "/candidatura-geral",
+  "start_url": "/",
   "display": "browser",
   "background_color": "#0a2a1b",
   "theme_color": "#0a2a1b",

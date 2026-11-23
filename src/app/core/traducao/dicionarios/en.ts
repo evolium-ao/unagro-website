@@ -1,4 +1,3 @@
-import { PRAZO_CANDIDATURA_GERAL_TEXTO } from '../../dados/candidatura-geral.mock';
 import { Dicionario } from '../dicionario';
 
 export const en = {
@@ -361,15 +360,6 @@ export const en = {
     candidaturaDocentes: {
       titulo: 'Faculty Applications',
       descricao: 'UNAGRO faculty recruitment: benefits, requirements and how to apply.',
-    },
-    candidaturaGeral: {
-      titulo: 'Faculty Application Process',
-      descricao:
-        `Applications for lecturers, researchers and specialists in the agribusiness sector. Higher education in Icolo e Bengo, Luanda. Deadline ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataEn}.`,
-    },
-    candidaturaGeralFormulario: {
-      titulo: 'Faculty Application',
-      descricao: 'Expression of interest form: personal details, academic background and document dossier.',
     },
     inscricao: {
       titulo: 'Enrolment',

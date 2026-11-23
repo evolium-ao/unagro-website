@@ -1,4 +1,3 @@
-import { PRAZO_CANDIDATURA_GERAL_TEXTO } from '../../dados/candidatura-geral.mock';
 import { Dicionario } from '../dicionario';
 
 export const pt = {
@@ -368,16 +367,6 @@ export const pt = {
     candidaturaDocentes: {
       titulo: 'Candidatura de Docentes',
       descricao: 'Recrutamento docente da UNAGRO: vantagens, requisitos e processo de candidatura.',
-    },
-    candidaturaGeral: {
-      titulo: 'Processo de Candidatura para Docentes',
-      descricao:
-        `Candidaturas para docentes, investigadores e especialistas no sector do agronegócio. Ensino superior no Icolo e Bengo, Luanda. Prazo até ${PRAZO_CANDIDATURA_GERAL_TEXTO.dataPt}.`,
-    },
-    candidaturaGeralFormulario: {
-      titulo: 'Candidatura ao Corpo Docente',
-      descricao:
-        'Formulário de manifestação de interesse: dados pessoais, percurso académico e dossier documental.',
     },
     inscricao: {
       titulo: 'Inscrição',

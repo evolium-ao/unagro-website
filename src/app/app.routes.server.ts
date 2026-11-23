@@ -18,7 +18,6 @@ const ROTAS_ESTATICAS = [
   'estudantes',
   'entrar',
   'registo',
-  'candidatura-geral',
 ] as const;
 
 export const serverRoutes: ServerRoute[] = [
@@ -28,25 +27,6 @@ export const serverRoutes: ServerRoute[] = [
       renderMode: RenderMode.Prerender,
     }),
   ),
-  {
-    // Etapas do formulário da candidatura docente: dependem do rascunho no
-    // `localStorage` e do `state` da navegação, que só existem no navegador —
-    // renderizá-las no cliente evita um HTML de servidor diferente do hidratado.
-    path: 'candidatura-geral/etapa-1',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'candidatura-geral/etapa-2',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'candidatura-geral/etapa-3',
-    renderMode: RenderMode.Client,
-  },
-  {
-    path: 'candidatura-geral/etapa-4',
-    renderMode: RenderMode.Client,
-  },
   {
     // Endereços antigos das candidaturas: continuam a redireccionar para as novas
     // páginas. Renderizados no servidor para devolver 200 em vez do 404 da rota
