@@ -36,9 +36,9 @@
     "semantic_hash": "cb7ed9a56930402d9059ea5a9773d60e"
   },
   "angular.json": {
-    "mtime": 1792395948.968588,
-    "seen": 1792399317.3664534,
-    "ast_hash": "94ddac693c4b8d8bc2c5b1074d8b3fea",
+    "mtime": 1795162343.8939753,
+    "seen": 1795162967.2498298,
+    "ast_hash": "4bc813da2420c05f4f8646ab852f504c",
     "semantic_hash": ""
   },
   "package.json": {
@@ -60,15 +60,15 @@
     "semantic_hash": "f1c098e7346a48a860dca27564aa7756"
   },
   "src/app/app.routes.server.ts": {
-    "mtime": 1795161803.6617937,
-    "seen": 1795162229.442442,
-    "ast_hash": "9a2f79a926e46c597ab4d3331e4a79ca",
+    "mtime": 1795162841.1776502,
+    "seen": 1795162967.2515526,
+    "ast_hash": "892ffaa605cb2f125d86864c48f523e9",
     "semantic_hash": ""
   },
   "src/app/app.routes.ts": {
-    "mtime": 1795162162.654969,
-    "seen": 1795162229.4424453,
-    "ast_hash": "91c47a663644f802802a70ad6cbdbcf0",
+    "mtime": 1795162885.488742,
+    "seen": 1795162967.2515576,
+    "ast_hash": "910111a2de2ebeec3cfa52fef951a10e",
     "semantic_hash": ""
   },
   "src/app/app.spec.ts": {
@@ -1092,10 +1092,10 @@
     "semantic_hash": "f0c4ebb5565a8705ad838f7aa26517a4"
   },
   "src/app/pages/sobre/faculdades-departamentos/faculdades-departamentos.component.ts": {
-    "mtime": 1788879520.2028735,
-    "seen": 1790849448.6421318,
-    "ast_hash": "41e256f49ba349274e336024c4284907",
-    "semantic_hash": "41e256f49ba349274e336024c4284907"
+    "mtime": 1795170294.8605359,
+    "seen": 1795170535.7283223,
+    "ast_hash": "b0799896cf3d6e7d589214078105eab1",
+    "semantic_hash": ""
   },
   "src/app/pages/sobre/governanca/governanca.component.ts": {
     "mtime": 1792596739.7855926,
@@ -1128,10 +1128,10 @@
     "semantic_hash": ""
   },
   "src/app/pages/sobre/sobre.component.ts": {
-    "mtime": 1792597655.1743462,
-    "seen": 1792663022.7960467,
-    "ast_hash": "bc9878569fa74569e4bab7cb0b9c4e7a",
-    "semantic_hash": "bc9878569fa74569e4bab7cb0b9c4e7a"
+    "mtime": 1795169686.9570577,
+    "seen": 1795169858.3631635,
+    "ast_hash": "1c42e2de3e444e6664bb3127b201f3c2",
+    "semantic_hash": ""
   },
   "src/app/shared/componentes/abas/abas.component.ts": {
     "mtime": 1788780664.525833,
@@ -1656,9 +1656,9 @@
     "semantic_hash": "e571559313a131bcfdba153132264cc3"
   },
   "src/app/shared/componentes/modal-agendar-visita/campos-agendar-visita.component.ts": {
-    "mtime": 1792395949.014111,
-    "seen": 1792399317.4344537,
-    "ast_hash": "56ddbcb0d8dba454ddf8f98760eaa063",
+    "mtime": 1795170728.6844192,
+    "seen": 1795170812.7039466,
+    "ast_hash": "10b3e37156b9711ca424ca858497b42d",
     "semantic_hash": ""
   },
   "src/app/shared/componentes/modal-agendar-visita/modal-agendar-visita.component.spec.ts": {
@@ -1866,9 +1866,9 @@
     "semantic_hash": ""
   },
   "src/environments/environment.ts": {
-    "mtime": 1792659747.021653,
-    "seen": 1792663022.8312614,
-    "ast_hash": "c8d2c06de26d3efa061f0d1105fdea3e",
+    "mtime": 1795164712.1297927,
+    "seen": 1795169858.403199,
+    "ast_hash": "b3785dfb847241e43b447ec8738e20d5",
     "semantic_hash": ""
   },
   "src/main.server.ts": {
@@ -1884,9 +1884,9 @@
     "semantic_hash": "1289536d6d8f94242a4ffc598d094633"
   },
   "src/server.ts": {
-    "mtime": 1794217163.2001183,
-    "seen": 1794224038.9942963,
-    "ast_hash": "166128f7f11458ee6adf56e51a09062b",
+    "mtime": 1795162841.0643585,
+    "seen": 1795162967.3886325,
+    "ast_hash": "b507527aa1e5f4916fb9e08f22b120d2",
     "semantic_hash": ""
   },
   "tsconfig.app.json": {
@@ -2190,9 +2190,9 @@
     "semantic_hash": "8d0a97be55307551fe4039354a3dbfb8"
   },
   "src/app/pages/sobre/sobre.component.html": {
-    "mtime": 1792596739.7915916,
-    "seen": 1792663022.844573,
-    "ast_hash": "4e599829d0060e53f6317ba7ab169088",
+    "mtime": 1795169728.5143478,
+    "seen": 1795169858.4199083,
+    "ast_hash": "3a646cf63d3cc7f164cc9e2a7a5597a8",
     "semantic_hash": ""
   },
   "src/app/shared/componentes/alert-modal/EXEMPLO_EVENTOS.md": {
@@ -3057,6 +3057,12 @@
     "mtime": 1794827866.820868,
     "seen": 1795162229.5048466,
     "ast_hash": "407563cf958fdd40a88ba36a30d0ca62",
+    "semantic_hash": ""
+  },
+  "src/app/pages/sobre/cursos/cursos.component.ts": {
+    "mtime": 1795170359.465113,
+    "seen": 1795170535.7280395,
+    "ast_hash": "93d515f78298157dac6aab8dfe907626",
     "semantic_hash": ""
   }
 }
