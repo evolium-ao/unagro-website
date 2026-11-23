@@ -104,7 +104,7 @@ const ESTILOS_CARTAO_FACULDADE: EstiloCartaoFaculdade[] = [
             </span>
             <div>
               <p class="text-base font-bold text-text-primary">
-                +{{ total }} {{ textos().totalCursosRotulo }}
+                {{ total }} {{ textos().totalCursosRotulo }}
               </p>
               <p class="mt-1 text-xs leading-relaxed text-text-secondary">
                 {{ textos().totalCursosDescricao }}

@@ -15,7 +15,7 @@
     </app-container-pagina>
   </div>
   <app-container-pagina>
-    <!-- São sete: em telemóvel a fila desliza na horizontal em vez de quebrar. -->
+    <!-- São várias: em telemóvel a fila desliza na horizontal em vez de quebrar. -->
 
     <div class="mt-12">
       @switch (abaAtiva()) {
@@ -33,6 +33,9 @@
       }
       @case ('faculdades-departamentos') {
       <app-sobre-faculdades-departamentos />
+      }
+      @case ('cursos') {
+      <app-sobre-cursos />
       }
       @case ('aba-unagro') {
       <app-sobre-aba-unagro />

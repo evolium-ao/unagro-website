@@ -15,6 +15,7 @@ import { BannerDestaqueComponent } from '../../shared/componentes/banner-destaqu
 import { ContainerBannerFaixaEstatisticaComponent } from '../../shared/componentes/container-banner-faixa-estatistica/container-banner-faixa-estatistica.component';
 import { ContainerPaginaComponent } from '../../shared/componentes/container-pagina/container-pagina.component';
 import { SobreAbaUnagroComponent } from './aba-unagro/aba-unagro.component';
+import { SobreCursosComponent } from './cursos/cursos.component';
 import { SobreEstruturaOrganizacionalComponent } from './estrutura-organizacional/estrutura-organizacional.component';
 import { SobreFaculdadesDepartamentosComponent } from './faculdades-departamentos/faculdades-departamentos.component';
 import { SobreGovernancaComponent } from './governanca/governanca.component';
@@ -29,13 +30,18 @@ export type IdAbaSobre =
   | 'orgaos-gestao'
   | 'estrutura-organizacional'
   | 'faculdades-departamentos'
+  | 'cursos'
   | 'aba-unagro'
   | 'governanca';
 
 /**
  * Os rótulos são as **mesmas** chaves do submenu (`nav.sobreMenu.*`): assim a aba e o
  * item de menu nunca dizem coisas diferentes, e voltar ao submenu
- * (`SOBRE_COM_SUBMENU_MODAIS`) não obriga a retocar textos.
+ * (`SOBRE_COM_SUBMENU_MODAIS`) não obriga a retocar textos. A aba "Cursos" não tem
+ * item no submenu e usa o rótulo geral `nav.cursos`.
+ *
+ * "Aba UNAGRO" e "Governança" estão ocultas a pedido do cliente: os componentes e os
+ * `@case` do template continuam lá, basta voltar a pôr as entradas nesta lista.
  */
 const ABAS_SOBRE: readonly { id: IdAbaSobre; label: CaminhoDicionario }[] = [
   { id: 'nossa-historia', label: 'nav.sobreMenu.nossaHistoria' },
@@ -43,8 +49,9 @@ const ABAS_SOBRE: readonly { id: IdAbaSobre; label: CaminhoDicionario }[] = [
   { id: 'orgaos-gestao', label: 'nav.sobreMenu.orgaosGestao' },
   { id: 'estrutura-organizacional', label: 'nav.sobreMenu.estruturaOrganizacional' },
   { id: 'faculdades-departamentos', label: 'nav.sobreMenu.faculdadesDepartamentos' },
-  { id: 'aba-unagro', label: 'nav.sobreMenu.abaUnagro' },
-  { id: 'governanca', label: 'nav.sobreMenu.governanca' },
+  { id: 'cursos', label: 'nav.cursos' },
+  // { id: 'aba-unagro', label: 'nav.sobreMenu.abaUnagro' },
+  // { id: 'governanca', label: 'nav.sobreMenu.governanca' },
 ];
 
 /** Para validar o fragmento da URL (`/sobre#<id>`) antes de o usar como aba ativa. */
@@ -69,6 +76,7 @@ const IDS_ABAS_SOBRE = new Set<IdAbaSobre>(ABAS_SOBRE.map((aba) => aba.id));
     SobreOrgaosGestaoComponent,
     SobreEstruturaOrganizacionalComponent,
     SobreFaculdadesDepartamentosComponent,
+    SobreCursosComponent,
     SobreAbaUnagroComponent,
     SobreGovernancaComponent,
   ],
