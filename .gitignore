@@ -44,3 +44,6 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 /docs/AUDITORIA_SEGURANCA.pdf
+
+# Knowledge graph (gerado por graphify; regenerar com `graphify update .`)
+/graphify-out/
