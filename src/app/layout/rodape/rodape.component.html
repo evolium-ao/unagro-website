@@ -1,0 +1,112 @@
+<footer class="bg-primary-deep text-white border-t-4 border-secondary">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Marca -->
+      <div>
+        <div class="flex items-center gap-2.5">
+          <img class="h-9 w-9 rounded-full" src="/imagens/unagro-favicon.png" alt="UNAGRO">
+          
+          <span class="flex flex-col">
+            <span class="text-xl font-bold leading-none">UNAGRO</span>
+            <span
+              class="mt-1.5 text-[9px] font-semibold uppercase leading-relaxed tracking-[0.08em] text-white/45"
+            >
+              Universidade de Agronegócio de Angola
+            </span>
+          </span>
+        </div>
+
+        <p class="mt-6 text-sm leading-relaxed text-white/65">{{ traducao.t('rodape.lema') }}</p>
+
+        <div class="mt-6 flex gap-4">
+          @for (rede of redesSociais; track rede.nome) {
+            @if (rede.url; as destino) {
+              <a
+                [href]="destino"
+                target="_blank"
+                rel="noopener"
+                [attr.aria-label]="rede.nome"
+                class="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white/80 transition-colors duration-200 hover:border-secondary hover:text-secondary"
+              >
+                <app-icone [nome]="rede.icone" [tamanho]="15" />
+              </a>
+            } @else {
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 text-white/80"
+                [attr.title]="rede.nome"
+              >
+                <app-icone [nome]="rede.icone" [tamanho]="15" />
+              </span>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Colunas de ligações -->
+      @for (coluna of colunas; track coluna.titulo) {
+        <nav [attr.aria-label]="traducao.t(coluna.titulo)">
+          <h3 class="text-xs font-bold uppercase tracking-[0.1em] text-secondary">
+            {{ traducao.t(coluna.titulo) }}
+          </h3>
+          <ul class="mt-8 space-y-4 text-sm text-white/70">
+            @for (item of coluna.itens; track item.label) {
+              <li>
+                @if (item.path; as destino) {
+                  <a [routerLink]="destino" class="transition-colors duration-200 hover:text-white">
+                    {{ traducao.t(item.label) }}
+                  </a>
+                } @else {
+                  <span>{{ traducao.t(item.label) }}</span>
+                }
+              </li>
+            }
+          </ul>
+        </nav>
+      }
+
+      <!-- Contactos -->
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-[0.1em] text-secondary">
+          {{ traducao.t('rodape.contactoTitulo') }}
+        </h3>
+        <ul class="mt-8 space-y-6 text-sm text-white/70">
+          @for (contacto of contactos; track contacto.valor) {
+            <li class="flex items-start gap-4">
+              <app-icone [nome]="contacto.icone" [tamanho]="16" class="mt-0.5 text-secondary" />
+              @if (contacto.href; as destino) {
+                <a
+                  [href]="destino"
+                  class="leading-relaxed transition-colors duration-200 hover:text-white"
+                >
+                  {{ contacto.valor }}
+                </a>
+              } @else {
+                <span class="leading-relaxed">{{ contacto.valor }}</span>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <!-- Barra inferior -->
+    <div class="mt-16 border-t border-white/10 pt-8 text-center lg:mt-20">
+      <p class="text-[10px] text-white/40">
+        © {{ anoAtual }} {{ traducao.t('rodape.assinatura') }}
+      </p>
+      <ul class="mt-1 flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+        @for (legal of legais; track legal.label) {
+          <li class="text-[10px] font-bold uppercase tracking-wider text-white/60">
+            @if (legal.path; as destino) {
+              <a [routerLink]="destino" class="transition-colors duration-200 hover:text-white">
+                {{ traducao.t(legal.label) }}
+              </a>
+            } @else {
+              <span>{{ traducao.t(legal.label) }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</footer>

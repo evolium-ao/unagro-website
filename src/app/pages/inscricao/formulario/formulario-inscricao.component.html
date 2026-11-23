@@ -1,0 +1,45 @@
+<div class="mx-auto max-w-lg overflow-x-auto">
+  <app-passos-formulario
+    class="block min-w-[300px]"
+    formaDistintivo="circulo"
+    [passos]="rotulosPassos()"
+    [ativo]="passoAtual()"
+    [rotuloLista]="textos().progresso" />
+</div>
+
+<form
+  class="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8 lg:p-10"
+  [formGroup]="formulario"
+  (ngSubmit)="submeter()">
+  <app-inscricao-dados-pessoais />
+
+  <div class="mt-12">
+    <app-inscricao-formacao-academica [cursos]="opcoesCursos()" />
+  </div>
+
+  <div class="mt-12">
+    <app-inscricao-motivacao-documentos />
+  </div>
+
+  <!-- A falha do POST fica aqui, e não num modal: o formulário continua
+       preenchido e a candidatura repete-se com um clique. -->
+  @if (enviar.isError()) {
+  <p role="alert"
+    class="mt-8 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-relaxed text-red-700">
+    {{ mensagemErro() }}
+  </p>
+  }
+
+  <div class="mt-10 flex justify-end">
+    <app-botao
+      variante="primario"
+      raio="medio"
+      tipo="submit"
+      icone="arrow-right"
+      posicaoIcone="direita"
+      [aCarregar]="enviar.isPending()"
+      [desativado]="enviar.isPending()">
+      {{ textos().avancar }}
+    </app-botao>
+  </div>
+</form>
