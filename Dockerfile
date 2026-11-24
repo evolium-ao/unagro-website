@@ -9,6 +9,7 @@ ARG GITHUB_PACKAGES_TOKEN
 WORKDIR /app
 
 COPY package.json package-lock.json .npmrc ./
+RUN test -n "$GITHUB_PACKAGES_TOKEN" || (echo "ERRO: GITHUB_PACKAGES_TOKEN vazio. No Coolify, defina-o em Environment Variables com 'Build Variable' activo (sem aspas/espacos)." && exit 1)
 RUN npm ci
 
 COPY . .
@@ -23,6 +24,7 @@ ARG GITHUB_PACKAGES_TOKEN
 WORKDIR /app
 
 COPY package.json package-lock.json .npmrc ./
+RUN test -n "$GITHUB_PACKAGES_TOKEN" || (echo "ERRO: GITHUB_PACKAGES_TOKEN vazio. No Coolify, defina-o em Environment Variables com 'Build Variable' activo (sem aspas/espacos)." && exit 1)
 RUN npm ci --omit=dev
 
 # ─── Stage 3: Runtime
