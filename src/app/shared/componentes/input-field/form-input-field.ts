@@ -1,0 +1,261 @@
+import { Component, input, forwardRef, Optional, Host, OnInit, computed } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  ControlContainer,
+  ControlValueAccessor,
+  FormGroup,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule
+} from '@angular/forms';
+
+type ErroFnOuTexto = (form: FormGroup) => string | null | boolean;
+
+/**
+ * `caixa` = campo emoldurado clássico; `minimalista` = rótulo em maiúsculas e campo
+ * sem moldura, sublinhado apenas em foco — o estilo do formulário de candidatura;
+ * `sublinhado` = uma única linha cinzenta sob todo o campo (ícone incluído) que se
+ * pinta a verde em foco — o estilo dos ecrãs de autenticação; `destacado` = a mesma
+ * caixa branca da `caixa`, mas com o rótulo em maiúsculas negrito e escuro
+ * (`text-text-primary`) em vez do cinzento — o estilo do cartão de formulário sobre
+ * fundo `bg-bg-lighter` (canal de dúvidas da candidatura).
+ */
+export type VarianteCampo = 'caixa' | 'minimalista' | 'sublinhado' | 'destacado';
+
+import { Directive } from '@angular/core';
+
+@Directive({
+  selector: '[leftIcon]',
+  standalone: true
+})
+export class LeftIconDirective { }
+
+@Directive({
+  selector: '[rightIcon]',
+  standalone: true
+})
+export class RightIconDirective { }
+
+const CLASSES_ROTULO: Record<VarianteCampo, string> = {
+  caixa: 'text-xs font-medium text-black truncate',
+  minimalista: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
+  sublinhado: 'text-[11px] font-medium uppercase tracking-[0.09em] text-text-secondary truncate',
+  destacado: 'text-xs font-bold uppercase tracking-[0.08em] text-text-primary truncate',
+};
+
+const CLASSES_TEXTO: Record<VarianteCampo, string> = {
+  caixa: 'py-2 text-sm text-[#585959] placeholder:text-[#9A9A9A]',
+  minimalista: 'py-1.5 text-base text-text-primary placeholder:text-text-primary/55 border-b border-gray-200',
+  // Sem `border-b` próprio: nesta variante a linha é da moldura, para atravessar
+  // também o ícone à esquerda.
+  sublinhado: 'py-2 text-sm text-text-primary placeholder:text-text-secondary/70',
+  destacado: 'py-2.5 text-sm text-text-primary placeholder:text-gray-400',
+};
+
+@Component({
+  selector: 'form-input-field',
+  // Lembre-se de importar as diretivas aqui para o Angular aceitá-las no ng-content selector
+  imports: [FormsModule, ReactiveFormsModule, NgTemplateOutlet],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => FormFieldInputComponentV2),
+      multi: true
+    }
+  ],
+  template: `
+    <div class="flex flex-col gap-y-1" [class.bg-white]="fundoBranco()">
+      @if (maxCaracteres(); as limite) {
+        <!-- Com limite, o rótulo partilha a linha com o contador "n / limite". -->
+        <div class="flex items-end justify-between gap-3">
+          <ng-container [ngTemplateOutlet]="rotulo" />
+          <span class="shrink-0 text-xs tracking-wide text-text-secondary" aria-live="polite">
+            {{ value.length }} / {{ limite }} {{ textoCaracteres() }}
+          </span>
+        </div>
+      } @else if (mostrarRotulo()) {
+        <ng-container [ngTemplateOutlet]="rotulo" />
+      }
+
+      <ng-template #rotulo>
+        <label [for]="id" [class]="classesRotulo()" animate.enter="animete-titulo-1">
+          {{ label() }}
+          @if (obrigatorio()) {
+            <span class="text-red-600" aria-hidden="true">*</span>
+          }
+          @if (optional()) {
+            <span class="text-[#9A9A9A] font-normal normal-case">{{ textoOpcional() }}</span>
+          }
+        </label>
+      </ng-template>
+
+      <div class="group flex w-full items-center transition" [class]="classesMoldura()">
+        <div class="mr-2 flex shrink-0 select-none items-center justify-center text-gray-400">
+          <ng-content select="[leftIcon]"></ng-content>
+        </div>
+
+        <div class="flex-1">
+          @if (type() === 'textarea') {
+            <textarea
+              (blur)="onBlur()"
+              [id]="id"
+              [disabled]="disabled()"
+              [placeholder]="placeholder()"
+              [value]="value"
+              [rows]="rows()"
+              [attr.maxlength]="maxCaracteres() ?? null"
+              (input)="updateValue($event)"
+              animate.enter="animete-titulo-2"
+              class="w-full resize-none border-0 bg-transparent outline-none focus:ring-0 {{ classesTexto() }}"
+            ></textarea>
+          } @else {
+            <input
+              (blur)="onBlur()"
+              [id]="id"
+              [disabled]="disabled()"
+              [type]="type()"
+              [placeholder]="placeholder()"
+              [value]="value"
+              [attr.maxlength]="maxCaracteres() ?? null"
+              (input)="updateValue($event)"
+              animate.enter="animete-titulo-2"
+              class="w-full border-0 bg-transparent outline-none focus:ring-0 {{ classesTexto() }}"
+            />
+          }
+        </div>
+
+        <div class="ml-2 flex shrink-0 select-none items-center justify-center text-gray-400">
+          <ng-content select="[rightIcon]"></ng-content>
+        </div>
+      </div>
+
+      <span class="min-h-2 text-xs text-red-600" role="alert">
+        {{ __erro() }}
+      </span>
+    </div>
+  `,
+})
+export class FormFieldInputComponentV2 implements ControlValueAccessor, OnInit {
+  public parentForm!: FormGroup;
+  constructor(
+    @Optional() @Host() private controlContainer: ControlContainer
+  ) { }
+
+  ngOnInit(): void {
+    if (this.controlContainer) {
+      this.parentForm = this.controlContainer.control as FormGroup;
+    }
+  }
+
+  readonly label = input<string>('');
+  readonly erro = input<string | null | boolean | ErroFnOuTexto>(null);
+  readonly type = input<string>('text');
+  readonly placeholder = input<string>('');
+  readonly optional = input<boolean>(false);
+  /** Sufixo do rótulo quando `optional` — recebe o texto já traduzido. */
+  readonly textoOpcional = input<string>('(opcional)');
+  /** Asterisco vermelho a seguir ao rótulo. Por omissão `false` — nada muda. */
+  readonly obrigatorio = input<boolean>(false);
+  /**
+   * Limite de caracteres: aplica `maxlength` e mostra o contador "n / limite" na
+   * linha do rótulo. Sem valor (por omissão) o campo fica como sempre foi.
+   */
+  readonly maxCaracteres = input<number>();
+  /** Palavra depois do contador — recebe o texto já traduzido. */
+  readonly textoCaracteres = input<string>('caracteres');
+  readonly inline = input<boolean>(false);
+  readonly rows = input<number>(4);
+  readonly disabled = input<boolean>(false);
+  readonly bgTransparent = input<boolean>(false);
+  readonly variante = input<VarianteCampo>('caixa');
+  /**
+   * Deixa cair o `<label>` quando não há texto nenhum para mostrar. Por omissão
+   * `false`, porque há formulários que usam o rótulo vazio como espaçador.
+   */
+  readonly ocultarRotuloVazio = input(false);
+  id = crypto.randomUUID();
+  value = '';
+
+  protected readonly classesRotulo = computed(() => CLASSES_ROTULO[this.variante()]);
+  protected readonly mostrarRotulo = computed(
+    () => !this.ocultarRotuloVazio() || !!this.label() || this.optional(),
+  );
+  protected readonly classesTexto = computed(() => CLASSES_TEXTO[this.variante()]);
+  protected readonly fundoBranco = computed(
+    () => !this.bgTransparent() && (this.variante() === 'caixa' || this.variante() === 'destacado'),
+  );
+
+  /**
+   * Na variante minimalista o campo é apenas uma linha que se pinta a verde em foco;
+   * a textarea é a excepção — mantém caixa para se perceber a área de escrita.
+   */
+  protected readonly classesMoldura = computed(() => {
+    const temErro = !!this.__erro();
+
+    if (this.variante() === 'caixa') {
+      return temErro
+        ? 'rounded-md border border-red-500 bg-white px-3 pr-1 outline-2 outline-red-300'
+        : 'rounded-md border border-[#E2E8F0] bg-white px-3 pr-1 focus-within:border-primary focus-within:outline-3 focus-within:outline-primary/20';
+    }
+
+    // Caixa branca mais arredondada, do cartão de formulário sobre `bg-bg-lighter`.
+    if (this.variante() === 'destacado') {
+      return temErro
+        ? 'rounded-xl border border-red-500 bg-white px-4 pr-3 outline-2 outline-red-300'
+        : 'rounded-xl border border-gray-200 bg-white px-4 pr-3 focus-within:border-primary focus-within:outline-3 focus-within:outline-primary/20';
+    }
+
+    // A linha vive na moldura, por isso atravessa o ícone e o campo de uma ponta à outra.
+    if (this.variante() === 'sublinhado') {
+      return temErro
+        ? 'border-b border-red-400'
+        : 'border-b border-gray-200 focus-within:border-primary';
+    }
+
+    if (this.type() === 'textarea') {
+      return temErro
+        ? 'rounded-lg border border-red-400 bg-bg-lighter px-4 py-1'
+        : 'rounded-lg border border-gray-200 bg-bg-lighter px-4 py-1 focus-within:border-primary';
+    }
+
+    // Sem linha em repouso, como na maqueta; o sublinhado verde só aparece em foco.
+    return temErro
+      ? 'border-b border-red-400'
+      : 'border-b border-transparent focus-within:border-primary';
+  });
+
+  __erro = computed(() => {
+    if (typeof this.erro() === 'function') {
+      return (this.erro() as ErroFnOuTexto)?.(this.parentForm);
+    }
+    return this.erro();
+  });
+
+  onChange = (_value: string) => { };
+  onTouched = () => { };
+
+  writeValue(value: string): void {
+    this.value = value ?? '';
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(_isDisabled: boolean): void { }
+
+  updateValue(event: Event) {
+    const input = event.target as HTMLInputElement | HTMLTextAreaElement;
+    this.value = input.value;
+    this.onChange(this.value);
+    this.onTouched();
+  }
+
+  onBlur() {
+    this.onTouched()
+  }
+}

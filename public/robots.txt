@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /entrar
+Disallow: /registo
+
+Sitemap: https://agrosophia.ao/sitemap.xml

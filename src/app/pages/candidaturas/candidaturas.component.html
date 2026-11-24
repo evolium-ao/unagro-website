@@ -1,0 +1,222 @@
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque [titulo]="TituloInicio()" [tituloDestaque]="'UNAGRO'" [subtitulo]="heroSubtitulo()"
+    [ctas]="ctaBannerDestaque()" [selos]="['Comece aquí a sua carreira']" bg="/imagens/campos-hero-candidatura.png"
+    [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
+
+<app-container-pagina>
+  <!-- Aqui vai o conteúdo da página de candidaturas -->
+  <!-- 1 sessaão -->
+  <section class="py-16 sm:py-20">
+    <app-cabecalho-secao [titulo]="traducao.t('paginas.candidaturas.passosTitulo')"
+      [descricao]="traducao.t('paginas.candidaturas.passosSubtitulo')" />
+    <div class="mt-12">
+      <app-indicador-passos [passos]="passos()" />
+    </div>
+  </section>
+
+  <!-- 2 sessaão -->
+  <section id="secao-cursos" class="py-16 sm:py-20">
+    <app-cabecalho-secao [titulo]="traducao.t('paginas.candidaturas.ofertaTitulo')"
+      [descricao]="traducao.t('paginas.candidaturas.ofertaSubtitulo')" />
+
+    @if (consultaCursosOferta.isPending()) {
+    <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (_ of [1, 2, 3]; track $index) {
+      <app-cartao-curso-esqueleto />
+      }
+    </div>
+    } @else if (consultaCursosOferta.isError()) {
+    <p class="mt-12 text-center text-sm text-text-secondary">
+      {{ traducao.getTraducao(['Não foi possível carregar a oferta académica.', 'Could not load the academic offer.'])
+      }}
+    </p>
+    } @else {
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroFaculdadeRotulo')"
+        [opcoes]="opcoesFaculdade()" [(valor)]="filtroFaculdade" />
+      <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroGrauRotulo')" [opcoes]="opcoesGrau()"
+        [(valor)]="filtroGrau" />
+      <app-filtro-pilula [rotulo]="traducao.t('paginas.candidaturas.filtroRegimeRotulo')" [opcoes]="opcoesRegime()"
+        [(valor)]="filtroRegime" />
+    </div>
+
+    <div class="mt-12 flex flex-col gap-12">
+      @for (grupo of gruposOferta(); track grupo.faculdade) {
+      <div>
+        <h3 class="text-base font-semibold text-text-primary">{{ grupo.faculdade }}</h3>
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          @for (curso of grupo.cursos; track curso.id; let i = $index) {
+          <app-cartao-curso variante="academica" [curso]="curso" [appRevelarAoScroll]="i % 6" />
+          }
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </section>
+
+  <!-- 3 sessaão -->
+</app-container-pagina>
+
+<div class="bg-white">
+  <app-container-pagina>
+    <section class="py-16 sm:py-20 ">
+      <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <!-- Coluna esquerda: documentos a preparar -->
+        <div>
+          <h2 class="text-2xl font-bold text-text-primary sm:text-3xl">
+            {{ traducao.t('paginas.candidaturas.requisitosTitulo') }}
+          </h2>
+          <p class="mt-3 max-w-md text-sm leading-relaxed text-text-secondary">
+            {{ traducao.t('paginas.candidaturas.requisitosDescricao') }}
+          </p>
+
+          <div class="mt-8 flex flex-col gap-3">
+            @for (documento of documentos(); track documento.id) {
+            <app-cartao-requisito [icone]="documento.icone" [titulo]="documento.titulo"
+              [descricao]="documento.descricao" />
+            }
+          </div>
+        </div>
+
+        <!-- Coluna direita: critérios por nível de ensino -->
+        <div class="rounded-xl bg-bg-light p-6 sm:p-8">
+          <app-abas [abas]="abasRequisitos()" [(ativa)]="nivelRequisitosAtivo" />
+
+          @if (requisitosAtivos(); as nivel) {
+          <div class="mt-6">
+            <app-lista-verificacao [itens]="nivel.criterios" />
+            <p class="mt-6 rounded-lg bg-primary p-4 text-xs leading-relaxed text-white/90">
+              {{ nivel.nota }}
+            </p>
+          </div>
+          }
+        </div>
+      </div>
+    </section>
+  </app-container-pagina>
+</div>
+<!-- 4 sessaão — faixa verde a toda a largura, só o conteúdo é que fica no container -->
+<section class="bg-primary px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="escuro" [mostrarTracos]="false"
+      [titulo]="traducao.t('paginas.candidaturas.calendarioTitulo')"
+      [descricao]="traducao.t('paginas.candidaturas.calendarioSubtitulo')" />
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2">
+      @for (fase of fases(); track fase.id) {
+      <app-cartao-fase [titulo]="fase.titulo" [estado]="fase.estado" [estadoRotulo]="fase.estadoRotulo"
+        [prazos]="fase.prazos" />
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 5 sessaão — imagem de fundo a toda a largura, só o cartão fica no container -->
+<section id="secao-portal" class="relative isolate overflow-hidden px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-espaco-imagem class="absolute inset-0 -z-10" proporcao="cover" alturaMinima="100%" [legenda]="undefined"
+    imagem="imagens/bg-candidatura-sessao-2.png" [temBackdrop]="true" />
+  <div class="absolute inset-0 -z-10 bg-white/30" aria-hidden="true"></div>
+
+  <app-container-pagina>
+    <app-cartao-chamada-acao [titulo]="traducao.t('paginas.candidaturas.portalTitulo')"
+      [descricao]="traducao.t('paginas.candidaturas.portalDescricao')">
+      <app-botao acoes variante="primario" raio="medio" icone="log-in" link="/estudantes">
+        {{ traducao.t('paginas.candidaturas.portalBotaoContinuar') }}
+      </app-botao>
+      <app-botao acoes variante="contorno" raio="medio" icone="search" link="/estudantes">
+        {{ traducao.t('paginas.candidaturas.portalBotaoEstado') }}
+      </app-botao>
+    </app-cartao-chamada-acao>
+  </app-container-pagina>
+</section>
+
+<app-container-pagina>
+  <!-- 6 sessaão — recrutamento de professores -->
+  <section class="py-16 sm:py-20">
+    <div class="grid overflow-hidden rounded-2xl bg-bg-light lg:grid-cols-2">
+      <div class="flex flex-col items-start justify-start p-8 sm:p-10 lg:p-12 pt-0!">
+        <app-selo variante="primario" class="uppercase tracking-wider">
+          {{ traducao.t('paginas.candidaturas.recrutamentoSelo') }}
+        </app-selo>
+
+        <h2 class="mt-5 text-2xl font-bold text-text-primary sm:text-3xl">
+          {{ traducao.t('paginas.candidaturas.recrutamentoTitulo') }}
+        </h2>
+        <p class="mt-4 text-sm leading-relaxed text-text-secondary">
+          {{ traducao.t('paginas.candidaturas.recrutamentoDescricao') }}
+        </p>
+
+        <app-lista-verificacao class="mt-6 block w-full" [itens]="beneficiosRecrutamento()" />
+
+        <app-botao class="mt-8" variante="primario" raio="medio" icone="arrow-right" posicaoIcone="direita"
+          link="/candidaturas/docentes#secao-formulario">
+          {{ traducao.t('paginas.candidaturas.recrutamentoBotao') }}
+        </app-botao>
+      </div>
+
+      <app-espaco-imagem proporcao="auto" alturaMinima="100%" class="min-h-80" imagem="/imagens/home-grafico.png" />
+    </div>
+  </section>
+
+
+  <!-- 7 sessaão — bolsas e apoios + dúvidas frequentes -->
+  <section class="py-16 sm:py-20">
+    <div class="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <!-- Coluna esquerda: bolsas e apoios -->
+      <div>
+        <app-cabecalho-secao alinhamento="esquerda" [titulo]="traducao.t('paginas.candidaturas.bolsasTitulo')"
+          [descricao]="traducao.t('paginas.candidaturas.bolsasDescricao')" class="-mt-10" />
+
+        <div class="mt-8 flex flex-col gap-4">
+          @for (bolsa of bolsas(); track bolsa.id) {
+          <app-cartao-bolsa [nome]="bolsa.nome" [descricao]="bolsa.descricao" />
+          }
+        </div>
+
+        <a routerLink="/estudantes"
+          class="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-primary-hover">
+          {{ traducao.t('paginas.candidaturas.bolsasLink') }}
+          <app-icone nome="arrow-right" [tamanho]="16" />
+        </a>
+      </div>
+
+      <!-- Coluna direita: dúvidas frequentes -->
+      <div>
+        <h2 class="text-2xl font-bold text-text-primary sm:text-3xl">
+          {{ traducao.t('paginas.candidaturas.faqTitulo') }}
+        </h2>
+
+        <app-acordeao variante="cartoes" class="mt-8 block">
+          @for (pergunta of perguntas(); track pergunta.id; let primeira = $first) {
+          <app-item-acordeao [titulo]="pergunta.pergunta" [inicialmenteAberto]="primeira">
+            {{ pergunta.resposta }}
+          </app-item-acordeao>
+          }
+        </app-acordeao>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 sessaão — secretaria de admissões -->
+  <section class="pb-16 sm:pb-20">
+    <div class="rounded-xl bg-white p-8 sm:p-10 rounded-2xl">
+      <div class="grid gap-8 lg:grid-cols-4 lg:gap-10 ">
+        <div>
+          <h2 class="font-semibold text-text-primary">
+            {{ traducao.t('paginas.candidaturas.secretariaTitulo') }}
+          </h2>
+          <p class="mt-2 text-xs leading-relaxed text-text-secondary">
+            {{ traducao.t('paginas.candidaturas.secretariaDescricao') }}
+          </p>
+        </div>
+
+        @for (canal of canaisContacto(); track canal.id) {
+        <app-item-contacto [icone]="canal.icone" [rotulo]="canal.rotulo" [valor]="canal.valor"
+          [detalhe]="canal.detalhe" />
+        }
+      </div>
+    </div>
+  </section>
+</app-container-pagina>

@@ -1,0 +1,104 @@
+<!-- Hero — sem selos: o mockup abre directamente no título. -->
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque
+    [titulo]="tituloHero()"
+    [tituloDestaque]="tituloDestaqueHero()"
+    [subtitulo]="subtituloHero()"
+    [ctas]="ctasHero()"
+    bg="/imagens/bg-banner-alumni.png"
+    [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
+
+<!-- 1 sessão — missão da rede Alumni, dimensão da comunidade e os três eixos de ligação -->
+<section id="secao-sobre-alumni" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="verde" posicaoTracos="abaixo" [titulo]="tituloSobre()" />
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      <div class="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm shadow-black/5 sm:p-10 lg:col-span-2"
+        appRevelarAoScroll>
+        <h3 class="text-xl font-bold text-primary-deep">{{ tituloMissao() }}</h3>
+        <p class="mt-4 text-base leading-relaxed text-text-secondary">{{ textoMissao() }}</p>
+      </div>
+
+      @if (membrosRede(); as membros) {
+      <div class="flex flex-col justify-center rounded-2xl bg-primary-deep p-8 sm:p-9" [appRevelarAoScroll]="1">
+        @if (membros.icone) {
+        <app-icone [nome]="membros.icone" [tamanho]="32" class="text-secondary" />
+        }
+        <app-item-estatistica class="mt-6" tema="sobreEscuro" [valor]="membros.valor" [rotulo]="membros.rotulo" />
+      </div>
+      }
+    </div>
+
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      @for (pilar of pilares(); track pilar.id) {
+      <app-cartao-recurso superficie="suave" [icone]="pilar.icone" [titulo]="pilar.titulo"
+        [descricao]="pilar.descricao" [appRevelarAoScroll]="$index" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-text-secondary">{{ semPilares() }}</p>
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 2 sessão — histórias de impacto dos antigos alunos, com retrato e testemunho -->
+<section id="secao-historias-alumni" class="bg-primary-deep px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao tema="escuro" alinhamento="esquerda" [mostrarTracos]="false" corAcao="branca"
+      tamanhoDescricao="pequeno" [titulo]="tituloHistorias()" [descricao]="descricaoHistorias()"
+      [textoAcao]="textoTodasHistorias()" [linkAcao]="linkTodasHistorias" />
+
+    <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      @if (consultaAlumni.isPending()) {
+      @for (_ of [1, 2, 3]; track $index) {
+      <app-cartao-historia-alumni-esqueleto />
+      }
+      } @else if (consultaAlumni.isError()) {
+      <p class="col-span-full py-12 text-center text-sm text-white/70">{{ erroHistorias() }}</p>
+      } @else {
+      @for (historia of historiasDestaque(); track historia.id) {
+      <app-cartao-historia-alumni [historia]="historia" [appRevelarAoScroll]="$index" />
+      } @empty {
+      <p class="col-span-full py-12 text-center text-sm text-white/70">{{ semHistorias() }}</p>
+      }
+      }
+    </div>
+  </app-container-pagina>
+</section>
+
+<!-- 3 sessão — apelo à contribuição: fotografia à esquerda e, à direita, as duas vias de apoio e as acções -->
+<section id="secao-contribuir" class="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+      <div [appRevelarAoScroll]="1">
+        <app-cabecalho-secao tema="verde" alinhamento="esquerda" [mostrarTracos]="false" tamanhoDescricao="pequeno"
+          [titulo]="tituloContribuir()" [descricao]="descricaoContribuir()" />
+
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          @for (modo of modosContribuicao(); track modo.id) {
+          <app-item-informacao formato="simples" [icone]="modo.icone" [titulo]="modo.titulo"
+            [descricao]="modo.descricao" [appRevelarAoScroll]="$index" />
+          } @empty {
+          <p class="col-span-full text-sm text-text-secondary">{{ semModosContribuicao() }}</p>
+          }
+        </div>
+
+        <div class="mt-10 flex flex-col gap-3 sm:max-w-xs">
+          <app-botao variante="primario" raio="medio" [link]="linkDoacao" [larguraTotal]="true">
+            {{ textoDoacao() }}
+          </app-botao>
+
+          <app-botao variante="contorno" raio="medio" [link]="linkComunidade" [larguraTotal]="true">
+            {{ textoComunidade() }}
+          </app-botao>
+        </div>
+      </div>
+      <div appRevelarAoScroll>
+        <img src="/imagens/jovem-agronimos.png" [alt]="legendaImagemContribuir()" loading="lazy"
+          class="h-72 w-full rounded-3xl object-cover shadow-xl shadow-black/10 sm:h-96 lg:h-[30rem]" />
+      </div>
+
+    </div>
+  </app-container-pagina>
+</section>

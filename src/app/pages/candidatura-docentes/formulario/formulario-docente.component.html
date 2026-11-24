@@ -1,0 +1,60 @@
+<div class="mx-auto max-w-4xl">
+  <div class="text-center">
+    <h2 class="text-2xl font-bold text-primary-dark sm:text-3xl">
+      {{ textos().titulo }}
+    </h2>
+    <p class="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-text-secondary">
+      {{ textos().subtitulo }}
+    </p>
+  </div>
+
+  <div class="mt-10 overflow-x-auto">
+    <app-passos-formulario class="block min-w-[320px]" [passos]="rotulosPassos()" [ativo]="passoAtual()" />
+  </div>
+
+  <div class="mt-8 rounded-2xl bg-white p-6 shadow-sm sm:p-10 lg:p-12">
+    <form [formGroup]="formulario" (ngSubmit)="submeter()">
+      @switch (passoAtual()) {
+      @case (0) {
+      <app-passo-dados-pessoais />
+      }
+      @case (1) {
+      <app-passo-academico [titulacoes]="titulacoes()" />
+      }
+      @default {
+      <app-passo-submissao />
+      }
+      }
+
+      <!-- A falha do POST fica aqui, e não num modal: o formulário continua
+           preenchido e a candidatura repete-se com um clique. -->
+      @if (enviar.isError()) {
+      <p role="alert"
+        class="mt-8 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-relaxed text-red-700">
+        {{ mensagemErro() }}
+      </p>
+      }
+
+      <div class="mt-10 flex items-center justify-between gap-4 border-t border-gray-200 pt-6">
+        @if (passoAtual() > 0) {
+        <app-botao variante="contorno" icone="chevron-left" (clicado)="recuar()">
+          {{ textos().botaoVoltar }}
+        </app-botao>
+        } @else {
+        <span></span>
+        }
+
+        @if (noUltimoPasso()) {
+        <app-botao variante="primario" tipo="submit" icone="arrow-right" posicaoIcone="direita"
+          [aCarregar]="enviar.isPending()" [desativado]="enviar.isPending()">
+          {{ textos().botaoSubmeter }}
+        </app-botao>
+        } @else {
+        <app-botao variante="primario" icone="arrow-right" posicaoIcone="direita" (clicado)="avancar()">
+          {{ textos().botaoContinuar }}
+        </app-botao>
+        }
+      </div>
+    </form>
+  </div>
+</div>

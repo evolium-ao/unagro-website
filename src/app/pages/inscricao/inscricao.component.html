@@ -1,0 +1,49 @@
+<!-- Hero — título todo a branco, sem realce dourado, como no mockup. -->
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque
+    [titulo]="tituloHero()"
+    [subtitulo]="subtituloHero()"
+    [selos]="selosHero()"
+    [ctas]="ctasHero()"
+    bg="/imagens/bg-banner-inscricao.png"
+    [temBackdrop]="true" />
+</app-container-banner-faixa-estatistica>
+
+<!-- 1 sessão — formulário de inscrição em três passos e painel de requisitos gerais -->
+<section id="secao-formulario" class="bg-bg-lighter px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+  <app-container-pagina>
+    <app-cabecalho-secao [titulo]="tituloFormulario()" [descricao]="descricaoFormulario()" />
+
+    <div class="mt-12 grid gap-8 lg:grid-cols-3 lg:gap-10">
+      <div class="lg:col-span-2" appRevelarAoScroll>
+        <app-formulario-inscricao />
+      </div>
+
+      <div class="flex flex-col gap-6 lg:sticky lg:top-24 lg:self-start" [appRevelarAoScroll]="1">
+        <app-painel-lateral tema="branco" icone="file-text" [titulo]="tituloRequisitos()">
+          @for (requisito of requisitosGerais(); track requisito.id) {
+          <app-item-requisito tema="primario" [icone]="requisito.icone" [titulo]="requisito.titulo"
+            [descricao]="requisito.descricao" />
+          } @empty {
+          <p class="text-sm text-text-secondary">{{ textoSemRequisitos() }}</p>
+          }
+
+          <div rodape>
+            <p class="text-xs text-text-secondary">{{ textoDuvidas() }}</p>
+            <a routerLink="/contactos"
+              class="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-primary-hover">
+              {{ textoLinkApoio() }}
+              <app-icone nome="arrow-right" [tamanho]="15" />
+            </a>
+          </div>
+        </app-painel-lateral>
+
+        <app-cartao-apoio [titulo]="tituloAjuda()" [descricao]="descricaoAjuda()">
+          <app-botao variante="secundario" raio="medio" link="/contactos" [larguraTotal]="true">
+            {{ textoBotaoAjuda() }}
+          </app-botao>
+        </app-cartao-apoio>
+      </div>
+    </div>
+  </app-container-pagina>
+</section>

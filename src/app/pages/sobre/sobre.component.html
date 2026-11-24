@@ -1,0 +1,49 @@
+<!-- Hero — mesmo molde de `/formacoes`: banner de largura total dentro do contentor que
+     lhe encosta a faixa de estatísticas, sem selos nem CTAs. -->
+<app-container-banner-faixa-estatistica>
+  <app-banner-destaque [titulo]="tituloHero()" [tituloDestaque]="tituloDestaqueHero()" [subtitulo]="subtituloHero()"
+    bg="/imagens/campus-hero.png" [temBackdrop]="true"
+    classeBackdrop="bg-gradient-to-r from-black/70 via-black/45 to-black/10" />
+</app-container-banner-faixa-estatistica>
+
+<!-- Abas — substituem os modais que o submenu "Sobre UNAGRO" abria. Cada aba tem o seu
+     componente em `src/app/pages/sobre/<aba>/`. -->
+<section id="secao-abas-sobre" class="bg-bg-lighter px-4 py-16  sm:py-20  pt-0!">
+  <div class="bg-white">
+    <app-container-pagina>
+      <app-abas class="block bg-transparent" [abas]="abas()" [(ativa)]="abaAtiva" [rolavel]="true" />
+    </app-container-pagina>
+  </div>
+  <app-container-pagina>
+    <!-- São várias: em telemóvel a fila desliza na horizontal em vez de quebrar. -->
+
+    <div class="mt-12">
+      @switch (abaAtiva()) {
+      @case ('nossa-historia') {
+      <app-sobre-nossa-historia />
+      }
+      @case ('pilares') {
+      <app-sobre-pilares-institucionais />
+      }
+      @case ('orgaos-gestao') {
+      <app-sobre-orgaos-gestao />
+      }
+      @case ('estrutura-organizacional') {
+      <app-sobre-estrutura-organizacional />
+      }
+      @case ('faculdades-departamentos') {
+      <app-sobre-faculdades-departamentos />
+      }
+      @case ('cursos') {
+      <app-sobre-cursos />
+      }
+      @case ('aba-unagro') {
+      <app-sobre-aba-unagro />
+      }
+      @case ('governanca') {
+      <app-sobre-governanca />
+      }
+      }
+    </div>
+  </app-container-pagina>
+</section>

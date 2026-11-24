@@ -1,0 +1,46 @@
+# Controlo de versão e metadados
+.git
+.gitignore
+.gitattributes
+
+# Dependências locais — nunca copiar para a imagem
+node_modules
+
+# Artefactos de build locais — gerados dentro do container, não copiados do host
+# dist  ← não ignorar: irrelevante pois o builder gera o seu próprio dist
+
+# Cache do Angular CLI
+.angular
+
+# Ficheiros de IDE e editor
+.vscode
+.idea
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Configuração específica de ambiente local
+.env
+.env.*
+!.env.example
+
+# Ficheiros de teste e cobertura
+coverage
+.nyc_output
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Documentação
+README.md
+*.md
+
+# Ficheiros de sistema operativo
+.DS_Store
+Thumbs.db
